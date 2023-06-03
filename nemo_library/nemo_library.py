@@ -76,7 +76,6 @@ class NemoLibrary:
     #################################################################################################################################################################
 
     def UploadFile(self, projectname, filename):
-        print(f"Uploading file: {filename} into project {projectname}")
 
         # define some variables
         token = None

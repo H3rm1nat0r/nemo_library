@@ -11,7 +11,10 @@ mdurl
 more-itertools
 numpy
 pandas
+pandoc
 pkginfo
+plumbum
+ply
 Pygments
 python-dateutil
 pytz

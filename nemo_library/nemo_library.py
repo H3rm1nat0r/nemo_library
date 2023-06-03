@@ -8,13 +8,21 @@ NEMO_URL = "https://enter.nemo-ai.com"
 
 class NemoLibrary:
 
-    @staticmethod
-    def _login():
+    #################################################################################################################################################################
+
+    def __init__(self):
 
         config = configparser.ConfigParser()
         config.read('config.ini')
-        userid = config['nemo_library']['userid']
-        password = config['nemo_library']['password']
+        self._userid_ = config['nemo_library']['userid']
+        self._password_ = config['nemo_library']['password']
+        self._nemo_url_ = config['nemo_library']['nemo_url']
+
+        super().__init__()
+
+    #################################################################################################################################################################
+
+    def _login(self):
 
         headers = {
             'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
@@ -22,8 +30,8 @@ class NemoLibrary:
         }
 
         authparams = {
-            'USERNAME': userid,
-            'PASSWORD': password
+            'USERNAME': self._userid_,
+            'PASSWORD': self._password_
         }
 
         data = {
@@ -42,13 +50,16 @@ class NemoLibrary:
         tokens = json.loads(response_auth.text)
         return tokens["AuthenticationResult"]["IdToken"]
 
-    @staticmethod
-    def UploadFile(filename):
+    #################################################################################################################################################################
+
+    def UploadFile(self,filename):
         # Implementiere den Upload-Code hier
         print(f"Uploading file: {filename}")
-        NemoLibrary._login()
+        self._login()
 
-    @staticmethod
-    def LoadReport(reportname):
+    #################################################################################################################################################################
+
+    def LoadReport(self,reportname):
         # Implementiere den Report-Lade-Code hier
         print(f"Loading report: {reportname}")
+        self._login()

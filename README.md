@@ -23,14 +23,22 @@ from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
 nl.UploadFile(filename="test.csv")
-nl.LoadReport(report_guid="b82cfed8-81a7-44e0-b3da-c76454540697")
+df = nl.LoadReport(report_guid="b82cfed8-81a7-44e0-b3da-c76454540697")
 ```
 
 ## LoadReport method
 
-This methode takes 1 parameter, the report_guid. You can find "your" guid in NEMO meta data. Just open the definition of the report in meta data and copy the GUID from your browser URL.
+Load a report from NEMO and return this as pandas dataframe
+
+### report_guid
+
+This methode takes 1 mandatory parameter, the report_guid. You can find "your" guid in NEMO meta data. Just open the definition of the report in meta data and copy the GUID from your browser URL.
 
 The report "(SAMPLE) Replenishment Time Analysis Purchased Parts" for example has this URL: https://enter.nemo-ai.com/nemo/metadata/report/b82cfed8-81a7-44e0-b3da-c76454540697 and thus the GUID you need is then "b82cfed8-81a7-44e0-b3da-c76454540697"
+
+### max_pages
+
+By default all pages from the report are loaded. You can optionally restrict the amount of data by providing max_pages parameter and you'll get not more than this number of pages (usually 1 page holds 20 records)
 
 # Contributions
 

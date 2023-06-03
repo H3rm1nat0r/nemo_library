@@ -1,8 +1,9 @@
 import configparser
 import json
 import requests
+import pandas as pd
 
-from nemo_library.symbols import COGNITO_APPCLIENTID, COGNITO_AUTHFLOW, COGNITO_URL
+from nemo_library.symbols import COGNITO_APPCLIENTID, COGNITO_AUTHFLOW, COGNITO_URL, ENDPOINT_URL_REPORT_RESULT
 
 NEMO_URL = "https://enter.nemo-ai.com"
 
@@ -59,7 +60,53 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def LoadReport(self,report_guid):
-        # Implementiere den Report-Lade-Code hier
+    def LoadReport(self,report_guid,max_pages=None):
+
         print(f"Loading report: {report_guid}")
-        self._login()
+
+        token = self._login()
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {token}'
+        }
+
+        page = 0
+        result = pd.DataFrame()
+
+        while (True):
+
+            page += 1
+
+            print("loading page:", page)
+
+            # INIT REPORT PAYLOAD (REQUEST BODY)
+            report_params = {
+                "report_id" : report_guid,
+                "page" : page
+            }
+
+            response_report = requests.post(
+                self._nemo_url_ + ENDPOINT_URL_REPORT_RESULT, headers=headers, json=report_params)
+
+            if response_report.status_code != 200:
+                raise Exception(
+                    f"request failed. Status: {response_report.status_code}, error: {response_report.text}")
+
+            # Parse REPORT Respone
+            resultjs = json.loads(response_report.text)
+            records = resultjs["records"]
+
+            df = pd.json_normalize(records)
+            if page == 1:
+                result = df
+            else:
+                result = pd.concat([result, df], ignore_index=True)
+
+            if resultjs["max_page"] <= page:
+                break
+        
+            if not max_pages is None and max_pages <= page:
+                break
+
+        return result

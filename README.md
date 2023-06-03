@@ -21,8 +21,9 @@ password = <your password>
 ```python
 from nemo_library import NemoLibrary
 
-NemoLibrary.UploadFile(filename="test.csv")
-NemoLibrary.LoadReport(reportname="21 MRR")
+nl = NemoLibrary()
+nl.UploadFile(filename="test.csv")
+nl.LoadReport(reportname="21 MRR")
 ```
 
 # Contributions

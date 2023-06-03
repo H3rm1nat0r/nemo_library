@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nemo_library',
-    version='1.0.0',
+    version='1.0.5',
     packages=find_packages(),
     install_requires=[
         'requests','pandas'
@@ -10,6 +10,8 @@ setup(
     author='Gunnar Schug',
     author_email='GunnarSchug81@gmail.com',
     description='A library for uploading data to and downloading reports from NEMO cloud solution',
+    long_description=open('README.rst').read(),
+    long_description_content_type='text/x-rst',    
     classifiers=[
         'Programming Language :: Python :: 3.11',
     ],

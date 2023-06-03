@@ -6,6 +6,10 @@ This library helps you with access to NEMO APIs
 
 pip install nemo_library
 
+# Sources
+
+please find all sources on github: https://github.com/H3rm1nat0r/nemo_library
+
 # configuration
 
 please create a file "config.ini". This is an example for the content:

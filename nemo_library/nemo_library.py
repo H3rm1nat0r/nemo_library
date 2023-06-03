@@ -14,6 +14,7 @@ from nemo_library.symbols import (
     ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_FINALIZE,
     ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_INITIALIZE,
     ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_KEEP_ALIVE,
+    ENDPOINT_URL_PROJECT_PROPERTIES,
     ENDPOINT_URL_PROJECTS,
     ENDPOINT_URL_REPORT_RESULT,
     FILE_UPLOAD_CHUNK_SIZE,
@@ -281,3 +282,26 @@ class NemoLibrary:
                 break
 
         return result
+
+    #################################################################################################################################################################
+
+    def ProjectProperty(self, propertyname):
+
+        token = self._login()
+        headers = {
+            "accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        }
+
+        ENDPOINT_URL = self._nemo_url_ + ENDPOINT_URL_PROJECT_PROPERTIES.format(request=propertyname)
+
+        response = requests.get(
+            ENDPOINT_URL, headers=headers)
+        
+        if response.status_code != 200:
+            raise Exception(
+                f"request failed. Status: {response.status_code}, error: {response.text}"
+            )
+
+        return response.text

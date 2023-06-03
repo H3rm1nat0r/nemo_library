@@ -59,7 +59,7 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def LoadReport(self,reportname):
+    def LoadReport(self,report_guid):
         # Implementiere den Report-Lade-Code hier
-        print(f"Loading report: {reportname}")
+        print(f"Loading report: {report_guid}")
         self._login()

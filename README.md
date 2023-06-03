@@ -23,8 +23,14 @@ from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
 nl.UploadFile(filename="test.csv")
-nl.LoadReport(reportname="21 MRR")
+nl.LoadReport(report_guid="b82cfed8-81a7-44e0-b3da-c76454540697")
 ```
+
+## LoadReport method
+
+This methode takes 1 parameter, the report_guid. You can find "your" guid in NEMO meta data. Just open the definition of the report in meta data and copy the GUID from your browser URL.
+
+The report "(SAMPLE) Replenishment Time Analysis Purchased Parts" for example has this URL: https://enter.nemo-ai.com/nemo/metadata/report/b82cfed8-81a7-44e0-b3da-c76454540697 and thus the GUID you need is then "b82cfed8-81a7-44e0-b3da-c76454540697"
 
 # Contributions
 

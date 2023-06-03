@@ -2,26 +2,9 @@ import configparser
 import json
 import requests
 
-# GLOBAL VARS
-COGNITO_URL = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF'
-COGNITO_APPCLIENTID = '8t32vcmmdvmva4qvb79gpfhdn'
-COGNITO_AUTHFLOW = 'USER_PASSWORD_AUTH'
+from nemo_library.symbols import COGNITO_APPCLIENTID, COGNITO_AUTHFLOW, COGNITO_URL
 
 NEMO_URL = "https://enter.nemo-ai.com"
-ENDPOINT_URL_REPORT_RESULT = NEMO_URL + "/api/nemo-report/report_results"
-
-FILE_UPLOAD_CHUNK_SIZE = 5 * 1024 * 1024  # 5MB
-ENDPOINT_URL_PROJECTS = NEMO_URL + "/api/nemo-projects/projects"
-ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_INITIALIZE = NEMO_URL + \
-    "/api/nemo-projects/file-re-upload/initialize"
-ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_KEEP_ALIVE = NEMO_URL + \
-    "/api/nemo-projects/projects/{projectId}/upload/{uploadId}/keep-alive"
-ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_FINALIZE = NEMO_URL + \
-    "/api/nemo-projects/file-re-upload/finalize"
-
-ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_ABORT = NEMO_URL + \
-    "/api/nemo-projects/file-re-upload/abort"
-
 
 class NemoLibrary:
 
@@ -30,8 +13,8 @@ class NemoLibrary:
 
         config = configparser.ConfigParser()
         config.read('config.ini')
-        userid = config['Cognito']['userid']
-        password = config['Cognito']['password']
+        userid = config['nemo_library']['userid']
+        password = config['nemo_library']['password']
 
         headers = {
             'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth',
@@ -53,6 +36,9 @@ class NemoLibrary:
 
         response_auth = requests.post(
             COGNITO_URL, headers=headers, data=json.dumps(data))
+        if response_auth.status_code != 200:
+            raise Exception(
+                f"request failed. Status: {response_auth.status_code}, error: {response_auth.text}")
         tokens = json.loads(response_auth.text)
         return tokens["AuthenticationResult"]["IdToken"]
 

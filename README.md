@@ -8,7 +8,7 @@ pip install nemo_library
 
 # configuration
 
-please create a file "nemo_library_config.ini". This is an example for the content:
+please create a file "config.ini". This is an example for the content:
 ```
 [nemo_library]
 nemo_url = https://enter.nemo-ai.com

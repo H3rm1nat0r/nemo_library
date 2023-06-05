@@ -7,9 +7,6 @@ import pandas as pd
 import requests
 
 from nemo_library.symbols import (
-    COGNITO_APPCLIENTID,
-    COGNITO_AUTHFLOW,
-    COGNITO_URL,
     ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_ABORT,
     ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_FINALIZE,
     ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_INITIALIZE,
@@ -29,10 +26,27 @@ class NemoLibrary:
     def __init__(self):
         config = configparser.ConfigParser()
         config.read("config.ini")
+        self._environment_ = config["nemo_library"]["environment"]
         self._userid_ = config["nemo_library"]["userid"]
         self._password_ = config["nemo_library"]["password"]
         self._nemo_url_ = config["nemo_library"]["nemo_url"]
 
+        match self._environment_:
+            case "demo":
+                self._cognito_url_ = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1ZbUITj21'
+                self._cognito_appclientid = '7tvfugcnunac7id3ebgns6n66u'
+                self._cognito_authflow_ = 'USER_PASSWORD_AUTH'
+            case "dev":
+                self._cognito_url_ = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE'
+                self._cognito_appclientid = '4lr89aas81m844o0admv3pfcrp'
+                self._cognito_authflow_ = 'USER_PASSWORD_AUTH'
+            case "prod":
+                self._cognito_url_ = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF'
+                self._cognito_appclientid = '8t32vcmmdvmva4qvb79gpfhdn'
+                self._cognito_authflow_ = 'USER_PASSWORD_AUTH'
+            case _:
+                raise Exception(f"unknown environment '{self._environment_}' provided")
+            
         super().__init__()
 
     #################################################################################################################################################################
@@ -47,14 +61,14 @@ class NemoLibrary:
 
         data = {
             "AuthParameters": authparams,
-            "AuthFlow": COGNITO_AUTHFLOW,
-            "ClientId": COGNITO_APPCLIENTID,
+            "AuthFlow": self._cognito_authflow_,
+            "ClientId": self._cognito_appclientid,
         }
 
         # login and get tokenb
 
         response_auth = requests.post(
-            COGNITO_URL, headers=headers, data=json.dumps(data)
+            self._cognito_url_, headers=headers, data=json.dumps(data)
         )
         if response_auth.status_code != 200:
             raise Exception(

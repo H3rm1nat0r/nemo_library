@@ -1,8 +1,3 @@
-# cognito login
-COGNITO_URL = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF'
-COGNITO_APPCLIENTID = '8t32vcmmdvmva4qvb79gpfhdn'
-COGNITO_AUTHFLOW = 'USER_PASSWORD_AUTH'
-
 # Endpoints
 
 ## projects

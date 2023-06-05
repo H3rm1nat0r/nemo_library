@@ -4,7 +4,9 @@ This library helps you with access to NEMO APIs
 
 # Installation
 
+```
 pip install nemo_library
+```
 
 # Sources
 
@@ -18,21 +20,22 @@ please create a file "config.ini". This is an example for the content:
 nemo_url = https://enter.nemo-ai.com
 userid = <your userid>
 password = <your password>
+environment = [prod|dev|demo]
 ```
 
-# usage
+# Methods
+
+
+## LoadReport method
+
+Load a report from NEMO and return this as pandas dataframe
 
 ```python
 from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
-nl.UploadFile(filename="test.csv")
 df = nl.LoadReport(report_guid="b82cfed8-81a7-44e0-b3da-c76454540697")
 ```
-
-## LoadReport method
-
-Load a report from NEMO and return this as pandas dataframe
 
 ### report_guid
 
@@ -43,6 +46,32 @@ The report "(SAMPLE) Replenishment Time Analysis Purchased Parts" for example ha
 ### max_pages
 
 By default all pages from the report are loaded. You can optionally restrict the amount of data by providing max_pages parameter and you'll get not more than this number of pages (usually 1 page holds 20 records)
+
+## UploadFile method
+
+(Re-)Upload a CSV file into an existing project
+
+```python
+from nemo_library import NemoLibrary
+
+nl = NemoLibrary()
+nl.UploadFile(projectname="21 CRM", filename="./csv/hubspot.csv")
+````
+
+## ProjectProperty method
+
+Get a project property
+
+```python
+from nemo_library import NemoLibrary
+
+nl = NemoLibrary()
+val = nl.ProjectProperty(propertyname="ExpDateTo")
+````
+
+
+## ProjectProperty method
+## ProjectProperty method
 
 # Contributions
 

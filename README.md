@@ -56,7 +56,18 @@ from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
 nl.UploadFile(projectname="21 CRM", filename="./csv/hubspot.csv")
-````
+```
+
+## getProjectList method
+
+Return list of projects (as pandas Dataframe)
+
+```python
+from nemo_library import NemoLibrary
+
+nl = NemoLibrary()
+df = nl.getProjectList()
+```
 
 ## ProjectProperty method
 
@@ -67,11 +78,8 @@ from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
 val = nl.ProjectProperty(propertyname="ExpDateTo")
-````
+```
 
-
-## ProjectProperty method
-## ProjectProperty method
 
 # Contributions
 

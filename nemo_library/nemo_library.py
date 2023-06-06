@@ -89,6 +89,28 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
+    def getProjectList(self,token = None):
+        if token is None:
+            token = self._login()
+
+        headers = {
+            "accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        }
+        response = requests.get(
+            self._nemo_url_ + ENDPOINT_URL_PROJECTS, headers=headers
+        )
+        if response.status_code != 200:
+            raise Exception(
+                f"request failed. Status: {response.status_code}, error: {response.text}"
+            )
+        resultjs = json.loads(response.text)
+        df = pd.json_normalize(resultjs)    
+        return df    
+
+    #################################################################################################################################################################
+
     def UploadFile(self, projectname, filename):
 
         # define some variables
@@ -104,22 +126,7 @@ class NemoLibrary:
                 f"upload of file '{filename}' into project '{projectname}' initiated..."
             )
 
-            ####
-            # get project id
-            headers = {
-                "accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {token}",
-            }
-            response = requests.get(
-                self._nemo_url_ + ENDPOINT_URL_PROJECTS, headers=headers
-            )
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-            resultjs = json.loads(response.text)
-            df = pd.json_normalize(resultjs)
+            df = self.getProjectList(token=token)
             crmproject = df[df["displayName"] == projectname]
             if len(crmproject) != 1:
                 raise Exception(f"could not identify project name {projectname}")

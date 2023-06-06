@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nemo_library',
-    version='1.0.9',
+    version='1.0.11',
     packages=find_packages(),
     install_requires=[
         'requests','pandas'
@@ -15,4 +15,8 @@ setup(
     classifiers=[
         'Programming Language :: Python :: 3.11',
     ],
+    project_urls={
+        'Github': 'https://github.com/H3rm1nat0r/nemo_library',  
+        'NEMO': 'https://enter.nemo-ai.com/nemo/'
+    }
 )

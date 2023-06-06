@@ -19,4 +19,4 @@ python setup.py sdist bdist_wheel
 
 # upload distribution
 source config_twine.sh
-twine upload dist/* -u "$USER" -p "$PWD"
+twine upload dist/* -u "$USER" -p "$PWD" --verbose

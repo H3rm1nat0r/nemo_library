@@ -33,20 +33,20 @@ class NemoLibrary:
 
         match self._environment_:
             case "demo":
-                self._cognito_url_ = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1ZbUITj21'
-                self._cognito_appclientid = '7tvfugcnunac7id3ebgns6n66u'
-                self._cognito_authflow_ = 'USER_PASSWORD_AUTH'
+                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1ZbUITj21"
+                self._cognito_appclientid = "7tvfugcnunac7id3ebgns6n66u"
+                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
             case "dev":
-                self._cognito_url_ = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE'
-                self._cognito_appclientid = '4lr89aas81m844o0admv3pfcrp'
-                self._cognito_authflow_ = 'USER_PASSWORD_AUTH'
+                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE"
+                self._cognito_appclientid = "4lr89aas81m844o0admv3pfcrp"
+                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
             case "prod":
-                self._cognito_url_ = 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF'
-                self._cognito_appclientid = '8t32vcmmdvmva4qvb79gpfhdn'
-                self._cognito_authflow_ = 'USER_PASSWORD_AUTH'
+                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF"
+                self._cognito_appclientid = "8t32vcmmdvmva4qvb79gpfhdn"
+                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
             case _:
                 raise Exception(f"unknown environment '{self._environment_}' provided")
-            
+
         super().__init__()
 
     #################################################################################################################################################################
@@ -79,7 +79,16 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def _split_file(self, file_path, chunk_size):
+    def _get_file_size_in_characters_(self,file_path):
+        character_count = 0
+        with open(file_path, "r", encoding="utf-8") as file:
+            for line in file:
+                character_count += len(line)
+        return character_count
+
+    #################################################################################################################################################################
+
+    def _split_file_(self, file_path, chunk_size):
         with open(file_path, "r", encoding="utf-8") as file:
             while True:
                 data = file.read(chunk_size)
@@ -89,7 +98,7 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def getProjectList(self,token = None):
+    def getProjectList(self, token=None):
         if token is None:
             token = self._login()
 
@@ -106,13 +115,12 @@ class NemoLibrary:
                 f"request failed. Status: {response.status_code}, error: {response.text}"
             )
         resultjs = json.loads(response.text)
-        df = pd.json_normalize(resultjs)    
-        return df    
+        df = pd.json_normalize(resultjs)
+        return df
 
     #################################################################################################################################################################
 
     def UploadFile(self, projectname, filename):
-
         # define some variables
         token = None
         upload_id = None
@@ -138,11 +146,17 @@ class NemoLibrary:
             # start upload process
 
             # we need to upload file in chunks. Default is 6MB size chunks
-            file_size = os.path.getsize(filename)
+
+            # usually we would get the file size with os.path.getsize(filename) - but this is
+            # the size in Bytes, not in (UTF-8)-characters. So we have to calculate the size
+            # by our own
+
+            file_size = self._get_file_size_in_characters_(filename)
             total_chunks = math.ceil(file_size / FILE_UPLOAD_CHUNK_SIZE)
 
-            print("file size:", file_size)
-            print("total chunks", total_chunks)
+            print(f"file size: {file_size:,}")
+            print(f"chunk size: {FILE_UPLOAD_CHUNK_SIZE:,}")
+            print(f"--> total chunks: {total_chunks:,}")
             headers = {
                 "accept": "application/json",
                 "Content-Type": "application/json",
@@ -166,7 +180,7 @@ class NemoLibrary:
             upload_urls = resultjs["urls"]
             partETags = pd.DataFrame({"partNumber": [None], "eTag": [None]})
 
-            file_chunks = self._split_file(filename, FILE_UPLOAD_CHUNK_SIZE)
+            file_chunks = self._split_file_(filename, FILE_UPLOAD_CHUNK_SIZE)
 
             for index, url in enumerate(upload_urls, start=1):
                 # post keep alive message
@@ -306,7 +320,6 @@ class NemoLibrary:
     #################################################################################################################################################################
 
     def ProjectProperty(self, propertyname):
-
         token = self._login()
         headers = {
             "accept": "application/json",
@@ -314,11 +327,12 @@ class NemoLibrary:
             "Authorization": f"Bearer {token}",
         }
 
-        ENDPOINT_URL = self._nemo_url_ + ENDPOINT_URL_PROJECT_PROPERTIES.format(request=propertyname)
+        ENDPOINT_URL = self._nemo_url_ + ENDPOINT_URL_PROJECT_PROPERTIES.format(
+            request=propertyname
+        )
 
-        response = requests.get(
-            ENDPOINT_URL, headers=headers)
-        
+        response = requests.get(ENDPOINT_URL, headers=headers)
+
         if response.status_code != 200:
             raise Exception(
                 f"request failed. Status: {response.status_code}, error: {response.text}"

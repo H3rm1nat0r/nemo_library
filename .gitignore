@@ -4,3 +4,6 @@ dist/
 
 config_twine.sh
 README.rst
+config.ini
+test.py
+__pycache__/

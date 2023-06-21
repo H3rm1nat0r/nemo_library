@@ -47,15 +47,15 @@ The report "(SAMPLE) Replenishment Time Analysis Purchased Parts" for example ha
 
 By default all pages from the report are loaded. You can optionally restrict the amount of data by providing max_pages parameter and you'll get not more than this number of pages (usually 1 page holds 20 records)
 
-## UploadFile method
+## ReUploadFile method
 
-(Re-)Upload a CSV file into an existing project
+ReUpload a CSV file into an existing project
 
 ```python
 from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
-nl.UploadFile(projectname="21 CRM", filename="./csv/hubspot.csv")
+nl.ReUploadFile(projectname="21 CRM", filename="./csv/hubspot.csv")
 ```
 
 ## getProjectList method

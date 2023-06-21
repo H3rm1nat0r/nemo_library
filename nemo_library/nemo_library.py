@@ -120,7 +120,7 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def UploadFile(self, projectname, filename):
+    def ReUploadFile(self, projectname, filename):
         # define some variables
         token = None
         upload_id = None

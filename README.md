@@ -37,6 +37,10 @@ nl = NemoLibrary()
 df = nl.LoadReport(report_guid="b82cfed8-81a7-44e0-b3da-c76454540697")
 ```
 
+### project_id
+
+Optional parameter. If you want to get reports for non-default ERP projects. Please provide the project GUID (you can retrieve them by running getProjectList)
+
 ### report_guid
 
 This methode takes 1 mandatory parameter, the report_guid. You can find "your" guid in NEMO meta data. Just open the definition of the report in meta data and copy the GUID from your browser URL.

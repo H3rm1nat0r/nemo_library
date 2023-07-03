@@ -267,7 +267,7 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def LoadReport(self, report_guid, max_pages=None):
+    def LoadReport(self, report_guid, project_id = "00000000-0000-0000-0000-000000000001",max_pages=None):
         print(f"Loading report: {report_guid}")
 
         token = self._login()
@@ -286,7 +286,7 @@ class NemoLibrary:
             print("loading page:", page)
 
             # INIT REPORT PAYLOAD (REQUEST BODY)
-            report_params = {"id": report_guid, "page": page}
+            report_params = {"id": report_guid, "page": page, "project_id" : project_id}
 
             response_report = requests.post(
                 self._nemo_url_ + ENDPOINT_URL_REPORT_RESULT,

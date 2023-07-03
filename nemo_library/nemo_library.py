@@ -286,7 +286,7 @@ class NemoLibrary:
             print("loading page:", page)
 
             # INIT REPORT PAYLOAD (REQUEST BODY)
-            report_params = {"report_id": report_guid, "page": page}
+            report_params = {"id": report_guid, "page": page}
 
             response_report = requests.post(
                 self._nemo_url_ + ENDPOINT_URL_REPORT_RESULT,

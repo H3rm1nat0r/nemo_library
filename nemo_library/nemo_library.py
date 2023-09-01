@@ -75,8 +75,25 @@ class NemoLibrary:
                 f"request failed. Status: {response_auth.status_code}, error: {response_auth.text}"
             )
         tokens = json.loads(response_auth.text)
-        return tokens["AuthenticationResult"]["IdToken"]
+        id_token = tokens["AuthenticationResult"]["IdToken"]
+        access_token = tokens["AuthenticationResult"]["AccessToken"]
+        refresh_token = tokens["AuthenticationResult"].get("RefreshToken")  # Some flows might not return a RefreshToken
 
+        return id_token, access_token, refresh_token
+
+    #################################################################################################################################################################
+
+    def _headers(self):
+        tokens = self._login()
+
+        headers = {
+            "accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {tokens[0]}",
+            "refresh-token": tokens[2]
+        }
+        return headers
+            
     #################################################################################################################################################################
 
     def _get_file_size_in_characters_(self,file_path):
@@ -98,15 +115,10 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def getProjectList(self, token=None):
-        if token is None:
-            token = self._login()
+    def getProjectList(self):
+        
+        headers = self._headers()
 
-        headers = {
-            "accept": "application/json",
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}",
-        }
         response = requests.get(
             self._nemo_url_ + ENDPOINT_URL_PROJECTS, headers=headers
         )
@@ -122,19 +134,18 @@ class NemoLibrary:
 
     def ReUploadFile(self, projectname, filename):
         # define some variables
-        token = None
         upload_id = None
         project_id = None
         headers = None
 
         try:
-            token = self._login()
+            headers = self._headers()
 
             print(
                 f"upload of file '{filename}' into project '{projectname}' initiated..."
             )
 
-            df = self.getProjectList(token=token)
+            df = self.getProjectList()
             crmproject = df[df["displayName"] == projectname]
             if len(crmproject) != 1:
                 raise Exception(f"could not identify project name {projectname}")
@@ -157,11 +168,6 @@ class NemoLibrary:
             print(f"file size: {file_size:,}")
             print(f"chunk size: {FILE_UPLOAD_CHUNK_SIZE:,}")
             print(f"--> total chunks: {total_chunks:,}")
-            headers = {
-                "accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {token}",
-            }
             data = {"projectId": project_id, "partCount": total_chunks}
 
             # initialize upload
@@ -241,8 +247,6 @@ class NemoLibrary:
             print("upload finished")
 
         except Exception as e:
-            if token == None:
-                raise Exception("upload stopped, no token available")
 
             if project_id == None:
                 raise Exception("upload stopped, no project_id available")
@@ -270,12 +274,7 @@ class NemoLibrary:
     def LoadReport(self, report_guid, project_id = "00000000-0000-0000-0000-000000000001",max_pages=None):
         print(f"Loading report: {report_guid}")
 
-        token = self._login()
-        headers = {
-            "accept": "application/json",
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}",
-        }
+        headers = self._headers()
 
         page = 0
         result = pd.DataFrame()
@@ -320,12 +319,7 @@ class NemoLibrary:
     #################################################################################################################################################################
 
     def ProjectProperty(self, propertyname):
-        token = self._login()
-        headers = {
-            "accept": "application/json",
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {token}",
-        }
+        headers = self._headers()
 
         ENDPOINT_URL = self._nemo_url_ + ENDPOINT_URL_PROJECT_PROPERTIES.format(
             request=propertyname

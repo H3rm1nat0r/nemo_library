@@ -94,6 +94,7 @@ class NemoLibrary:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {tokens[0]}",
             "refresh-token": tokens[2],
+            "api-version": "1.0"
         }
         return headers
 
@@ -138,8 +139,6 @@ class NemoLibrary:
         project_id = None
 
         try:
-            headers = self._headers()
-            print(headers)
 
             df = self.getProjectList()
             crmproject = df[df["displayName"] == projectname]
@@ -147,20 +146,12 @@ class NemoLibrary:
                 raise Exception(f"could not identify project name {projectname}")
             project_id = crmproject["id"].to_list()[0]
 
-            print("project id:", project_id)
-
-            print(
-                self._nemo_url_
-                + ENDPOINT_URL_PROJECT_COLUMNS.format(projectId=project_id)
-            )
-
             # initialize reqeust
-            data = {"projectId": project_id}
-            response = requests.post(
+            headers = self._headers()
+            response = requests.get(
                 self._nemo_url_
                 + ENDPOINT_URL_PROJECT_COLUMNS.format(projectId=project_id),
                 headers=headers,
-                json=data,
             )
             if response.status_code != 200:
                 raise Exception(

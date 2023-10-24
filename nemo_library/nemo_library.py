@@ -13,6 +13,7 @@ from nemo_library.symbols import (
     ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_KEEP_ALIVE,
     ENDPOINT_URL_PROJECT_PROPERTIES,
     ENDPOINT_URL_PROJECTS,
+    ENDPOINT_URL_PROJECT_COLUMNS,
     ENDPOINT_URL_REPORT_RESULT,
     FILE_UPLOAD_CHUNK_SIZE,
 )
@@ -77,7 +78,9 @@ class NemoLibrary:
         tokens = json.loads(response_auth.text)
         id_token = tokens["AuthenticationResult"]["IdToken"]
         access_token = tokens["AuthenticationResult"]["AccessToken"]
-        refresh_token = tokens["AuthenticationResult"].get("RefreshToken")  # Some flows might not return a RefreshToken
+        refresh_token = tokens["AuthenticationResult"].get(
+            "RefreshToken"
+        )  # Some flows might not return a RefreshToken
 
         return id_token, access_token, refresh_token
 
@@ -90,13 +93,13 @@ class NemoLibrary:
             "accept": "application/json",
             "Content-Type": "application/json",
             "Authorization": f"Bearer {tokens[0]}",
-            "refresh-token": tokens[2]
+            "refresh-token": tokens[2],
         }
         return headers
-            
+
     #################################################################################################################################################################
 
-    def _get_file_size_in_characters_(self,file_path):
+    def _get_file_size_in_characters_(self, file_path):
         character_count = 0
         with open(file_path, "r", encoding="utf-8") as file:
             for line in file:
@@ -116,7 +119,6 @@ class NemoLibrary:
     #################################################################################################################################################################
 
     def getProjectList(self):
-        
         headers = self._headers()
 
         response = requests.get(
@@ -129,6 +131,49 @@ class NemoLibrary:
         resultjs = json.loads(response.text)
         df = pd.json_normalize(resultjs)
         return df
+
+    #################################################################################################################################################################
+
+    def getImportedColumns(self, projectname):
+        project_id = None
+
+        try:
+            headers = self._headers()
+            print(headers)
+
+            df = self.getProjectList()
+            crmproject = df[df["displayName"] == projectname]
+            if len(crmproject) != 1:
+                raise Exception(f"could not identify project name {projectname}")
+            project_id = crmproject["id"].to_list()[0]
+
+            print("project id:", project_id)
+
+            print(
+                self._nemo_url_
+                + ENDPOINT_URL_PROJECT_COLUMNS.format(projectId=project_id)
+            )
+
+            # initialize reqeust
+            data = {"projectId": project_id}
+            response = requests.post(
+                self._nemo_url_
+                + ENDPOINT_URL_PROJECT_COLUMNS.format(projectId=project_id),
+                headers=headers,
+                json=data,
+            )
+            if response.status_code != 200:
+                raise Exception(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
+            resultjs = json.loads(response.text)
+            df = pd.json_normalize(resultjs)
+            return df
+
+        except Exception as e:
+            if project_id == None:
+                raise Exception("process stopped, no project_id available")
+            raise Exception("process aborted")
 
     #################################################################################################################################################################
 
@@ -247,7 +292,6 @@ class NemoLibrary:
             print("upload finished")
 
         except Exception as e:
-
             if project_id == None:
                 raise Exception("upload stopped, no project_id available")
 
@@ -271,7 +315,12 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def LoadReport(self, report_guid, project_id = "00000000-0000-0000-0000-000000000001",max_pages=None):
+    def LoadReport(
+        self,
+        report_guid,
+        project_id="00000000-0000-0000-0000-000000000001",
+        max_pages=None,
+    ):
         print(f"Loading report: {report_guid}")
 
         headers = self._headers()
@@ -285,7 +334,7 @@ class NemoLibrary:
             print("loading page:", page)
 
             # INIT REPORT PAYLOAD (REQUEST BODY)
-            report_params = {"id": report_guid, "page": page, "project_id" : project_id}
+            report_params = {"id": report_guid, "page": page, "project_id": project_id}
 
             response_report = requests.post(
                 self._nemo_url_ + ENDPOINT_URL_REPORT_RESULT,

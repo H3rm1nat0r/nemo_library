@@ -7,13 +7,14 @@ import pandas as pd
 import requests
 
 from nemo_library.symbols import (
-    ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_ABORT,
-    ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_FINALIZE,
-    ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_INITIALIZE,
-    ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_KEEP_ALIVE,
-    ENDPOINT_URL_PROJECT_PROPERTIES,
-    ENDPOINT_URL_PROJECTS,
-    ENDPOINT_URL_PROJECT_COLUMNS,
+    ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
+    ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_FINALIZE,
+    ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE,
+    ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_KEEP_ALIVE,
+    ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES,
+    ENDPOINT_URL_PROJECTS_ALL,
+    ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
+    ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES,
     ENDPOINT_URL_REPORT_RESULT,
     FILE_UPLOAD_CHUNK_SIZE,
 )
@@ -44,6 +45,10 @@ class NemoLibrary:
             case "prod":
                 self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF"
                 self._cognito_appclientid = "8t32vcmmdvmva4qvb79gpfhdn"
+                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
+            case "challenge":
+                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_U2V9y0lzx"
+                self._cognito_appclientid = "43lq8ej98uuo8hvnoi1g880onp"
                 self._cognito_authflow_ = "USER_PASSWORD_AUTH"
             case _:
                 raise Exception(f"unknown environment '{self._environment_}' provided")
@@ -94,7 +99,7 @@ class NemoLibrary:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {tokens[0]}",
             "refresh-token": tokens[2],
-            "api-version": "1.0"
+            "api-version": "1.0",
         }
         return headers
 
@@ -123,7 +128,7 @@ class NemoLibrary:
         headers = self._headers()
 
         response = requests.get(
-            self._nemo_url_ + ENDPOINT_URL_PROJECTS, headers=headers
+            self._nemo_url_ + ENDPOINT_URL_PROJECTS_ALL, headers=headers
         )
         if response.status_code != 200:
             raise Exception(
@@ -139,7 +144,6 @@ class NemoLibrary:
         project_id = None
 
         try:
-
             df = self.getProjectList()
             crmproject = df[df["displayName"] == projectname]
             if len(crmproject) != 1:
@@ -150,7 +154,9 @@ class NemoLibrary:
             headers = self._headers()
             response = requests.get(
                 self._nemo_url_
-                + ENDPOINT_URL_PROJECT_COLUMNS.format(projectId=project_id),
+                + ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS.format(
+                    projectId=project_id
+                ),
                 headers=headers,
             )
             if response.status_code != 200:
@@ -165,6 +171,126 @@ class NemoLibrary:
             if project_id == None:
                 raise Exception("process stopped, no project_id available")
             raise Exception("process aborted")
+
+    #################################################################################################################################################################
+
+    def int_to_base62(self, n):
+        chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        if n == 0:
+            return "0"
+        arr = []
+        while n:
+            n, rem = divmod(n, 62)
+            arr.append(chars[rem])
+        arr.reverse()
+        if len(arr) > 1 and arr[0] == "1":
+            arr[0] = "z"
+        return "".join(arr)
+
+    def setMetadataSortOrder(self, projectname: str, fields: list):
+        try:
+            # everything is case sensitive, thus we convert everything to lower case for a better mapping
+            fields_lower = [field.lower() for field in fields]
+
+            # store position in fields list
+            field_order = {field: index for index, field in enumerate(fields_lower)}
+
+            # get columns and apply new sort order
+            df_imported = self.getImportedColumns(projectname=projectname)
+            print(df_imported)
+            df_imported["focusOrder"] = (
+                df_imported["displayName"].str.lower().map(field_order)
+            )
+
+            # apply base62-coded sort order
+            df_imported["focusOrder"] = df_imported["focusOrder"].apply(
+                lambda x: self.int_to_base62(x) if not pd.isna(x) else x
+            )
+
+            # initialize reqeust
+            headers = self._headers()
+
+            for idx, row in df_imported.iterrows():
+                print(idx,row["internalName"])
+                response = requests.put(
+                    self._nemo_url_
+                    + ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES.format(
+                        id=row["id"]
+                    ),
+                    headers=headers,
+                    json=row.to_dict(),
+                )
+                if response.status_code != 200:
+                    raise Exception(
+                        f"request failed. Status: {response.status_code}, error: {response.text}"
+                    )
+
+        except Exception as e:
+            raise Exception("setMetadataSortOrder metadata aborted")
+
+    #################################################################################################################################################################
+
+    def copyMetadata(self, projectname_src, projectname_tgt):
+        try:
+            # load columns from both projects
+            df_src = self.getImportedColumns(projectname_src)
+            df_tgt = self.getImportedColumns(projectname_tgt)
+
+            # make code bullet proof (we don not support everything yet)
+            if len(df_src) != len(df_tgt):
+                raise Exception(
+                    "Target dataset has different length ({len_tgt}) than source ({len_src})".format(
+                        len_tgt=len(df_tgt), len_src=len(df_src)
+                    )
+                )
+
+            # check for different values in relevant fields
+
+            # merge datasets on "internalName"
+            merged_df = pd.merge(
+                df_src, df_tgt, on="internalName", suffixes=("_src", "_tgt")
+            )
+
+            # check whether the result still has the same number of records
+            if len(df_src) != len(df_tgt):
+                raise Exception(
+                    "Merge dataset has different length ({len_mrg}) than source ({len_src})".format(
+                        len_mrg=len(merged_df), len_src=len(df_src)
+                    )
+                )
+
+            # filter on differences now
+            columns_to_compare = [
+                "dataType",
+                "description",
+                # "attributeGroupInternalName",
+                # "groupByColumnInternalName",
+                # "order",
+                # "focusOrder",
+            ]
+            conditions = (
+                merged_df[col + "_src"] != merged_df[col + "_tgt"]
+                for col in columns_to_compare
+            )
+            combined_condition = pd.concat(conditions, axis=1).any(axis=1)
+            diff_df = merged_df[combined_condition]
+
+            # create results dataset with differences
+            output_columns = [
+                "id_src",
+                "id_tgt",
+                "internalName",
+            ] + [
+                col + suffix
+                for col in columns_to_compare
+                for suffix in ["_src", "_tgt"]
+            ]
+            result_df = diff_df[output_columns]
+
+            print(result_df)
+
+        except Exception as e:
+            raise Exception("copy metadata aborted")
 
     #################################################################################################################################################################
 
@@ -208,7 +334,7 @@ class NemoLibrary:
 
             # initialize upload
             response = requests.post(
-                self._nemo_url_ + ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_INITIALIZE,
+                self._nemo_url_ + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE,
                 headers=headers,
                 json=data,
             )
@@ -229,7 +355,7 @@ class NemoLibrary:
 
                 karesponse = requests.post(
                     url=self._nemo_url_
-                    + ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_KEEP_ALIVE.format(
+                    + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_KEEP_ALIVE.format(
                         projectId=project_id, uploadId=upload_id
                     ),
                     headers=headers,
@@ -271,7 +397,7 @@ class NemoLibrary:
             }
             datajs = json.dumps(data, indent=2)
             response = requests.post(
-                self._nemo_url_ + ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_FINALIZE,
+                self._nemo_url_ + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_FINALIZE,
                 headers=headers,
                 data=datajs,
             )
@@ -293,7 +419,7 @@ class NemoLibrary:
 
             data = {"uploadId": upload_id, "projectId": project_id}
             response = requests.post(
-                self._nemo_url_ + ENDPOINT_URL_PROJECT_FILE_RE_UPLOAD_ABORT,
+                self._nemo_url_ + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
                 headers=headers,
                 json=data,
             )
@@ -361,8 +487,9 @@ class NemoLibrary:
     def ProjectProperty(self, propertyname):
         headers = self._headers()
 
-        ENDPOINT_URL = self._nemo_url_ + ENDPOINT_URL_PROJECT_PROPERTIES.format(
-            request=propertyname
+        ENDPOINT_URL = (
+            self._nemo_url_
+            + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(request=propertyname)
         )
 
         response = requests.get(ENDPOINT_URL, headers=headers)

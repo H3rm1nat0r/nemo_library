@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nemo_library',
-    version='1.0.19',
+    version='1.0.21',
     packages=find_packages(),
     install_requires=[
         'requests','pandas'

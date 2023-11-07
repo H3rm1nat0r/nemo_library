@@ -20,6 +20,7 @@ from nemo_library.symbols import (
 )
 
 NEMO_URL = "https://enter.nemo-ai.com"
+DEFAULT_PROJECT_NAME = "ERP Business Processes"
 
 
 class NemoLibrary:
@@ -140,15 +141,23 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def getImportedColumns(self, projectname):
+    def getProjectID(self, projectname: str ):
+        if projectname == None:
+            projectname = DEFAULT_PROJECT_NAME
+        df = self.getProjectList()
+        crmproject = df[df["displayName"] == projectname]
+        if len(crmproject) != 1:
+            raise Exception(f"could not identify project name {projectname}")
+        project_id = crmproject["id"].to_list()[0]
+        return project_id
+
+    #################################################################################################################################################################
+
+    def getImportedColumns(self, projectname: str ):
         project_id = None
 
         try:
-            df = self.getProjectList()
-            crmproject = df[df["displayName"] == projectname]
-            if len(crmproject) != 1:
-                raise Exception(f"could not identify project name {projectname}")
-            project_id = crmproject["id"].to_list()[0]
+            project_id = self.getProjectID(projectname)
 
             # initialize reqeust
             headers = self._headers()
@@ -211,7 +220,7 @@ class NemoLibrary:
             headers = self._headers()
 
             for idx, row in df_imported.iterrows():
-                print(idx,row["internalName"])
+                print(idx, row["internalName"])
                 response = requests.put(
                     self._nemo_url_
                     + ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES.format(
@@ -294,26 +303,19 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def ReUploadFile(self, projectname, filename):
-        # define some variables
-        upload_id = None
+    def ReUploadFile(self, projectname: str, filename: str):
         project_id = None
         headers = None
+        upload_id = None
 
         try:
+            project_id = self.getProjectID(projectname)
+
             headers = self._headers()
 
             print(
                 f"upload of file '{filename}' into project '{projectname}' initiated..."
             )
-
-            df = self.getProjectList()
-            crmproject = df[df["displayName"] == projectname]
-            if len(crmproject) != 1:
-                raise Exception(f"could not identify project name {projectname}")
-            project_id = crmproject["id"].to_list()[0]
-
-            print("project id:", project_id)
 
             ####
             # start upload process
@@ -432,13 +434,10 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def LoadReport(
-        self,
-        report_guid,
-        project_id="00000000-0000-0000-0000-000000000001",
-        max_pages=None,
-    ):
-        print(f"Loading report: {report_guid}")
+    def LoadReport(self, projectname: str, report_guid: str, max_pages=None):
+        project_id = self.getProjectID(projectname)
+
+        print(f"Loading report: {report_guid} from project {projectname}")
 
         headers = self._headers()
 

@@ -16,3 +16,8 @@ ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES = "/api/nemo-persistence
 ## reports
 ENDPOINT_URL_REPORT_RESULT = "/api/nemo-report/report_results"
 FILE_UPLOAD_CHUNK_SIZE = 5 * 1024 * 1024  # 5MB
+
+
+## queue
+ENDPOINT_URL_QUEUE_INGEST_DATA_V2 = "/api/nemo-queue/ingest_data_kubernetes_v2"
+ENDPOINT_URL_QUEUE_TASK_RUNS  = "/api/nemo-queue/task_runs"

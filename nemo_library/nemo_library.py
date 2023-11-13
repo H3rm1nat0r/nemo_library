@@ -47,10 +47,26 @@ class NemoLibrary:
         self._userid_ = config["nemo_library"]["userid"]
         self._password_ = config["nemo_library"]["password"]
         self._nemo_url_ = config["nemo_library"]["nemo_url"]
-        self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF"
-        self._cognito_appclientid = "8t32vcmmdvmva4qvb79gpfhdn"
-        self._cognito_authflow_ = "USER_PASSWORD_AUTH"
 
+        match self._environment_:
+            case "demo":
+                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1ZbUITj21"
+                self._cognito_appclientid = "7tvfugcnunac7id3ebgns6n66u"
+                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
+            case "dev":
+                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE"
+                self._cognito_appclientid = "4lr89aas81m844o0admv3pfcrp"
+                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
+            case "prod":
+                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF"
+                self._cognito_appclientid = "8t32vcmmdvmva4qvb79gpfhdn"
+                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
+            case "challenge":
+                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_U2V9y0lzx"
+                self._cognito_appclientid = "43lq8ej98uuo8hvnoi1g880onp"
+                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
+            case _:
+                raise Exception(f"unknown environment '{self._environment_}' provided")
 
         super().__init__()
 

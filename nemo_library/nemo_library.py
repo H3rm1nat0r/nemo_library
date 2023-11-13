@@ -12,6 +12,7 @@ import requests
 
 import gzip
 import shutil
+import re
 
 from nemo_library.symbols import (
     ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
@@ -22,10 +23,13 @@ from nemo_library.symbols import (
     ENDPOINT_URL_PROJECTS_ALL,
     ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
     ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES,
+    ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
+    ENDPOINT_URL_PERSISTENCE_METADATA_DELETE_IMPORTED_COLUMN,
     ENDPOINT_URL_REPORT_RESULT,
     ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
     ENDPOINT_URL_QUEUE_TASK_RUNS,
     FILE_UPLOAD_CHUNK_SIZE,
+    RESERVED_KEYWORDS
 )
 
 NEMO_URL = "https://enter.nemo-ai.com"
@@ -43,26 +47,10 @@ class NemoLibrary:
         self._userid_ = config["nemo_library"]["userid"]
         self._password_ = config["nemo_library"]["password"]
         self._nemo_url_ = config["nemo_library"]["nemo_url"]
+        self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF"
+        self._cognito_appclientid = "8t32vcmmdvmva4qvb79gpfhdn"
+        self._cognito_authflow_ = "USER_PASSWORD_AUTH"
 
-        match self._environment_:
-            case "demo":
-                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1ZbUITj21"
-                self._cognito_appclientid = "7tvfugcnunac7id3ebgns6n66u"
-                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
-            case "dev":
-                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE"
-                self._cognito_appclientid = "4lr89aas81m844o0admv3pfcrp"
-                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
-            case "prod":
-                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF"
-                self._cognito_appclientid = "8t32vcmmdvmva4qvb79gpfhdn"
-                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
-            case "challenge":
-                self._cognito_url_ = "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_U2V9y0lzx"
-                self._cognito_appclientid = "43lq8ej98uuo8hvnoi1g880onp"
-                self._cognito_authflow_ = "USER_PASSWORD_AUTH"
-            case _:
-                raise Exception(f"unknown environment '{self._environment_}' provided")
 
         super().__init__()
 
@@ -618,3 +606,88 @@ class NemoLibrary:
             )
 
         return response.text
+
+
+    def synchronizeCsvColsAndImportedColumns(self, csv_full_filepath:str, project_name:str):
+        importedColumns = self.getImportedColumns(project_name)
+        project_id = self.getProjectID(project_name)
+
+        # Read the first line of the CSV file to get column names
+        with open(csv_full_filepath, 'r') as file:
+            first_line = file.readline().strip()
+
+        # Split the first line into a list of column names
+        csv_column_names = first_line.split(';')
+
+        # Check if a record exists in the DataFrame for each column
+        for column_name in csv_column_names:
+            displayName = column_name
+            column_name = self.clean_column_name(column_name, RESERVED_KEYWORDS)  # Assuming you have the clean_column_name function from the previous script
+
+            # Check if the record with internal_name equal to the column name exists
+            if not importedColumns[importedColumns['internalName'] == column_name].empty:
+                print(f"Record found for column '{column_name}' in the DataFrame.")
+            else:
+                print(f"******************************No record found for column '{column_name}' in the DataFrame.")
+                new_importedColumn = {
+                    "id":"",
+                    "internalName":column_name,
+                    "displayName":displayName,
+                    "importName":displayName,
+                    "description":"",
+                    "dataType":"string",
+                    "categorialType": False,
+                    "businessEvent": False,
+                    "unit": "",
+                    "columnType": "ExportedColumn",
+                    "tenant": self._tenant_,
+                    "projectId": project_id,
+                }
+
+                self.createImportedColumn(new_importedColumn, project_id)
+
+    def clean_column_name(self, column_name, reserved_keywords):
+        # If csv column name is empty, return "undefined_name"
+        if not column_name:
+            return "undefined_name"
+
+        # Replace all chars not matching regex [^a-zA-Z0-9_] with empty char
+        cleaned_name = re.sub(r'[^a-zA-Z0-9_]', '', column_name)
+
+        # Convert to lowercase
+        cleaned_name = cleaned_name.lower()
+
+        # If starts with a number, concatenate "numeric_" to the beginning
+        if cleaned_name[0].isdigit():
+            cleaned_name = "numeric_" + cleaned_name
+
+        # Replace all double "_" chars with one "_"
+        cleaned_name = re.sub(r'_{2,}', '_', cleaned_name)
+
+        # If length of csv column name equals 1 or is a reserved keyword, concatenate "_" to the end
+        if len(cleaned_name) == 1 or cleaned_name in reserved_keywords:
+            cleaned_name += "_"
+
+        return cleaned_name
+    
+    def createImportedColumn(self, importedColumn:json, project_id:str):
+        try:
+
+            # initialize reqeust
+            headers = self._headers()
+            response = requests.post(
+                self._nemo_url_
+                + ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
+                headers=headers,
+                json=importedColumn
+            )
+            if response.status_code != 201:
+                raise Exception(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
+            resultjs = json.loads(response.text)
+            df = pd.json_normalize(resultjs)
+            return df
+
+        except Exception as e:
+            raise Exception("process aborted")

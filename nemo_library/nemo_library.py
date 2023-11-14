@@ -623,6 +623,7 @@ class NemoLibrary:
 
         return response.text
 
+    #################################################################################################################################################################
 
     def synchronizeCsvColsAndImportedColumns(self, csv_full_filepath:str, project_name:str):
         importedColumns = self.getImportedColumns(project_name)
@@ -662,6 +663,8 @@ class NemoLibrary:
 
                 self.createImportedColumn(new_importedColumn, project_id)
 
+    #################################################################################################################################################################
+
     def clean_column_name(self, column_name, reserved_keywords):
         # If csv column name is empty, return "undefined_name"
         if not column_name:
@@ -686,6 +689,8 @@ class NemoLibrary:
 
         return cleaned_name
     
+    #################################################################################################################################################################
+
     def createImportedColumn(self, importedColumn:json, project_id:str):
         try:
 

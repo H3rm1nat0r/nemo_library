@@ -1,10 +1,13 @@
 bleach
+boto3
+botocore
 certifi
 charset-normalizer
 docutils
 idna
 importlib-metadata
 jaraco.classes
+jmespath
 keyring
 markdown-it-py
 mdurl
@@ -23,6 +26,7 @@ requests
 requests-toolbelt
 rfc3986
 rich
+s3transfer
 six
 twine
 tzdata

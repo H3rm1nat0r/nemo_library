@@ -8,5 +8,4 @@ README.rst
 config.ini
 test.py
 __pycache__/
-snr21_NEMO.csv
-snr21_NEMO.csv.gz
+csv/

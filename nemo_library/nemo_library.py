@@ -625,12 +625,12 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def synchronizeCsvColsAndImportedColumns(self, csv_full_filepath:str, project_name:str):
-        importedColumns = self.getImportedColumns(project_name)
-        project_id = self.getProjectID(project_name)
+    def synchronizeCsvColsAndImportedColumns(self, projectname:str, filename:str):
+        importedColumns = self.getImportedColumns(projectname)
+        project_id = self.getProjectID(projectname)
 
         # Read the first line of the CSV file to get column names
-        with open(csv_full_filepath, 'r') as file:
+        with open(filename, 'r') as file:
             first_line = file.readline().strip()
 
         # Split the first line into a list of column names

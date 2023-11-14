@@ -12,6 +12,7 @@ keyring
 markdown-it-py
 mdurl
 more-itertools
+nh3
 numpy
 pandas
 pandoc

@@ -9,7 +9,7 @@ ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_FINALIZE ="/api/nemo-projects/file-re-uploa
 ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT = "/api/nemo-projects/file-re-upload/abort"
 
 ## meta data
-ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES = "/api/nemo-persistence/ProjectProperty/{request}"
+ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES = "/api/nemo-persistence/ProjectProperty/project/{projectId}/{request}"
 ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS = "/api/nemo-persistence/metadata/Columns/project/{projectId}/exported"
 ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES = "/api/nemo-persistence/metadata/Columns/{id}"
 ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN = "/api/nemo-persistence/metadata/Columns"

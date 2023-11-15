@@ -18,6 +18,7 @@ please create a file "config.ini". This is an example for the content:
 ```
 [nemo_library]
 nemo_url = https://enter.nemo-ai.com
+tenant = <your tenant>
 userid = <your userid>
 password = <your password>
 environment = [prod|dev|demo]
@@ -46,7 +47,7 @@ Get a project property
 from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
-val = nl.ProjectProperty(propertyname="ExpDateTo")
+val = nl.ProjectProperty(projectname=None,propertyname="ExpDateTo")
 ```
 
 ### getImportedColumns method

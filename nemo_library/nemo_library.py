@@ -606,12 +606,13 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def ProjectProperty(self, propertyname):
+    def ProjectProperty(self, projectname:str, propertyname:str):
         headers = self._headers()
+        project_id = self.getProjectID(projectname)
 
         ENDPOINT_URL = (
             self._nemo_url_
-            + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(request=propertyname)
+            + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(projectId=project_id,request=propertyname)
         )
 
         response = requests.get(ENDPOINT_URL, headers=headers)

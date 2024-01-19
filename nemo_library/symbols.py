@@ -16,7 +16,7 @@ ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN = "/api/nemo-persistenc
 ENDPOINT_URL_PERSISTENCE_METADATA_DELETE_IMPORTED_COLUMN = "/api/nemo-persistence/metadata/Columns/{id}"
 
 ## reports
-ENDPOINT_URL_REPORT_RESULT = "/api/nemo-report/report_results"
+ENDPOINT_URL_REPORT_EXPORT = "/api/nemo-report/report_export"
 FILE_UPLOAD_CHUNK_SIZE = 5 * 1024 * 1024  # 5MB
 
 

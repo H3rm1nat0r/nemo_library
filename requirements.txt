@@ -4,6 +4,7 @@ botocore
 certifi
 charset-normalizer
 docutils
+et-xmlfile
 idna
 importlib-metadata
 jaraco.classes
@@ -14,6 +15,7 @@ mdurl
 more-itertools
 nh3
 numpy
+openpyxl
 pandas
 pandoc
 pkginfo

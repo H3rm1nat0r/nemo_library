@@ -25,7 +25,7 @@ from nemo_library.symbols import (
     ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES,
     ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
     ENDPOINT_URL_PERSISTENCE_METADATA_DELETE_IMPORTED_COLUMN,
-    ENDPOINT_URL_REPORT_RESULT,
+    ENDPOINT_URL_REPORT_EXPORT,
     ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
     ENDPOINT_URL_QUEUE_TASK_RUNS,
     FILE_UPLOAD_CHUNK_SIZE,
@@ -564,44 +564,31 @@ class NemoLibrary:
 
         headers = self._headers()
 
-        page = 0
-        result = pd.DataFrame()
+        # INIT REPORT PAYLOAD (REQUEST BODY)
+        report_params = {"id": report_guid, "project_id": project_id}
 
-        while True:
-            page += 1
+        response_report = requests.post(
+            self._nemo_url_ + ENDPOINT_URL_REPORT_EXPORT,
+            headers=headers,
+            json=report_params,
+        )
 
-            print("loading page:", page)
-
-            # INIT REPORT PAYLOAD (REQUEST BODY)
-            report_params = {"id": report_guid, "page": page, "project_id": project_id}
-
-            response_report = requests.post(
-                self._nemo_url_ + ENDPOINT_URL_REPORT_RESULT,
-                headers=headers,
-                json=report_params,
+        if response_report.status_code != 200:
+            raise Exception(
+                f"request failed. Status: {response_report.status_code}, error: {response_report.text}"
             )
 
-            if response_report.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response_report.status_code}, error: {response_report.text}"
-                )
+        # extract download URL from response
+        csv_url = response_report.text.strip('"')
+        print(f"Downloading CSV from: {csv_url}")
 
-            # Parse REPORT Respone
-            resultjs = json.loads(response_report.text)
-            records = resultjs["records"]
-
-            df = pd.json_normalize(records)
-            if page == 1:
-                result = df
-            else:
-                result = pd.concat([result, df], ignore_index=True)
-
-            if resultjs["max_page"] <= page:
-                break
-
-            if not max_pages is None and max_pages <= page:
-                break
-
+        # download the file into pandas
+        try:
+            result = pd.read_csv(csv_url)
+        except Exception as e:
+            raise Exception(
+                f"download failed. Status: {e}"
+            )
         return result
 
     #################################################################################################################################################################

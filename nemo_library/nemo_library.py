@@ -585,6 +585,8 @@ class NemoLibrary:
         # download the file into pandas
         try:
             result = pd.read_csv(csv_url)
+            if "_RECORD_COUNT" in result.columns:
+                result.drop(columns=["_RECORD_COUNT"],inplace=True)
         except Exception as e:
             raise Exception(
                 f"download failed. Status: {e}"

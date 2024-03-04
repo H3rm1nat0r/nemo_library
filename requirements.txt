@@ -24,7 +24,7 @@ ply
 Pygments
 python-dateutil
 pytz
-readme-renderer
+readme_renderer
 requests
 requests-toolbelt
 rfc3986

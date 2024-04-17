@@ -6,8 +6,10 @@ charset-normalizer
 docutils
 et-xmlfile
 idna
-importlib-metadata
+importlib_metadata
 jaraco.classes
+jaraco.context
+jaraco.functools
 jmespath
 keyring
 markdown-it-py
@@ -30,9 +32,11 @@ requests-toolbelt
 rfc3986
 rich
 s3transfer
+setuptools
 six
 twine
 tzdata
 urllib3
 webencodings
+wheel
 zipp

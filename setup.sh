@@ -1,6 +1,6 @@
 #!/bin/sh
 git pull
-source .venv/bin/activate
+conda activate nemo_library
 python -m pip install --upgrade pip
 pip install --upgrade -r requirements.txt
 # pip freeze > requirements.txt 

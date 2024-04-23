@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nemo_library',
-    version='1.0.26',
+    version='1.0.28',
     packages=find_packages(),
     install_requires=[
         'requests','pandas'
@@ -13,7 +13,7 @@ setup(
     long_description=open('README.rst').read(),
     long_description_content_type='text/x-rst',    
     classifiers=[
-        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
     project_urls={
         'Github': 'https://github.com/H3rm1nat0r/nemo_library',  

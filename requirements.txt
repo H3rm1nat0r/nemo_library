@@ -1,6 +1,7 @@
 bleach
 boto3
 botocore
+build
 certifi
 charset-normalizer
 docutils
@@ -18,12 +19,14 @@ more-itertools
 nh3
 numpy
 openpyxl
+packaging
 pandas
 pandoc
 pkginfo
 plumbum
 ply
 Pygments
+pyproject_hooks
 python-dateutil
 pytz
 readme_renderer

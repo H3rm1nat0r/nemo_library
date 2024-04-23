@@ -9,3 +9,4 @@ config.ini
 test.py
 __pycache__/
 csv/
+uploader_test.py

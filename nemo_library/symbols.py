@@ -24,6 +24,9 @@ FILE_UPLOAD_CHUNK_SIZE = 5 * 1024 * 1024  # 5MB
 ENDPOINT_URL_QUEUE_INGEST_DATA_V2 = "/api/nemo-queue/ingest_data_kubernetes_v2"
 ENDPOINT_URL_QUEUE_TASK_RUNS  = "/api/nemo-queue/task_runs"
 
+## tvm
+ENDPOINT_URL_TVM_S3_ACCESS = "/api/nemo-tokenvendor/InternalTokenVendor/sts/s3_policy"
+
 ##  RESERVED KEY WORDS
 RESERVED_KEYWORDS = [
         "abort", "abortsession", "abs", "absolute", "access", "accessible",

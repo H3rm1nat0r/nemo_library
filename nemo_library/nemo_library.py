@@ -28,6 +28,7 @@ from nemo_library.symbols import (
     ENDPOINT_URL_REPORT_EXPORT,
     ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
     ENDPOINT_URL_QUEUE_TASK_RUNS,
+    ENDPOINT_URL_TVM_S3_ACCESS,
     FILE_UPLOAD_CHUNK_SIZE,
     RESERVED_KEYWORDS
 )
@@ -471,12 +472,23 @@ class NemoLibrary:
             ####
             # start upload process
 
-            # AWS credentials (configure your AWS CLI or set environment variables)
-            config = configparser.ConfigParser()
-            config.read("config.ini")
-            aws_access_key_id = config["AWS"]["aws_access_key_id"]
-            aws_secret_access_key = config["AWS"]["aws_secret_access_key"]
-            aws_session_token = config["AWS"]["aws_session_token"]
+            # Retrieve temp. Creds. from NEMO TVM
+
+            response = requests.get(
+                self._nemo_url_ + ENDPOINT_URL_TVM_S3_ACCESS,
+                headers=headers,
+                )
+
+            if response.status_code != 200:
+                raise Exception(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
+            
+            aws_credentials = json.loads(response.text)
+
+            aws_access_key_id = aws_credentials['accessKeyId']
+            aws_secret_access_key = aws_credentials['secretAccessKey']
+            aws_session_token = aws_credentials['sessionToken']
 
             # Create an S3 client
             s3 = boto3.client(
@@ -539,11 +551,11 @@ class NemoLibrary:
                     )
                 status = df_filtered["status"].iloc[0]
                 print("Status: ",status)
-                if status == "Failed":
+                if status == "failed":
                     raise Exception(
                         f"data ingestion request faild, task id return status FAILED"
                     )
-                if status == "Finished":
+                if status == "finished":
                     records = df_filtered["records"].iloc[0]
                     print(f"Ingestion finished. {records} records loaded")
                     break

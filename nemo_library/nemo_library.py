@@ -450,7 +450,7 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def ReUploadFileIngestionV2(self, projectname: str, filename: str):
+    def ReUploadFileIngestionV2(self, projectname: str, filename: str, update_project_settings : bool = True):
         project_id = None
         headers = None
 
@@ -564,53 +564,54 @@ class NemoLibrary:
                                             
             ###################### trigger Analyze Table Task ####################################
 
-            # dataingestion is done, now trigger analyze_table to update the project settings
+            if update_project_settings:
+                # dataingestion is done, now trigger analyze_table to update the project settings
 
-            data = {
-                "project_id": project_id,
-            }
-            response = requests.post(
-                self._nemo_url_ + ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
-                headers=headers,
-                json=data,
-            )
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-            print("analyze_table triggered")
-
-            # wait for task to be completed
-            taskid = response.text.replace("\"","")
-            while True:
                 data = {
-                    "sort_by" : "submit_at",
-                    "is_sort_ascending" : "False",
-                    "page" : 1,
-                    "page_size" : 20
+                    "project_id": project_id,
                 }
-                response = requests.get(
-                    self._nemo_url_ + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                response = requests.post(
+                    self._nemo_url_ + ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
                     headers=headers,
                     json=data,
                 )
-                resultjs = json.loads(response.text)
-                df = pd.json_normalize(resultjs["records"])
-                df_filtered = df[df["id"]==taskid]
-                if len(df_filtered) != 1:
+                if response.status_code != 200:
                     raise Exception(
-                        f"analyze_table request failed, task id that have been provided not found in tasks list"
+                        f"request failed. Status: {response.status_code}, error: {response.text}"
                     )
-                status = df_filtered["status"].iloc[0]
-                print("Status: ",status)
-                if status == "failed":
-                    raise Exception(
-                        f"analyze_table request faild, task id return status FAILED"
+                print("analyze_table triggered")
+
+                # wait for task to be completed
+                taskid = response.text.replace("\"","")
+                while True:
+                    data = {
+                        "sort_by" : "submit_at",
+                        "is_sort_ascending" : "False",
+                        "page" : 1,
+                        "page_size" : 20
+                    }
+                    response = requests.get(
+                        self._nemo_url_ + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                        headers=headers,
+                        json=data,
                     )
-                if status == "finished":
-                    print(f"analyze_table finished.")
-                    break
-                time.sleep(1)
+                    resultjs = json.loads(response.text)
+                    df = pd.json_normalize(resultjs["records"])
+                    df_filtered = df[df["id"]==taskid]
+                    if len(df_filtered) != 1:
+                        raise Exception(
+                            f"analyze_table request failed, task id that have been provided not found in tasks list"
+                        )
+                    status = df_filtered["status"].iloc[0]
+                    print("Status: ",status)
+                    if status == "failed":
+                        raise Exception(
+                            f"analyze_table request faild, task id return status FAILED"
+                        )
+                    if status == "finished":
+                        print(f"analyze_table finished.")
+                        break
+                    time.sleep(1)
 
             #######################################################################################
                                             

@@ -22,6 +22,7 @@ FILE_UPLOAD_CHUNK_SIZE = 5 * 1024 * 1024  # 5MB
 
 ## queue
 ENDPOINT_URL_QUEUE_INGEST_DATA_V2 = "/api/nemo-queue/ingest_data_kubernetes_v2"
+ENDPOINT_URL_QUEUE_INGEST_DATA_V3 = "/api/nemo-queue/ingest_data_kubernetes_v3"
 ENDPOINT_URL_QUEUE_TASK_RUNS  = "/api/nemo-queue/task_runs"
 ENDPOINT_URL_QUEUE_ANALYZE_TABLE = "/api/nemo-queue/analyze_table_kubernetes"
 

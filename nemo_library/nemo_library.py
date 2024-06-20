@@ -625,7 +625,7 @@ class NemoLibrary:
     #################################################################################################################################################################
 
     
-    def ReUploadFileIngestionV3(self, projectname: str, filename: str, datasource_ids:list[dict], global_fields_mapping:list[dict], trigger_only:bool):
+    def ReUploadFileIngestionV3(self, projectname: str, filename: str, datasource_ids: list[dict], global_fields_mapping: list[dict], trigger_only: bool = True):
         project_id = None
         headers = None
 

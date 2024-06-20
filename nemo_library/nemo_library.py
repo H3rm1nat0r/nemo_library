@@ -625,7 +625,7 @@ class NemoLibrary:
     #################################################################################################################################################################
 
     
-    def ReUploadFileIngestionV3(self, projectname: str, filename: str, datasource_ids:list[dict], global_fields_mapping:list[dict]):
+    def ReUploadFileIngestionV3(self, projectname: str, filename: str, datasource_ids:list[dict], global_fields_mapping:list[dict], trigger_only:bool):
         project_id = None
         headers = None
 
@@ -709,37 +709,39 @@ class NemoLibrary:
             print("ingestion successful")
 
             # wait for task to be completed
-            taskid = response.text.replace("\"","")
-            while True:
-                data = {
-                    "sort_by" : "submit_at",
-                    "is_sort_ascending" : "False",
-                    "page" : 1,
-                    "page_size" : 20
-                }
-                response = requests.get(
-                    self._nemo_url_ + ENDPOINT_URL_QUEUE_TASK_RUNS,
-                    headers=headers,
-                    json=data,
-                )
-                resultjs = json.loads(response.text)
-                df = pd.json_normalize(resultjs["records"])
-                df_filtered = df[df["id"]==taskid]
-                if len(df_filtered) != 1:
-                    raise Exception(
-                        f"data ingestions request failed, task id that have been provided not found in tasks list"
+
+            if not trigger_only:
+                taskid = response.text.replace("\"","")
+                while True:
+                    data = {
+                        "sort_by" : "submit_at",
+                        "is_sort_ascending" : "False",
+                        "page" : 1,
+                        "page_size" : 20
+                    }
+                    response = requests.get(
+                        self._nemo_url_ + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                        headers=headers,
+                        json=data,
                     )
-                status = df_filtered["status"].iloc[0]
-                print("Status: ",status)
-                if status == "failed":
-                    raise Exception(
-                        f"data ingestion request faild, task id return status FAILED"
-                    )
-                if status == "finished":
-                    records = df_filtered["records"].iloc[0]
-                    print(f"Ingestion finished. {records} records loaded")
-                    break
-                time.sleep(5)
+                    resultjs = json.loads(response.text)
+                    df = pd.json_normalize(resultjs["records"])
+                    df_filtered = df[df["id"]==taskid]
+                    if len(df_filtered) != 1:
+                        raise Exception(
+                            f"data ingestions request failed, task id that have been provided not found in tasks list"
+                        )
+                    status = df_filtered["status"].iloc[0]
+                    print("Status: ",status)
+                    if status == "failed":
+                        raise Exception(
+                            f"data ingestion request faild, task id return status FAILED"
+                        )
+                    if status == "finished":
+                        records = df_filtered["records"].iloc[0]
+                        print(f"Ingestion finished. {records} records loaded")
+                        break
+                    time.sleep(5)
                                                                                    
         except Exception as e:
             if project_id == None:

@@ -32,7 +32,7 @@ from nemo_library.symbols import (
     ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
     ENDPOINT_URL_TVM_S3_ACCESS,
     FILE_UPLOAD_CHUNK_SIZE,
-    RESERVED_KEYWORDS
+    RESERVED_KEYWORDS,
 )
 
 NEMO_URL = "https://enter.nemo-ai.com"
@@ -451,7 +451,9 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def ReUploadFileIngestionV2(self, projectname: str, filename: str, update_project_settings : bool = True):
+    def ReUploadFileIngestionV2(
+        self, projectname: str, filename: str, update_project_settings: bool = True
+    ):
         project_id = None
         headers = None
 
@@ -465,9 +467,9 @@ class NemoLibrary:
             )
 
             # Zip the file before uploading
-            gzipped_filename = filename + '.gz'
-            with open(filename, 'rb') as f_in:
-                with gzip.open(gzipped_filename, 'wb') as f_out:
+            gzipped_filename = filename + ".gz"
+            with open(filename, "rb") as f_in:
+                with gzip.open(gzipped_filename, "wb") as f_out:
                     shutil.copyfileobj(f_in, f_out)
             print(f"File {filename} has been compressed to {gzipped_filename}")
 
@@ -479,18 +481,18 @@ class NemoLibrary:
             response = requests.get(
                 self._nemo_url_ + ENDPOINT_URL_TVM_S3_ACCESS,
                 headers=headers,
-                )
+            )
 
             if response.status_code != 200:
                 raise Exception(
                     f"request failed. Status: {response.status_code}, error: {response.text}"
                 )
-            
+
             aws_credentials = json.loads(response.text)
 
-            aws_access_key_id = aws_credentials['accessKeyId']
-            aws_secret_access_key = aws_credentials['secretAccessKey']
-            aws_session_token = aws_credentials['sessionToken']
+            aws_access_key_id = aws_credentials["accessKeyId"]
+            aws_secret_access_key = aws_credentials["secretAccessKey"]
+            aws_session_token = aws_credentials["sessionToken"]
 
             # Create an S3 client
             s3 = boto3.client(
@@ -502,7 +504,9 @@ class NemoLibrary:
 
             try:
                 # Upload the file
-                s3filename = self._tenant_ + "/ingestv2/" + os.path.basename(gzipped_filename)
+                s3filename = (
+                    self._tenant_ + "/ingestv2/" + os.path.basename(gzipped_filename)
+                )
                 s3.upload_file(
                     gzipped_filename,
                     "nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs",
@@ -531,13 +535,13 @@ class NemoLibrary:
             print("ingestion successful")
 
             # wait for task to be completed
-            taskid = response.text.replace("\"","")
+            taskid = response.text.replace('"', "")
             while True:
                 data = {
-                    "sort_by" : "submit_at",
-                    "is_sort_ascending" : "False",
-                    "page" : 1,
-                    "page_size" : 20
+                    "sort_by": "submit_at",
+                    "is_sort_ascending": "False",
+                    "page": 1,
+                    "page_size": 20,
                 }
                 response = requests.get(
                     self._nemo_url_ + ENDPOINT_URL_QUEUE_TASK_RUNS,
@@ -546,13 +550,13 @@ class NemoLibrary:
                 )
                 resultjs = json.loads(response.text)
                 df = pd.json_normalize(resultjs["records"])
-                df_filtered = df[df["id"]==taskid]
+                df_filtered = df[df["id"] == taskid]
                 if len(df_filtered) != 1:
                     raise Exception(
                         f"data ingestions request failed, task id that have been provided not found in tasks list"
                     )
                 status = df_filtered["status"].iloc[0]
-                print("Status: ",status)
+                print("Status: ", status)
                 if status == "failed":
                     raise Exception(
                         f"data ingestion request faild, task id return status FAILED"
@@ -562,7 +566,7 @@ class NemoLibrary:
                     print(f"Ingestion finished. {records} records loaded")
                     break
                 time.sleep(1)
-                                            
+
             ###################### trigger Analyze Table Task ####################################
 
             if update_project_settings:
@@ -583,13 +587,13 @@ class NemoLibrary:
                 print("analyze_table triggered")
 
                 # wait for task to be completed
-                taskid = response.text.replace("\"","")
+                taskid = response.text.replace('"', "")
                 while True:
                     data = {
-                        "sort_by" : "submit_at",
-                        "is_sort_ascending" : "False",
-                        "page" : 1,
-                        "page_size" : 20
+                        "sort_by": "submit_at",
+                        "is_sort_ascending": "False",
+                        "page": 1,
+                        "page_size": 20,
                     }
                     response = requests.get(
                         self._nemo_url_ + ENDPOINT_URL_QUEUE_TASK_RUNS,
@@ -598,13 +602,13 @@ class NemoLibrary:
                     )
                     resultjs = json.loads(response.text)
                     df = pd.json_normalize(resultjs["records"])
-                    df_filtered = df[df["id"]==taskid]
+                    df_filtered = df[df["id"] == taskid]
                     if len(df_filtered) != 1:
                         raise Exception(
                             f"analyze_table request failed, task id that have been provided not found in tasks list"
                         )
                     status = df_filtered["status"].iloc[0]
-                    print("Status: ",status)
+                    print("Status: ", status)
                     if status == "failed":
                         raise Exception(
                             f"analyze_table request faild, task id return status FAILED"
@@ -615,7 +619,7 @@ class NemoLibrary:
                     time.sleep(1)
 
             #######################################################################################
-                                            
+
         except Exception as e:
             if project_id == None:
                 raise Exception("upload stopped, no project_id available")
@@ -624,8 +628,14 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    
-    def ReUploadFileIngestionV3(self, projectname: str, filename: str, datasource_ids: list[dict], global_fields_mapping: list[dict], trigger_only: bool = True):
+    def ReUploadFileIngestionV3(
+        self,
+        projectname: str,
+        filename: str,
+        datasource_ids: list[dict],
+        global_fields_mapping: list[dict],
+        trigger_only: bool = True,
+    ):
         project_id = None
         headers = None
 
@@ -639,9 +649,9 @@ class NemoLibrary:
             )
 
             # Zip the file before uploading
-            gzipped_filename = filename + '.gz'
-            with open(filename, 'rb') as f_in:
-                with gzip.open(gzipped_filename, 'wb') as f_out:
+            gzipped_filename = filename + ".gz"
+            with open(filename, "rb") as f_in:
+                with gzip.open(gzipped_filename, "wb") as f_out:
                     shutil.copyfileobj(f_in, f_out)
             print(f"File {filename} has been compressed to {gzipped_filename}")
 
@@ -653,18 +663,18 @@ class NemoLibrary:
             response = requests.get(
                 self._nemo_url_ + ENDPOINT_URL_TVM_S3_ACCESS,
                 headers=headers,
-                )
+            )
 
             if response.status_code != 200:
                 raise Exception(
                     f"request failed. Status: {response.status_code}, error: {response.text}"
                 )
-            
+
             aws_credentials = json.loads(response.text)
 
-            aws_access_key_id = aws_credentials['accessKeyId']
-            aws_secret_access_key = aws_credentials['secretAccessKey']
-            aws_session_token = aws_credentials['sessionToken']
+            aws_access_key_id = aws_credentials["accessKeyId"]
+            aws_secret_access_key = aws_credentials["secretAccessKey"]
+            aws_session_token = aws_credentials["sessionToken"]
 
             # Create an S3 client
             s3 = boto3.client(
@@ -676,7 +686,9 @@ class NemoLibrary:
 
             try:
                 # Upload the file
-                s3filename = self._tenant_ + "/ingestv3/" + os.path.basename(gzipped_filename)
+                s3filename = (
+                    self._tenant_ + "/ingestv3/" + os.path.basename(gzipped_filename)
+                )
                 s3.upload_file(
                     gzipped_filename,
                     "nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs",
@@ -693,8 +705,8 @@ class NemoLibrary:
             data = {
                 "project_id": project_id,
                 "s3_filepath": f"s3://nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs/{s3filename}",
-                "data_source_identifiers":datasource_ids,
-                "global_fields_mappings":global_fields_mapping,
+                "data_source_identifiers": datasource_ids,
+                "global_fields_mappings": global_fields_mapping,
             }
 
             response = requests.post(
@@ -711,13 +723,13 @@ class NemoLibrary:
             # wait for task to be completed
 
             if not trigger_only:
-                taskid = response.text.replace("\"","")
+                taskid = response.text.replace('"', "")
                 while True:
                     data = {
-                        "sort_by" : "submit_at",
-                        "is_sort_ascending" : "False",
-                        "page" : 1,
-                        "page_size" : 20
+                        "sort_by": "submit_at",
+                        "is_sort_ascending": "False",
+                        "page": 1,
+                        "page_size": 20,
                     }
                     response = requests.get(
                         self._nemo_url_ + ENDPOINT_URL_QUEUE_TASK_RUNS,
@@ -726,13 +738,13 @@ class NemoLibrary:
                     )
                     resultjs = json.loads(response.text)
                     df = pd.json_normalize(resultjs["records"])
-                    df_filtered = df[df["id"]==taskid]
+                    df_filtered = df[df["id"] == taskid]
                     if len(df_filtered) != 1:
                         raise Exception(
                             f"data ingestions request failed, task id that have been provided not found in tasks list"
                         )
                     status = df_filtered["status"].iloc[0]
-                    print("Status: ",status)
+                    print("Status: ", status)
                     if status == "failed":
                         raise Exception(
                             f"data ingestion request faild, task id return status FAILED"
@@ -742,7 +754,7 @@ class NemoLibrary:
                         print(f"Ingestion finished. {records} records loaded")
                         break
                     time.sleep(5)
-                                                                                   
+
         except Exception as e:
             if project_id == None:
                 raise Exception("upload stopped, no project_id available")
@@ -780,22 +792,22 @@ class NemoLibrary:
         try:
             result = pd.read_csv(csv_url)
             if "_RECORD_COUNT" in result.columns:
-                result.drop(columns=["_RECORD_COUNT"],inplace=True)
+                result.drop(columns=["_RECORD_COUNT"], inplace=True)
         except Exception as e:
-            raise Exception(
-                f"download failed. Status: {e}"
-            )
+            raise Exception(f"download failed. Status: {e}")
         return result
 
     #################################################################################################################################################################
 
-    def ProjectProperty(self, projectname:str, propertyname:str):
+    def ProjectProperty(self, projectname: str, propertyname: str):
         headers = self._headers()
         project_id = self.getProjectID(projectname)
 
         ENDPOINT_URL = (
             self._nemo_url_
-            + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(projectId=project_id,request=propertyname)
+            + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(
+                projectId=project_id, request=propertyname
+            )
         )
 
         response = requests.get(ENDPOINT_URL, headers=headers)
@@ -809,34 +821,40 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def synchronizeCsvColsAndImportedColumns(self, projectname:str, filename:str):
+    def synchronizeCsvColsAndImportedColumns(self, projectname: str, filename: str):
         importedColumns = self.getImportedColumns(projectname)
         project_id = self.getProjectID(projectname)
 
         # Read the first line of the CSV file to get column names
-        with open(filename, 'r') as file:
+        with open(filename, "r") as file:
             first_line = file.readline().strip()
 
         # Split the first line into a list of column names
-        csv_column_names = first_line.split(';')
+        csv_column_names = first_line.split(";")
 
         # Check if a record exists in the DataFrame for each column
         for column_name in csv_column_names:
             displayName = column_name
-            column_name = self.clean_column_name(column_name, RESERVED_KEYWORDS)  # Assuming you have the clean_column_name function from the previous script
+            column_name = self.clean_column_name(
+                column_name, RESERVED_KEYWORDS
+            )  # Assuming you have the clean_column_name function from the previous script
 
             # Check if the record with internal_name equal to the column name exists
-            if not importedColumns[importedColumns['internalName'] == column_name].empty:
+            if not importedColumns[
+                importedColumns["internalName"] == column_name
+            ].empty:
                 print(f"Record found for column '{column_name}' in the DataFrame.")
             else:
-                print(f"******************************No record found for column '{column_name}' in the DataFrame.")
+                print(
+                    f"******************************No record found for column '{column_name}' in the DataFrame."
+                )
                 new_importedColumn = {
-                    "id":"",
-                    "internalName":column_name,
-                    "displayName":displayName,
-                    "importName":displayName,
-                    "description":"",
-                    "dataType":"string",
+                    "id": "",
+                    "internalName": column_name,
+                    "displayName": displayName,
+                    "importName": displayName,
+                    "description": "",
+                    "dataType": "string",
                     "categorialType": False,
                     "businessEvent": False,
                     "unit": "",
@@ -855,7 +873,7 @@ class NemoLibrary:
             return "undefined_name"
 
         # Replace all chars not matching regex [^a-zA-Z0-9_] with empty char
-        cleaned_name = re.sub(r'[^a-zA-Z0-9_]', '', column_name)
+        cleaned_name = re.sub(r"[^a-zA-Z0-9_]", "", column_name)
 
         # Convert to lowercase
         cleaned_name = cleaned_name.lower()
@@ -865,17 +883,17 @@ class NemoLibrary:
             cleaned_name = "numeric_" + cleaned_name
 
         # Replace all double "_" chars with one "_"
-        cleaned_name = re.sub(r'_{2,}', '_', cleaned_name)
+        cleaned_name = re.sub(r"_{2,}", "_", cleaned_name)
 
         # If length of csv column name equals 1 or is a reserved keyword, concatenate "_" to the end
         if len(cleaned_name) == 1 or cleaned_name in reserved_keywords:
             cleaned_name += "_"
 
         return cleaned_name
-    
+
     #################################################################################################################################################################
 
-    def createImportedColumn(self, importedColumn:json, project_id:str):
+    def createImportedColumn(self, importedColumn: json, project_id: str):
         try:
 
             # initialize reqeust
@@ -884,7 +902,7 @@ class NemoLibrary:
                 self._nemo_url_
                 + ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
                 headers=headers,
-                json=importedColumn
+                json=importedColumn,
             )
             if response.status_code != 201:
                 raise Exception(
@@ -896,3 +914,172 @@ class NemoLibrary:
 
         except Exception as e:
             raise Exception("process aborted")
+
+    #################################################################################################################################################################
+
+    def create_attribute_group(
+        self, group_name, group_uuid, parent_group_uuid,  headers, project_id
+    ):
+        """
+        Perform the desired action for each group by making an API call.
+
+        :param group_name: Name of the current group.
+        :param group_uuid: UUID of the current group.
+        :param parent_group_uuid: UUID of the parent group.
+        :param headers: The headers for the API call.
+        :param project_id: The project ID for the API call.
+        """
+
+        api_url = self._nemo_url_ + "/api/nemo-persistence/metadata/AttributeGroup"
+        payload = {
+            "displayName": group_name,
+            "displayNameTranslations": {
+                "de": group_name  # Assuming 'en' is the default language
+            },
+            "internalName": group_name,
+            "parentAttributeGroupInternalName": parent_group_uuid,
+            "projectId": project_id,
+        }
+
+        response = requests.post(api_url, headers=headers, json=payload)
+        if response.status_code == 200:
+            print(f"Successfully created group: {group_name} ({group_uuid})")
+            print(response.text)
+        else:
+            print(
+                f"Failed to create group: {group_name} ({group_uuid}). Status code: {response.status_code}, Error: {response.text}"
+            )
+
+    def process_groups(
+        self,
+        df,
+        headers,
+        project_id,
+        current_group=None,
+        parent_group_uuid=None,
+    ):
+        """
+        Recursively process groups starting from the root level.
+
+        :param df: DataFrame containing the group information.
+        :param headers: The headers for the API call.
+        :param project_id: The project ID for the API call.
+        :param current_group: The UUID of the current group to process. None indicates root level.
+        :param parent_group_uuid: UUID of the parent group, None indicates root level.
+        :param level: The current level in the hierarchy.
+        """
+        if current_group is None:
+            # Start with root level groups (those not contained in any other group)
+            root_groups = df[df["Enthalten in Gruppe (mit UUID)"].isna()]
+            for index, row in root_groups.iterrows():
+                self.create_attribute_group(
+                    row["Importname"],
+                    row["UUID"],
+                    parent_group_uuid,
+                    headers,
+                    project_id,
+                )
+                self.process_groups(
+                    df,
+                    headers,
+                    project_id,
+                    current_group=row["UUID"],
+                    parent_group_uuid=row["UUID"],
+                )
+        else:
+            # Process sub-groups contained in the current group
+            sub_groups = df[
+                df["Enthalten in Gruppe (mit UUID)"].str.contains(
+                    current_group, na=False
+                )
+            ]
+            for index, row in sub_groups.iterrows():
+                self.create_attribute_group(
+                    row["Importname"],
+                    row["UUID"],
+                    current_group,
+                    headers,
+                    project_id,
+                )
+                self.process_groups(
+                    df,
+                    headers,
+                    project_id,
+                    current_group=row["UUID"],
+                    parent_group_uuid=row["UUID"],
+                )
+
+    def synchMetadataWithFocus(self, metadatafile: str, projectId: str):
+        try:
+
+            # headers for all requests
+            headers = self._headers()
+
+            # read meta data from fox file
+            foxmetadata = pd.read_excel(
+                metadatafile,
+                usecols=[
+                    "Attribut",
+                    "UUID",
+                    "Importname",
+                    "Definition",
+                    "Enthalten in Gruppe (mit UUID)",
+                ],
+            )
+            foxmetadata.set_index("Attribut", inplace=True)
+            # print("Fox Metadata:")
+            # print(foxmetadata)
+
+            # Filter rows where Definition is 'Gruppe'
+            foxmetadata_groups = foxmetadata[foxmetadata["Definition"] == "Gruppe"]
+            self.process_groups(foxmetadata_groups, headers, projectId)
+
+            # # read meta data from NEMO project
+            # response = requests.get(
+            #     self._nemo_url_
+            #     + f"/api/nemo-persistence/metadata/Columns/project/{projectId}/exported",
+            #     headers=headers,
+            # )
+            # if response.status_code != 200:
+            #     raise Exception(
+            #         f"request failed. Status: {response.status_code}, error: {response.text}"
+            #     )
+            # resultjs = json.loads(response.text)
+            # nemometadatadf = pd.json_normalize(resultjs)
+            # # print("Nemo Metadata:")
+            # # print(nemometadatadf)
+
+            # # Select only the required columns from nemometadatadf
+            # required_columns = ['importName', 'id']
+            # nemometadatadf = nemometadatadf[required_columns]
+
+            # # Ensure columns are lowercase for merge
+            # foxmetadata.columns = [col.lower() for col in foxmetadata.columns]
+            # nemometadatadf.columns = [col.lower() for col in nemometadatadf.columns]
+
+            # # Merge the DataFrames
+            # merged_df = foxmetadata.merge(
+            #     nemometadatadf,
+            #     left_on="importname",
+            #     right_on="importname",
+            #     suffixes=("_fox", "_nemo"),
+            # )
+
+            # # Add prefixes to columns
+            # fox_columns = {
+            #     col: "fox_" + col for col in foxmetadata.columns if col != "importname"
+            # }
+            # nemo_columns = {
+            #     col: "nemo_" + col
+            #     for col in nemometadatadf.columns
+            #     if col != "importname"
+            # }
+
+            # merged_df.rename(columns=fox_columns, inplace=True)
+            # merged_df.rename(columns=nemo_columns, inplace=True)
+
+            # print("Merged DataFrame:")
+            # print(merged_df)
+
+        except Exception as e:
+            raise Exception(f"process aborted: {str(e)}")

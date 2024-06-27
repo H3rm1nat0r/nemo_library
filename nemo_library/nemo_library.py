@@ -50,6 +50,11 @@ class NemoLibrary:
         self._userid_ = config["nemo_library"]["userid"]
         self._password_ = config["nemo_library"]["password"]
         self._nemo_url_ = config["nemo_library"]["nemo_url"]
+        
+        ### Load sql_keywords.json into global var
+        with open(r"./nemo_library/sql_keywords.json", "r") as f:
+            self._sql_keywords = set(json.load(f))
+
 
         match self._environment_:
             case "demo":
@@ -1083,3 +1088,29 @@ class NemoLibrary:
 
         except Exception as e:
             raise Exception(f"process aborted: {str(e)}")
+
+
+    def convert_internal_name(self, name: str) -> str:
+        # Remove special chars and replace with unterscores
+        pattern = r"[^a-zA-Z0-9_]+"
+        internal_name = re.sub(pattern, "_", name)
+
+        # Use a regular expression to find lowercase characters followed by uppercase characters
+        pattern = re.compile(r"([a-z])([A-Z]+)")
+
+        # Use re.sub to insert an underscore between the matched groups
+        internal_name = re.sub(pattern, r"\1_\2", internal_name)
+
+        internal_name = internal_name.lower()
+
+        # multiple underscores to one underscore
+        internal_name = re.sub("_{2,}", "_", internal_name)
+
+        if internal_name.startswith("_"):
+            internal_name = internal_name[1:]
+
+        # column must not be an sql keyword
+        if internal_name in self._sql_keywords:
+            internal_name = f"name_{internal_name}"
+
+        return internal_name

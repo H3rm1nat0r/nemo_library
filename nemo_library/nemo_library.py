@@ -50,11 +50,10 @@ class NemoLibrary:
         self._userid_ = config["nemo_library"]["userid"]
         self._password_ = config["nemo_library"]["password"]
         self._nemo_url_ = config["nemo_library"]["nemo_url"]
-        
+
         ### Load sql_keywords.json into global var
         with open(r"./nemo_library/sql_keywords.json", "r") as f:
             self._sql_keywords = set(json.load(f))
-
 
         match self._environment_:
             case "demo":
@@ -922,174 +921,6 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def create_attribute_group(
-        self, group_name, group_uuid, parent_group_uuid,  headers, project_id
-    ):
-        """
-        Perform the desired action for each group by making an API call.
-
-        :param group_name: Name of the current group.
-        :param group_uuid: UUID of the current group.
-        :param parent_group_uuid: UUID of the parent group.
-        :param headers: The headers for the API call.
-        :param project_id: The project ID for the API call.
-        """
-
-        api_url = self._nemo_url_ + "/api/nemo-persistence/metadata/AttributeGroup"
-        payload = {
-            "displayName": group_name,
-            "displayNameTranslations": {
-                "de": group_name  # Assuming 'en' is the default language
-            },
-            "internalName": group_name,
-            "parentAttributeGroupInternalName": parent_group_uuid,
-            "projectId": project_id,
-        }
-
-        response = requests.post(api_url, headers=headers, json=payload)
-        if response.status_code == 200:
-            print(f"Successfully created group: {group_name} ({group_uuid})")
-            print(response.text)
-        else:
-            print(
-                f"Failed to create group: {group_name} ({group_uuid}). Status code: {response.status_code}, Error: {response.text}"
-            )
-
-    def process_groups(
-        self,
-        df,
-        headers,
-        project_id,
-        current_group=None,
-        parent_group_uuid=None,
-    ):
-        """
-        Recursively process groups starting from the root level.
-
-        :param df: DataFrame containing the group information.
-        :param headers: The headers for the API call.
-        :param project_id: The project ID for the API call.
-        :param current_group: The UUID of the current group to process. None indicates root level.
-        :param parent_group_uuid: UUID of the parent group, None indicates root level.
-        :param level: The current level in the hierarchy.
-        """
-        if current_group is None:
-            # Start with root level groups (those not contained in any other group)
-            root_groups = df[df["Enthalten in Gruppe (mit UUID)"].isna()]
-            for index, row in root_groups.iterrows():
-                self.create_attribute_group(
-                    row["Importname"],
-                    row["UUID"],
-                    parent_group_uuid,
-                    headers,
-                    project_id,
-                )
-                self.process_groups(
-                    df,
-                    headers,
-                    project_id,
-                    current_group=row["UUID"],
-                    parent_group_uuid=row["UUID"],
-                )
-        else:
-            # Process sub-groups contained in the current group
-            sub_groups = df[
-                df["Enthalten in Gruppe (mit UUID)"].str.contains(
-                    current_group, na=False
-                )
-            ]
-            for index, row in sub_groups.iterrows():
-                self.create_attribute_group(
-                    row["Importname"],
-                    row["UUID"],
-                    current_group,
-                    headers,
-                    project_id,
-                )
-                self.process_groups(
-                    df,
-                    headers,
-                    project_id,
-                    current_group=row["UUID"],
-                    parent_group_uuid=row["UUID"],
-                )
-
-    def synchMetadataWithFocus(self, metadatafile: str, projectId: str):
-        try:
-
-            # headers for all requests
-            headers = self._headers()
-
-            # read meta data from fox file
-            foxmetadata = pd.read_excel(
-                metadatafile,
-                usecols=[
-                    "Attribut",
-                    "UUID",
-                    "Importname",
-                    "Definition",
-                    "Enthalten in Gruppe (mit UUID)",
-                ],
-            )
-            foxmetadata.set_index("Attribut", inplace=True)
-            # print("Fox Metadata:")
-            # print(foxmetadata)
-
-            # Filter rows where Definition is 'Gruppe'
-            foxmetadata_groups = foxmetadata[foxmetadata["Definition"] == "Gruppe"]
-            self.process_groups(foxmetadata_groups, headers, projectId)
-
-            # # read meta data from NEMO project
-            # response = requests.get(
-            #     self._nemo_url_
-            #     + f"/api/nemo-persistence/metadata/Columns/project/{projectId}/exported",
-            #     headers=headers,
-            # )
-            # if response.status_code != 200:
-            #     raise Exception(
-            #         f"request failed. Status: {response.status_code}, error: {response.text}"
-            #     )
-            # resultjs = json.loads(response.text)
-            # nemometadatadf = pd.json_normalize(resultjs)
-            # # print("Nemo Metadata:")
-            # # print(nemometadatadf)
-
-            # # Select only the required columns from nemometadatadf
-            # required_columns = ['importName', 'id']
-            # nemometadatadf = nemometadatadf[required_columns]
-
-            # # Ensure columns are lowercase for merge
-            # foxmetadata.columns = [col.lower() for col in foxmetadata.columns]
-            # nemometadatadf.columns = [col.lower() for col in nemometadatadf.columns]
-
-            # # Merge the DataFrames
-            # merged_df = foxmetadata.merge(
-            #     nemometadatadf,
-            #     left_on="importname",
-            #     right_on="importname",
-            #     suffixes=("_fox", "_nemo"),
-            # )
-
-            # # Add prefixes to columns
-            # fox_columns = {
-            #     col: "fox_" + col for col in foxmetadata.columns if col != "importname"
-            # }
-            # nemo_columns = {
-            #     col: "nemo_" + col
-            #     for col in nemometadatadf.columns
-            #     if col != "importname"
-            # }
-
-            # merged_df.rename(columns=fox_columns, inplace=True)
-            # merged_df.rename(columns=nemo_columns, inplace=True)
-
-            # print("Merged DataFrame:")
-            # print(merged_df)
-
-        except Exception as e:
-            raise Exception(f"process aborted: {str(e)}")
-
-
     def convert_internal_name(self, name: str) -> str:
         # Remove special chars and replace with unterscores
         pattern = r"[^a-zA-Z0-9_]+"
@@ -1114,3 +945,227 @@ class NemoLibrary:
             internal_name = f"name_{internal_name}"
 
         return internal_name
+
+    def create_attribute_group(
+        self, headers, project_id, group_name, parent_group_internal_name
+    ) -> str:
+        """
+        Perform the desired action for each group by making an API call.
+
+        :param headers: The headers for the API call.
+        :param project_id: The project ID for the API call.
+        :param group_name: Name of the current group.
+        :param parent_group_internal_name: Internal name of the parent group.
+        """
+
+        api_url = self._nemo_url_ + "/api/nemo-persistence/metadata/AttributeGroup"
+        group_internal_name = self.convert_internal_name(group_name)
+        payload = {
+            "displayName": group_name,
+            "displayNameTranslations": {
+                "de": group_name  # Assuming 'en' is the default language
+            },
+            "internalName": group_internal_name,
+            "parentAttributeGroupInternalName": parent_group_internal_name,
+            "projectId": project_id,
+        }
+
+        response = requests.post(api_url, headers=headers, json=payload)
+        if response.status_code == 201:
+            print(
+                f"Successfully created group: {group_name} as child of {parent_group_internal_name}"
+            )
+            return group_internal_name
+        else:
+            print(
+                f"Failed to create group: {group_name}. Status code: {response.status_code}, Error: {response.text}"
+            )
+
+    def process_groups(
+        self,
+        df,
+        headers,
+        projectId,
+        current_group=None,
+        parent_group_internal_name=None,
+    ):
+        """
+        Recursively process groups starting from the root level.
+
+        :param df: DataFrame containing the group information.
+        :param headers: The headers for the API call.
+        :param project_id: The project ID for the API call.
+        :param current_group: The UUID of the current group to process. None indicates root level.
+        :param parent_group_uuid: UUID of the parent group, None indicates root level.
+        :param level: The current level in the hierarchy.
+        """
+        if current_group is None:
+            # remove existing groups first
+            api_url = (
+                self._nemo_url_
+                + f"/api/nemo-persistence/metadata/AttributeGroup/project/{projectId}/attributegroups"
+            )
+            response = requests.get(api_url, headers=headers)
+            if response.status_code != 200:
+                raise Exception(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
+            resultjs = json.loads(response.text)
+            attributegroups = pd.json_normalize(resultjs)
+            for index, row in attributegroups.iterrows():
+                print("delete attribute group", row["internalName"])
+                api_url = (
+                    self._nemo_url_
+                    + "/api/nemo-persistence/metadata/AttributeGroup/"
+                    + row["id"]
+                )
+                response = requests.delete(api_url, headers=headers)
+                if response.status_code != 204:
+                    raise Exception(
+                        f"request failed. Status: {response.status_code}, error: {response.text}"
+                    )
+
+            # create groups from scratch starting with root level
+            root_groups = df[df["Enthalten in Gruppe (mit UUID)"].isna()]
+            for index, row in root_groups.iterrows():
+                nemo_group_internal_name = self.create_attribute_group(
+                    headers, projectId, row["Attributname"], parent_group_internal_name
+                )
+                self.process_groups(
+                    df,
+                    headers,
+                    projectId,
+                    current_group=row["UUID"],
+                    parent_group_internal_name=nemo_group_internal_name,
+                )
+        else:
+            # Process sub-groups contained in the current group
+            sub_groups = df[
+                df["Enthalten in Gruppe (mit UUID)"].str.contains(
+                    current_group, na=False
+                )
+            ]
+            for index, row in sub_groups.iterrows():
+                nemo_group_internal_name = self.create_attribute_group(
+                    headers, projectId, row["Attributname"], parent_group_internal_name
+                )
+                self.process_groups(
+                    df,
+                    headers,
+                    projectId,
+                    current_group=row["UUID"],
+                    parent_group_internal_name=nemo_group_internal_name,
+                )
+
+    def synchMetadataWithFocus(self, metadatafile: str, projectId: str):
+        try:
+
+            # headers for all requests
+            headers = self._headers()
+
+            # read meta data from fox file
+            foxmetadata = pd.read_excel(
+                metadatafile,
+                usecols=[
+                    "Attribut",
+                    "UUID",
+                    "Attributname",
+                    "Importname",
+                    "Definition",
+                    "Enthalten in Gruppe",
+                    "Enthalten in Gruppe (mit UUID)",
+                ],
+            )
+            foxmetadata.set_index("Attribut", inplace=True)
+
+            # Filter rows where Definition is 'Gruppe' and create groups first
+            foxmetadata_groups = foxmetadata[foxmetadata["Definition"] == "Gruppe"]
+            # self.process_groups(foxmetadata_groups, headers, projectId)
+
+            # read meta data from NEMO project
+            response = requests.get(
+                self._nemo_url_
+                + f"/api/nemo-persistence/metadata/Columns/project/{projectId}/exported",
+                headers=headers,
+            )
+            if response.status_code != 200:
+                raise Exception(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
+            resultjs = json.loads(response.text)
+            nemometadatadf = pd.json_normalize(resultjs)
+
+            # process attributes
+
+            previous_attr = None
+            for idx, row in foxmetadata.iterrows():
+
+                print(
+                    "processing attibute",
+                    idx,
+                    row["Attributname"],
+                    "type:",
+                    row["Definition"],
+                )
+
+                # search for twin in meta data
+                if row["Definition"] not in ["Einfaches Attribut", "Gruppe"]:
+                    print(
+                        "attribute "
+                        + row["Attributname"]
+                        + " ignored, due to unsupported type "
+                        + row["Definition"]
+                    )
+                else:
+                    meta = nemometadatadf[
+                        nemometadatadf["importName"]
+                        == (
+                            row["Attributname"]
+                            if row["Definition"] == "Gruppe"
+                            else row["Importname"]
+                        )
+                    ]
+                    if len(meta) == 0:
+                        print(
+                            "could not find attribute "
+                            + row["Attributname"]
+                            + " in meta data!"
+                        )
+                    else:
+                        if len(meta) > 1:
+                            print(
+                                "multiple matches of attribute "
+                                + row["Attributname"]
+                                + " in meta data. Type : "
+                                + row["Definition"]
+                                + ". First one will be selected"
+                            )
+                        first_meta = meta.iloc[0]
+                        source_id_meta = first_meta["id"]
+
+                        if pd.isna(row["Enthalten in Gruppe"]):
+                            group_name = None
+                        else:
+                            group_name = self.convert_internal_name(row["Enthalten in Gruppe"])
+                        
+                        # lets move the attribute now
+                        api_url = (
+                            self._nemo_url_
+                            + f"/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/move"
+                        )
+                        payload = {
+                            "sourceAttributes": [source_id_meta],
+                            "targetPreviousElementId": previous_attr,
+                            "groupInternalName": group_name,
+                        }
+
+                        response = requests.put(api_url, headers=headers, json=payload)
+                        if response.status_code != 204:
+                            raise Exception(
+                                f"request failed. Status: {response.status_code}, error: {response.text}"
+                            )
+
+                        previous_attr = source_id_meta
+
+        except Exception as e:
+            raise Exception(f"process aborted: {str(e)}")

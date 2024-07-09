@@ -8,38 +8,38 @@ class PasswordManager:
 
     def set_password(self, password):
         """
-        Speichert das Passwort im Credential Manager (Windows) oder im Keychain (macOS).
+        Stores the password in the Credential Manager (Windows) or Keychain (macOS).
         
         Args:
-            password (str): Das zu speichernde Passwort.
+            password (str): The password to be stored.
         """
         keyring.set_password(self.service_name, self.username, password)
 
     def get_password(self):
         """
-        Ruft das Passwort aus dem Credential Manager (Windows) oder dem Keychain (macOS) ab.
+        Retrieves the password from the Credential Manager (Windows) or Keychain (macOS).
         
         Returns:
-            str: Das gespeicherte Passwort oder None, wenn kein Passwort gefunden wurde.
+            str: The stored password or None if no password is found.
         """
         return keyring.get_password(self.service_name, self.username)
 
 
 if __name__ == "__main__":
-    # Beispielhafte Verwendung:
+    # Example usage:
     service_name = "nemo_library"
-    username = "xxx"
-    password = "yyy"
+    username = "my_username"
+    password = "my_password"
 
     pm = PasswordManager(service_name, username)
 
-    # Passwort setzen
+    # Set password
     pm.set_password(password)
-    print(f"Passwort für Benutzer '{username}' im Dienst '{service_name}' wurde gespeichert.")
+    print(f"Password for user '{username}' in service '{service_name}' has been stored.")
 
-    # Passwort abrufen
+    # Retrieve password
     retrieved_password = pm.get_password()
     if retrieved_password:
-        print(f"Das gespeicherte Passwort für Benutzer '{username}' ist: {retrieved_password}")
+        print(f"The stored password for user '{username}' is: {retrieved_password}")
     else:
-        print(f"Kein Passwort für Benutzer '{username}' im Dienst '{service_name}' gefunden.")
+        print(f"No password found for user '{username}' in service '{service_name}'.")

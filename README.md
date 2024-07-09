@@ -24,6 +24,31 @@ password = <your password>
 environment = [prod|dev|demo]
 ```
 
+If you don't want to pass userid/password in a file (which is readable to everybody that has access to the file), you can use Windows Credential Manager or MacOS key chain to store your password. Please use "nemo_library" as "Program name". As an alternative, you can programmatically set your password by using this code
+
+```python
+from nemo_library.sub_password_handler import *
+
+service_name = "nemo_library"
+username = "my_username"
+password = "my_password"
+
+pm = PasswordManager(service_name, username)
+
+# Set password
+pm.set_password(password)
+print(f"Password for user '{username}' in service '{service_name}' has been stored.")
+
+# Retrieve password
+retrieved_password = pm.get_password()
+if retrieved_password:
+    print(f"The stored password for user '{username}' is: {retrieved_password}")
+else:
+    print(f"No password found for user '{username}' in service '{service_name}'.")
+```
+
+
+
 # Methods
 
 ## Projects
@@ -39,43 +64,15 @@ nl = NemoLibrary()
 df = nl.getProjectList()
 ```
 
-### ProjectProperty method
+### getProjectID method
 
-Get a project property
+Return internal id of project identified by given project name as shown in the NEMO UI
 
 ```python
 from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
-val = nl.ProjectProperty(projectname=None,propertyname="ExpDateTo")
-```
-
-### getImportedColumns method
-
-Get list if imported columns of a project 
-
-```python
-from nemo_library import NemoLibrary
-import pandas as pd
-
-nl = NemoLibrary()
-df = nl.getImportedColumns(projectname="0 SNR")
-```
-
-### setMetadataSortOrder method
-
-Set sort order of fields in a project
-
-```python
-from nemo_library import NemoLibrary
-import pandas as pd
-
-# import field order from infozoom meta data export
-dfsort = pd.read_csv("Metadaten_AUTODATA_SORT_1.csv",delimiter=";")
-fieldlist = dfsort["Importname"].to_list()
-
-nl = NemoLibrary()
-nl.setMetadataSortOrder(projectname="AUTODATA",fields=fieldlist)
+print(nl.getProjectID(projectname="Business Processes"))
 ```
 
 ### ReUploadFile method
@@ -87,6 +84,26 @@ from nemo_library import NemoLibrary
 
 nl = NemoLibrary()
 nl.ReUploadFile(projectname="21 CRM", filename="./csv/hubspot.csv")
+```
+
+### synchronizeCsvColsAndImportedColumns method
+
+Sychronize columns with CSV file and NEMO meta data. This method compares the list of columns found in CSV with the list of columns defined in meta data and adds or removes missing or not-any-longer-used columns to and from meta data. For performance reasons, you should not use it on a daily base, but after changes in the source, it makes sense to call it before uploading a file.
+
+Here's some example code from Gunnar's reporting
+
+```python
+nl = NemoLibrary()
+if synch_columns:
+    nl.synchronizeCsvColsAndImportedColumns(
+        projectname=PROJECT_NAME_SNR0,
+        filename=folder_reporting_input_pa() + "/snr0_NEMO.csv",
+    )
+    time.sleep(120)
+nl.ReUploadFile(
+    projectname=PROJECT_NAME_SNR0,
+    filename=folder_reporting_input_pa() + "/snr0_NEMO.csv",
+)
 ```
 
 ## Reports

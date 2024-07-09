@@ -16,13 +16,12 @@ import re
 from nemo_library.sub_symbols import *
 from nemo_library.sub_connection_handler import *
 from nemo_library.sub_config_handler import *
+from nemo_library.sub_password_handler import *
+from nemo_library.sub_project_handler import *
 
-NEMO_URL = "https://enter.nemo-ai.com"
-DEFAULT_PROJECT_NAME = "ERP Business Processes"
 
 
 class NemoLibrary:
-    #################################################################################################################################################################
 
     def __init__(
         self,
@@ -34,9 +33,8 @@ class NemoLibrary:
         config_file="config.ini",
     ):
 
-        ### Load sql_keywords.json into global var
         with open(r"./nemo_library/sql_keywords.json", "r") as f:
-            self._sql_keywords_ = set(json.load(f))
+            self.sql_keywords = set(json.load(f))
 
         self.config = ConfigHandler(
             nemo_url=nemo_url,
@@ -49,52 +47,27 @@ class NemoLibrary:
 
         super().__init__()
 
-    #################################################################################################################################################################
-
-    def _get_file_size_in_characters_(self, file_path):
-        character_count = 0
-        with open(file_path, "r", encoding="utf-8") as file:
-            for line in file:
-                character_count += len(line)
-        return character_count
-
-    #################################################################################################################################################################
-
-    def _split_file_(self, file_path, chunk_size):
-        with open(file_path, "r", encoding="utf-8") as file:
-            while True:
-                data = file.read(chunk_size)
-                if not data:
-                    break
-                yield data
-
-    #################################################################################################################################################################
 
     def getProjectList(self):
-        headers = connection_get_headers(self.config)
+        """
+        Retrieves a list of projects from the server.
 
-        response = requests.get(
-            self.config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_ALL, headers=headers
-        )
-        if response.status_code != 200:
-            raise Exception(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
-        resultjs = json.loads(response.text)
-        df = pd.json_normalize(resultjs)
-        return df
-
-    #################################################################################################################################################################
+        Returns:
+            pd.DataFrame: DataFrame containing the list of projects.
+        """
+        return getProjectList(self.config)
 
     def getProjectID(self, projectname: str):
-        if projectname == None:
-            projectname = DEFAULT_PROJECT_NAME
-        df = self.getProjectList()
-        crmproject = df[df["displayName"] == projectname]
-        if len(crmproject) != 1:
-            raise Exception(f"could not identify project name {projectname}")
-        project_id = crmproject["id"].to_list()[0]
-        return project_id
+        """
+        Retrieves the project ID for a given project name.
+
+        Args:
+            projectname (str): The name of the project for which to retrieve the ID.
+
+        Returns:
+            str: The ID of the specified project.
+        """
+        return getProjectID(self.config,projectname)
 
     #################################################################################################################################################################
 
@@ -126,125 +99,6 @@ class NemoLibrary:
                 raise Exception("process stopped, no project_id available")
             raise Exception("process aborted")
 
-    #################################################################################################################################################################
-
-    def int_to_base62(self, n):
-        chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        if n == 0:
-            return "0"
-        arr = []
-        while n:
-            n, rem = divmod(n, 62)
-            arr.append(chars[rem])
-        arr.reverse()
-        if len(arr) > 1 and arr[0] == "1":
-            arr[0] = "z"
-        return "".join(arr)
-
-    def setMetadataSortOrder(self, projectname: str, fields: list):
-        try:
-            # everything is case sensitive, thus we convert everything to lower case for a better mapping
-            fields_lower = [field.lower() for field in fields]
-
-            # store position in fields list
-            field_order = {field: index for index, field in enumerate(fields_lower)}
-
-            # get columns and apply new sort order
-            df_imported = self.getImportedColumns(projectname=projectname)
-            print(df_imported)
-            df_imported["focusOrder"] = (
-                df_imported["displayName"].str.lower().map(field_order)
-            )
-
-            # apply base62-coded sort order
-            df_imported["focusOrder"] = df_imported["focusOrder"].apply(
-                lambda x: self.int_to_base62(x) if not pd.isna(x) else x
-            )
-
-            # initialize reqeust
-            headers = connection_get_headers(self.config)
-
-            for idx, row in df_imported.iterrows():
-                print(idx, row["internalName"])
-                response = requests.put(
-                    self.config.config_get_nemo_url()
-                    + ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES.format(
-                        id=row["id"]
-                    ),
-                    headers=headers,
-                    json=row.to_dict(),
-                )
-                if response.status_code != 200:
-                    raise Exception(
-                        f"request failed. Status: {response.status_code}, error: {response.text}"
-                    )
-
-        except Exception as e:
-            raise Exception("setMetadataSortOrder metadata aborted")
-
-    #################################################################################################################################################################
-
-    def copyMetadata(self, projectname_src, projectname_tgt):
-        try:
-            # load columns from both projects
-            df_src = self.getImportedColumns(projectname_src)
-            df_tgt = self.getImportedColumns(projectname_tgt)
-
-            # make code bullet proof (we don not support everything yet)
-            if len(df_src) != len(df_tgt):
-                raise Exception(
-                    "Target dataset has different length ({len_tgt}) than source ({len_src})".format(
-                        len_tgt=len(df_tgt), len_src=len(df_src)
-                    )
-                )
-
-            # check for different values in relevant fields
-
-            # merge datasets on "internalName"
-            merged_df = pd.merge(
-                df_src, df_tgt, on="internalName", suffixes=("_src", "_tgt")
-            )
-
-            # check whether the result still has the same number of records
-            if len(df_src) != len(df_tgt):
-                raise Exception(
-                    "Merge dataset has different length ({len_mrg}) than source ({len_src})".format(
-                        len_mrg=len(merged_df), len_src=len(df_src)
-                    )
-                )
-
-            # filter on differences now
-            columns_to_compare = [
-                "dataType",
-                "description",
-                # "attributeGroupInternalName",
-                # "groupByColumnInternalName",
-                # "order",
-                # "focusOrder",
-            ]
-            conditions = (
-                merged_df[col + "_src"] != merged_df[col + "_tgt"]
-                for col in columns_to_compare
-            )
-            combined_condition = pd.concat(conditions, axis=1).any(axis=1)
-            diff_df = merged_df[combined_condition]
-
-            # create results dataset with differences
-            output_columns = [
-                "id_src",
-                "id_tgt",
-                "internalName",
-            ] + [
-                col + suffix
-                for col in columns_to_compare
-                for suffix in ["_src", "_tgt"]
-            ]
-            result_df = diff_df[output_columns]
-
-            print(result_df)
-
-        except Exception as e:
-            raise Exception("copy metadata aborted")
 
     #################################################################################################################################################################
 
@@ -731,27 +585,6 @@ class NemoLibrary:
             raise Exception(f"download failed. Status: {e}")
         return result
 
-    #################################################################################################################################################################
-
-    def ProjectProperty(self, projectname: str, propertyname: str):
-        headers = connection_get_headers(self.config)
-        project_id = self.getProjectID(projectname)
-
-        ENDPOINT_URL = (
-            self.config.config_get_nemo_url()
-            + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(
-                projectId=project_id, request=propertyname
-            )
-        )
-
-        response = requests.get(ENDPOINT_URL, headers=headers)
-
-        if response.status_code != 200:
-            raise Exception(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
-
-        return response.text
 
     #################################################################################################################################################################
 
@@ -871,7 +704,7 @@ class NemoLibrary:
             internal_name = internal_name[1:]
 
         # column must not be an sql keyword
-        if internal_name in self._sql_keywords_:
+        if internal_name in self.sql_keywords:
             internal_name = f"name_{internal_name}"
 
         return internal_name

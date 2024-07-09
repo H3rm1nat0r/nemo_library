@@ -1,5 +1,5 @@
 import configparser
-from sub_password_handler import *
+from nemo_library.sub_password_handler import *
 
 class ConfigHandler:
     def __init__(
@@ -19,7 +19,8 @@ class ConfigHandler:
         try:
             self.password = self.config["nemo_library"]["password"] if password == None else password
         except KeyError as e:
-            pass
+            pm = PasswordManager(service_name="nemo_library",username=self.userid)
+            self.password = pm.get_password()
 
         self.environment = self.config["nemo_library"]["environment"] if environment == None else environment
 

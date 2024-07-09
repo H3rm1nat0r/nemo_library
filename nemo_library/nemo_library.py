@@ -18,7 +18,7 @@ from nemo_library.sub_connection_handler import *
 from nemo_library.sub_config_handler import *
 from nemo_library.sub_password_handler import *
 from nemo_library.sub_project_handler import *
-
+from nemo_library.sub_file_upload_handler import *
 
 
 class NemoLibrary:
@@ -47,7 +47,6 @@ class NemoLibrary:
 
         super().__init__()
 
-
     def getProjectList(self):
         """
         Retrieves a list of projects from the server.
@@ -67,7 +66,41 @@ class NemoLibrary:
         Returns:
             str: The ID of the specified project.
         """
-        return getProjectID(self.config,projectname)
+        return getProjectID(self.config, projectname)
+
+    def ReUploadFile(
+        self,
+        projectname: str,
+        filename: str,
+        update_project_settings: bool = True,
+        datasource_ids: list[dict] = None,
+        global_fields_mapping: list[dict] = None,
+        version: int = 2,
+        trigger_only: bool = False,
+    ):
+        """
+        Uploads a file to a project and optionally updates project settings or triggers analyze tasks.
+
+        Args:
+            projectname (str): Name of the project.
+            filename (str): Name of the file to be uploaded.
+            update_project_settings (bool, optional): Whether to update project settings after ingestion. Defaults to True.
+            datasource_ids (list[dict], optional): List of datasource identifiers for V3 ingestion. Defaults to None.
+            global_fields_mapping (list[dict], optional): Global fields mapping for V3 ingestion. Defaults to None.
+            version (int, optional): Version of the ingestion process (2 or 3). Defaults to 2.
+            trigger_only (bool, optional): Whether to trigger only without waiting for task completion. Applicable for V3. Defaults to False.
+        """
+        
+        ReUploadFileIngestion(
+            config=self.config,
+            projectname=projectname,
+            filename=filename,
+            update_project_settings=update_project_settings,
+            datasource_ids=datasource_ids,
+            global_fields_mapping=global_fields_mapping,
+            version=version,
+            trigger_only=trigger_only,
+        )
 
     #################################################################################################################################################################
 
@@ -100,454 +133,6 @@ class NemoLibrary:
             raise Exception("process aborted")
 
 
-    #################################################################################################################################################################
-
-    def ReUploadFile(self, projectname: str, filename: str):
-        project_id = None
-        headers = None
-        upload_id = None
-
-        try:
-            project_id = self.getProjectID(projectname)
-
-            headers = connection_get_headers(self.config)
-
-            print(
-                f"upload of file '{filename}' into project '{projectname}' initiated..."
-            )
-
-            ####
-            # start upload process
-
-            # we need to upload file in chunks. Default is 6MB size chunks
-
-            # usually we would get the file size with os.path.getsize(filename) - but this is
-            # the size in Bytes, not in (UTF-8)-characters. So we have to calculate the size
-            # by our own
-
-            file_size = self._get_file_size_in_characters_(filename)
-            total_chunks = math.ceil(file_size / FILE_UPLOAD_CHUNK_SIZE)
-
-            print(f"file size: {file_size:,}")
-            print(f"chunk size: {FILE_UPLOAD_CHUNK_SIZE:,}")
-            print(f"--> total chunks: {total_chunks:,}")
-            data = {"projectId": project_id, "partCount": total_chunks}
-
-            # initialize upload
-            response = requests.post(
-                self.config.config_get_nemo_url()
-                + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE,
-                headers=headers,
-                json=data,
-            )
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-            resultjs = json.loads(response.text)
-            df = pd.json_normalize(resultjs)
-            upload_id = resultjs["uploadId"]
-            upload_urls = resultjs["urls"]
-            partETags = pd.DataFrame({"partNumber": [None], "eTag": [None]})
-
-            file_chunks = self._split_file_(filename, FILE_UPLOAD_CHUNK_SIZE)
-
-            for index, url in enumerate(upload_urls, start=1):
-                # post keep alive message
-
-                karesponse = requests.post(
-                    url=self.config.config_get_nemo_url()
-                    + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_KEEP_ALIVE.format(
-                        projectId=project_id, uploadId=upload_id
-                    ),
-                    headers=headers,
-                )
-                if (
-                    karesponse.status_code != 204
-                ):  # this is the defined response that we expect, not 200
-                    raise Exception(
-                        f"request failed. Status: {karesponse.status_code}, error: {karesponse.text}"
-                    )
-
-                print(f"upload part {index}")
-                headers_upload = {
-                    "Content-Type": "text/csv",
-                }
-                data = next(file_chunks, None)
-
-                response = requests.put(
-                    url=url,
-                    headers=headers_upload,
-                    data=data.encode("utf-8"),
-                )
-                if response.status_code != 200:
-                    raise Exception(
-                        f"request failed. Status: {response.status_code}, error: {response.text}"
-                    )
-
-                partETags.at[index - 1, "partNumber"] = index
-                partETags.at[index - 1, "eTag"] = response.headers["ETag"].strip('"')
-
-            print("finalize upload")
-
-            data = {
-                "uploadId": upload_id,
-                "projectId": project_id,
-                "fieldDelimiter": ";",
-                "recordDelimiter": "\n",
-                "partETags": partETags.to_dict(orient="records"),
-            }
-            datajs = json.dumps(data, indent=2)
-            response = requests.post(
-                self.config.config_get_nemo_url()
-                + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_FINALIZE,
-                headers=headers,
-                data=datajs,
-            )
-            if response.status_code != 204:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-
-            print("upload finished")
-
-        except Exception as e:
-            if project_id == None:
-                raise Exception("upload stopped, no project_id available")
-
-            if upload_id == None:
-                raise Exception("upload stopped, no upload_id available")
-
-            # we are sure that all information to anbandon the upload are available, we do so now
-
-            data = {"uploadId": upload_id, "projectId": project_id}
-            response = requests.post(
-                self.config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
-                headers=headers,
-                json=data,
-            )
-            if response.status_code != 204:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-
-            raise Exception("upload aborted")
-
-    #################################################################################################################################################################
-
-    def ReUploadFileIngestionV2(
-        self, projectname: str, filename: str, update_project_settings: bool = True
-    ):
-        project_id = None
-        headers = None
-
-        try:
-            project_id = self.getProjectID(projectname)
-
-            headers = connection_get_headers(self.config)
-
-            print(
-                f"upload of file '{filename}' into project '{projectname}' initiated..."
-            )
-
-            # Zip the file before uploading
-            gzipped_filename = filename + ".gz"
-            with open(filename, "rb") as f_in:
-                with gzip.open(gzipped_filename, "wb") as f_out:
-                    shutil.copyfileobj(f_in, f_out)
-            print(f"File {filename} has been compressed to {gzipped_filename}")
-
-            ####
-            # start upload process
-
-            # Retrieve temp. Creds. from NEMO TVM
-
-            response = requests.get(
-                self.config.config_get_nemo_url() + ENDPOINT_URL_TVM_S3_ACCESS,
-                headers=headers,
-            )
-
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-
-            aws_credentials = json.loads(response.text)
-
-            aws_access_key_id = aws_credentials["accessKeyId"]
-            aws_secret_access_key = aws_credentials["secretAccessKey"]
-            aws_session_token = aws_credentials["sessionToken"]
-
-            # Create an S3 client
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=aws_access_key_id,
-                aws_secret_access_key=aws_secret_access_key,
-                aws_session_token=aws_session_token,
-            )
-
-            try:
-                # Upload the file
-                s3filename = (
-                    connection_get_tenant(self.config)
-                    + "/ingestv2/"
-                    + os.path.basename(gzipped_filename)
-                )
-                s3.upload_file(
-                    gzipped_filename,
-                    "nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs",
-                    s3filename,
-                )
-                print(f"File {filename} uploaded successfully to s3 ({s3filename})")
-            except FileNotFoundError:
-                print(f"The file {filename} was not found.")
-            except NoCredentialsError:
-                print("Credentials not available or incorrect.")
-
-            # file is uploaded, ingest it now into project
-            data = {
-                "project_id": project_id,
-                "s3_filepath": f"s3://nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs/{s3filename}",
-            }
-            response = requests.post(
-                self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
-                headers=headers,
-                json=data,
-            )
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-            print("ingestion successful")
-
-            # wait for task to be completed
-            taskid = response.text.replace('"', "")
-            while True:
-                data = {
-                    "sort_by": "submit_at",
-                    "is_sort_ascending": "False",
-                    "page": 1,
-                    "page_size": 20,
-                }
-                response = requests.get(
-                    self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
-                    headers=headers,
-                    json=data,
-                )
-                resultjs = json.loads(response.text)
-                df = pd.json_normalize(resultjs["records"])
-                df_filtered = df[df["id"] == taskid]
-                if len(df_filtered) != 1:
-                    raise Exception(
-                        f"data ingestions request failed, task id that have been provided not found in tasks list"
-                    )
-                status = df_filtered["status"].iloc[0]
-                print("Status: ", status)
-                if status == "failed":
-                    raise Exception(
-                        f"data ingestion request faild, task id return status FAILED"
-                    )
-                if status == "finished":
-                    records = df_filtered["records"].iloc[0]
-                    print(f"Ingestion finished. {records} records loaded")
-                    break
-                time.sleep(1)
-
-            ###################### trigger Analyze Table Task ####################################
-
-            if update_project_settings:
-                # dataingestion is done, now trigger analyze_table to update the project settings
-
-                data = {
-                    "project_id": project_id,
-                }
-                response = requests.post(
-                    self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
-                    headers=headers,
-                    json=data,
-                )
-                if response.status_code != 200:
-                    raise Exception(
-                        f"request failed. Status: {response.status_code}, error: {response.text}"
-                    )
-                print("analyze_table triggered")
-
-                # wait for task to be completed
-                taskid = response.text.replace('"', "")
-                while True:
-                    data = {
-                        "sort_by": "submit_at",
-                        "is_sort_ascending": "False",
-                        "page": 1,
-                        "page_size": 20,
-                    }
-                    response = requests.get(
-                        self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
-                        headers=headers,
-                        json=data,
-                    )
-                    resultjs = json.loads(response.text)
-                    df = pd.json_normalize(resultjs["records"])
-                    df_filtered = df[df["id"] == taskid]
-                    if len(df_filtered) != 1:
-                        raise Exception(
-                            f"analyze_table request failed, task id that have been provided not found in tasks list"
-                        )
-                    status = df_filtered["status"].iloc[0]
-                    print("Status: ", status)
-                    if status == "failed":
-                        raise Exception(
-                            f"analyze_table request faild, task id return status FAILED"
-                        )
-                    if status == "finished":
-                        print(f"analyze_table finished.")
-                        break
-                    time.sleep(1)
-
-            #######################################################################################
-
-        except Exception as e:
-            if project_id == None:
-                raise Exception("upload stopped, no project_id available")
-
-            raise Exception("upload aborted")
-
-    #################################################################################################################################################################
-
-    def ReUploadFileIngestionV3(
-        self,
-        projectname: str,
-        filename: str,
-        datasource_ids: list[dict],
-        global_fields_mapping: list[dict],
-        trigger_only: bool = True,
-    ):
-        project_id = None
-        headers = None
-
-        try:
-            project_id = self.getProjectID(projectname)
-
-            headers = connection_get_headers(self.config)
-
-            print(
-                f"upload of file '{filename}' into project '{projectname}' initiated..."
-            )
-
-            # Zip the file before uploading
-            gzipped_filename = filename + ".gz"
-            with open(filename, "rb") as f_in:
-                with gzip.open(gzipped_filename, "wb") as f_out:
-                    shutil.copyfileobj(f_in, f_out)
-            print(f"File {filename} has been compressed to {gzipped_filename}")
-
-            ####
-            # start upload process
-
-            # Retrieve temp. Creds. from NEMO TVM
-
-            response = requests.get(
-                self.config.config_get_nemo_url() + ENDPOINT_URL_TVM_S3_ACCESS,
-                headers=headers,
-            )
-
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-
-            aws_credentials = json.loads(response.text)
-
-            aws_access_key_id = aws_credentials["accessKeyId"]
-            aws_secret_access_key = aws_credentials["secretAccessKey"]
-            aws_session_token = aws_credentials["sessionToken"]
-
-            # Create an S3 client
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=aws_access_key_id,
-                aws_secret_access_key=aws_secret_access_key,
-                aws_session_token=aws_session_token,
-            )
-
-            try:
-                # Upload the file
-                s3filename = (
-                    connection_get_tenant(self.config)
-                    + "/ingestv3/"
-                    + os.path.basename(gzipped_filename)
-                )
-                s3.upload_file(
-                    gzipped_filename,
-                    "nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs",
-                    s3filename,
-                )
-                print(f"File {filename} uploaded successfully to s3 ({s3filename})")
-            except FileNotFoundError:
-                print(f"The file {filename} was not found.")
-            except NoCredentialsError:
-                print("Credentials not available or incorrect.")
-
-            # file is uploaded, ingest it now into project
-
-            data = {
-                "project_id": project_id,
-                "s3_filepath": f"s3://nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs/{s3filename}",
-                "data_source_identifiers": datasource_ids,
-                "global_fields_mappings": global_fields_mapping,
-            }
-
-            response = requests.post(
-                self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_INGEST_DATA_V3,
-                headers=headers,
-                json=data,
-            )
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-            print("ingestion successful")
-
-            # wait for task to be completed
-
-            if not trigger_only:
-                taskid = response.text.replace('"', "")
-                while True:
-                    data = {
-                        "sort_by": "submit_at",
-                        "is_sort_ascending": "False",
-                        "page": 1,
-                        "page_size": 20,
-                    }
-                    response = requests.get(
-                        self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
-                        headers=headers,
-                        json=data,
-                    )
-                    resultjs = json.loads(response.text)
-                    df = pd.json_normalize(resultjs["records"])
-                    df_filtered = df[df["id"] == taskid]
-                    if len(df_filtered) != 1:
-                        raise Exception(
-                            f"data ingestions request failed, task id that have been provided not found in tasks list"
-                        )
-                    status = df_filtered["status"].iloc[0]
-                    print("Status: ", status)
-                    if status == "failed":
-                        raise Exception(
-                            f"data ingestion request faild, task id return status FAILED"
-                        )
-                    if status == "finished":
-                        records = df_filtered["records"].iloc[0]
-                        print(f"Ingestion finished. {records} records loaded")
-                        break
-                    time.sleep(5)
-
-        except Exception as e:
-            if project_id == None:
-                raise Exception("upload stopped, no project_id available")
-
-            raise Exception("upload aborted")
 
     #################################################################################################################################################################
 
@@ -584,7 +169,6 @@ class NemoLibrary:
         except Exception as e:
             raise Exception(f"download failed. Status: {e}")
         return result
-
 
     #################################################################################################################################################################
 
@@ -722,7 +306,8 @@ class NemoLibrary:
         """
 
         api_url = (
-            self.config.config_get_nemo_url() + "/api/nemo-persistence/metadata/AttributeGroup"
+            self.config.config_get_nemo_url()
+            + "/api/nemo-persistence/metadata/AttributeGroup"
         )
         group_internal_name = self.convert_internal_name(group_name)
         payload = {

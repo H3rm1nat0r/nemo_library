@@ -86,6 +86,17 @@ nl = NemoLibrary()
 nl.ReUploadFile(projectname="21 CRM", filename="./csv/hubspot.csv")
 ```
 
+Args:
+- projectname (str): Name of the project.
+- filename (str): Name of the file to be uploaded.
+- update_project_settings (bool, optional): Whether to update project settings after ingestion. Defaults to True.
+- datasource_ids (list[dict], optional): List of datasource identifiers for V3 ingestion. Defaults to None.
+- global_fields_mapping (list[dict], optional): Global fields mapping for V3 ingestion. Defaults to None.
+- version (int, optional): Version of the ingestion process (2 or 3). Defaults to 2
+- trigger_only (bool, optional): Whether to trigger only without waiting for task completion. Applicable for V3. Defaults to False.
+
+V2 uploads a file plain into the project. V3 merges the data with the Business Processes project (needs more parameters)
+
 ### synchronizeCsvColsAndImportedColumns method
 
 Sychronize columns with CSV file and NEMO meta data. This method compares the list of columns found in CSV with the list of columns defined in meta data and adds or removes missing or not-any-longer-used columns to and from meta data. For performance reasons, you should not use it on a daily base, but after changes in the source, it makes sense to call it before uploading a file.

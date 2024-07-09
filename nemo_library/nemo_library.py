@@ -14,25 +14,7 @@ import gzip
 import shutil
 import re
 
-from nemo_library.symbols import (
-    ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
-    ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_FINALIZE,
-    ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE,
-    ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_KEEP_ALIVE,
-    ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES,
-    ENDPOINT_URL_PROJECTS_ALL,
-    ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
-    ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES,
-    ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
-    ENDPOINT_URL_REPORT_EXPORT,
-    ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
-    ENDPOINT_URL_QUEUE_INGEST_DATA_V3,
-    ENDPOINT_URL_QUEUE_TASK_RUNS,
-    ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
-    ENDPOINT_URL_TVM_S3_ACCESS,
-    FILE_UPLOAD_CHUNK_SIZE,
-    RESERVED_KEYWORDS,
-)
+from nemo_library.symbols import *
 
 NEMO_URL = "https://enter.nemo-ai.com"
 DEFAULT_PROJECT_NAME = "ERP Business Processes"
@@ -1145,8 +1127,10 @@ class NemoLibrary:
                         if pd.isna(row["Enthalten in Gruppe"]):
                             group_name = None
                         else:
-                            group_name = self.convert_internal_name(row["Enthalten in Gruppe"])
-                        
+                            group_name = self.convert_internal_name(
+                                row["Enthalten in Gruppe"]
+                            )
+
                         # lets move the attribute now
                         api_url = (
                             self._nemo_url_

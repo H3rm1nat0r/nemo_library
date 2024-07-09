@@ -1,8 +1,9 @@
 import configparser
 import requests
 import json
+from nemo_library.sub_config_handler import *
 
-def connection_get_headers():
+def connection_get_headers(config):
     """
     Retrieve headers for authentication and API requests.
 
@@ -13,7 +14,7 @@ def connection_get_headers():
         dict: A dictionary containing headers with the authorization token,
               content type, API version, and refresh token.
     """
-    tokens = connection_get_tokens()
+    tokens = connection_get_tokens(config)
     headers = {
         "accept": "application/json",
         "Content-Type": "application/json",
@@ -23,7 +24,7 @@ def connection_get_headers():
     }
     return headers
 
-def connection_get_nemo_url():
+def connection_get_nemo_url(config):
     """
     Retrieve the Nemo URL from the configuration file.
 
@@ -37,7 +38,7 @@ def connection_get_nemo_url():
     config.read("config.ini")
     return config["nemo_library"]["nemo_url"]
 
-def connection_get_tenant():
+def connection_get_tenant(config):
     """
     Retrieve the tenant information from the configuration file.
 
@@ -51,7 +52,7 @@ def connection_get_tenant():
     config.read("config.ini")
     return config["nemo_library"]["tenant"]
 
-def connection_get_userid():
+def connection_get_userid(config):
     """
     Retrieve the user ID from the configuration file.
 
@@ -65,7 +66,7 @@ def connection_get_userid():
     config.read("config.ini")
     return config["nemo_library"]["userid"]
 
-def connection_get_password():
+def connection_get_password(config):
     """
     Retrieve the password from the configuration file.
 
@@ -79,7 +80,7 @@ def connection_get_password():
     config.read("config.ini")
     return config["nemo_library"]["password"]
 
-def connection_get_environment():
+def connection_get_environment(config):
     """
     Retrieve the environment information from the configuration file.
 
@@ -93,7 +94,7 @@ def connection_get_environment():
     config.read("config.ini")
     return config["nemo_library"]["environment"]
 
-def connection_get_cognito_authflow():
+def connection_get_cognito_authflow(config):
     """
     Retrieve the Cognito authentication flow type.
 
@@ -104,7 +105,7 @@ def connection_get_cognito_authflow():
     """
     return "USER_PASSWORD_AUTH"
 
-def connection_get_cognito_url():
+def connection_get_cognito_url(config):
     """
     Retrieve the Cognito URL based on the current environment.
 
@@ -118,7 +119,7 @@ def connection_get_cognito_url():
     Raises:
         Exception: If the environment is unknown.
     """
-    env = connection_get_environment()
+    env = connection_get_environment(config)
     appclient_ids = {
         "demo": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1ZbUITj21",
         "dev": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE",
@@ -131,7 +132,7 @@ def connection_get_cognito_url():
     except KeyError:
         raise Exception(f"unknown environment '{env}' provided")
 
-def connection_get_cognito_appclientid():
+def connection_get_cognito_appclientid(config):
     """
     Retrieve the Cognito App Client ID based on the current environment.
 
@@ -145,7 +146,7 @@ def connection_get_cognito_appclientid():
     Raises:
         Exception: If the environment is unknown.
     """
-    env = connection_get_environment()
+    env = connection_get_environment(config)
     appclient_ids = {
         "demo": "7tvfugcnunac7id3ebgns6n66u",
         "dev": "4lr89aas81m844o0admv3pfcrp",
@@ -158,7 +159,7 @@ def connection_get_cognito_appclientid():
     except KeyError:
         raise Exception(f"unknown environment '{env}' provided")
 
-def connection_get_tokens():
+def connection_get_tokens(config):
     """
     Retrieve authentication tokens from the Cognito service.
 
@@ -176,17 +177,17 @@ def connection_get_tokens():
         "Content-Type": "application/x-amz-json-1.1",
     }
 
-    authparams = {"USERNAME": connection_get_userid(), "PASSWORD": connection_get_password()}
+    authparams = {"USERNAME": connection_get_userid(config), "PASSWORD": connection_get_password(config)}
 
     data = {
         "AuthParameters": authparams,
-        "AuthFlow": connection_get_cognito_authflow(),
-        "ClientId": connection_get_cognito_appclientid(),
+        "AuthFlow": connection_get_cognito_authflow(config),
+        "ClientId": connection_get_cognito_appclientid(config),
     }
 
     # login and get token
     response_auth = requests.post(
-        connection_get_cognito_url(), headers=headers, data=json.dumps(data)
+        connection_get_cognito_url(config), headers=headers, data=json.dumps(data)
     )
     if response_auth.status_code != 200:
         raise Exception(
@@ -202,4 +203,5 @@ def connection_get_tokens():
     return id_token, access_token, refresh_token    
 
 if __name__ == "__main__":
-    print(connection_get_headers())
+    config = ConfigHandler()
+    print(connection_get_headers(config))

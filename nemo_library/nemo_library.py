@@ -15,6 +15,7 @@ import re
 
 from nemo_library.sub_symbols import *
 from nemo_library.sub_connection_handler import *
+from nemo_library.sub_config_handler import *
 
 NEMO_URL = "https://enter.nemo-ai.com"
 DEFAULT_PROJECT_NAME = "ERP Business Processes"
@@ -23,15 +24,31 @@ DEFAULT_PROJECT_NAME = "ERP Business Processes"
 class NemoLibrary:
     #################################################################################################################################################################
 
-    def __init__(self):
+    def __init__(
+        self,
+        nemo_url=None,
+        tenant=None,
+        userid=None,
+        password=None,
+        environment=None,
+        config_file="config.ini",
+    ):
 
         ### Load sql_keywords.json into global var
         with open(r"./nemo_library/sql_keywords.json", "r") as f:
             self._sql_keywords_ = set(json.load(f))
 
+        self.config = ConfigHandler(
+            nemo_url=nemo_url,
+            tenant=tenant,
+            userid=userid,
+            password=password,
+            environment=environment,
+            config_file=config_file,
+        )
+
         super().__init__()
 
-    
     #################################################################################################################################################################
 
     def _get_file_size_in_characters_(self, file_path):
@@ -54,10 +71,10 @@ class NemoLibrary:
     #################################################################################################################################################################
 
     def getProjectList(self):
-        headers = connection_get_headers()
+        headers = connection_get_headers(self.config)
 
         response = requests.get(
-            connection_get_nemo_url() + ENDPOINT_URL_PROJECTS_ALL, headers=headers
+            connection_get_nemo_url(self.config) + ENDPOINT_URL_PROJECTS_ALL, headers=headers
         )
         if response.status_code != 200:
             raise Exception(
@@ -88,9 +105,9 @@ class NemoLibrary:
             project_id = self.getProjectID(projectname)
 
             # initialize reqeust
-            headers = connection_get_headers()
+            headers = connection_get_headers(self.config)
             response = requests.get(
-                connection_get_nemo_url()
+                connection_get_nemo_url(self.config)
                 + ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS.format(
                     projectId=project_id
                 ),
@@ -145,12 +162,12 @@ class NemoLibrary:
             )
 
             # initialize reqeust
-            headers = connection_get_headers()
+            headers = connection_get_headers(self.config)
 
             for idx, row in df_imported.iterrows():
                 print(idx, row["internalName"])
                 response = requests.put(
-                    connection_get_nemo_url()
+                    connection_get_nemo_url(self.config)
                     + ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES.format(
                         id=row["id"]
                     ),
@@ -239,7 +256,7 @@ class NemoLibrary:
         try:
             project_id = self.getProjectID(projectname)
 
-            headers = connection_get_headers()
+            headers = connection_get_headers(self.config)
 
             print(
                 f"upload of file '{filename}' into project '{projectname}' initiated..."
@@ -264,7 +281,8 @@ class NemoLibrary:
 
             # initialize upload
             response = requests.post(
-                connection_get_nemo_url() + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE,
+                connection_get_nemo_url(self.config)
+                + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE,
                 headers=headers,
                 json=data,
             )
@@ -284,7 +302,7 @@ class NemoLibrary:
                 # post keep alive message
 
                 karesponse = requests.post(
-                    url=connection_get_nemo_url()
+                    url=connection_get_nemo_url(self.config)
                     + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_KEEP_ALIVE.format(
                         projectId=project_id, uploadId=upload_id
                     ),
@@ -327,7 +345,8 @@ class NemoLibrary:
             }
             datajs = json.dumps(data, indent=2)
             response = requests.post(
-                connection_get_nemo_url() + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_FINALIZE,
+                connection_get_nemo_url(self.config)
+                + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_FINALIZE,
                 headers=headers,
                 data=datajs,
             )
@@ -349,7 +368,7 @@ class NemoLibrary:
 
             data = {"uploadId": upload_id, "projectId": project_id}
             response = requests.post(
-                connection_get_nemo_url() + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
+                connection_get_nemo_url(self.config) + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
                 headers=headers,
                 json=data,
             )
@@ -371,7 +390,7 @@ class NemoLibrary:
         try:
             project_id = self.getProjectID(projectname)
 
-            headers = connection_get_headers()
+            headers = connection_get_headers(self.config)
 
             print(
                 f"upload of file '{filename}' into project '{projectname}' initiated..."
@@ -390,7 +409,7 @@ class NemoLibrary:
             # Retrieve temp. Creds. from NEMO TVM
 
             response = requests.get(
-                connection_get_nemo_url() + ENDPOINT_URL_TVM_S3_ACCESS,
+                connection_get_nemo_url(self.config) + ENDPOINT_URL_TVM_S3_ACCESS,
                 headers=headers,
             )
 
@@ -416,7 +435,9 @@ class NemoLibrary:
             try:
                 # Upload the file
                 s3filename = (
-                    connection_get_tenant() + "/ingestv2/" + os.path.basename(gzipped_filename)
+                    connection_get_tenant(self.config)
+                    + "/ingestv2/"
+                    + os.path.basename(gzipped_filename)
                 )
                 s3.upload_file(
                     gzipped_filename,
@@ -435,7 +456,7 @@ class NemoLibrary:
                 "s3_filepath": f"s3://nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs/{s3filename}",
             }
             response = requests.post(
-                connection_get_nemo_url() + ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
+                connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
                 headers=headers,
                 json=data,
             )
@@ -455,7 +476,7 @@ class NemoLibrary:
                     "page_size": 20,
                 }
                 response = requests.get(
-                    connection_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                    connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_TASK_RUNS,
                     headers=headers,
                     json=data,
                 )
@@ -487,7 +508,7 @@ class NemoLibrary:
                     "project_id": project_id,
                 }
                 response = requests.post(
-                    connection_get_nemo_url() + ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
+                    connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
                     headers=headers,
                     json=data,
                 )
@@ -507,7 +528,7 @@ class NemoLibrary:
                         "page_size": 20,
                     }
                     response = requests.get(
-                        connection_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                        connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_TASK_RUNS,
                         headers=headers,
                         json=data,
                     )
@@ -553,7 +574,7 @@ class NemoLibrary:
         try:
             project_id = self.getProjectID(projectname)
 
-            headers = connection_get_headers()
+            headers = connection_get_headers(self.config)
 
             print(
                 f"upload of file '{filename}' into project '{projectname}' initiated..."
@@ -572,7 +593,7 @@ class NemoLibrary:
             # Retrieve temp. Creds. from NEMO TVM
 
             response = requests.get(
-                connection_get_nemo_url() + ENDPOINT_URL_TVM_S3_ACCESS,
+                connection_get_nemo_url(self.config) + ENDPOINT_URL_TVM_S3_ACCESS,
                 headers=headers,
             )
 
@@ -598,7 +619,9 @@ class NemoLibrary:
             try:
                 # Upload the file
                 s3filename = (
-                    connection_get_tenant() + "/ingestv3/" + os.path.basename(gzipped_filename)
+                    connection_get_tenant(self.config)
+                    + "/ingestv3/"
+                    + os.path.basename(gzipped_filename)
                 )
                 s3.upload_file(
                     gzipped_filename,
@@ -621,7 +644,7 @@ class NemoLibrary:
             }
 
             response = requests.post(
-                connection_get_nemo_url() + ENDPOINT_URL_QUEUE_INGEST_DATA_V3,
+                connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_INGEST_DATA_V3,
                 headers=headers,
                 json=data,
             )
@@ -643,7 +666,7 @@ class NemoLibrary:
                         "page_size": 20,
                     }
                     response = requests.get(
-                        connection_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                        connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_TASK_RUNS,
                         headers=headers,
                         json=data,
                     )
@@ -679,13 +702,13 @@ class NemoLibrary:
 
         print(f"Loading report: {report_guid} from project {projectname}")
 
-        headers = connection_get_headers()
+        headers = connection_get_headers(self.config)
 
         # INIT REPORT PAYLOAD (REQUEST BODY)
         report_params = {"id": report_guid, "project_id": project_id}
 
         response_report = requests.post(
-            connection_get_nemo_url() + ENDPOINT_URL_REPORT_EXPORT,
+            connection_get_nemo_url(self.config) + ENDPOINT_URL_REPORT_EXPORT,
             headers=headers,
             json=report_params,
         )
@@ -711,11 +734,11 @@ class NemoLibrary:
     #################################################################################################################################################################
 
     def ProjectProperty(self, projectname: str, propertyname: str):
-        headers = connection_get_headers()
+        headers = connection_get_headers(self.config)
         project_id = self.getProjectID(projectname)
 
         ENDPOINT_URL = (
-            connection_get_nemo_url()
+            connection_get_nemo_url(self.config)
             + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(
                 projectId=project_id, request=propertyname
             )
@@ -770,7 +793,7 @@ class NemoLibrary:
                     "businessEvent": False,
                     "unit": "",
                     "columnType": "ExportedColumn",
-                    "tenant": connection_get_tenant(),
+                    "tenant": connection_get_tenant(self.config),
                     "projectId": project_id,
                 }
 
@@ -808,9 +831,9 @@ class NemoLibrary:
         try:
 
             # initialize reqeust
-            headers = connection_get_headers()
+            headers = connection_get_headers(self.config)
             response = requests.post(
-                connection_get_nemo_url()
+                connection_get_nemo_url(self.config)
                 + ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
                 headers=headers,
                 json=importedColumn,
@@ -865,7 +888,9 @@ class NemoLibrary:
         :param parent_group_internal_name: Internal name of the parent group.
         """
 
-        api_url = connection_get_nemo_url() + "/api/nemo-persistence/metadata/AttributeGroup"
+        api_url = (
+            connection_get_nemo_url(self.config) + "/api/nemo-persistence/metadata/AttributeGroup"
+        )
         group_internal_name = self.convert_internal_name(group_name)
         payload = {
             "displayName": group_name,
@@ -909,7 +934,7 @@ class NemoLibrary:
         if current_group is None:
             # remove existing groups first
             api_url = (
-                connection_get_nemo_url()
+                connection_get_nemo_url(self.config)
                 + f"/api/nemo-persistence/metadata/AttributeGroup/project/{projectId}/attributegroups"
             )
             response = requests.get(api_url, headers=headers)
@@ -922,7 +947,7 @@ class NemoLibrary:
             for index, row in attributegroups.iterrows():
                 print("delete attribute group", row["internalName"])
                 api_url = (
-                    connection_get_nemo_url()
+                    connection_get_nemo_url(self.config)
                     + "/api/nemo-persistence/metadata/AttributeGroup/"
                     + row["id"]
                 )
@@ -968,7 +993,7 @@ class NemoLibrary:
         try:
 
             # headers for all requests
-            headers = connection_get_headers()
+            headers = connection_get_headers(self.config)
 
             # read meta data from fox file
             foxmetadata = pd.read_excel(
@@ -991,7 +1016,7 @@ class NemoLibrary:
 
             # read meta data from NEMO project
             response = requests.get(
-                connection_get_nemo_url()
+                connection_get_nemo_url(self.config)
                 + f"/api/nemo-persistence/metadata/Columns/project/{projectId}/exported",
                 headers=headers,
             )
@@ -1059,7 +1084,7 @@ class NemoLibrary:
 
                         # lets move the attribute now
                         api_url = (
-                            connection_get_nemo_url()
+                            connection_get_nemo_url(self.config)
                             + f"/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/move"
                         )
                         payload = {

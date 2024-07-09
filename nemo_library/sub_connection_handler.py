@@ -1,9 +1,9 @@
-import configparser
 import requests
 import json
 from nemo_library.sub_config_handler import *
 
-def connection_get_headers(config):
+
+def connection_get_headers(config: ConfigHandler):
     """
     Retrieve headers for authentication and API requests.
 
@@ -24,77 +24,7 @@ def connection_get_headers(config):
     }
     return headers
 
-def connection_get_nemo_url(config):
-    """
-    Retrieve the Nemo URL from the configuration file.
-
-    This function reads the `config.ini` file and retrieves the Nemo URL 
-    specified under the `nemo_library` section.
-
-    Returns:
-        str: The Nemo URL.
-    """
-    config = configparser.ConfigParser()
-    config.read("config.ini")
-    return config["nemo_library"]["nemo_url"]
-
-def connection_get_tenant(config):
-    """
-    Retrieve the tenant information from the configuration file.
-
-    This function reads the `config.ini` file and retrieves the tenant 
-    specified under the `nemo_library` section.
-
-    Returns:
-        str: The tenant information.
-    """
-    config = configparser.ConfigParser()
-    config.read("config.ini")
-    return config["nemo_library"]["tenant"]
-
-def connection_get_userid(config):
-    """
-    Retrieve the user ID from the configuration file.
-
-    This function reads the `config.ini` file and retrieves the user ID 
-    specified under the `nemo_library` section.
-
-    Returns:
-        str: The user ID.
-    """
-    config = configparser.ConfigParser()
-    config.read("config.ini")
-    return config["nemo_library"]["userid"]
-
-def connection_get_password(config):
-    """
-    Retrieve the password from the configuration file.
-
-    This function reads the `config.ini` file and retrieves the password 
-    specified under the `nemo_library` section.
-
-    Returns:
-        str: The password.
-    """
-    config = configparser.ConfigParser()
-    config.read("config.ini")
-    return config["nemo_library"]["password"]
-
-def connection_get_environment(config):
-    """
-    Retrieve the environment information from the configuration file.
-
-    This function reads the `config.ini` file and retrieves the environment 
-    specified under the `nemo_library` section.
-
-    Returns:
-        str: The environment information.
-    """
-    config = configparser.ConfigParser()
-    config.read("config.ini")
-    return config["nemo_library"]["environment"]
-
-def connection_get_cognito_authflow(config):
+def connection_get_cognito_authflow(config: ConfigHandler):
     """
     Retrieve the Cognito authentication flow type.
 
@@ -105,7 +35,8 @@ def connection_get_cognito_authflow(config):
     """
     return "USER_PASSWORD_AUTH"
 
-def connection_get_cognito_url(config):
+
+def connection_get_cognito_url(config: ConfigHandler):
     """
     Retrieve the Cognito URL based on the current environment.
 
@@ -119,20 +50,21 @@ def connection_get_cognito_url(config):
     Raises:
         Exception: If the environment is unknown.
     """
-    env = connection_get_environment(config)
+    env = config.config_get_environment()
     appclient_ids = {
         "demo": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1ZbUITj21",
         "dev": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE",
         "prod": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF",
         "challenge": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_U2V9y0lzx",
     }
-    
+
     try:
         return appclient_ids[env]
     except KeyError:
         raise Exception(f"unknown environment '{env}' provided")
 
-def connection_get_cognito_appclientid(config):
+
+def connection_get_cognito_appclientid(config: ConfigHandler):
     """
     Retrieve the Cognito App Client ID based on the current environment.
 
@@ -146,20 +78,21 @@ def connection_get_cognito_appclientid(config):
     Raises:
         Exception: If the environment is unknown.
     """
-    env = connection_get_environment(config)
+    env = config.config_get_environment()
     appclient_ids = {
         "demo": "7tvfugcnunac7id3ebgns6n66u",
         "dev": "4lr89aas81m844o0admv3pfcrp",
         "prod": "8t32vcmmdvmva4qvb79gpfhdn",
         "challenge": "43lq8ej98uuo8hvnoi1g880onp",
     }
-    
+
     try:
         return appclient_ids[env]
     except KeyError:
         raise Exception(f"unknown environment '{env}' provided")
 
-def connection_get_tokens(config):
+
+def connection_get_tokens(config: ConfigHandler):
     """
     Retrieve authentication tokens from the Cognito service.
 
@@ -177,7 +110,10 @@ def connection_get_tokens(config):
         "Content-Type": "application/x-amz-json-1.1",
     }
 
-    authparams = {"USERNAME": connection_get_userid(config), "PASSWORD": connection_get_password(config)}
+    authparams = {
+        "USERNAME": config.config_get_userid(),
+        "PASSWORD": config.config_get_password(),
+    }
 
     data = {
         "AuthParameters": authparams,
@@ -200,7 +136,8 @@ def connection_get_tokens(config):
         "RefreshToken"
     )  # Some flows might not return a RefreshToken
 
-    return id_token, access_token, refresh_token    
+    return id_token, access_token, refresh_token
+
 
 if __name__ == "__main__":
     config = ConfigHandler()

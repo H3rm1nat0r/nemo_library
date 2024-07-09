@@ -74,7 +74,7 @@ class NemoLibrary:
         headers = connection_get_headers(self.config)
 
         response = requests.get(
-            connection_get_nemo_url(self.config) + ENDPOINT_URL_PROJECTS_ALL, headers=headers
+            self.config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_ALL, headers=headers
         )
         if response.status_code != 200:
             raise Exception(
@@ -107,7 +107,7 @@ class NemoLibrary:
             # initialize reqeust
             headers = connection_get_headers(self.config)
             response = requests.get(
-                connection_get_nemo_url(self.config)
+                self.config.config_get_nemo_url()
                 + ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS.format(
                     projectId=project_id
                 ),
@@ -167,7 +167,7 @@ class NemoLibrary:
             for idx, row in df_imported.iterrows():
                 print(idx, row["internalName"])
                 response = requests.put(
-                    connection_get_nemo_url(self.config)
+                    self.config.config_get_nemo_url()
                     + ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES.format(
                         id=row["id"]
                     ),
@@ -281,7 +281,7 @@ class NemoLibrary:
 
             # initialize upload
             response = requests.post(
-                connection_get_nemo_url(self.config)
+                self.config.config_get_nemo_url()
                 + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE,
                 headers=headers,
                 json=data,
@@ -302,7 +302,7 @@ class NemoLibrary:
                 # post keep alive message
 
                 karesponse = requests.post(
-                    url=connection_get_nemo_url(self.config)
+                    url=self.config.config_get_nemo_url()
                     + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_KEEP_ALIVE.format(
                         projectId=project_id, uploadId=upload_id
                     ),
@@ -345,7 +345,7 @@ class NemoLibrary:
             }
             datajs = json.dumps(data, indent=2)
             response = requests.post(
-                connection_get_nemo_url(self.config)
+                self.config.config_get_nemo_url()
                 + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_FINALIZE,
                 headers=headers,
                 data=datajs,
@@ -368,7 +368,7 @@ class NemoLibrary:
 
             data = {"uploadId": upload_id, "projectId": project_id}
             response = requests.post(
-                connection_get_nemo_url(self.config) + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
+                self.config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_ABORT,
                 headers=headers,
                 json=data,
             )
@@ -409,7 +409,7 @@ class NemoLibrary:
             # Retrieve temp. Creds. from NEMO TVM
 
             response = requests.get(
-                connection_get_nemo_url(self.config) + ENDPOINT_URL_TVM_S3_ACCESS,
+                self.config.config_get_nemo_url() + ENDPOINT_URL_TVM_S3_ACCESS,
                 headers=headers,
             )
 
@@ -456,7 +456,7 @@ class NemoLibrary:
                 "s3_filepath": f"s3://nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs/{s3filename}",
             }
             response = requests.post(
-                connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
+                self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
                 headers=headers,
                 json=data,
             )
@@ -476,7 +476,7 @@ class NemoLibrary:
                     "page_size": 20,
                 }
                 response = requests.get(
-                    connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                    self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
                     headers=headers,
                     json=data,
                 )
@@ -508,7 +508,7 @@ class NemoLibrary:
                     "project_id": project_id,
                 }
                 response = requests.post(
-                    connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
+                    self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
                     headers=headers,
                     json=data,
                 )
@@ -528,7 +528,7 @@ class NemoLibrary:
                         "page_size": 20,
                     }
                     response = requests.get(
-                        connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                        self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
                         headers=headers,
                         json=data,
                     )
@@ -593,7 +593,7 @@ class NemoLibrary:
             # Retrieve temp. Creds. from NEMO TVM
 
             response = requests.get(
-                connection_get_nemo_url(self.config) + ENDPOINT_URL_TVM_S3_ACCESS,
+                self.config.config_get_nemo_url() + ENDPOINT_URL_TVM_S3_ACCESS,
                 headers=headers,
             )
 
@@ -644,7 +644,7 @@ class NemoLibrary:
             }
 
             response = requests.post(
-                connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_INGEST_DATA_V3,
+                self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_INGEST_DATA_V3,
                 headers=headers,
                 json=data,
             )
@@ -666,7 +666,7 @@ class NemoLibrary:
                         "page_size": 20,
                     }
                     response = requests.get(
-                        connection_get_nemo_url(self.config) + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                        self.config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
                         headers=headers,
                         json=data,
                     )
@@ -708,7 +708,7 @@ class NemoLibrary:
         report_params = {"id": report_guid, "project_id": project_id}
 
         response_report = requests.post(
-            connection_get_nemo_url(self.config) + ENDPOINT_URL_REPORT_EXPORT,
+            self.config.config_get_nemo_url() + ENDPOINT_URL_REPORT_EXPORT,
             headers=headers,
             json=report_params,
         )
@@ -738,7 +738,7 @@ class NemoLibrary:
         project_id = self.getProjectID(projectname)
 
         ENDPOINT_URL = (
-            connection_get_nemo_url(self.config)
+            self.config.config_get_nemo_url()
             + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(
                 projectId=project_id, request=propertyname
             )
@@ -833,7 +833,7 @@ class NemoLibrary:
             # initialize reqeust
             headers = connection_get_headers(self.config)
             response = requests.post(
-                connection_get_nemo_url(self.config)
+                self.config.config_get_nemo_url()
                 + ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
                 headers=headers,
                 json=importedColumn,
@@ -889,7 +889,7 @@ class NemoLibrary:
         """
 
         api_url = (
-            connection_get_nemo_url(self.config) + "/api/nemo-persistence/metadata/AttributeGroup"
+            self.config.config_get_nemo_url() + "/api/nemo-persistence/metadata/AttributeGroup"
         )
         group_internal_name = self.convert_internal_name(group_name)
         payload = {
@@ -934,7 +934,7 @@ class NemoLibrary:
         if current_group is None:
             # remove existing groups first
             api_url = (
-                connection_get_nemo_url(self.config)
+                self.config.config_get_nemo_url()
                 + f"/api/nemo-persistence/metadata/AttributeGroup/project/{projectId}/attributegroups"
             )
             response = requests.get(api_url, headers=headers)
@@ -947,7 +947,7 @@ class NemoLibrary:
             for index, row in attributegroups.iterrows():
                 print("delete attribute group", row["internalName"])
                 api_url = (
-                    connection_get_nemo_url(self.config)
+                    self.config.config_get_nemo_url()
                     + "/api/nemo-persistence/metadata/AttributeGroup/"
                     + row["id"]
                 )
@@ -1016,7 +1016,7 @@ class NemoLibrary:
 
             # read meta data from NEMO project
             response = requests.get(
-                connection_get_nemo_url(self.config)
+                self.config.config_get_nemo_url()
                 + f"/api/nemo-persistence/metadata/Columns/project/{projectId}/exported",
                 headers=headers,
             )
@@ -1084,7 +1084,7 @@ class NemoLibrary:
 
                         # lets move the attribute now
                         api_url = (
-                            connection_get_nemo_url(self.config)
+                            self.config.config_get_nemo_url()
                             + f"/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/move"
                         )
                         payload = {

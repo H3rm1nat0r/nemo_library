@@ -27,7 +27,7 @@ class NemoLibrary:
 
         ### Load sql_keywords.json into global var
         with open(r"./nemo_library/sql_keywords.json", "r") as f:
-            self._sql_keywords = set(json.load(f))
+            self._sql_keywords_ = set(json.load(f))
 
         super().__init__()
 
@@ -848,7 +848,7 @@ class NemoLibrary:
             internal_name = internal_name[1:]
 
         # column must not be an sql keyword
-        if internal_name in self._sql_keywords:
+        if internal_name in self._sql_keywords_:
             internal_name = f"name_{internal_name}"
 
         return internal_name

@@ -28,8 +28,8 @@ class PasswordManager:
 if __name__ == "__main__":
     # Beispielhafte Verwendung:
     service_name = "nemo_library"
-    username = "schug_g_ca_proalpha"
-    password = "vdcGz9CT3rX8uwhsLSdxGiDp5naP6kUF"
+    username = "xxx"
+    password = "yyy"
 
     pm = PasswordManager(service_name, username)
 

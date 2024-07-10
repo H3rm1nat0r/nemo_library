@@ -91,4 +91,4 @@ def getProjectProperty(config: ConfigHandler, projectname: str, propertyname: st
             f"request failed. Status: {response.status_code}, error: {response.text}"
         )
 
-    return response.text
+    return response.text[1:-1] # cut off leading and trailing "

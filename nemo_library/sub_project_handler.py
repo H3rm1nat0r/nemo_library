@@ -4,12 +4,13 @@ import json
 
 from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_connection_handler import connection_get_headers
-from nemo_library.sub_symbols import ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES, ENDPOINT_URL_PROJECTS_ALL
+from nemo_library.sub_symbols import (
+    ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES,
+    ENDPOINT_URL_PROJECTS_ALL,
+)
 
 
-DEFAULT_PROJECT_NAME = "Business Processes"
-
-def getProjectList(config : ConfigHandler):
+def getProjectList(config: ConfigHandler):
     """
     Retrieves a list of projects from the server and returns it as a DataFrame.
 
@@ -36,7 +37,7 @@ def getProjectList(config : ConfigHandler):
     return df
 
 
-def getProjectID(config : ConfigHandler, projectname: str):
+def getProjectID(config: ConfigHandler, projectname: str):
     """
     Retrieves the project ID for a given project name.
 
@@ -50,14 +51,13 @@ def getProjectID(config : ConfigHandler, projectname: str):
     Raises:
         Exception: If the project name is not found or if multiple projects match the given name.
     """
-    if projectname is None:
-        projectname = DEFAULT_PROJECT_NAME
     df = getProjectList(config)
     crmproject = df[df["displayName"] == projectname]
     if len(crmproject) != 1:
         raise Exception(f"could not identify project name {projectname}")
     project_id = crmproject["id"].to_list()[0]
     return project_id
+
 
 def getProjectProperty(config: ConfigHandler, projectname: str, propertyname: str):
     """

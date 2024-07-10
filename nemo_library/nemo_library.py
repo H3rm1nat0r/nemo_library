@@ -9,17 +9,14 @@ from botocore.exceptions import NoCredentialsError
 import pandas as pd
 import requests
 
-import gzip
 import shutil
 import re
 
-from nemo_library.sub_symbols import *
-from nemo_library.sub_connection_handler import *
-from nemo_library.sub_config_handler import *
-from nemo_library.sub_password_handler import *
-from nemo_library.sub_project_handler import *
-from nemo_library.sub_file_upload_handler import *
-
+from nemo_library.sub_config_handler import ConfigHandler
+from nemo_library.sub_connection_handler import connection_get_headers
+from nemo_library.sub_file_upload_handler import ReUploadFileIngestion
+from nemo_library.sub_project_handler import getProjectID, getProjectList, getProjectProperty
+from nemo_library.sub_symbols import ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN, ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS, ENDPOINT_URL_REPORT_EXPORT, RESERVED_KEYWORDS
 
 class NemoLibrary:
 
@@ -223,7 +220,7 @@ class NemoLibrary:
                     "businessEvent": False,
                     "unit": "",
                     "columnType": "ExportedColumn",
-                    "tenant": connection_get_tenant(self.config),
+                    "tenant": self.config.config_get_tenant(),
                     "projectId": project_id,
                 }
 

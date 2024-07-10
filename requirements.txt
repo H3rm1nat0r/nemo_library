@@ -4,10 +4,12 @@ botocore
 build
 certifi
 charset-normalizer
+coverage
 docutils
 et-xmlfile
 idna
 importlib_metadata
+iniconfig
 jaraco.classes
 jaraco.context
 jaraco.functools
@@ -23,10 +25,13 @@ packaging
 pandas
 pandoc
 pkginfo
+pluggy
 plumbum
 ply
 Pygments
 pyproject_hooks
+pytest
+pytest-cov
 python-dateutil
 pytz
 readme_renderer

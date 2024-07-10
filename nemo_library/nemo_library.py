@@ -33,7 +33,7 @@ class NemoLibrary:
         config_file="config.ini",
     ):
 
-        with open(r"./nemo_library/sql_keywords.json", "r") as f:
+        with open(r"sql_keywords.json", "r") as f:
             self.sql_keywords = set(json.load(f))
 
         self.config = ConfigHandler(

@@ -3,6 +3,9 @@
 # ensure proper python environment
 source setup.sh
 
+# remove old artifacts
+rm -rf build dist *.egg-info
+
 # convert README.md for pypi
 pandoc -f markdown -t rst -o README.rst README.md
 

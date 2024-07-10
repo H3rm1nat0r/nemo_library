@@ -2,12 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name='nemo_library',
-    version='1.0.38',
+    version='1.0.39',
     packages=find_packages(),
-    include_package_data=True,
-    package_data={
-        'nemo_library': ['sql_keywords.json'],
-    },
     install_requires=[
         'requests','pandas'
     ],

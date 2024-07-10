@@ -33,9 +33,6 @@ class NemoLibrary:
         config_file="config.ini",
     ):
 
-        with open(r"sql_keywords.json", "r") as f:
-            self.sql_keywords = set(json.load(f))
-
         self.config = ConfigHandler(
             nemo_url=nemo_url,
             tenant=tenant,
@@ -218,7 +215,7 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def clean_column_name(self, column_name, reserved_keywords):
+    def aclean_column_name(self, column_name, reserved_keywords):
         # If csv column name is empty, return "undefined_name"
         if not column_name:
             return "undefined_name"
@@ -288,7 +285,7 @@ class NemoLibrary:
             internal_name = internal_name[1:]
 
         # column must not be an sql keyword
-        if internal_name in self.sql_keywords:
+        if internal_name in RESERVED_KEYWORDS:
             internal_name = f"name_{internal_name}"
 
         return internal_name

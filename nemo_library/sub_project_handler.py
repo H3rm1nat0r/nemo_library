@@ -2,14 +2,14 @@ import pandas as pd
 import requests
 import json
 
-from nemo_library.sub_symbols import *
-from nemo_library.sub_connection_handler import *
-from nemo_library.sub_config_handler import *
-from nemo_library.sub_password_handler import *
+from nemo_library.sub_config_handler import ConfigHandler
+from nemo_library.sub_connection_handler import connection_get_headers
+from nemo_library.sub_symbols import ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES, ENDPOINT_URL_PROJECTS_ALL
+
 
 DEFAULT_PROJECT_NAME = "Business Processes"
 
-def getProjectList(config):
+def getProjectList(config : ConfigHandler):
     """
     Retrieves a list of projects from the server and returns it as a DataFrame.
 
@@ -36,7 +36,7 @@ def getProjectList(config):
     return df
 
 
-def getProjectID(config, projectname: str):
+def getProjectID(config : ConfigHandler, projectname: str):
     """
     Retrieves the project ID for a given project name.
 
@@ -58,3 +58,37 @@ def getProjectID(config, projectname: str):
         raise Exception(f"could not identify project name {projectname}")
     project_id = crmproject["id"].to_list()[0]
     return project_id
+
+def getProjectProperty(config: ConfigHandler, projectname: str, propertyname: str):
+    """
+    Retrieves a specified property for a given project from the server.
+
+    Args:
+        config: Configuration object that contains necessary connection settings.
+        projectname (str): The name of the project for which to retrieve the property.
+        propertyname (str): The name of the property to retrieve.
+
+    Returns:
+        str: The value of the specified property for the given project.
+
+    Raises:
+        Exception: If the request to the server fails.
+    """
+    headers = connection_get_headers(config)
+    project_id = getProjectID(config, projectname)
+
+    ENDPOINT_URL = (
+        config.config_get_nemo_url()
+        + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(
+            projectId=project_id, request=propertyname
+        )
+    )
+
+    response = requests.get(ENDPOINT_URL, headers=headers)
+
+    if response.status_code != 200:
+        raise Exception(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
+        )
+
+    return response.text

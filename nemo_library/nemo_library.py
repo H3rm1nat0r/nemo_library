@@ -65,6 +65,22 @@ class NemoLibrary:
         """
         return getProjectID(self.config, projectname)
 
+    def getProjectProperty(self, projectname: str, propertyname: str):
+        """
+        Retrieves a specified property for a given project from the server.
+
+        Args:
+            projectname (str): The name of the project for which to retrieve the property.
+            propertyname (str): The name of the property to retrieve.
+
+        Returns:
+            str: The value of the specified property for the given project.
+
+        Raises:
+            Exception: If the request to the server fails.
+        """
+        return getProjectProperty(self.config,projectname,propertyname)
+    
     def ReUploadFile(
         self,
         projectname: str,

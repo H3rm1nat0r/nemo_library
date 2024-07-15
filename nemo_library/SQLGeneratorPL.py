@@ -539,7 +539,7 @@ class SQLGeneratorPL:
             rowdesc = row["Bezeichnung1"] if row["Bezeichnung1"] is not None else ""
 
             if not account_numbers:
-                frags = [f"0 AS {label}" for label in labels]
+                frags = [f"NULL AS {label}" for label in labels]
             else:
                 frags = [
                     f"""    ROUND(
@@ -572,12 +572,7 @@ class SQLGeneratorPL:
             else:
                 fragment += f"""
     FROM 
-        nemo."pa_export" 
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = {company}
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0"""
+        DUMMY"""
 
             sql_fragments.append(fragment)
 

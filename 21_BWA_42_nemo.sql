@@ -251,8 +251,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     6 AS SortOrder,
@@ -293,8 +293,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     7 AS SortOrder,
@@ -335,8 +335,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     8 AS SortOrder,
@@ -737,14 +737,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8000,8001,8002,8003,8004,8005,8169)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8000,8001,8002,8003,8004,8005,8169)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     9 AS SortOrder,
@@ -1145,14 +1145,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8170,8200,8201,8202,8203,8204,8205,8320,8321)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8170,8200,8201,8202,8203,8204,8205,8320,8321)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     10 AS SortOrder,
@@ -1553,14 +1553,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8100,8101,8102,8103,8104,8105,8323,8650,8651,8652,8653,8654,8655,8750)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8100,8101,8102,8103,8104,8105,8323,8650,8651,8652,8653,8654,8655,8750)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     11 AS SortOrder,
@@ -1961,14 +1961,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8700,8701,8702,8703,8704,8705,8706,8707,8708,8709,8720,8721,8723,8730,8737,8739)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8700,8701,8702,8703,8704,8705,8706,8707,8708,8709,8720,8721,8723,8730,8737,8739)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     12 AS SortOrder,
@@ -2369,14 +2369,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8965,8967,8985)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8965,8967,8985)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     13 AS SortOrder,
@@ -2417,8 +2417,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     14 AS SortOrder,
@@ -2459,8 +2459,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     15 AS SortOrder,
@@ -2861,14 +2861,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8006,8007,8008)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8006,8007,8008)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     16 AS SortOrder,
@@ -3269,14 +3269,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8206,8207,8208,8322)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8206,8207,8208,8322)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     17 AS SortOrder,
@@ -3677,14 +3677,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8106,8107,8108,8361,8362,8363,8656,8657,8658)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8106,8107,8108,8361,8362,8363,8656,8657,8658)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     18 AS SortOrder,
@@ -3725,8 +3725,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     19 AS SortOrder,
@@ -4127,14 +4127,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8966)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8966)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     20 AS SortOrder,
@@ -4175,8 +4175,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     21 AS SortOrder,
@@ -4217,8 +4217,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     22 AS SortOrder,
@@ -4259,8 +4259,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     23 AS SortOrder,
@@ -4661,14 +4661,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2752)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2752)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     24 AS SortOrder,
@@ -5069,14 +5069,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2670,2702,2703,2720,2730,2735,2742,2743,2749,8610,8613,8616)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2670,2702,2703,2720,2730,2735,2742,2743,2749,8610,8613,8616)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     25 AS SortOrder,
@@ -5477,14 +5477,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (8950)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (8950)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     26 AS SortOrder,
@@ -5525,8 +5525,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     27 AS SortOrder,
@@ -5567,8 +5567,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     28 AS SortOrder,
@@ -5609,8 +5609,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     29 AS SortOrder,
@@ -5651,8 +5651,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     30 AS SortOrder,
@@ -6053,14 +6053,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (3300,3401,3402,3555,3556,3557)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (3300,3401,3402,3555,3556,3557)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     31 AS SortOrder,
@@ -6461,14 +6461,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (3400,3500,3501,3502,3504,3505,3506,3507,3508,3509,3595,3597,3598,3599,3600,3730,3731,3737,3739)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (3400,3500,3501,3502,3504,3505,3506,3507,3508,3509,3595,3597,3598,3599,3600,3730,3731,3737,3739)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     32 AS SortOrder,
@@ -6869,14 +6869,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (3210,3211,3215,3216,3217,3332)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (3210,3211,3215,3216,3217,3332)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     33 AS SortOrder,
@@ -7277,14 +7277,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (3100,3102,3103,3650,3651,3652)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (3100,3102,3103,3650,3651,3652)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     34 AS SortOrder,
@@ -7685,14 +7685,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (3611,3612,3613)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (3611,3612,3613)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     35 AS SortOrder,
@@ -7733,8 +7733,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     36 AS SortOrder,
@@ -7775,8 +7775,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     37 AS SortOrder,
@@ -8177,14 +8177,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2736,4100,4102,4104,4105,4106,4110,4112,4115,4119,4120,4121,4122,4123,4124,4125,4126,4127,4128,4152,4155,4190,4191,4199,6110,6120,6127,8597)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2736,4100,4102,4104,4105,4106,4110,4112,4115,4119,4120,4121,4122,4123,4124,4125,4126,4127,4128,4152,4155,4190,4191,4199,6110,6120,6127,8597)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     38 AS SortOrder,
@@ -8585,14 +8585,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4130,4132,4134,4138,4139,4140,4142,4145,4165,4170,6130,6140)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4130,4132,4134,4138,4139,4140,4142,4145,4165,4170,6130,6140)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     39 AS SortOrder,
@@ -8633,8 +8633,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     40 AS SortOrder,
@@ -8675,8 +8675,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     41 AS SortOrder,
@@ -9077,14 +9077,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4201,4209,4210,4213)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4201,4209,4210,4213)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     42 AS SortOrder,
@@ -9485,14 +9485,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4240,4241,4251,4261)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4240,4241,4251,4261)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     43 AS SortOrder,
@@ -9893,14 +9893,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4510,4520,4531,4532,4541,4570,4571,4572,4575,4580,4581,4582)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4510,4520,4531,4532,4541,4570,4571,4572,4575,4580,4581,4582)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     44 AS SortOrder,
@@ -10301,14 +10301,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4186,4946)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4186,4946)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     45 AS SortOrder,
@@ -10709,14 +10709,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4360,4362,4380,4381,4390)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4360,4362,4380,4381,4390)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     46 AS SortOrder,
@@ -11117,14 +11117,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4910,4912,4920,4922,4925)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4910,4912,4920,4922,4925)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     47 AS SortOrder,
@@ -11525,14 +11525,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4662,4663,4667,4668,4686,4690,4692,4695)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4662,4663,4667,4668,4686,4690,4692,4695)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     48 AS SortOrder,
@@ -11933,14 +11933,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4760,4761)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4760,4761)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     49 AS SortOrder,
@@ -12341,14 +12341,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4780,4781,6781)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4780,4781,6781)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     50 AS SortOrder,
@@ -12749,14 +12749,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4951,4957,6951)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4951,4957,6951)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     51 AS SortOrder,
@@ -13157,14 +13157,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4610,4616,4630,4635,4637,4641,4651,4652,4655,4952)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4610,4616,4630,4635,4637,4641,4651,4652,4655,4952)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     52 AS SortOrder,
@@ -13205,8 +13205,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     53 AS SortOrder,
@@ -13607,14 +13607,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4961,4963,4964)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4961,4963,4964)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     54 AS SortOrder,
@@ -14015,14 +14015,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4805,4809)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4805,4809)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     55 AS SortOrder,
@@ -14423,14 +14423,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4785)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4785)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     56 AS SortOrder,
@@ -14831,14 +14831,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4931,4932,4933,4934,4940,4981)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4931,4932,4933,4934,4940,4981)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     57 AS SortOrder,
@@ -14879,8 +14879,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     58 AS SortOrder,
@@ -15281,14 +15281,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2000,2104,2300,2301,2308,2310,2315,2320,2350,2380,4732,4733,4900,4958)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2000,2104,2300,2301,2308,2310,2315,2320,2350,2380,4732,4733,4900,4958)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     59 AS SortOrder,
@@ -15689,14 +15689,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4970)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4970)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     60 AS SortOrder,
@@ -16097,14 +16097,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2150,2990)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2150,2990)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     61 AS SortOrder,
@@ -16505,14 +16505,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2400,2401,2403,2407,2460,2465,2731,2733)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2400,2401,2403,2407,2460,2465,2731,2733)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     62 AS SortOrder,
@@ -16913,14 +16913,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4782,4783,4784,4901,4902,4903,4904,4905,4906)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4782,4783,4784,4901,4902,4903,4904,4905,4906)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     63 AS SortOrder,
@@ -16961,8 +16961,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     64 AS SortOrder,
@@ -17003,8 +17003,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     65 AS SortOrder,
@@ -17045,8 +17045,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     66 AS SortOrder,
@@ -17447,14 +17447,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (4830,4860,4870)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (4830,4860,4870)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     67 AS SortOrder,
@@ -17495,8 +17495,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     68 AS SortOrder,
@@ -17537,8 +17537,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     69 AS SortOrder,
@@ -17579,8 +17579,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     70 AS SortOrder,
@@ -17621,8 +17621,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     71 AS SortOrder,
@@ -18023,14 +18023,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2100,2101,2110,2120)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2100,2101,2110,2120)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     72 AS SortOrder,
@@ -18071,8 +18071,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     73 AS SortOrder,
@@ -18113,8 +18113,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     74 AS SortOrder,
@@ -18515,14 +18515,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2494)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2494)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     75 AS SortOrder,
@@ -18923,14 +18923,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2650,2651,2660)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2650,2651,2660)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     76 AS SortOrder,
@@ -18971,8 +18971,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     77 AS SortOrder,
@@ -19373,14 +19373,14 @@ SELECT
                     0
             END),
         2) AS "P&L_FY00_FM12"
-    FROM 
-        $schema.$table  
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = 21
-        AND FA_MAIN_POST_ACCOUNT in (2200,2205,2210,2215,2219,2280,2283,2285,2289,2780,2785,4320)
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0
+        FROM 
+            $schema.$table  
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = 21
+            AND FA_MAIN_POST_ACCOUNT in (2200,2205,2210,2215,2219,2280,2283,2285,2289,2780,2785,4320)
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0
 UNION ALL
 SELECT
     78 AS SortOrder,
@@ -19421,8 +19421,8 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 UNION ALL
 SELECT
     79 AS SortOrder,
@@ -19463,6 +19463,6 @@ NULL AS "P&L_FY00_FM09",
 NULL AS "P&L_FY00_FM10",
 NULL AS "P&L_FY00_FM11",
 NULL AS "P&L_FY00_FM12"
-    FROM 
-        DUMMY
+        FROM 
+            DUMMY
 ORDER BY SortOrder

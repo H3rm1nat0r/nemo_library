@@ -463,7 +463,7 @@ class SQLGeneratorPL:
         df_ttSA_Zeile_sorted = df_ttSA_Zeile.sort_values(by="ZeilenNr")
         return df_ttSA_Zeile_sorted
 
-    def getAccountIDs(self, import_file: str, line_id: int) -> List[Tuple[int, int]]:
+    def getAccountIDs(self, import_file: str, line_id: int) -> List[int]:
         """
         Extract account ID pairs (Konto_min, Konto_max) from an XML file where the ZeilenID matches the provided line_id.
 
@@ -472,7 +472,7 @@ class SQLGeneratorPL:
         line_id (int): The line ID used to filter the ttSA_Konto entries.
 
         Returns:
-        List[Tuple[int, int]]: A list of tuples where each tuple contains the Konto_min and Konto_max values.
+        List[int]: A list of account ids.
         """
         accounts = []
 
@@ -493,9 +493,71 @@ class SQLGeneratorPL:
                 if konto_min is not None and konto_max is not None:
                     konto_min_value = int(konto_min.text)
                     konto_max_value = int(konto_max.text)
-                    accounts.append((konto_min_value, konto_max_value))
-
+                    
+                    if konto_min ==konto_max:
+                        accounts.append(konto_min_value)
+                    else:
+                        accounts.extend(range(konto_min_value, konto_max_value + 1))
+        
         return accounts
+
+    def generate_sql_fragment(
+        self,
+        rowdesc: str,
+        labels: List[str],
+        business_periods: List[Tuple[int, int]],
+        account_ids: List[int],
+        company: str
+    ) -> str:
+        """
+        Generate a single SQL fragment for a given row description and account IDs.
+        
+        Parameters:
+        rowdesc (str): Description for the current row.
+        labels (List[str]): List of labels for the SQL columns.
+        business_periods (List[Tuple[int, int]]): List of tuples representing fiscal year and period.
+        account_ids (List[int]): List of account IDs.
+        company (str): Company ID to be used in the SQL statement.
+        
+        Returns:
+        str: Generated SQL fragment.
+        """
+        if not account_ids:
+            frags = [f"NULL AS {label}" for label in labels]
+            fragment = f"    '{rowdesc}' AS DESCRIPTION,\n"
+            fragment += ",\n".join(frags)
+            fragment += f"""
+        FROM 
+            DUMMY"""
+        else:
+            account_ids_str = ",".join(map(str, account_ids))
+            frags = [
+                f"""    ROUND(
+        SUM(
+            CASE 
+                WHEN FA_MAIN_POST_YEAR = FiscalYearMinus{year:01d}
+                    AND FA_MAIN_POST_PERIOD = {month} THEN 
+                    FA_MAIN_POST_AMOUNT 
+                    * CASE WHEN FA_MAIN_POST_DC_INDICATOR = 'C' THEN 1 ELSE -1 END
+                ELSE 
+                    0
+            END),
+        2) AS {labels[idx]}"""
+                for idx, (year, month) in enumerate(business_periods)
+            ]
+            fragment = f"    '{rowdesc}' AS DESCRIPTION,\n"
+            fragment += ",\n".join(frags)
+            fragment += f"""
+        FROM 
+            nemo."pa_export" 
+        CROSS JOIN
+            DateCalculations
+        WHERE
+            COMPANY = {company}
+            AND FA_MAIN_POST_ACCOUNT in ({account_ids_str})
+            AND FA_MAIN_POST_DATE >= CalendarPeriod0"""
+
+        return fragment
 
     def generate_PandL(
         self,
@@ -525,55 +587,14 @@ class SQLGeneratorPL:
 
         # Iterate lines
         for idx, row in df_ttSA_Zeile_sorted.iterrows():
+            # Get description for current row
+            rowdesc = row["Bezeichnung1"] if row["Bezeichnung1"] is not None else ""
 
             # Check whether this is a row with accounts attached
             account_ids = self.getAccountIDs(import_file, row["ZeilenID"])
-            account_numbers = []
-            for konto_min, konto_max in account_ids:
-                if konto_min == konto_max:
-                    account_numbers.append(str(konto_min))
-                else:
-                    account_numbers.extend(map(str, range(konto_min, konto_max + 1)))
 
-            account_numbers_str = ",".join(account_numbers)
-            rowdesc = row["Bezeichnung1"] if row["Bezeichnung1"] is not None else ""
-
-            if not account_numbers:
-                frags = [f"NULL AS {label}" for label in labels]
-            else:
-                frags = [
-                    f"""    ROUND(
-        SUM(
-            CASE 
-                WHEN FA_MAIN_POST_YEAR = FiscalYearMinus{year:01d}
-                    AND FA_MAIN_POST_PERIOD = {month} THEN 
-                    FA_MAIN_POST_AMOUNT 
-                    * CASE WHEN FA_MAIN_POST_DC_INDICATOR = 'C' THEN 1 ELSE -1 END
-                ELSE 
-                    0
-            END),
-        2) AS {labels[idx]}"""
-                    for idx, (year, month) in enumerate(business_periods)
-                ]
-
-            fragment = f"    '{rowdesc}' AS DESCRIPTION,\n"
-            fragment += ",\n".join(frags)
-            
-            if account_numbers:
-                fragment += f"""
-    FROM 
-        nemo."pa_export" 
-    CROSS JOIN
-        DateCalculations
-    WHERE
-        COMPANY = {company}
-        AND FA_MAIN_POST_ACCOUNT in ({account_numbers_str})
-        AND FA_MAIN_POST_DATE >= CalendarPeriod0"""
-            else:
-                fragment += f"""
-    FROM 
-        DUMMY"""
-
+            # Generate SQL fragment for the current row
+            fragment = self.generate_sql_fragment(rowdesc, labels, business_periods, account_ids, company)
             sql_fragments.append(fragment)
 
     def export(self, select: str, output_file: str) -> None:

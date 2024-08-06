@@ -144,6 +144,60 @@ The report "(SAMPLE) Replenishment Time Analysis Purchased Parts" for example ha
 
 By default all pages from the report are loaded. You can optionally restrict the amount of data by providing max_pages parameter and you'll get not more than this number of pages (usually 1 page holds 20 records)
 
+## InfoZoom / NEMO synchronization
+
+There are two thinkable ways of synchronization between InfoZoom and NEMO. At the moment, we support InfoZoom --> NEMO direction only. The other way is on my wish list, but not implemented yet
+
+### InfoZoom --> NEMO
+
+When synchronizing an InfoZoom (FOX) file with NEMO, there are two thinks to think about
+- data: data can easily uploaded using the above mentioned "ReUploadFile" method (maybe you need to use InfoZoom batch commands to extract the data first). But it's on my list as well to make this more automatic
+- meta data: this is the point, where this library is the closest to a final solution
+
+#### exportMetadata
+
+Exports metadata from an InfoZoom file using the InfoZoom executable.
+
+```python
+from nemo_library import NemoLibrary
+
+nl = NemoLibrary()
+nl.exportMetadata(infozoomexe="C:\\Program Files (x86)\\NEMO\\InfoZoom 2025\\InfoZoom.exe",infozoomfile="D:\\temp\\SNr.fox",metadatafile="D:\\temp\\SNr.metadata.csv")
+```
+
+This code snipped calls exportMetadata method which itself opens InfoZoom (identified by the given executable path), then opens the given fox file, openes the metadata view and finally exports the metadata file into the given CSV file (delimiter ;, UTF-8-Format).
+
+This is the first step needed to synchronize the FOX meta data with NEMO.
+
+### synchMetadataWithFocus
+
+Synchronizes metadata from a given CSV file with the NEMO project metadata.
+
+This method reads metadata from a CSV file, processes it, and synchronizes it with the metadata of a specified NEMO project. It handles the creation of groups first and then processes individual attributes.
+
+```python
+from nemo_library import NemoLibrary
+
+nl = NemoLibrary()
+projectId = nl.getProjectID(projectname="VH0001_21_XVH001_SNrNemo")
+nl.synchMetadataWithFocus(metadatafile="d:\\temp\\SNr.metadata.csv", projectId=projectId)
+
+```
+
+This code snipped gets the projectid identified by its name in NEMO and then synchronizes the meta data (exported by synchMetadataWithFocus) with NEMO.
+
+At the moment the following pieces are synchronized
+- Groups (and sub groups and sub sub groups etc)
+- sequence of attributes (and allocation with groups)
+
+This is a list of pieces that are currently ignored
+- Couples
+- Formulae
+- case statements
+- aggregations
+- this list is not complete
+
+
 
 # Contributions
 

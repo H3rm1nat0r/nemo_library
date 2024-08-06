@@ -17,8 +17,19 @@ import subprocess
 from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_connection_handler import connection_get_headers
 from nemo_library.sub_file_upload_handler import ReUploadFileIngestion
-from nemo_library.sub_project_handler import getProjectID, getProjectList, getProjectProperty
-from nemo_library.sub_symbols import ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN, ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS, ENDPOINT_URL_REPORT_EXPORT, RESERVED_KEYWORDS
+from nemo_library.sub_project_handler import (
+    getProjectID,
+    getProjectList,
+    getProjectProperty,
+)
+from nemo_library.sub_infozoom_handler import synchMetadataWithFocus
+from nemo_library.sub_symbols import (
+    ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
+    ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
+    ENDPOINT_URL_REPORT_EXPORT,
+    RESERVED_KEYWORDS,
+)
+
 
 class NemoLibrary:
 
@@ -78,8 +89,8 @@ class NemoLibrary:
         Raises:
             Exception: If the request to the server fails.
         """
-        return getProjectProperty(self.config,projectname,propertyname)
-    
+        return getProjectProperty(self.config, projectname, propertyname)
+
     def ReUploadFile(
         self,
         projectname: str,
@@ -102,7 +113,7 @@ class NemoLibrary:
             version (int, optional): Version of the ingestion process (2 or 3). Defaults to 2.
             trigger_only (bool, optional): Whether to trigger only without waiting for task completion. Applicable for V3. Defaults to False.
         """
-        
+
         ReUploadFileIngestion(
             config=self.config,
             projectname=projectname,
@@ -112,6 +123,12 @@ class NemoLibrary:
             global_fields_mapping=global_fields_mapping,
             version=version,
             trigger_only=trigger_only,
+        )
+
+    def synchMetadataWithFocus(self, metadatafile: str, projectId: str):
+
+        synchMetadataWithFocus(
+            config=self.config, metadatafile=metadatafile, projectId=projectId
         )
 
     #################################################################################################################################################################
@@ -143,8 +160,6 @@ class NemoLibrary:
             if project_id == None:
                 raise Exception("process stopped, no project_id available")
             raise Exception("process aborted")
-
-
 
     #################################################################################################################################################################
 
@@ -419,123 +434,15 @@ class NemoLibrary:
                     parent_group_internal_name=nemo_group_internal_name,
                 )
 
-    def synchMetadataWithFocus(self, metadatafile: str, projectId: str):
-        try:
+    def exportMetadata(self, infozoomexe: str, infozoomfile: str, metadatafile: str):
 
-            # headers for all requests
-            headers = connection_get_headers(self.config)
-
-            # read meta data from fox file
-            foxmetadata = pd.read_excel(
-                metadatafile,
-                usecols=[
-                    "Attribut",
-                    "UUID",
-                    "Attributname",
-                    "Importname",
-                    "Definition",
-                    "Enthalten in Gruppe",
-                    "Enthalten in Gruppe (mit UUID)",
-                ],
-            )
-            foxmetadata.set_index("Attribut", inplace=True)
-
-            # Filter rows where Definition is 'Gruppe' and create groups first
-            foxmetadata_groups = foxmetadata[foxmetadata["Definition"] == "Gruppe"]
-            # self.process_groups(foxmetadata_groups, headers, projectId)
-
-            # read meta data from NEMO project
-            response = requests.get(
-                self.config.config_get_nemo_url()
-                + f"/api/nemo-persistence/metadata/Columns/project/{projectId}/exported",
-                headers=headers,
-            )
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-            resultjs = json.loads(response.text)
-            nemometadatadf = pd.json_normalize(resultjs)
-
-            # process attributes
-
-            previous_attr = None
-            for idx, row in foxmetadata.iterrows():
-
-                print(
-                    "processing attibute",
-                    idx,
-                    row["Attributname"],
-                    "type:",
-                    row["Definition"],
-                )
-
-                # search for twin in meta data
-                if row["Definition"] not in ["Einfaches Attribut", "Gruppe"]:
-                    print(
-                        "attribute "
-                        + row["Attributname"]
-                        + " ignored, due to unsupported type "
-                        + row["Definition"]
-                    )
-                else:
-                    meta = nemometadatadf[
-                        nemometadatadf["importName"]
-                        == (
-                            row["Attributname"]
-                            if row["Definition"] == "Gruppe"
-                            else row["Importname"]
-                        )
-                    ]
-                    if len(meta) == 0:
-                        print(
-                            "could not find attribute "
-                            + row["Attributname"]
-                            + " in meta data!"
-                        )
-                    else:
-                        if len(meta) > 1:
-                            print(
-                                "multiple matches of attribute "
-                                + row["Attributname"]
-                                + " in meta data. Type : "
-                                + row["Definition"]
-                                + ". First one will be selected"
-                            )
-                        first_meta = meta.iloc[0]
-                        source_id_meta = first_meta["id"]
-
-                        if pd.isna(row["Enthalten in Gruppe"]):
-                            group_name = None
-                        else:
-                            group_name = self.convert_internal_name(
-                                row["Enthalten in Gruppe"]
-                            )
-
-                        # lets move the attribute now
-                        api_url = (
-                            self.config.config_get_nemo_url()
-                            + f"/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/move"
-                        )
-                        payload = {
-                            "sourceAttributes": [source_id_meta],
-                            "targetPreviousElementId": previous_attr,
-                            "groupInternalName": group_name,
-                        }
-
-                        response = requests.put(api_url, headers=headers, json=payload)
-                        if response.status_code != 204:
-                            raise Exception(
-                                f"request failed. Status: {response.status_code}, error: {response.text}"
-                            )
-
-                        previous_attr = source_id_meta
-
-        except Exception as e:
-            raise Exception(f"process aborted: {str(e)}")
-
-    def exportMetadata(self, infozoomexe:str,infozoomfile:str,metadatafile: str):
-
-        full_command = [infozoomexe, infozoomfile, '-metadata', '-saveObjectsAsCSV', ';', metadatafile]
+        full_command = [
+            infozoomexe,
+            infozoomfile,
+            "-metadata",
+            "-saveObjectsAsCSV",
+            ";",
+            metadatafile,
+        ]
         result = subprocess.run(full_command, shell=True, check=True)
         print("Command executed with return code:", result.returncode)

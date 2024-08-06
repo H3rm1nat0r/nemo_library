@@ -434,8 +434,37 @@ class NemoLibrary:
                     parent_group_internal_name=nemo_group_internal_name,
                 )
 
+    def extract_version(self,log_file_path):
+        with open(log_file_path, 'r') as file:
+            log_contents = file.read()
+        
+        version_pattern = re.compile(r"Version (\d+\.\d+\.\d+)")
+        match = version_pattern.search(log_contents)
+        
+        if match:
+            return match.group(1)
+        else:
+            return "Versionsnummer nicht gefunden"
+
+    def is_version_at_least(self,version, minimum_version):
+        version_parts = list(map(int, version.split('.')))
+        minimum_version_parts = list(map(int, minimum_version.split('.')))
+        
+        return version_parts >= minimum_version_parts
+
+
     def exportMetadata(self, infozoomexe:str,infozoomfile:str,metadatafile: str):
 
         full_command = [infozoomexe, infozoomfile, '-metadata', '-saveObjectsAsCSV', ';', metadatafile, '-UTF8','-invisible']
         result = subprocess.run(full_command, shell=True, check=True)
         print("Command executed with return code:", result.returncode)
+        log_file_path = 'log.txt'
+        version = self.extract_version(log_file_path)
+        if version:
+            print(f"Gefundene Versionsnummer: {version}")
+            if self.is_version_at_least(version, '9.90.0'):
+                print("Die Versionsnummer ist mindestens 9.90.")
+            else:
+                print("Die Versionsnummer ist kleiner als 9.90.")
+        else:
+            print("Versionsnummer nicht gefunden.")

@@ -11,6 +11,8 @@ import requests
 
 import shutil
 import re
+import subprocess
+
 
 from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_connection_handler import connection_get_headers
@@ -531,3 +533,9 @@ class NemoLibrary:
 
         except Exception as e:
             raise Exception(f"process aborted: {str(e)}")
+
+    def exportMetadata(self, infozoomexe:str,infozoomfile:str,metadatafile: str):
+
+        full_command = [infozoomexe, infozoomfile, '-metadata', '-saveObjectsAsCSV', ';', metadatafile]
+        result = subprocess.run(full_command, shell=True, check=True)
+        print("Command executed with return code:", result.returncode)

@@ -155,7 +155,7 @@ def extract_version(log_file_path: str) -> str:
     with open(log_file_path, "r") as file:
         log_contents = file.read()
 
-    version_pattern = re.compile(r"Versionx (\d+\.\d+\.\d+)")
+    version_pattern = re.compile(r"Version (\d+\.\d+\.\d+)")
     match = version_pattern.search(log_contents)
 
     if match:
@@ -212,11 +212,10 @@ def exportMetadata(
     ]
     result = subprocess.run(full_command, shell=True, check=True)
     print("Command executed with return code:", result.returncode)
-    log_file_path = "log.txt"
+    log_file_path = "Log.txt"
     version = extract_version(log_file_path)
-    print(f"Gefundene Versionsnummer: {version}")
+    print(f"version number found in {log_file_path}: {version}")
     if is_version_at_least(version, MINIMUM_INFOZOOM_VERSION):
         print(f"Version number {version} matches minimum version {MINIMUM_INFOZOOM_VERSION}")
     else:
-        print("Die Versionsnummer ist kleiner als 9.90.")
         raise Exception(f"Version {version} lower than minimum version {MINIMUM_INFOZOOM_VERSION}")

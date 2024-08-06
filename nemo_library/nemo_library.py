@@ -22,7 +22,11 @@ from nemo_library.sub_project_handler import (
     getProjectList,
     getProjectProperty,
 )
-from nemo_library.sub_infozoom_handler import synchMetadataWithFocus
+from nemo_library.sub_infozoom_handler import (
+    synchMetadataWithFocus, 
+    exportMetadata
+)
+
 from nemo_library.sub_symbols import (
     ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
     ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
@@ -126,9 +130,50 @@ class NemoLibrary:
         )
 
     def synchMetadataWithFocus(self, metadatafile: str, projectId: str):
+        """
+        Synchronizes metadata from a given CSV file with the NEMO project metadata.
 
+        This method reads metadata from a CSV file, processes it, and synchronizes it with
+        the metadata of a specified NEMO project. It handles the creation of groups first
+        and then processes individual attributes.
+
+        Args:
+            config (ConfigHandler): Configuration handler instance to retrieve configuration details.
+            metadatafile (str): Path to the CSV file containing metadata.
+            projectId (str): The ID of the NEMO project to synchronize with.
+
+        Raises:
+            Exception: If any request to the NEMO API fails or if an unexpected error occurs.
+        """
         synchMetadataWithFocus(
             config=self.config, metadatafile=metadatafile, projectId=projectId
+        )
+
+    def exportMetadata(self, infozoomexe: str, infozoomfile: str, metadatafile: str):
+        """
+        Exports metadata from an InfoZoom file using the InfoZoom executable.
+
+        Args:
+            config (ConfigHandler): Configuration handler object.
+            infozoomexe (str): Path to the InfoZoom executable.
+            infozoomfile (str): Path to the InfoZoom file.
+            metadatafile (str): Path to the metadata output file.
+
+        Returns:
+            None
+
+        Prints:
+            str: Output messages including the execution status and version information.
+
+        Raises:
+            subprocess.CalledProcessError: If the command execution fails.
+        """
+
+        exportMetadata(
+            config=self.config,
+            infozoomexe=infozoomexe,
+            infozoomfile=infozoomfile,
+            metadatafile=metadatafile,
         )
 
     #################################################################################################################################################################
@@ -433,38 +478,3 @@ class NemoLibrary:
                     current_group=row["UUID"],
                     parent_group_internal_name=nemo_group_internal_name,
                 )
-
-    def extract_version(self,log_file_path):
-        with open(log_file_path, 'r') as file:
-            log_contents = file.read()
-        
-        version_pattern = re.compile(r"Version (\d+\.\d+\.\d+)")
-        match = version_pattern.search(log_contents)
-        
-        if match:
-            return match.group(1)
-        else:
-            return "Versionsnummer nicht gefunden"
-
-    def is_version_at_least(self,version, minimum_version):
-        version_parts = list(map(int, version.split('.')))
-        minimum_version_parts = list(map(int, minimum_version.split('.')))
-        
-        return version_parts >= minimum_version_parts
-
-
-    def exportMetadata(self, infozoomexe:str,infozoomfile:str,metadatafile: str):
-
-        full_command = [infozoomexe, infozoomfile, '-metadata', '-saveObjectsAsCSV', ';', metadatafile, '-UTF8','-invisible']
-        result = subprocess.run(full_command, shell=True, check=True)
-        print("Command executed with return code:", result.returncode)
-        log_file_path = 'log.txt'
-        version = self.extract_version(log_file_path)
-        if version:
-            print(f"Gefundene Versionsnummer: {version}")
-            if self.is_version_at_least(version, '9.90.0'):
-                print("Die Versionsnummer ist mindestens 9.90.")
-            else:
-                print("Die Versionsnummer ist kleiner als 9.90.")
-        else:
-            print("Versionsnummer nicht gefunden.")

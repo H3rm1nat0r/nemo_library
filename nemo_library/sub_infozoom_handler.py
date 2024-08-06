@@ -1,10 +1,13 @@
 import pandas as pd
 import requests
 import json
+import re
+import subprocess
 
 from nemo_library.sub_connection_handler import connection_get_headers
 from nemo_library.sub_config_handler import ConfigHandler
 
+MINIMUM_INFOZOOM_VERSION = "9.90.0"
 
 def synchMetadataWithFocus(config: ConfigHandler, metadatafile: str, projectId: str):
     """
@@ -135,3 +138,85 @@ def synchMetadataWithFocus(config: ConfigHandler, metadatafile: str, projectId: 
 
     except Exception as e:
         raise Exception(f"process aborted: {str(e)}")
+
+def extract_version(log_file_path: str) -> str:
+    """
+    Extracts the version number from a log file.
+
+    Args:
+        log_file_path (str): The path to the log file.
+
+    Returns:
+        str: The extracted version number in the format "x.y.z".
+
+    Raises:
+        Exception: If the version information is not found in the log file.
+    """
+    with open(log_file_path, "r") as file:
+        log_contents = file.read()
+
+    version_pattern = re.compile(r"Versionx (\d+\.\d+\.\d+)")
+    match = version_pattern.search(log_contents)
+
+    if match:
+        return match.group(1)
+    else:
+        raise Exception(f"Version information not found")
+
+def is_version_at_least(version: str, minimum_version: str) -> bool:
+    """
+    Checks if a version number is at least a specified minimum version.
+
+    Args:
+        version (str): The version number to check.
+        minimum_version (str): The minimum version number to compare against.
+
+    Returns:
+        bool: True if the version is at least the minimum version, False otherwise.
+    """
+    version_parts = list(map(int, version.split(".")))
+    minimum_version_parts = list(map(int, minimum_version.split(".")))
+
+    return version_parts >= minimum_version_parts
+
+def exportMetadata(
+    config: ConfigHandler, infozoomexe: str, infozoomfile: str, metadatafile: str
+) -> None:
+    """
+    Exports metadata from an InfoZoom file using the InfoZoom executable.
+
+    Args:
+        config (ConfigHandler): Configuration handler object.
+        infozoomexe (str): Path to the InfoZoom executable.
+        infozoomfile (str): Path to the InfoZoom file.
+        metadatafile (str): Path to the metadata output file.
+
+    Returns:
+        None
+
+    Prints:
+        str: Output messages including the execution status and version information.
+
+    Raises:
+        subprocess.CalledProcessError: If the command execution fails.
+    """
+    full_command = [
+        infozoomexe,
+        infozoomfile,
+        "-metadata",
+        "-saveObjectsAsCSV",
+        ";",
+        metadatafile,
+        "-UTF8",
+        "-invisible",
+    ]
+    result = subprocess.run(full_command, shell=True, check=True)
+    print("Command executed with return code:", result.returncode)
+    log_file_path = "log.txt"
+    version = extract_version(log_file_path)
+    print(f"Gefundene Versionsnummer: {version}")
+    if is_version_at_least(version, MINIMUM_INFOZOOM_VERSION):
+        print(f"Version number {version} matches minimum version {MINIMUM_INFOZOOM_VERSION}")
+    else:
+        print("Die Versionsnummer ist kleiner als 9.90.")
+        raise Exception(f"Version {version} lower than minimum version {MINIMUM_INFOZOOM_VERSION}")

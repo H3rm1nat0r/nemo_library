@@ -290,7 +290,7 @@ class NemoLibrary:
 
     #################################################################################################################################################################
 
-    def aclean_column_name(self, column_name, reserved_keywords):
+    def clean_column_name(self, column_name, reserved_keywords):
         # If csv column name is empty, return "undefined_name"
         if not column_name:
             return "undefined_name"

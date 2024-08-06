@@ -203,12 +203,13 @@ def exportMetadata(
     full_command = [
         infozoomexe,
         infozoomfile,
+        "-invisible",
         "-metadata",
+        "-UTF8",
         "-saveObjectsAsCSV",
         ";",
         metadatafile,
-        "-UTF8",
-        "-invisible",
+        "-exit",
     ]
     result = subprocess.run(full_command, shell=True, check=True)
     print("Command executed with return code:", result.returncode)

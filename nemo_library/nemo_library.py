@@ -536,6 +536,6 @@ class NemoLibrary:
 
     def exportMetadata(self, infozoomexe:str,infozoomfile:str,metadatafile: str):
 
-        full_command = [infozoomexe, infozoomfile, '-metadata', '-saveObjectsAsCSV', ';', metadatafile]
+        full_command = [infozoomexe, infozoomfile, '-metadata', '-saveObjectsAsCSV', ';', metadatafile, '-UTF8','-invisible']
         result = subprocess.run(full_command, shell=True, check=True)
         print("Command executed with return code:", result.returncode)

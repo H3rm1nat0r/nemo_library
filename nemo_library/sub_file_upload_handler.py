@@ -7,15 +7,20 @@ import requests
 import boto3
 from botocore.exceptions import NoCredentialsError
 import pandas as pd
-from nemo_library.sub_symbols import *
-from nemo_library.sub_connection_handler import *
-from nemo_library.sub_config_handler import *
-from nemo_library.sub_password_handler import *
-from nemo_library.sub_project_handler import *
+from nemo_library.sub_config_handler import ConfigHandler
+from nemo_library.sub_connection_handler import connection_get_headers
+from nemo_library.sub_project_handler import getProjectID
+from nemo_library.sub_symbols import (
+    ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
+    ENDPOINT_URL_QUEUE_INGEST_DATA_V2,
+    ENDPOINT_URL_QUEUE_INGEST_DATA_V3,
+    ENDPOINT_URL_QUEUE_TASK_RUNS,
+    ENDPOINT_URL_TVM_S3_ACCESS,
+)
 
 
 def ReUploadFileIngestion(
-    config : ConfigHandler,
+    config: ConfigHandler,
     projectname: str,
     filename: str,
     update_project_settings: bool = True,
@@ -41,7 +46,7 @@ def ReUploadFileIngestion(
     headers = None
 
     try:
-        project_id = getProjectID(config,projectname)
+        project_id = getProjectID(config, projectname)
 
         headers = connection_get_headers(config)
 

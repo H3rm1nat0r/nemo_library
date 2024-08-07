@@ -1,6 +1,6 @@
 import requests
 import json
-from nemo_library.sub_config_handler import *
+from nemo_library.sub_config_handler import ConfigHandler
 
 
 def connection_get_headers(config: ConfigHandler):
@@ -23,6 +23,7 @@ def connection_get_headers(config: ConfigHandler):
         "api-version": "1.0",
     }
     return headers
+
 
 def connection_get_cognito_authflow(config: ConfigHandler):
     """

@@ -61,6 +61,14 @@ ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS = (
 Endpoint to retrieve imported columns metadata for a project.
 """
 
+ENDPOINT_URL_PERSISTENCE_METADATA_ATTRIBUTE_GROUPS = (
+    "/api/nemo-persistence/metadata/AttributeGroup/project/{projectId}/attributegroups"
+)
+"""
+Endpoint to retrieve attribute groups metadata for a project.
+"""
+
+
 ENDPOINT_URL_PERSISTENCE_METADATA_SET_COLUMN_PROPERTIES = (
     "/api/nemo-persistence/metadata/Columns/{id}"
 )

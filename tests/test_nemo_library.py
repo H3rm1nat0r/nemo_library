@@ -1,6 +1,44 @@
 import pytest
+import requests
+
 from nemo_library import NemoLibrary
 from datetime import datetime
+from nemo_library.sub_infozoom_handler import (
+    getFOXMetaData,
+    getNEMOMetaData_imported_columns,
+)
+
+IC_PROJECT_NAME = "gs_unit_test_Intercompany"
+
+def getNL():
+    """
+    Initializes and returns an instance of the NemoLibrary class.
+
+    This function reads the configuration settings from the specified
+    configuration file and uses them to create and return a NemoLibrary
+    object.
+
+    Returns:
+        NemoLibrary: An instance of the NemoLibrary class initialized
+                     with settings from 'tests/config.ini'.
+
+    Example:
+        nl = getNL()
+        print(nl)
+
+    Note:
+        The configuration file 'tests/config.ini' should be present in
+        the specified path and contain the necessary configuration
+        settings required for initializing the NemoLibrary.
+
+    Raises:
+        FileNotFoundError: If the configuration file does not exist.
+        ConfigParserError: If there is an error parsing the configuration file.
+
+    """
+    return NemoLibrary(
+        config_file="tests/config.ini",
+    )    
 
 def test_getProjectList():
     """
@@ -15,7 +53,7 @@ def test_getProjectList():
         AssertionError: If the DataFrame is empty or the 'id' of the first row
                         does not match the expected value.
     """
-    nl = NemoLibrary()
+    nl = getNL()
     df = nl.getProjectList()
     print(df)
     assert len(df) > 0
@@ -33,7 +71,7 @@ def test_getProjectID():
     Raises:
         AssertionError: If the returned project ID does not match the expected value.
     """
-    nl = NemoLibrary()
+    nl = getNL()
     assert (
         nl.getProjectID("Business Processes") == "00000000-0000-0000-0000-000000000001"
     )
@@ -53,7 +91,7 @@ def test_getProjectProperty():
                         or the year is out of the acceptable range.
         pytest.fail: If the returned value is not in the format 'YYYY-MM-DD'.
     """
-    nl = NemoLibrary()
+    nl = getNL()
     val = nl.getProjectProperty(
         projectname="Business Processes", propertyname="ExpDateFrom"
     )
@@ -80,9 +118,8 @@ def test_ReUploadFile():
     Raises:
         AssertionError: If the number of records does not match the expected value.
     """
-    nl = NemoLibrary()
+    nl = getNL()
 
-    IC_PROJECT_NAME = "Intercompany pA --> hit"
     nl.ReUploadFile(
         projectname=IC_PROJECT_NAME,
         filename="./tests/intercompany_NEMO.csv",
@@ -91,7 +128,39 @@ def test_ReUploadFile():
     val = nl.getProjectProperty(
         projectname=IC_PROJECT_NAME, propertyname="ExpNumberOfRecords"
     )
-    assert int(val) == 34957, "number of records do not match"
+    assert int(val) == 34960, "number of records do not match"
+
+
+def xxxtest_synchMetadataWithFocus():
+    # test de-activated since we don't have the analyzer file in challenge and I was not able to reproduce the file with the same attributes like in prod
+    """
+    Test the synchronization of FOX metadata with a NEMO project.
+
+    This function performs the following steps:
+    1. Creates an instance of NemoLibrary.
+    2. Retrieves the project ID for a specific NEMO project.
+    3. Calls the synchronization method to sync metadata from a given file with the NEMO project.
+    4. Validates the synchronization by comparing the number of 'Einfaches Attribut' attributes
+       in the FOX metadata with the number of attributes in the NEMO metadata.
+
+    Raises:
+        AssertionError: If the number of 'Einfaches Attribut' attributes in FOX metadata does not
+                        match the number of attributes in the NEMO metadata.
+    """
+
+    # call API to synchronize FOX Meta data with NEMO project
+    nl = getNL()
+    projectId = nl.getProjectID(projectname="gs_unit_test_snr")
+    metadatafile = "./tests/SNr.metadata.csv"
+    nl.synchMetadataWithFocus(metadatafile=metadatafile, projectId=projectId)
+
+    # now validate number of attributes
+    dfMetaFOX = getFOXMetaData(metadatafile=metadatafile)
+    dfMetaNEMO = getNEMOMetaData_imported_columns(config=nl.config, projectId=projectId)
+
+    dfMetaFOX_Attributes = dfMetaFOX[dfMetaFOX["Definition"] == "Einfaches Attribut"]
+
+    assert len(dfMetaFOX_Attributes) == len(dfMetaNEMO)
 
 
 def test_LoadReport():
@@ -104,10 +173,10 @@ def test_LoadReport():
     Raises:
         AssertionError: If the DataFrame does not contain the expected number of rows.
     """
-    nl = NemoLibrary()
+    nl = getNL()
     df = nl.LoadReport(
-        projectname="21 CRM",
-        report_guid="66b6e2f5-d3f5-40fa-98e3-b4e7097b5c4d",
+        projectname=IC_PROJECT_NAME,
+        report_guid="2b02f610-c70e-489a-9895-2cab382ff911",
     )
 
-    assert len(df) == 13
+    assert len(df) == 33

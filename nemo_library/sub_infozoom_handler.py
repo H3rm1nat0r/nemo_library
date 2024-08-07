@@ -6,7 +6,7 @@ import subprocess
 
 from nemo_library.sub_connection_handler import connection_get_headers
 from nemo_library.sub_config_handler import ConfigHandler
-from nemo_library.sub_symbols import RESERVED_KEYWORDS
+from nemo_library.sub_symbols import ENDPOINT_URL_PERSISTENCE_METADATA_ATTRIBUTE_GROUPS, ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS, RESERVED_KEYWORDS
 
 
 MINIMUM_INFOZOOM_VERSION = "9.80.0"
@@ -34,42 +34,21 @@ def synchMetadataWithFocus(config: ConfigHandler, metadatafile: str, projectId: 
         headers = connection_get_headers(config)
 
         # read meta data from fox file
-        foxmetadata = pd.read_csv(
-            metadatafile,
-            usecols=[
-                "Attribut",
-                "UUID",
-                "Attributname",
-                "Importname",
-                "Definition",
-                "Enthalten in Gruppe",
-                "Enthalten in Gruppe (mit UUID)",
-            ],
-            delimiter=";",
-            encoding="utf-8",
-        )
-        foxmetadata.set_index("Attribut", inplace=True)
+        foxmetadata = getFOXMetaData(metadatafile=metadatafile)
 
         # Filter rows where Definition is 'Gruppe' and create groups first
         foxmetadata_groups = foxmetadata[foxmetadata["Definition"] == "Gruppe"]
         process_groups(config, foxmetadata_groups, headers, projectId)
 
-        # read meta data from NEMO project
-        response = requests.get(
-            config.config_get_nemo_url()
-            + f"/api/nemo-persistence/metadata/Columns/project/{projectId}/exported",
-            headers=headers,
-        )
-        if response.status_code != 200:
-            raise Exception(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
-        resultjs = json.loads(response.text)
-        nemometadatadf = pd.json_normalize(resultjs)
+
+        # get meta data from NEMO project
+        dfMetaNEMO_imported_columns = getNEMOMetaData_imported_columns(config=config, projectId=projectId)
+        dfMetaNEMO_attribute_groups = getNEMOMetaData_attribute_groups(config=config, projectId=projectId)
 
         # process attributes
-
         previous_attr = None
+        ignored_attributes = []
+        
         for idx, row in foxmetadata.iterrows():
 
             print(
@@ -80,34 +59,28 @@ def synchMetadataWithFocus(config: ConfigHandler, metadatafile: str, projectId: 
                 row["Definition"],
             )
 
-            # search for twin in meta data
-            if row["Definition"] not in ["Einfaches Attribut", "Gruppe"]:
-                print(
-                    "attribute "
-                    + row["Attributname"]
-                    + " ignored, due to unsupported type "
-                    + row["Definition"]
-                )
-            else:
-                meta = nemometadatadf[
-                    nemometadatadf["importName"]
-                    == (
-                        row["Attributname"]
-                        if row["Definition"] == "Gruppe"
-                        else row["Importname"]
-                    )
-                ]
+            # handle different row types
+            match row["Definition"]:
+                case 'Einfaches Attribut':
+                    internal_name = convert_internal_name(name=row["Importname"])
+                    meta = dfMetaNEMO_imported_columns[dfMetaNEMO_imported_columns["internalName"] == internal_name]
+                case "Gruppe":
+                    internal_name = convert_internal_name(name=row["Attributname"])
+                    meta = dfMetaNEMO_attribute_groups[dfMetaNEMO_attribute_groups["internalName"] == internal_name]
+                case _:
+                    ignored_attributes.append((row["Attributname"], row["Definition"]))
+                    internal_name = None
+                    
+            if internal_name:
                 if len(meta) == 0:
                     print(
-                        "could not find attribute "
-                        + row["Attributname"]
-                        + " in meta data!"
+                        f"could not find attribute {internal_name}  in meta data!"
                     )
                 else:
                     if len(meta) > 1:
                         print(
                             "multiple matches of attribute "
-                            + row["Attributname"]
+                            + internal_name
                             + " in meta data. Type : "
                             + row["Definition"]
                             + ". First one will be selected"
@@ -139,8 +112,122 @@ def synchMetadataWithFocus(config: ConfigHandler, metadatafile: str, projectId: 
 
                     previous_attr = source_id_meta
 
+        if ignored_attributes:
+            print("Ignored attributes due to unsupported types:")
+            for attr, definition in ignored_attributes:
+                print(
+                    f" - attribute {attr} ignored, due to unsupported type {definition}"
+                )
+
     except Exception as e:
         raise Exception(f"process aborted: {str(e)}")
+
+
+def getFOXMetaData(metadatafile: str) -> pd.DataFrame:
+    """
+    Reads a CSV file containing FOX metadata and returns it as a pandas DataFrame.
+
+    The CSV file should have the following columns:
+    - Attribut
+    - UUID
+    - Attributname
+    - Importname
+    - Definition
+    - Enthalten in Gruppe
+    - Enthalten in Gruppe (mit UUID)
+
+    The resulting DataFrame will have the "Attribut" column set as its index.
+
+    Args:
+        metadatafile (str): The path to the CSV file containing the FOX metadata.
+
+    Returns:
+        pd.DataFrame: A pandas DataFrame with the FOX metadata, indexed by the "Attribut" column.
+    """
+    foxmetadata = pd.read_csv(
+        metadatafile,
+        usecols=[
+            "Attribut",
+            "UUID",
+            "Attributname",
+            "Importname",
+            "Definition",
+            "Enthalten in Gruppe",
+            "Enthalten in Gruppe (mit UUID)",
+        ],
+        delimiter=";",
+        encoding="utf-8",
+    )
+    foxmetadata.set_index("Attribut", inplace=True)
+    return foxmetadata
+
+
+def getNEMOMetaData_imported_columns(config: ConfigHandler, projectId: str) -> pd.DataFrame:
+    """
+    Fetch metadata from a NEMO project and return it as a pandas DataFrame.
+
+    Args:
+        config (ConfigHandler): An instance of ConfigHandler containing configuration details.
+        projectId (str): The ID of the project to fetch metadata for.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the normalized metadata.
+
+    Raises:
+        Exception: If the request to the NEMO API fails, an exception is raised with the status code and error message.
+
+    """
+    # headers for all requests
+    headers = connection_get_headers(config)
+
+    # read meta data from NEMO project
+    response = requests.get(
+        config.config_get_nemo_url()
+        + ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS.format(
+            projectId=projectId
+        ),
+        headers=headers,
+    )
+    if response.status_code != 200:
+        raise Exception(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
+        )
+    resultjs = json.loads(response.text)
+    return pd.json_normalize(resultjs)
+
+
+def getNEMOMetaData_attribute_groups(config: ConfigHandler, projectId: str) -> pd.DataFrame:
+    """
+    Fetch metadata from a NEMO project and return it as a pandas DataFrame.
+
+    Args:
+        config (ConfigHandler): An instance of ConfigHandler containing configuration details.
+        projectId (str): The ID of the project to fetch metadata for.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the normalized metadata.
+
+    Raises:
+        Exception: If the request to the NEMO API fails, an exception is raised with the status code and error message.
+
+    """
+    # headers for all requests
+    headers = connection_get_headers(config)
+
+    # read meta data from NEMO project
+    response = requests.get(
+        config.config_get_nemo_url()
+        + ENDPOINT_URL_PERSISTENCE_METADATA_ATTRIBUTE_GROUPS.format(
+            projectId=projectId
+        ),
+        headers=headers,
+    )
+    if response.status_code != 200:
+        raise Exception(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
+        )
+    resultjs = json.loads(response.text)
+    return pd.json_normalize(resultjs)
 
 
 def convert_internal_name(name: str) -> str:
@@ -160,9 +247,24 @@ def convert_internal_name(name: str) -> str:
         'some_name_example'
     """
 
+    # map german umlauts
+    umlaut_map = {
+        "ä": "ae",
+        "ö": "oe",
+        "ü": "ue",
+        "Ä": "Ae",
+        "Ö": "Oe",
+        "Ü": "Ue",
+        "ß": "ss",
+    }
+
+    internal_name = name
+    for umlaut, ascii_rep in umlaut_map.items():
+        internal_name = internal_name.replace(umlaut, ascii_rep)
+
     # Remove special chars and replace with unterscores
     pattern = r"[^a-zA-Z0-9_]+"
-    internal_name = re.sub(pattern, "_", name)
+    internal_name = re.sub(pattern, "_", internal_name)
 
     # Use a regular expression to find lowercase characters followed by uppercase characters
     pattern = re.compile(r"([a-z])([A-Z]+)")
@@ -204,18 +306,9 @@ def process_groups(
     :param level: The current level in the hierarchy.
     """
     if current_group is None:
+        
         # remove existing groups first
-        api_url = (
-            config.config_get_nemo_url()
-            + f"/api/nemo-persistence/metadata/AttributeGroup/project/{projectId}/attributegroups"
-        )
-        response = requests.get(api_url, headers=headers)
-        if response.status_code != 200:
-            raise Exception(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
-        resultjs = json.loads(response.text)
-        attributegroups = pd.json_normalize(resultjs)
+        attributegroups = getNEMOMetaData_attribute_groups(config=config,projectId=projectId)
         for index, row in attributegroups.iterrows():
             print("delete attribute group", row["internalName"])
             api_url = (

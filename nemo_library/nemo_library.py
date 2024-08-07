@@ -1,18 +1,10 @@
 import json
-import math
-import os
-import time
 
-import boto3
-from botocore.exceptions import NoCredentialsError
 
 import pandas as pd
 import requests
 
-import shutil
 import re
-import subprocess
-
 
 from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_connection_handler import connection_get_headers
@@ -24,10 +16,10 @@ from nemo_library.sub_project_handler import (
 )
 from nemo_library.sub_infozoom_handler import synchMetadataWithFocus, exportMetadata
 
+from nemo_library.sub_report_handler import LoadReport
 from nemo_library.sub_symbols import (
     ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
     ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
-    ENDPOINT_URL_REPORT_EXPORT,
     RESERVED_KEYWORDS,
 )
 
@@ -151,7 +143,6 @@ class NemoLibrary:
         Exports metadata from an InfoZoom file using the InfoZoom executable.
 
         Args:
-            config (ConfigHandler): Configuration handler object.
             infozoomexe (str): Path to the InfoZoom executable.
             infozoomfile (str): Path to the InfoZoom file.
             metadatafile (str): Path to the metadata output file.
@@ -172,6 +163,26 @@ class NemoLibrary:
             infozoomfile=infozoomfile,
             metadatafile=metadatafile,
         )
+
+    def LoadReport(
+        self, projectname: str, report_guid: str, max_pages=None
+    ) -> pd.DataFrame:
+        """
+        Loads a report from a specified project and returns it as a pandas DataFrame.
+
+        Args:
+            projectname (str): The name of the project from which the report is to be loaded.
+            report_guid (str): The GUID (Globally Unique Identifier) of the report to be loaded.
+            max_pages (int, optional): Maximum number of pages to load. Defaults to None.
+
+        Returns:
+            pandas.DataFrame: The report data as a DataFrame.
+
+        Raises:
+            Exception: If the request to load the report fails or if downloading the CSV fails.
+
+        """
+        return LoadReport(self.config, projectname, report_guid, max_pages)
 
     #################################################################################################################################################################
 
@@ -202,42 +213,6 @@ class NemoLibrary:
             if project_id == None:
                 raise Exception("process stopped, no project_id available")
             raise Exception("process aborted")
-
-    #################################################################################################################################################################
-
-    def LoadReport(self, projectname: str, report_guid: str, max_pages=None):
-        project_id = self.getProjectID(projectname)
-
-        print(f"Loading report: {report_guid} from project {projectname}")
-
-        headers = connection_get_headers(self.config)
-
-        # INIT REPORT PAYLOAD (REQUEST BODY)
-        report_params = {"id": report_guid, "project_id": project_id}
-
-        response_report = requests.post(
-            self.config.config_get_nemo_url() + ENDPOINT_URL_REPORT_EXPORT,
-            headers=headers,
-            json=report_params,
-        )
-
-        if response_report.status_code != 200:
-            raise Exception(
-                f"request failed. Status: {response_report.status_code}, error: {response_report.text}"
-            )
-
-        # extract download URL from response
-        csv_url = response_report.text.strip('"')
-        print(f"Downloading CSV from: {csv_url}")
-
-        # download the file into pandas
-        try:
-            result = pd.read_csv(csv_url)
-            if "_RECORD_COUNT" in result.columns:
-                result.drop(columns=["_RECORD_COUNT"], inplace=True)
-        except Exception as e:
-            raise Exception(f"download failed. Status: {e}")
-        return result
 
     #################################################################################################################################################################
 

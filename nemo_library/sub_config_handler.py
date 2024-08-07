@@ -1,5 +1,6 @@
 import configparser
-from nemo_library.sub_password_handler import *
+from nemo_library.sub_password_handler import PasswordManager
+
 
 class ConfigHandler:
     def __init__(
@@ -13,16 +14,30 @@ class ConfigHandler:
     ):
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
-        self.nemo_url = self.config["nemo_library"]["nemo_url"] if nemo_url==None else nemo_url
-        self.tenant = self.config["nemo_library"]["tenant"] if tenant==None else tenant
-        self.userid = self.config["nemo_library"]["userid"] if userid == None else userid
+        self.nemo_url = (
+            self.config["nemo_library"]["nemo_url"] if nemo_url == None else nemo_url
+        )
+        self.tenant = (
+            self.config["nemo_library"]["tenant"] if tenant == None else tenant
+        )
+        self.userid = (
+            self.config["nemo_library"]["userid"] if userid == None else userid
+        )
         try:
-            self.password = self.config["nemo_library"]["password"] if password == None else password
+            self.password = (
+                self.config["nemo_library"]["password"]
+                if password == None
+                else password
+            )
         except KeyError as e:
-            pm = PasswordManager(service_name="nemo_library",username=self.userid)
+            pm = PasswordManager(service_name="nemo_library", username=self.userid)
             self.password = pm.get_password()
 
-        self.environment = self.config["nemo_library"]["environment"] if environment == None else environment
+        self.environment = (
+            self.config["nemo_library"]["environment"]
+            if environment == None
+            else environment
+        )
 
     def config_get_nemo_url(self):
         """

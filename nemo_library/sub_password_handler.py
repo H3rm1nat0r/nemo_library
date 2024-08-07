@@ -1,6 +1,7 @@
 import sys
 import keyring
 
+
 class PasswordManager:
     def __init__(self, service_name, username):
         self.service_name = service_name
@@ -9,7 +10,7 @@ class PasswordManager:
     def set_password(self, password):
         """
         Stores the password in the Credential Manager (Windows) or Keychain (macOS).
-        
+
         Args:
             password (str): The password to be stored.
         """
@@ -18,7 +19,7 @@ class PasswordManager:
     def get_password(self):
         """
         Retrieves the password from the Credential Manager (Windows) or Keychain (macOS).
-        
+
         Returns:
             str: The stored password or None if no password is found.
         """
@@ -35,7 +36,9 @@ if __name__ == "__main__":
 
     # Set password
     pm.set_password(password)
-    print(f"Password for user '{username}' in service '{service_name}' has been stored.")
+    print(
+        f"Password for user '{username}' in service '{service_name}' has been stored."
+    )
 
     # Retrieve password
     retrieved_password = pm.get_password()

@@ -22,10 +22,7 @@ from nemo_library.sub_project_handler import (
     getProjectList,
     getProjectProperty,
 )
-from nemo_library.sub_infozoom_handler import (
-    synchMetadataWithFocus, 
-    exportMetadata
-)
+from nemo_library.sub_infozoom_handler import synchMetadataWithFocus, exportMetadata
 
 from nemo_library.sub_symbols import (
     ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
@@ -337,7 +334,3 @@ class NemoLibrary:
 
         except Exception as e:
             raise Exception("process aborted")
-
-
-
-

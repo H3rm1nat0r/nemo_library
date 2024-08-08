@@ -13,3 +13,4 @@ uploader_test.py
 Metadaten_SNr_1.xlsx
 .coverage
 Log.txt
+.DS_Store

@@ -131,7 +131,7 @@ def test_ReUploadFile():
     assert int(val) == 34960, "number of records do not match"
 
 
-def xxxtest_synchMetadataWithFocus():
+def test_synchMetadataWithFocus():
     # test de-activated since we don't have the analyzer file in challenge and I was not able to reproduce the file with the same attributes like in prod
     """
     Test the synchronization of FOX metadata with a NEMO project.
@@ -150,7 +150,7 @@ def xxxtest_synchMetadataWithFocus():
 
     # call API to synchronize FOX Meta data with NEMO project
     nl = getNL()
-    projectId = nl.getProjectID(projectname="gs_unit_test_snr")
+    projectId = nl.getProjectID(projectname="VH0001_21_XVH001_SNrNemo")
     metadatafile = "./tests/SNr.metadata.csv"
     nl.synchMetadataWithFocus(metadatafile=metadatafile, projectId=projectId)
 
@@ -160,7 +160,7 @@ def xxxtest_synchMetadataWithFocus():
 
     dfMetaFOX_Attributes = dfMetaFOX[dfMetaFOX["Definition"] == "Einfaches Attribut"]
 
-    assert len(dfMetaFOX_Attributes) == len(dfMetaNEMO)
+    assert len(dfMetaFOX_Attributes) == len(dfMetaNEMO) + 2 # there are some attributes twice and thus cannot be sorted
 
 
 def test_LoadReport():

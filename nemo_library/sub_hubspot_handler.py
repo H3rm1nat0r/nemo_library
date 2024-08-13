@@ -1,4 +1,5 @@
 import configparser
+import csv
 import warnings
 import pandas as pd
 import tempfile
@@ -213,7 +214,10 @@ def load_deals_from_HubSpot(hs: HubSpot) -> pd.DataFrame:
 
     # debugging: remove all deals but 2
 
-    # deal_ids_to_keep = ["8163202199", "16410497543"]
+    # deal_ids_to_keep = [
+    #     "8163202199",
+    #     # "16410497543",
+    # ]
     # deals_df = deals_df[deals_df["deal_id"].isin(deal_ids_to_keep)]
 
     print(f"{len(deals_df)} deals loaded from CRM")
@@ -678,11 +682,6 @@ def upload_deals_to_NEMO(
 
     """
 
-    # remove timezone information (not supported by excel)
-    for column in deals.columns:
-        if pd.api.types.is_datetime64tz_dtype(deals[column]):
-            deals[column] = deals[column].dt.tz_localize(None)
-
     # Remove unnecessary columns like "associations" and "archived"
     columns_to_drop = [
         "deal_associations",
@@ -695,6 +694,44 @@ def upload_deals_to_NEMO(
     ]
     deals = deals.drop(columns=columns_to_drop, errors="ignore")
 
+    # handle date type fields
+
+    # Refine the date_columns selection to exclude columns that are not dates
+    date_columns = [
+        col
+        for col in deals.columns
+        if "createdate" in col.lower()
+        or "lastmodifieddate" in col.lower()
+        or "timestamp" in col.lower()
+    ]
+    date_only_columns = [
+        "update_closedate_new_value",
+        "update_closedate_old_value",
+    ]  # Columns with date only
+
+    # Known formats from the data
+    datetime_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+
+    # Convert datetime columns and remove timezone information (not supported by Excel)
+    for column in date_columns:
+        deals[column] = pd.to_datetime(
+            deals[column], format=datetime_format, errors="coerce"
+        )
+
+        # Remove timezone information if present
+        if pd.api.types.is_datetime64tz_dtype(deals[column]):
+            deals[column] = deals[column].dt.tz_localize(None)
+
+    # Convert date-only columns by first converting with time and then extracting the date part
+    for column in date_only_columns:
+        # Convert using the full datetime format and then extract the date part
+        deals[column] = pd.to_datetime(
+            deals[column], format=datetime_format, errors="coerce"
+        ).dt.date
+
+    # Replace line breaks in all columns with a space
+    deals = deals.replace({r"\n": " ", r"\r": " "}, regex=True)
+
     # write file temporarily to disk
 
     with tempfile.NamedTemporaryFile(delete=True, suffix=".csv") as temp_file:
@@ -705,6 +742,7 @@ def upload_deals_to_NEMO(
             temp_file_path,
             index=False,
             sep=";",
+            quoting=csv.QUOTE_NONNUMERIC,
         )
 
         print(f"file {temp_file_path} written. Number of records: {len(deals)}")

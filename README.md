@@ -197,6 +197,23 @@ This is a list of pieces that are currently ignored
 - aggregations
 - this list is not complete
 
+## HubSpot
+
+HubSpot is the very first CRM product that we support in this library. This adapter provides a method that uses the HubSpot API to extract deals and their history (deal changes as well as documented communication) and finally uploads this into a NEMO project given by it's name.
+
+If you want to use this, you have to enable this feature in Hubspot first. Steps:
+- create a private app in HubSpot (e.g. export for NEMO)
+- you are given an API token and a secret. Note them and enter the API token in the config.ini-file. Example:
+```
+hubspot_api_token = <your API token>
+```
+- provide read access to all objects, e.g. crm.schemas.deals.read, etc.
+
+Then you can use the HubSpot adapter like in this example:
+```python
+nl = NemoLibrary()
+nl.FetchDealFromHubSpotAndUploadToNEMO(projectname="21 CRM Activities")
+```
 
 
 # Contributions

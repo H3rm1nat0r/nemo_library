@@ -9,6 +9,7 @@ import re
 from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_connection_handler import connection_get_headers
 from nemo_library.sub_file_upload_handler import ReUploadFileIngestion
+from nemo_library.sub_hubspot_handler import CRM_Activities_handler
 from nemo_library.sub_project_handler import (
     getProjectID,
     getProjectList,
@@ -33,6 +34,7 @@ class NemoLibrary:
         userid=None,
         password=None,
         environment=None,
+        hubspot_api_token=None,
         config_file="config.ini",
     ):
 
@@ -42,6 +44,7 @@ class NemoLibrary:
             userid=userid,
             password=password,
             environment=environment,
+            hubspot_api_token=hubspot_api_token,
             config_file=config_file,
         )
 
@@ -183,6 +186,9 @@ class NemoLibrary:
 
         """
         return LoadReport(self.config, projectname, report_guid, max_pages)
+
+    def FetchDealFromHubSpotAndUploadToNEMO(self, projectname: str) -> None:
+        CRM_Activities_handler(config=self.config, projectname=projectname)
 
     #################################################################################################################################################################
 

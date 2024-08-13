@@ -7,6 +7,7 @@ charset-normalizer
 coverage
 docutils
 et-xmlfile
+hubspot-api-client
 idna
 importlib_metadata
 iniconfig

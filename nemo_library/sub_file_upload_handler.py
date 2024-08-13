@@ -28,7 +28,7 @@ def ReUploadFileIngestion(
     global_fields_mapping: list[dict] = None,
     version: int = 2,
     trigger_only: bool = False,
-):
+) -> None:
     """
     Uploads a file to a project and optionally updates project settings or triggers analyze tasks.
 

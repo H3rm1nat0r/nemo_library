@@ -10,6 +10,7 @@ class ConfigHandler:
         userid=None,
         password=None,
         environment=None,
+        hubspot_api_token=None,
         config_file="config.ini",
     ):
         self.config = configparser.ConfigParser()
@@ -37,6 +38,11 @@ class ConfigHandler:
             self.config["nemo_library"]["environment"]
             if environment == None
             else environment
+        )
+        self.hubspot_api_token = (
+            self.config["nemo_library"]["hubspot_api_token"]
+            if hubspot_api_token == None
+            else hubspot_api_token
         )
 
     def config_get_nemo_url(self):
@@ -98,3 +104,15 @@ class ConfigHandler:
             str: The environment information.
         """
         return self.environment
+
+    def config_get_hubspot_api_token(self):
+        """
+        Retrieve the hubspot_api_token information from the configuration file.
+
+        This function reads the `config.ini` file and retrieves the hubspot_api_token
+        specified under the `nemo_library` section.
+
+        Returns:
+            str: The hubspot_api_token information.
+        """
+        return self.hubspot_api_token

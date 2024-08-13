@@ -188,6 +188,37 @@ class NemoLibrary:
         return LoadReport(self.config, projectname, report_guid, max_pages)
 
     def FetchDealFromHubSpotAndUploadToNEMO(self, projectname: str) -> None:
+        """
+        Handles the processing and uploading of CRM deal activities to NEMO.
+
+        This function interacts with HubSpot's API to retrieve deal information, activity history,
+        and associated details, then merges and enriches the data before uploading it to the NEMO system.
+
+        Parameters:
+        -----------
+        config : ConfigHandler
+            An instance of ConfigHandler containing configuration settings, including API credentials
+            and other necessary parameters.
+
+        projectname : str
+            The name of the project to which the deal data should be uploaded in NEMO.
+
+        Process:
+        --------
+        1. Retrieves the HubSpot API token using the provided configuration.
+        2. Loads deals from the CRM system.
+        3. Loads and processes deal change history and activity data.
+        4. Merges deal history and activity data with deal details.
+        5. Resolves internal fields (e.g., company ID, user ID) to their corresponding plain text representations.
+        6. Maps deal stages to their respective descriptive names.
+        7. Uploads the processed deal data to the specified project in NEMO.
+
+        Returns:
+        --------
+        None
+            This function does not return any values. It performs operations that affect the state of
+            the CRM data in the NEMO system.
+        """        
         CRM_Activities_handler(config=self.config, projectname=projectname)
 
     #################################################################################################################################################################

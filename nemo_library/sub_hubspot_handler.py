@@ -86,11 +86,42 @@ DEALSTAGE_MAPPING = {
 
 
 def CRM_Activities_handler(config: ConfigHandler, projectname: str) -> None:
+    """
+    Handles the processing and uploading of CRM deal activities to NEMO.
+
+    This function interacts with HubSpot's API to retrieve deal information, activity history,
+    and associated details, then merges and enriches the data before uploading it to the NEMO system.
+
+    Parameters:
+    -----------
+    config : ConfigHandler
+        An instance of ConfigHandler containing configuration settings, including API credentials
+        and other necessary parameters.
+
+    projectname : str
+        The name of the project to which the deal data should be uploaded in NEMO.
+
+    Process:
+    --------
+    1. Retrieves the HubSpot API token using the provided configuration.
+    2. Loads deals from the CRM system.
+    3. Loads and processes deal change history and activity data.
+    4. Merges deal history and activity data with deal details.
+    5. Resolves internal fields (e.g., company ID, user ID) to their corresponding plain text representations.
+    6. Maps deal stages to their respective descriptive names.
+    7. Uploads the processed deal data to the specified project in NEMO.
+
+    Returns:
+    --------
+    None
+        This function does not return any values. It performs operations that affect the state of
+        the CRM data in the NEMO system.
+    """
 
     hs = getHubSpotAPIToken(config=config)
 
     # load deals and add information to them
-    deals = load_deals_from_CRM(hs)
+    deals = load_deals_from_HubSpot(hs)
 
     # load deal changes history
     deal_history = load_deal_history(hs, deals)
@@ -111,13 +142,48 @@ def CRM_Activities_handler(config: ConfigHandler, projectname: str) -> None:
     # finally upload data to NEMO
     upload_deals_to_NEMO(config=config, projectname=projectname, deals=deals)
 
-def getHubSpotAPIToken(config: ConfigHandler) -> HubSpot:
 
-    # Initialize HubSpot API client
+def getHubSpotAPIToken(config: ConfigHandler) -> HubSpot:
+    """
+    Initializes and returns a HubSpot API client using the API token from the provided configuration.
+
+    Args:
+        config (ConfigHandler): An instance of ConfigHandler that contains configuration details,
+                                including the HubSpot API token.
+
+    Returns:
+        HubSpot: An instance of the HubSpot API client initialized with the API token.
+    """
     hs = HubSpot(access_token=config.config_get_hubspot_api_token())
     return hs
-    
-def load_deals_from_CRM(hs: HubSpot) -> pd.DataFrame:
+
+
+def load_deals_from_HubSpot(hs: HubSpot) -> pd.DataFrame:
+    """
+    Loads all deals from the HubSpot CRM and processes them into a pandas DataFrame.
+
+    Parameters:
+    -----------
+    hs : HubSpot
+        An instance of the HubSpot client used to interact with the HubSpot API.
+
+    Returns:
+    --------
+    pd.DataFrame
+        A DataFrame containing the deals data. The columns are prefixed with "deal_",
+        and specific columns have been renamed for clarity. The DataFrame includes
+        only the properties specified in `deal_properties`.
+
+    Functionality:
+    --------------
+    - Retrieves all deals from HubSpot CRM using the specified properties.
+    - Converts the retrieved deals into a DataFrame.
+    - Extracts nested "properties" from the data and expands them into separate columns.
+    - Drops any columns provided by the API that were not explicitly requested.
+    - Renames columns to ensure consistency, with all columns prefixed by "deal_".
+    - Optionally filters the DataFrame to keep only specific deals (commented out by default).
+    - Prints the number of deals loaded from the CRM for debugging purposes.
+    """
 
     # load all deals
     deal_properties = [
@@ -156,6 +222,35 @@ def load_deals_from_CRM(hs: HubSpot) -> pd.DataFrame:
 
 
 def load_deal_history(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Fetches and processes the historical changes of specified properties for a batch of HubSpot deals.
+
+    This function retrieves historical data for specified properties of HubSpot deals using the HubSpot CRM API.
+    It processes changes in the `dealstage`, `amount`, and `closedate` properties, capturing the old and new values
+    along with metadata such as the timestamp of the change, the user who made the change, and the source of the change.
+
+    Args:
+        hs (HubSpot): An instance of the HubSpot class, which should include an `access_token` attribute for API authentication.
+        deals (pd.DataFrame): A pandas DataFrame containing deal information, where each deal should have a unique `deal_id`.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the history of changes for the specified properties. The DataFrame includes:
+            - deal_id: The ID of the deal.
+            - update_type: A string indicating the type of update (e.g., "dealstage changed").
+            - update_<property_name>_old_value: The previous value of the property before the change.
+            - update_<property_name>_new_value: The new value of the property after the change.
+            - update_timestamp: The timestamp when the change occurred.
+            - update_user_id: The ID of the user who made the change, if available.
+            - update_source_type: The source type of the change (e.g., manual, API).
+
+    Raises:
+        ValueError: If the API response status code is not 200 (OK), indicating a failed request.
+
+    Notes:
+        - The API has a batch limit, and the function processes the deals in batches of up to 50.
+        - After processing each batch, a status message is printed to indicate progress.
+        - Historical changes are sorted by timestamp before processing to ensure chronological order.
+    """
 
     batch_size = 50  # max API limit for batch with historical data
 
@@ -225,6 +320,39 @@ def load_deal_history(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Enriches a DataFrame of deals with associated company information using the HubSpot API.
+
+    This function retrieves the associations between deals and companies, fetches additional
+    details about the associated companies, and merges this information into the original
+    deals DataFrame.
+
+    Parameters:
+    -----------
+    hs : HubSpot
+        An instance of the HubSpot client, which is used to make API calls to retrieve
+        associations and company details.
+    deals : pd.DataFrame
+        A DataFrame containing deal information. It must include a "deal_id" column
+        that uniquely identifies each deal.
+
+    Returns:
+    --------
+    pd.DataFrame
+        A DataFrame containing the original deal information, enriched with additional
+        company details. The resulting DataFrame will have the original columns from the
+        `deals` DataFrame, along with added columns for "company_id", "company_name",
+        and "company_domain", among other potential fields retrieved from the HubSpot API.
+
+    Notes:
+    ------
+    - The function first retrieves the association between deals and companies using
+      HubSpot's batch API, then fetches additional company details in batches to
+      handle large numbers of company IDs.
+    - After fetching and processing all required data, the function merges the company
+      information into the original deals DataFrame based on the deal and company IDs.
+    - The function prints a status message after processing each batch of company IDs.
+    """
 
     # First API call to retrieve the associations between deals and companies
     associations = hs.crm.associations.batch_api.read(
@@ -296,6 +424,36 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_activities(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Load and associate activities with deals from HubSpot CRM.
+
+    This function retrieves associations between deals and various activity types (e.g., emails, tasks, meetings)
+    from the HubSpot CRM. For each deal, it loads the associated activities, organizes the data into a structured
+    format, and returns it as a DataFrame.
+
+    Args:
+        hs (HubSpot): An instance of the HubSpot client used to interact with the HubSpot CRM API.
+        deals (pd.DataFrame): A DataFrame containing deal information, where the 'deal_id' column represents the
+                              unique identifiers of the deals to be processed.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the associations between deals and activities. The DataFrame has
+                      the following columns:
+                      - 'deal_id': The ID of the deal.
+                      - 'activity_id': The ID of the associated activity.
+                      - 'update_type': The type of activity (e.g., email, task, meeting).
+
+    Notes:
+        - The function iterates over a predefined list of activity types (ACTIVITY_TYPES) to load associations
+          for each deal.
+        - The function outputs a message to indicate when each activity type has been loaded.
+
+    Example:
+        hs = HubSpot(api_key="your_api_key")
+        deals = pd.DataFrame({"deal_id": [123, 456, 789]})
+        activity_associations = load_activities(hs, deals)
+        print(activity_associations)
+    """
 
     activity_association_rows = []
     deal_ids = deals["deal_id"].unique().tolist()
@@ -334,6 +492,48 @@ def fetch_activity_details_batch_via_rest(
     activity_ids: list[str],
     properties: list[str],
 ) -> list[dict]:
+    """
+    Fetches activity details in batches from the HubSpot CRM using the batch read API.
+
+    This function sends POST requests to the HubSpot CRM API to retrieve details of specified
+    activities (e.g., contacts, deals, etc.) based on their IDs. The IDs are processed in
+    batches of up to 100 at a time to comply with API limitations.
+
+    Parameters:
+    ----------
+    hs : HubSpot
+        An instance of the HubSpot class containing authentication details, such as the access token.
+    activity_type : str
+        The type of activity to fetch (e.g., 'contacts', 'deals', etc.).
+    activity_ids : list[str]
+        A list of activity IDs for which details are to be fetched.
+    properties : list[str]
+        A list of properties to be retrieved for each activity.
+
+    Returns:
+    -------
+    list[dict]
+        A list of dictionaries containing the properties of each activity fetched.
+        Each dictionary corresponds to one activity's details.
+
+    Notes:
+    -----
+    - The function processes the activity IDs in batches of up to 100 to avoid exceeding
+      HubSpot API limits.
+    - The function prints the progress of the batch processing, including the number of items
+      processed and any errors encountered.
+    - In case of an error during the API request, an error message is printed along with the
+      HTTP status code and response text.
+
+    Example:
+    --------
+    hs = HubSpot(access_token="your_access_token")
+    activity_type = "contacts"
+    activity_ids = ["123", "456", "789"]
+    properties = ["firstname", "lastname", "email"]
+
+    activity_details = fetch_activity_details_batch_via_rest(hs, activity_type, activity_ids, properties)
+    """
 
     # Header is the same for all batches
     headers = {
@@ -378,6 +578,25 @@ def fetch_activity_details_batch_via_rest(
 
 
 def add_activity_details(hs: HubSpot, deal_activities: pd.DataFrame) -> pd.DataFrame:
+    """
+    Adds detailed information for each activity type in a HubSpot deals DataFrame.
+
+    This function takes a DataFrame containing deal activities and enriches it by
+    fetching detailed information for each activity type. It retrieves the details
+    in batches using the HubSpot REST API and merges the fetched data back into the
+    original DataFrame.
+
+    Args:
+        hs (HubSpot): An instance of the HubSpot API client used to fetch activity details.
+        deal_activities (pd.DataFrame): A DataFrame containing deal activity data, including
+                                        `activity_id` and `update_type` columns.
+
+    Returns:
+        pd.DataFrame: A DataFrame with enriched activity details, where columns from the
+                      fetched activity details are prefixed with "activity_".
+                      Additionally, `activity_createdate` is renamed to `update_timestamp`,
+                      and `activity_hubspot_owner_id` is renamed to `update_user_id`.
+    """
 
     # Load details for each activity type in batches
     activity_details = []
@@ -432,6 +651,32 @@ def add_activity_details(hs: HubSpot, deal_activities: pd.DataFrame) -> pd.DataF
 def upload_deals_to_NEMO(
     config: ConfigHandler, projectname: str, deals: pd.DataFrame
 ) -> None:
+    """
+    Uploads a DataFrame of deals to the NEMO system after processing and temporarily saving it as a CSV file.
+
+    This function performs the following steps:
+    1. Removes timezone information from datetime columns (as Excel does not support timezones).
+    2. Drops unnecessary columns from the DataFrame such as "deal_associations", "deal_archived", etc.
+    3. Saves the processed DataFrame as a CSV file to a temporary location on disk.
+    4. Uploads the temporary CSV file to the NEMO system using the provided configuration and project name.
+
+    Args:
+        config (ConfigHandler): A configuration handler object required for the upload process.
+        projectname (str): The name of the project to which the deals should be uploaded.
+        deals (pd.DataFrame): A pandas DataFrame containing the deals data to be processed and uploaded.
+
+    Returns:
+        None
+
+    Raises:
+        Any exceptions raised by the underlying methods, such as those for file handling or uploading, will not be caught and should be handled by the caller.
+
+    Notes:
+        - The temporary CSV file is automatically deleted after the upload process is complete.
+        - The function prints the path of the temporary file and the number of records before uploading.
+        - The file is saved with a semicolon (;) as the delimiter in the CSV format.
+
+    """
 
     # remove timezone information (not supported by excel)
     for column in deals.columns:
@@ -474,7 +719,40 @@ def upload_deals_to_NEMO(
 
 
 def add_user_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Enriches a DataFrame of HubSpot deals by replacing owner and user ID columns with corresponding owner names.
 
+    This function retrieves all HubSpot owners through the HubSpot API, creates a mapping between HubSpot owner IDs and owner names,
+    and then maps this information onto the appropriate columns in the provided deals DataFrame. Specifically, it identifies columns
+    in the DataFrame that contain "owner_id" or "user_id" in their names and creates new columns with the same names, replacing "id"
+    with "name". The new columns will contain the owner's full name (first and last name concatenated) in place of the ID.
+
+    Parameters:
+    -----------
+    hs : HubSpot
+        An instance of the HubSpot client, used to interact with the HubSpot API.
+    deals : pd.DataFrame
+        A pandas DataFrame containing deal information, which includes one or more columns with owner or user IDs.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The modified DataFrame with additional columns where owner or user IDs have been replaced by their corresponding names.
+        The original ID columns remain unchanged, and the new name columns are added next to them.
+
+    Example:
+    --------
+    >>> hs_client = HubSpot(api_key="your_api_key")
+    >>> deals_df = pd.DataFrame({
+    >>>     "deal_owner_id": [123, 456],
+    >>>     "deal_user_id": [789, 101]
+    >>> })
+    >>> enriched_deals_df = add_user_information(hs_client, deals_df)
+    >>> print(enriched_deals_df)
+       deal_owner_id  deal_user_id   deal_owner_name   deal_user_name
+    0            123           789   John Doe         Jane Smith
+    1            456           101   Alice Johnson    Bob Brown
+    """
     # Load HubSpot owners and create a mapping from hubspot_owner_id to owner name
     owners = hs.crm.owners.get_all()
     owner_mapping = {
@@ -482,7 +760,6 @@ def add_user_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
     }
 
     # Map internal owner ids to clear names
-
     columns_to_map = [
         col for col in deals.columns if "owner_id" in col or "user_id" in col
     ]
@@ -493,6 +770,27 @@ def add_user_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
 
 
 def map_deal_stage(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Maps internal deal stage keys in a DataFrame to user-friendly text based on predefined mappings.
+
+    This function takes a DataFrame of deals and maps all columns containing "dealstage" in their names
+    to more descriptive user-friendly labels using a predefined mapping dictionary. The mapping is applied
+    in-place to the columns of the DataFrame.
+
+    Parameters:
+    ----------
+    hs : HubSpot
+        An instance of the HubSpot API client or a related object, which may be used for additional operations
+        if needed in future extensions of this function. Currently not used in the function.
+
+    deals : pd.DataFrame
+        A pandas DataFrame containing deal data, where one or more columns represent deal stages using internal keys.
+
+    Returns:
+    -------
+    pd.DataFrame
+        The input DataFrame with the deal stage columns mapped to user-friendly text.
+    """
 
     # Map the internal dealstage keys to user-friendly text
     columns_to_map = [col for col in deals.columns if "dealstage" in col]
@@ -500,4 +798,3 @@ def map_deal_stage(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
         deals[col] = deals[col].map(DEALSTAGE_MAPPING)
 
     return deals
-

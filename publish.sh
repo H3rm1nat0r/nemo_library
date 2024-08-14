@@ -1,17 +1,30 @@
-#!/bin/sh
+#!/bin/bash
+set -e  # Stops the script if any command fails
+set -x  # Prints each command before executing it (Debugging)
 
-# ensure proper python environment
-source setup.sh
+# Initialize and activate Conda environment
+eval "$(conda shell.bash hook)"
+conda activate nemo_library
 
-# remove old artifacts
+# Ensure the git repository is up to date
+git pull
+
+# Upgrade pip and dependencies
+python -m pip install --upgrade pip
+pip install --upgrade -r requirements.txt
+
+# Update the requirements.txt file
+pip freeze | awk -F "==" '{ print $1 }' > requirements.txt 
+
+# Remove old distribution artifacts
 rm -rf build dist *.egg-info
 
-# convert README.md for pypi
+# Convert README.md to README.rst
 pandoc -f markdown -t rst -o README.rst README.md
 
-# prepare distribution using build (you need to install this tool if not already done)
+# Create the distribution
 python -m build
 
-# upload distribution using twine
+# Configure Twine and upload the package
 source config_twine.sh
 twine upload dist/* -u "$USER" -p "$PWD" --verbose

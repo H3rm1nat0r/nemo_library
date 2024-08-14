@@ -1,7 +1,6 @@
-import configparser
 import csv
-import warnings
 import pandas as pd
+import re
 import tempfile
 
 
@@ -13,6 +12,8 @@ from hubspot.crm.companies.models.batch_read_input_simple_public_object_id impor
     BatchReadInputSimplePublicObjectId,
 )
 import requests
+
+from bs4 import BeautifulSoup
 
 from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_file_upload_handler import ReUploadFileIngestion
@@ -652,6 +653,145 @@ def add_activity_details(hs: HubSpot, deal_activities: pd.DataFrame) -> pd.DataF
     return merged_df
 
 
+def beautify_deals_drop_columns(deals: pd.DataFrame) -> pd.DataFrame:
+
+    # Remove unnecessary columns like "associations" and "archived". These information are provided
+    # by HubSpot-APIs even, if we do not request them
+    columns_to_drop = [
+        "deal_associations",
+        "deal_archived",
+        "deal_archived_at",
+        "deal_properties_with_history",
+        "deal_created_at",
+        "deal_updated_at",
+        "deal_pipeline",
+    ]
+    deals = deals.drop(columns=columns_to_drop, errors="ignore")
+    return deals
+
+
+def beautify_deals_handle_date_fields(deals: pd.DataFrame) -> pd.DataFrame:
+
+    # Refine the date_columns selection to exclude columns that are not dates
+    datetime_columns = [
+        col
+        for col in deals.columns
+        if "createdate" in col.lower()
+        or "lastmodifieddate" in col.lower()
+        or "timestamp" in col.lower()
+    ]
+    date_only_columns = [
+        "update_closedate_new_value",
+        "update_closedate_old_value",
+    ]  # Columns with date only
+
+    # Known formats from the data
+    datetime_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+
+    # Convert datetime columns and remove timezone information (not supported by Excel)
+    for column in datetime_columns:
+        deals[column] = pd.to_datetime(
+            deals[column], format=datetime_format, errors="coerce"
+        )
+
+        # Remove timezone information if present
+        if pd.api.types.is_datetime64tz_dtype(deals[column]):
+            deals[column] = deals[column].dt.tz_localize(None)
+
+    # Convert date-only columns by first converting with time and then extracting the date part
+    for column in date_only_columns:
+        # Convert using the full datetime format and then extract the date part
+        deals[column] = pd.to_datetime(
+            deals[column], format=datetime_format, errors="coerce"
+        ).dt.date
+
+    return deals
+
+
+def beautify_deals_data_type_conversions(deals: pd.DataFrame) -> pd.DataFrame:
+
+    # assign data types
+    dtype_mapping = {
+        "deal_id": "Int64",
+        "deal_hubspot_owner_id": "Int64",
+        "activity_id": "Int64",
+        "activity_object_id": "Int64",
+        "company_id": "Int64",
+        "deal_docno": "Int64",
+        "update_amount_old_value": "Float64",
+        "update_amount_new_value": "Float64",
+        "update_user_id": "Int64",
+    }
+
+    # Replace empty strings and NaN values with 0 for all numeric fields before type conversion
+    for column, dtype in dtype_mapping.items():
+        if "Int" in dtype or "Float" in dtype:
+            # Replace NaNs with 0 and make result numeric
+            deals[column] = pd.to_numeric(
+                deals[column].replace("", 0).fillna(0), errors="coerce"
+            )
+
+    deals = deals.astype(dtype_mapping)
+
+    return deals
+
+def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
+
+    # extract HTML plain text and remove HTML formatting, shorten text and replace "dangerous" characters
+
+    replacements = {
+        r"\r\n": " ",
+        r"\n": " ",
+        r"\r": " ",
+        r'"': "",  # Standard straight double quotes
+        r"“": "",  # Opening typographic double quotes
+        r"”": "",  # Closing typographic double quotes
+        r"„": "",  # German opening double quotes (low)
+        r"'": "",  # Standard straight single quotes
+        r"«": "",  # French double angle quotes (Guillemets, opening)
+        r"»": "",  # French double angle quotes (Guillemets, closing)
+        r"‹": "",  # Single angle quotes (Guillemets, opening)
+        r"›": "",  # Single angle quotes (Guillemets, closing)
+        r"‘": "",  # Opening typographic single quotes
+        r"’": "",  # Closing typographic single quotes
+    }
+
+    # Function to replace strings using regular expressions
+    def replace_strings(text):
+        if isinstance(text, str):  # Check if the value is a string
+            for pattern, replacement in replacements.items():
+                text = re.sub(pattern, replacement, text)
+        return text
+
+    def extract_and_clean_text(html):
+        if isinstance(html, str):
+            # Extract text from HTML
+            soup = BeautifulSoup(html, "html.parser")
+            text = soup.get_text()[:400]
+
+            # Replace unwanted characters
+            text = replace_strings(text)
+
+            return text
+        else:
+            return html
+
+    html_columns = [
+        "activity_call_body",
+        "activity_call_title",
+        "activity_email_subject",
+        "activity_email_text",
+        "activity_internal_meeting_notes",
+        "activity_meeting_body",
+        "activity_note_body",
+        "activity_task_body",
+        "activity_task_subject",
+    ]
+    for col in html_columns:
+        deals[col] = deals[col].apply(extract_and_clean_text)
+        
+    return deals
+
 def upload_deals_to_NEMO(
     config: ConfigHandler, projectname: str, deals: pd.DataFrame
 ) -> None:
@@ -682,67 +822,21 @@ def upload_deals_to_NEMO(
 
     """
 
-    # Remove unnecessary columns like "associations" and "archived"
-    columns_to_drop = [
-        "deal_associations",
-        "deal_archived",
-        "deal_archived_at",
-        "deal_properties_with_history",
-        "deal_created_at",
-        "deal_updated_at",
-        "deal_pipeline",
-    ]
-    deals = deals.drop(columns=columns_to_drop, errors="ignore")
-
-    # handle date type fields
-
-    # Refine the date_columns selection to exclude columns that are not dates
-    date_columns = [
-        col
-        for col in deals.columns
-        if "createdate" in col.lower()
-        or "lastmodifieddate" in col.lower()
-        or "timestamp" in col.lower()
-    ]
-    date_only_columns = [
-        "update_closedate_new_value",
-        "update_closedate_old_value",
-    ]  # Columns with date only
-
-    # Known formats from the data
-    datetime_format = "%Y-%m-%dT%H:%M:%S.%fZ"
-
-    # Convert datetime columns and remove timezone information (not supported by Excel)
-    for column in date_columns:
-        deals[column] = pd.to_datetime(
-            deals[column], format=datetime_format, errors="coerce"
-        )
-
-        # Remove timezone information if present
-        if pd.api.types.is_datetime64tz_dtype(deals[column]):
-            deals[column] = deals[column].dt.tz_localize(None)
-
-    # Convert date-only columns by first converting with time and then extracting the date part
-    for column in date_only_columns:
-        # Convert using the full datetime format and then extract the date part
-        deals[column] = pd.to_datetime(
-            deals[column], format=datetime_format, errors="coerce"
-        ).dt.date
-
-    # Replace line breaks in all columns with a space
-    deals = deals.replace({r"\n": " ", r"\r": " "}, regex=True)
+    deals = beautify_deals_drop_columns(deals)
+    deals = beautify_deals_handle_date_fields(deals)
+    deals = beautify_deals_data_type_conversions(deals)
+    deals = beautify_deals_clean_text(deals)
 
     # write file temporarily to disk
 
     with tempfile.NamedTemporaryFile(delete=True, suffix=".csv") as temp_file:
         temp_file_path = temp_file.name
 
-        print(temp_file_path)
         deals.to_csv(
             temp_file_path,
             index=False,
             sep=";",
-            quoting=csv.QUOTE_NONNUMERIC,
+            quoting=csv.QUOTE_STRINGS,
         )
 
         print(f"file {temp_file_path} written. Number of records: {len(deals)}")

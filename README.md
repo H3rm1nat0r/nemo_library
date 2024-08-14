@@ -22,6 +22,7 @@ tenant = <your tenant>
 userid = <your userid>
 password = <your password>
 environment = [prod|dev|demo]
+hubspot_api_token = <your API token, if you are going to use the HubSpot adapter, blank if not used>
 ```
 
 If you don't want to pass userid/password in a file (which is readable to everybody that has access to the file), you can use Windows Credential Manager or MacOS key chain to store your password. Please use "nemo_library" as "Program name". As an alternative, you can programmatically set your password by using this code

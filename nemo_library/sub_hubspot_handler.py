@@ -757,11 +757,21 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
         r"’": "",  # Closing typographic single quotes
     }
 
+    emoji_pattern = re.compile(
+        "["
+        u"\U0001F600-\U0001F64F"  # emoticons
+        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+        "]+", flags=re.UNICODE
+    )
+
     # Function to replace strings using regular expressions
     def replace_strings(text):
         if isinstance(text, str):  # Check if the value is a string
             for pattern, replacement in replacements.items():
                 text = re.sub(pattern, replacement, text)
+                text = emoji_pattern.sub(r'', text)
         return text
 
     def extract_and_clean_text(html):
@@ -787,6 +797,7 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
         "activity_note_body",
         "activity_task_body",
         "activity_task_subject",
+        "company_name",
     ]
     for col in html_columns:
         deals[col] = deals[col].apply(extract_and_clean_text)
@@ -837,7 +848,7 @@ def upload_deals_to_NEMO(
             temp_file_path,
             index=False,
             sep=";",
-            quoting=csv.QUOTE_STRINGS,
+            quoting=csv.QUOTE_NONNUMERIC,
         )
 
         print(f"file {temp_file_path} written. Number of records: {len(deals)}")

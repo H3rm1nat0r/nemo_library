@@ -1,4 +1,5 @@
 import csv
+import os
 import pandas as pd
 import re
 import tempfile
@@ -829,8 +830,8 @@ def upload_deals_to_NEMO(
 
     # write file temporarily to disk
 
-    with tempfile.NamedTemporaryFile(delete=True, suffix=".csv") as temp_file:
-        temp_file_path = temp_file.name
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_path = os.path.join(temp_dir, 'tempfile.csv')
 
         deals.to_csv(
             temp_file_path,
@@ -847,7 +848,6 @@ def upload_deals_to_NEMO(
             update_project_settings=True,
         )
         print(f"upload to project {projectname} completed")
-        temp_file.close()
 
 
 def add_user_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:

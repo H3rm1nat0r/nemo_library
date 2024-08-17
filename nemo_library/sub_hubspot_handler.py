@@ -142,6 +142,10 @@ def CRM_Activities_handler(config: ConfigHandler, projectname: str) -> None:
     deals = add_user_information(hs, deals)
     deals = map_deal_stage(hs, deals)
 
+    # for debugging purposes
+    # deals.to_pickle("test.pkl")
+    # deals = pd.read_pickle("test.pkl")
+
     # finally upload data to NEMO
     upload_deals_to_NEMO(config=config, projectname=projectname, deals=deals)
 
@@ -727,14 +731,21 @@ def beautify_deals_data_type_conversions(deals: pd.DataFrame) -> pd.DataFrame:
     # Replace empty strings and NaN values with 0 for all numeric fields before type conversion
     for column, dtype in dtype_mapping.items():
         if "Int" in dtype or "Float" in dtype:
-            # Replace NaNs with 0 and make result numeric
-            deals[column] = pd.to_numeric(
-                deals[column].replace("", 0).fillna(0), errors="coerce"
-            )
+            numeric_cast = pd.Series(deals[column], dtype=dtype)
+            if "Int" in dtype:
+                deals[column] = pd.to_numeric(numeric_cast, errors="coerce").astype(
+                    dtype
+                )
+            else:
+                deals[column] = pd.to_numeric(
+                    numeric_cast, downcast="float", errors="coerce"
+                )
 
-    deals = deals.astype(dtype_mapping)
+    # deals = deals.astype(dtype_mapping)
 
+    print(deals.dtypes)
     return deals
+
 
 def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
 
@@ -759,11 +770,12 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
 
     emoji_pattern = re.compile(
         "["
-        u"\U0001F600-\U0001F64F"  # emoticons
-        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-        u"\U0001F680-\U0001F6FF"  # transport & map symbols
-        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-        "]+", flags=re.UNICODE
+        "\U0001F600-\U0001F64F"  # emoticons
+        "\U0001F300-\U0001F5FF"  # symbols & pictographs
+        "\U0001F680-\U0001F6FF"  # transport & map symbols
+        "\U0001F1E0-\U0001F1FF"  # flags (iOS)
+        "]+",
+        flags=re.UNICODE,
     )
 
     # Function to replace strings using regular expressions
@@ -771,7 +783,7 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
         if isinstance(text, str):  # Check if the value is a string
             for pattern, replacement in replacements.items():
                 text = re.sub(pattern, replacement, text)
-                text = emoji_pattern.sub(r'', text)
+                text = emoji_pattern.sub(r"", text)
         return text
 
     def extract_and_clean_text(html):
@@ -801,8 +813,9 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
     ]
     for col in html_columns:
         deals[col] = deals[col].apply(extract_and_clean_text)
-        
+
     return deals
+
 
 def upload_deals_to_NEMO(
     config: ConfigHandler, projectname: str, deals: pd.DataFrame
@@ -842,13 +855,13 @@ def upload_deals_to_NEMO(
     # write file temporarily to disk
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        temp_file_path = os.path.join(temp_dir, 'tempfile.csv')
+        temp_file_path = os.path.join(temp_dir, "tempfile.csv")
 
         deals.to_csv(
             temp_file_path,
             index=False,
             sep=";",
-            quoting=csv.QUOTE_NONNUMERIC,
+            na_rep="",
         )
 
         print(f"file {temp_file_path} written. Number of records: {len(deals)}")

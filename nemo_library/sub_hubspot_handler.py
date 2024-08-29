@@ -132,7 +132,13 @@ def CRM_Activities_handler(config: ConfigHandler, projectname: str) -> None:
     deal_activity = add_activity_details(hs, deal_activity)
 
     # concat deal history and deal activity
-    history = pd.concat([deal_history, deal_activity], ignore_index=True)
+    history = pd.concat(
+        [
+            deal_history,
+            deal_activity,
+        ],
+        ignore_index=True,
+    )
 
     # and finally join that with deal details
     deals = deals.merge(history, on="deal_id", how="left")
@@ -222,7 +228,6 @@ def load_deals_from_HubSpot(hs: HubSpot) -> pd.DataFrame:
 
     # deal_ids_to_keep = [
     #     "8163202199",
-    #     # "16410497543",
     # ]
     # deals_df = deals_df[deals_df["deal_id"].isin(deal_ids_to_keep)]
 
@@ -279,7 +284,11 @@ def load_deal_history(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
 
         batch_read_input = {
             "inputs": [{"id": deal_id} for deal_id in batch_ids],
-            "propertiesWithHistory": ["dealstage", "amount", "closedate"],
+            "propertiesWithHistory": [
+                "dealstage",
+                "amount",
+                "closedate",
+            ],
         }
 
         response = requests.post(base_url, json=batch_read_input, headers=headers)
@@ -659,9 +668,36 @@ def add_activity_details(hs: HubSpot, deal_activities: pd.DataFrame) -> pd.DataF
 
 
 def beautify_deals_drop_columns(deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Removes unnecessary columns from a HubSpot deals DataFrame.
 
-    # Remove unnecessary columns like "associations" and "archived". These information are provided
-    # by HubSpot-APIs even, if we do not request them
+    This function is used to clean up a DataFrame containing deal data from HubSpot by dropping
+    columns that are often included by default in API responses but are not needed for further
+    processing or analysis.
+
+    Parameters:
+    -----------
+    deals : pd.DataFrame
+        A DataFrame containing deal information retrieved from HubSpot, potentially with extra
+        columns that are not necessary for analysis.
+
+    Returns:
+    --------
+    pd.DataFrame
+        A cleaned DataFrame with specified unnecessary columns removed. If any of the specified
+        columns are not present in the input DataFrame, they will be ignored.
+
+    Notes:
+    ------
+    The following columns are removed if they exist:
+        - "deal_associations"
+        - "deal_archived"
+        - "deal_archived_at"
+        - "deal_properties_with_history"
+        - "deal_created_at"
+        - "deal_updated_at"
+        - "deal_pipeline"
+    """
     columns_to_drop = [
         "deal_associations",
         "deal_archived",
@@ -676,6 +712,51 @@ def beautify_deals_drop_columns(deals: pd.DataFrame) -> pd.DataFrame:
 
 
 def beautify_deals_handle_date_fields(deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Cleans and standardizes date-related fields within a DataFrame of deals data.
+
+    This function processes the provided DataFrame by identifying and handling various
+    date and timestamp fields. Specifically, it addresses the following:
+
+    1. Identifies columns related to creation dates, last modification dates, and timestamps
+       (e.g., columns with "createdate", "lastmodifieddate", or "timestamp" in their names).
+    2. Identifies specific columns that contain only date values.
+    3. Corrects timestamp formats that may lack milliseconds by adding them where missing.
+    4. Converts these timestamp strings to proper `datetime` objects.
+    5. Removes timezone information from `datetime` objects, if present.
+    6. Converts columns that should contain only dates to `date` objects, ensuring
+       they are stored without time components.
+
+    Parameters:
+    ----------
+    deals : pd.DataFrame
+        A DataFrame containing deal-related data, with various columns potentially
+        representing dates or timestamps.
+
+    Returns:
+    -------
+    pd.DataFrame
+        The input DataFrame with date-related fields standardized and cleaned.
+
+    Notes:
+    -----
+    - The function assumes that the columns to be processed either contain complete
+      timestamps or date-only values.
+    - Non-date columns or columns that do not match the specified patterns are left
+      unchanged.
+    - The function handles errors during conversion by coercing problematic values
+      to `NaT` (for datetime) or `NaN` (for dates), ensuring that the DataFrame remains
+      consistent.
+
+    Example:
+    --------
+    >>> import pandas as pd
+    >>> data = {'createdate': ['2021-08-29T14:48:00Z', '2022-02-10T11:23:45Z'],
+                'update_closedate_new_value': ['2021-12-01', '2022-03-15']}
+    >>> df = pd.DataFrame(data)
+    >>> beautified_df = beautify_deals_handle_date_fields(df)
+    >>> print(beautified_df)
+    """
 
     # Refine the date_columns selection to exclude columns that are not dates
     datetime_columns = [
@@ -690,14 +771,22 @@ def beautify_deals_handle_date_fields(deals: pd.DataFrame) -> pd.DataFrame:
         "update_closedate_old_value",
     ]  # Columns with date only
 
-    # Known formats from the data
-    datetime_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+    # Define a regular expression to match timestamps without milliseconds
+    pattern = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
-    # Convert datetime columns and remove timezone information (not supported by Excel)
+    # Convert datetime columns and handle missing milliseconds
     for column in datetime_columns:
-        deals[column] = pd.to_datetime(
-            deals[column], format=datetime_format, errors="coerce"
+        # Check and fix timestamps that lack milliseconds
+        deals[column] = deals[column].apply(
+            lambda x: (
+                re.sub(pattern, x.replace("Z", ".000Z"), x)
+                if isinstance(x, str) and pattern.match(x)
+                else x
+            )
         )
+
+        # Now, convert the corrected timestamps to datetime
+        deals[column] = pd.to_datetime(deals[column], errors="coerce")
 
         # Remove timezone information if present
         if pd.api.types.is_datetime64tz_dtype(deals[column]):
@@ -706,15 +795,51 @@ def beautify_deals_handle_date_fields(deals: pd.DataFrame) -> pd.DataFrame:
     # Convert date-only columns by first converting with time and then extracting the date part
     for column in date_only_columns:
         # Convert using the full datetime format and then extract the date part
-        deals[column] = pd.to_datetime(
-            deals[column], format=datetime_format, errors="coerce"
-        ).dt.date
+        if column in deals.columns:
+            deals[column] = pd.to_datetime(deals[column], errors="coerce").dt.date
 
     return deals
 
 
 def beautify_deals_data_type_conversions(deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Converts the data types of specified columns in the deals DataFrame to more appropriate types, 
+    specifically Int64 and Float64. This function also handles missing or invalid values by replacing 
+    empty strings and NaN values with 0 before performing the type conversions.
 
+    Parameters:
+    ----------
+    deals : pd.DataFrame
+        The input DataFrame containing deal data, where specific columns need type conversion.
+
+    Returns:
+    -------
+    pd.DataFrame
+        A DataFrame with updated data types for the specified columns.
+    
+    Notes:
+    -----
+    - The function first assigns data types according to the dtype_mapping dictionary.
+    - Columns expected to contain integer values are converted to the "Int64" type.
+    - Columns expected to contain float values are converted to the "Float64" type.
+    - Empty strings and NaN values in the specified numeric columns are replaced with 0 before conversion.
+    - If a column is not present in the DataFrame, it is ignored.
+
+    Example:
+    -------
+    Input DataFrame:
+        | deal_id | update_amount_old_value | update_amount_new_value | ... |
+        |---------|------------------------|------------------------|-----|
+        | '1'     | '100.0'                 | ''                     | ... |
+        | '2'     | '200.5'                 | '250.5'                | ... |
+    
+    Output DataFrame:
+        | deal_id | update_amount_old_value | update_amount_new_value | ... |
+        |---------|------------------------|------------------------|-----|
+        | 1       | 100.0                   | 0.0                    | ... |
+        | 2       | 200.5                   | 250.5                  | ... |
+    """
+    
     # assign data types
     dtype_mapping = {
         "deal_id": "Int64",
@@ -730,7 +855,7 @@ def beautify_deals_data_type_conversions(deals: pd.DataFrame) -> pd.DataFrame:
 
     # Replace empty strings and NaN values with 0 for all numeric fields before type conversion
     for column, dtype in dtype_mapping.items():
-        if "Int" in dtype or "Float" in dtype:
+        if column in deals.columns and ("Int" in dtype or "Float" in dtype):
             numeric_cast = pd.Series(deals[column], dtype=dtype)
             if "Int" in dtype:
                 deals[column] = pd.to_numeric(numeric_cast, errors="coerce").astype(
@@ -741,14 +866,44 @@ def beautify_deals_data_type_conversions(deals: pd.DataFrame) -> pd.DataFrame:
                     numeric_cast, downcast="float", errors="coerce"
                 )
 
-    # deals = deals.astype(dtype_mapping)
-
-    print(deals.dtypes)
     return deals
 
 
 def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Cleans and beautifies text data within specified columns of a DataFrame containing deal information.
 
+    This function performs the following operations:
+    1. Extracts plain text from HTML content within specified columns.
+    2. Cleans the extracted text by removing HTML tags and shortening it to a maximum of 400 characters.
+    3. Replaces certain "dangerous" characters and typographic quotes with their safer equivalents or removes them.
+    4. Removes emojis and other unwanted symbols.
+
+    Parameters:
+    deals (pd.DataFrame): A pandas DataFrame containing deal-related data. The columns expected to contain HTML
+                          and text data include:
+                          - "activity_call_body"
+                          - "activity_call_title"
+                          - "activity_email_subject"
+                          - "activity_email_text"
+                          - "activity_internal_meeting_notes"
+                          - "activity_meeting_body"
+                          - "activity_note_body"
+                          - "activity_task_body"
+                          - "activity_task_subject"
+                          - "company_name"
+
+    Returns:
+    pd.DataFrame: A DataFrame with cleaned and processed text in the specified columns.
+
+    Notes:
+    - The function handles only string-type values in the specified columns. Non-string values are left unchanged.
+    - The text is truncated to the first 400 characters after HTML tags are stripped.
+    - Emojis and other non-alphanumeric symbols specified by the regex pattern are removed.
+    - Special characters like typographic quotes, Guillemets, and line breaks are removed or replaced.
+
+    """
+    
     # extract HTML plain text and remove HTML formatting, shorten text and replace "dangerous" characters
 
     replacements = {
@@ -812,7 +967,8 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
         "company_name",
     ]
     for col in html_columns:
-        deals[col] = deals[col].apply(extract_and_clean_text)
+        if col in deals.columns:
+            deals[col] = deals[col].apply(extract_and_clean_text)
 
     return deals
 

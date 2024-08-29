@@ -227,7 +227,8 @@ def load_deals_from_HubSpot(hs: HubSpot) -> pd.DataFrame:
     # debugging: remove all deals but 2
 
     # deal_ids_to_keep = [
-    #     "8163202199",
+    #     # "8163202199", # HORA
+    #     "8165061386", # Synflex/Schwering & Hasse
     # ]
     # deals_df = deals_df[deals_df["deal_id"].isin(deal_ids_to_keep)]
 
@@ -772,15 +773,16 @@ def beautify_deals_handle_date_fields(deals: pd.DataFrame) -> pd.DataFrame:
     ]  # Columns with date only
 
     # Define a regular expression to match timestamps without milliseconds
-    pattern = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+    pattern_datetime = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+    pattern_date_only = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
 
     # Convert datetime columns and handle missing milliseconds
     for column in datetime_columns:
         # Check and fix timestamps that lack milliseconds
         deals[column] = deals[column].apply(
             lambda x: (
-                re.sub(pattern, x.replace("Z", ".000Z"), x)
-                if isinstance(x, str) and pattern.match(x)
+                re.sub(pattern_datetime, x.replace("Z", ".000Z"), x)
+                if isinstance(x, str) and pattern_datetime.match(x)
                 else x
             )
         )
@@ -792,10 +794,19 @@ def beautify_deals_handle_date_fields(deals: pd.DataFrame) -> pd.DataFrame:
         if pd.api.types.is_datetime64tz_dtype(deals[column]):
             deals[column] = deals[column].dt.tz_localize(None)
 
-    # Convert date-only columns by first converting with time and then extracting the date part
+    # Convert date-only columns by first checking and fixing the format
     for column in date_only_columns:
-        # Convert using the full datetime format and then extract the date part
         if column in deals.columns:
+            # Check and fix timestamps that lack milliseconds for date-only columns
+            deals[column] = deals[column].apply(
+                lambda x: (
+                    re.sub(pattern_datetime, x.replace("Z", ".000Z"), x)
+                    if isinstance(x, str) and not pattern_date_only.match(x)
+                    else x
+                )
+            )
+
+            # Convert using the full datetime format and then extract the date part
             deals[column] = pd.to_datetime(deals[column], errors="coerce").dt.date
 
     return deals
@@ -803,8 +814,8 @@ def beautify_deals_handle_date_fields(deals: pd.DataFrame) -> pd.DataFrame:
 
 def beautify_deals_data_type_conversions(deals: pd.DataFrame) -> pd.DataFrame:
     """
-    Converts the data types of specified columns in the deals DataFrame to more appropriate types, 
-    specifically Int64 and Float64. This function also handles missing or invalid values by replacing 
+    Converts the data types of specified columns in the deals DataFrame to more appropriate types,
+    specifically Int64 and Float64. This function also handles missing or invalid values by replacing
     empty strings and NaN values with 0 before performing the type conversions.
 
     Parameters:
@@ -816,7 +827,7 @@ def beautify_deals_data_type_conversions(deals: pd.DataFrame) -> pd.DataFrame:
     -------
     pd.DataFrame
         A DataFrame with updated data types for the specified columns.
-    
+
     Notes:
     -----
     - The function first assigns data types according to the dtype_mapping dictionary.
@@ -832,14 +843,14 @@ def beautify_deals_data_type_conversions(deals: pd.DataFrame) -> pd.DataFrame:
         |---------|------------------------|------------------------|-----|
         | '1'     | '100.0'                 | ''                     | ... |
         | '2'     | '200.5'                 | '250.5'                | ... |
-    
+
     Output DataFrame:
         | deal_id | update_amount_old_value | update_amount_new_value | ... |
         |---------|------------------------|------------------------|-----|
         | 1       | 100.0                   | 0.0                    | ... |
         | 2       | 200.5                   | 250.5                  | ... |
     """
-    
+
     # assign data types
     dtype_mapping = {
         "deal_id": "Int64",
@@ -903,7 +914,7 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
     - Special characters like typographic quotes, Guillemets, and line breaks are removed or replaced.
 
     """
-    
+
     # extract HTML plain text and remove HTML formatting, shorten text and replace "dangerous" characters
 
     replacements = {

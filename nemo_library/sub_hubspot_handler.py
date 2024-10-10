@@ -233,7 +233,8 @@ def load_deals_from_HubSpot(hs: HubSpot) -> pd.DataFrame:
 
     # deal_ids_to_keep = [
     #     # "8163202199", # HORA
-    #     "8165061386", # Synflex/Schwering & Hasse
+    #     # "8165061386", # Synflex/Schwering & Hasse
+    #     "22380066663",  # Börger
     # ]
     # deals_df = deals_df[deals_df["deal_id"].isin(deal_ids_to_keep)]
 
@@ -347,7 +348,6 @@ def load_deal_history(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
 def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
     """
     Enriches a DataFrame of deals with associated company information using the HubSpot API.
-
     This function retrieves the associations between deals and companies, fetches additional
     details about the associated companies, and merges this information into the original
     deals DataFrame.
@@ -367,19 +367,14 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
         A DataFrame containing the original deal information, enriched with additional
         company details. The resulting DataFrame will have the original columns from the
         `deals` DataFrame, along with added columns for "company_id", "company_name",
-        and "company_domain", among other potential fields retrieved from the HubSpot API.
+        "company_domain", "company_industry", and other relevant fields.
 
     Notes:
     ------
-    - The function first retrieves the association between deals and companies using
-      HubSpot's batch API, then fetches additional company details in batches to
-      handle large numbers of company IDs.
-    - After fetching and processing all required data, the function merges the company
-      information into the original deals DataFrame based on the deal and company IDs.
-    - The function prints a status message after processing each batch of company IDs.
+    - This function uses the HubSpot API to retrieve company associations and company details.
     """
 
-    # First API call to retrieve the associations between deals and companies
+    # Step 1: Retrieve associations between deals and companies
     associations = hs.crm.associations.batch_api.read(
         from_object_type="deals",
         to_object_type="company",
@@ -403,23 +398,37 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
     # Create a DataFrame from the expanded rows
     company_association_df = pd.DataFrame(company_association_rows)
 
-    # API call to retrieve additional company information
+    # Step 2: Retrieve company details in batches using the search API
     company_ids = company_association_df["company_id"].unique().tolist()
-
     company_details = []
     total_companies = len(company_ids)
 
-    # Split company_ids into batches of 100
+    # Define the properties you want to fetch (e.g., "industry", "phone", etc.)
+    properties_to_fetch = [
+        "name",
+        "domain",
+        "industry",
+        "numberofemployees",
+        "annualrevenue",
+    ]
+
     batch_size = 100
     for i in range(0, total_companies, batch_size):
         batch = company_ids[i : i + batch_size]
-        batch_input = BatchReadInputSimplePublicObjectId(
-            inputs=[{"id": cid} for cid in batch]
-        )
 
-        company_infos = hs.crm.companies.batch_api.read(
-            batch_read_input_simple_public_object_id=batch_input
-        )
+        # Using the search API to fetch company details with specific properties
+        filter_group = {
+            "filters": [
+                {"propertyName": "hs_object_id", "operator": "IN", "values": batch}
+            ]
+        }
+        search_request = {
+            "filterGroups": [filter_group],
+            "properties": properties_to_fetch,
+            "limit": batch_size,
+        }
+
+        company_infos = hs.crm.companies.search_api.do_search(search_request)
 
         for company_info in company_infos.results:
             company_details.append(
@@ -427,7 +436,13 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
                     "company_id": company_info.id,
                     "company_name": company_info.properties.get("name", ""),
                     "company_domain": company_info.properties.get("domain", ""),
-                    # Add more relevant fields here
+                    "company_industry": company_info.properties.get("industry", ""),
+                    "company_numberofemployees": company_info.properties.get(
+                        "numberofemployees", ""
+                    ),
+                    "company_annualrevenue": company_info.properties.get(
+                        "annualrevenue", ""
+                    ),
                 }
             )
 
@@ -436,7 +451,7 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
             f"company association: {min(i + batch_size, total_companies)} out of {total_companies} records processed"
         )
 
-    # Create a DataFrame from the company details
+    # Step 3: Create a DataFrame from the company details
     company_df = pd.DataFrame(company_details)
 
     # Merge the expanded DataFrame with the company_df
@@ -1029,6 +1044,7 @@ def upload_deals_to_NEMO(
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_file_path = os.path.join(temp_dir, "tempfile.csv")
 
+        # temp_file_path = "./crm.csv"
         deals.to_csv(
             temp_file_path,
             index=False,

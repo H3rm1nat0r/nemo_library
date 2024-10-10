@@ -206,6 +206,11 @@ def load_deals_from_HubSpot(hs: HubSpot) -> pd.DataFrame:
         "revenue_stream",
         "verkauf_uber",
         "belegnummer",
+        "budget_bekannt",
+        "entscheider_bekannt",
+        "entscheider_freigabe",
+        "entscheidungsdauer_bekannt",
+        "entscheidungsprozess_bekannt",
     ]
     deals = hs.crm.deals.get_all(properties=deal_properties)
 
@@ -1030,8 +1035,8 @@ def upload_deals_to_NEMO(
             sep=";",
             na_rep="",
         )
-
         print(f"file {temp_file_path} written. Number of records: {len(deals)}")
+
         ReUploadFileIngestion(
             config=config,
             projectname=projectname,

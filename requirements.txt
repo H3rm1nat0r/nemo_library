@@ -1,5 +1,4 @@
 beautifulsoup4
-bleach
 boto3
 botocore
 build
@@ -7,7 +6,6 @@ certifi
 charset-normalizer
 coverage
 docutils
-et-xmlfile
 hubspot-api-client
 idna
 importlib_metadata
@@ -22,14 +20,10 @@ mdurl
 more-itertools
 nh3
 numpy
-openpyxl
 packaging
 pandas
-pandoc
 pkginfo
 pluggy
-plumbum
-ply
 Pygments
 pyproject_hooks
 pytest
@@ -48,6 +42,5 @@ soupsieve
 twine
 tzdata
 urllib3
-webencodings
 wheel
 zipp

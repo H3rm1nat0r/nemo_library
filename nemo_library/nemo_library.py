@@ -1,13 +1,6 @@
-import json
-
-
 import pandas as pd
-import requests
-
-import re
 
 from nemo_library.sub_config_handler import ConfigHandler
-from nemo_library.sub_connection_handler import connection_get_headers
 from nemo_library.sub_file_upload_handler import ReUploadFileIngestion
 from nemo_library.sub_hubspot_handler import CRM_Activities_handler
 from nemo_library.sub_project_handler import (
@@ -18,10 +11,8 @@ from nemo_library.sub_project_handler import (
 from nemo_library.sub_infozoom_handler import synchMetadataWithFocus, exportMetadata
 
 from nemo_library.sub_report_handler import LoadReport
-from nemo_library.sub_symbols import (
-    ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
-    ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
-    RESERVED_KEYWORDS,
+from nemo_library.sub_synch_file_columns_handler import (
+    synchronizeCsvColsAndImportedColumns,
 )
 
 
@@ -121,6 +112,39 @@ class NemoLibrary:
             trigger_only=trigger_only,
         )
 
+    def synchronizeCsvColsAndImportedColumns(
+        self,
+        projectname: str,
+        filename: str,
+    ) -> None:
+        """
+        Synchronizes the columns in a CSV file with the imported columns in the project.
+
+        This function reads the column names from the first line of a specified CSV file and compares
+        them with the imported columns for a given project. If a column from the CSV is not found in 
+        the list of imported columns, it creates a new record for that column in the system.
+
+        Args:
+            projectname (str): The name of the project for which the columns are being synchronized.
+            filename (str): The path to the CSV file whose columns need to be synchronized.
+
+        Returns:
+            None: The function performs its operation without returning a value.
+
+        Steps:
+            1. Retrieves the project ID based on the given project name.
+            2. Reads the first line of the CSV file to get the column names.
+            3. Cleans the column names using a `clean_column_name` function.
+            4. For each CSV column, checks if an entry exists in the imported columns DataFrame.
+            5. If no record is found for a column, a new record is created and added to the system.
+        """
+
+        synchronizeCsvColsAndImportedColumns(
+            config=self.config,
+            projectname=projectname,
+            filename=filename,
+        )
+
     def synchMetadataWithFocus(self, metadatafile: str, projectId: str):
         """
         Synchronizes metadata from a given CSV file with the NEMO project metadata.
@@ -218,131 +242,7 @@ class NemoLibrary:
         None
             This function does not return any values. It performs operations that affect the state of
             the CRM data in the NEMO system.
-        """        
+        """
         CRM_Activities_handler(config=self.config, projectname=projectname)
 
-    #################################################################################################################################################################
 
-    def getImportedColumns(self, projectname: str):
-        project_id = None
-
-        try:
-            project_id = self.getProjectID(projectname)
-
-            # initialize reqeust
-            headers = connection_get_headers(self.config)
-            response = requests.get(
-                self.config.config_get_nemo_url()
-                + ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS.format(
-                    projectId=project_id
-                ),
-                headers=headers,
-            )
-            if response.status_code != 200:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-            resultjs = json.loads(response.text)
-            df = pd.json_normalize(resultjs)
-            return df
-
-        except Exception as e:
-            if project_id == None:
-                raise Exception("process stopped, no project_id available")
-            raise Exception("process aborted")
-
-    #################################################################################################################################################################
-
-    def synchronizeCsvColsAndImportedColumns(self, projectname: str, filename: str):
-        importedColumns = self.getImportedColumns(projectname)
-        project_id = self.getProjectID(projectname)
-
-        # Read the first line of the CSV file to get column names
-        with open(filename, "r") as file:
-            first_line = file.readline().strip()
-
-        # Split the first line into a list of column names
-        csv_column_names = first_line.split(";")
-
-        # Check if a record exists in the DataFrame for each column
-        for column_name in csv_column_names:
-            displayName = column_name
-            column_name = self.clean_column_name(
-                column_name, RESERVED_KEYWORDS
-            )  # Assuming you have the clean_column_name function from the previous script
-
-            # Check if the record with internal_name equal to the column name exists
-            if not importedColumns[
-                importedColumns["internalName"] == column_name
-            ].empty:
-                print(f"Record found for column '{column_name}' in the DataFrame.")
-            else:
-                print(
-                    f"******************************No record found for column '{column_name}' in the DataFrame."
-                )
-                new_importedColumn = {
-                    "id": "",
-                    "internalName": column_name,
-                    "displayName": displayName,
-                    "importName": displayName,
-                    "description": "",
-                    "dataType": "string",
-                    "categorialType": False,
-                    "businessEvent": False,
-                    "unit": "",
-                    "columnType": "ExportedColumn",
-                    "tenant": self.config.config_get_tenant(),
-                    "projectId": project_id,
-                }
-
-                self.createImportedColumn(new_importedColumn, project_id)
-
-    #################################################################################################################################################################
-
-    def clean_column_name(self, column_name, reserved_keywords):
-        # If csv column name is empty, return "undefined_name"
-        if not column_name:
-            return "undefined_name"
-
-        # Replace all chars not matching regex [^a-zA-Z0-9_] with empty char
-        cleaned_name = re.sub(r"[^a-zA-Z0-9_]", "", column_name)
-
-        # Convert to lowercase
-        cleaned_name = cleaned_name.lower()
-
-        # If starts with a number, concatenate "numeric_" to the beginning
-        if cleaned_name[0].isdigit():
-            cleaned_name = "numeric_" + cleaned_name
-
-        # Replace all double "_" chars with one "_"
-        cleaned_name = re.sub(r"_{2,}", "_", cleaned_name)
-
-        # If length of csv column name equals 1 or is a reserved keyword, concatenate "_" to the end
-        if len(cleaned_name) == 1 or cleaned_name in reserved_keywords:
-            cleaned_name += "_"
-
-        return cleaned_name
-
-    #################################################################################################################################################################
-
-    def createImportedColumn(self, importedColumn: json, project_id: str):
-        try:
-
-            # initialize reqeust
-            headers = connection_get_headers(self.config)
-            response = requests.post(
-                self.config.config_get_nemo_url()
-                + ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
-                headers=headers,
-                json=importedColumn,
-            )
-            if response.status_code != 201:
-                raise Exception(
-                    f"request failed. Status: {response.status_code}, error: {response.text}"
-                )
-            resultjs = json.loads(response.text)
-            df = pd.json_normalize(resultjs)
-            return df
-
-        except Exception as e:
-            raise Exception("process aborted")

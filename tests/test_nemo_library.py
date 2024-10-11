@@ -131,6 +131,28 @@ def test_ReUploadFile():
     assert int(val) == 34960, "number of records do not match"
 
 
+def test_SynchColumns():
+    """
+    Test the synchronizeCsvColsAndImportedColumns method of the NemoLibrary class.
+
+    This test initializes the NemoLibrary, synchronize fields from a file for a given project,
+    and asserts that the expected number of records matches the returned value.
+
+    Raises:
+        AssertionError: If the number of records does not match the expected value.
+    """
+    
+    nl = getNL()
+    nl.synchronizeCsvColsAndImportedColumns(
+        projectname=IC_PROJECT_NAME,
+        filename="./tests/intercompany_NEMO.csv",
+    )
+
+    val = nl.getProjectProperty(
+        projectname=IC_PROJECT_NAME, propertyname="ExpNumberOfRecords"
+    )
+    assert int(val) == 34960, "number of records do not match"
+    
 def test_synchMetadataWithFocus():
     # test de-activated since we don't have the analyzer file in challenge and I was not able to reproduce the file with the same attributes like in prod
     """

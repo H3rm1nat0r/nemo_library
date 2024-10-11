@@ -1,3 +1,5 @@
+import os
+import sys
 import pytest
 import requests
 
@@ -9,6 +11,7 @@ from nemo_library.sub_infozoom_handler import (
 )
 
 IC_PROJECT_NAME = "gs_unit_test_Intercompany"
+
 
 def getNL():
     """
@@ -38,7 +41,8 @@ def getNL():
     """
     return NemoLibrary(
         config_file="tests/config.ini",
-    )    
+    )
+
 
 def test_getProjectList():
     """
@@ -141,7 +145,7 @@ def test_SynchColumns():
     Raises:
         AssertionError: If the number of records does not match the expected value.
     """
-    
+
     nl = getNL()
     nl.synchronizeCsvColsAndImportedColumns(
         projectname=IC_PROJECT_NAME,
@@ -152,7 +156,33 @@ def test_SynchColumns():
         projectname=IC_PROJECT_NAME, propertyname="ExpNumberOfRecords"
     )
     assert int(val) == 34960, "number of records do not match"
-    
+
+@pytest.mark.skipif(sys.platform != "win32", reason="we can run InfoZoom on windows only")
+def test_exportMetadata():
+    test_file = "./tests/SNr.metadata.test.csv"
+    reference_file = "./tests/SNr.metadata.csv"
+
+    nl = getNL()
+    nl.exportMetadata(
+        infozoomexe="C:/Program Files (x86)/NEMO/InfoZoom 2025/InfoZoom.exe",
+        infozoomfile="./tests/snr.fox",
+        metadatafile=test_file,
+    )
+
+    # Ensure the test file has been created
+    assert os.path.exists(test_file), f"{test_file} was not created."
+
+    # Read the content of the test file
+    with open(test_file, "r", encoding="utf-8") as test_f:
+        test_content = test_f.read()
+
+    # Read the content of the reference file
+    with open(reference_file, "r", encoding="utf-8") as reference_f:
+        reference_content = reference_f.read()
+
+    # Check if the contents of the two files are identical
+    assert test_content == reference_content, "The files are not identical."
+
 def test_synchMetadataWithFocus():
     # test de-activated since we don't have the analyzer file in challenge and I was not able to reproduce the file with the same attributes like in prod
     """
@@ -182,7 +212,9 @@ def test_synchMetadataWithFocus():
 
     dfMetaFOX_Attributes = dfMetaFOX[dfMetaFOX["Definition"] == "Einfaches Attribut"]
 
-    assert len(dfMetaFOX_Attributes) == len(dfMetaNEMO) + 2 # there are some attributes twice and thus cannot be sorted
+    assert (
+        len(dfMetaFOX_Attributes) == len(dfMetaNEMO) + 2
+    )  # there are some attributes twice and thus cannot be sorted
 
 
 def test_LoadReport():

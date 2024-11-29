@@ -13,6 +13,7 @@ from nemo_library.sub_infozoom_handler import synchMetadataWithFocus, exportMeta
 
 from nemo_library.sub_report_handler import LoadReport
 from nemo_library.sub_synch_file_columns_handler import (
+    getImportedColumns,
     synchronizeCsvColsAndImportedColumns,
 )
 
@@ -79,7 +80,7 @@ class NemoLibrary:
         """
         return getProjectProperty(self.config, projectname, propertyname)
 
-    def createProject(self, projectname: str, description: str = None):
+    def createProject(self, projectname: str, description: str = None) -> None:
         """
         Creates a new project using the specified configuration and project name.
 
@@ -105,6 +106,27 @@ class NemoLibrary:
             description=description,
         )
 
+    def getImportedColumns(self, projectname: str) -> pd.DataFrame:
+        """
+        Retrieve the imported columns for a given project.
+
+        This method fetches the data about imported columns associated with the 
+        specified project name. It utilizes the current configuration and the 
+        project ID resolved by the `getProjectID` method.
+
+        Args:
+            projectname (str): The name of the project for which to retrieve 
+                            the imported columns.
+
+        Returns:
+            pd.DataFrame: A DataFrame containing information about the imported 
+                        columns for the specified project.
+
+        Raises:
+            Exception: If the project name is invalid or the columns cannot be retrieved.
+        """
+        return getImportedColumns(config=self.config, project_id=self.getProjectID(projectname=projectname))    
+    
     def ReUploadFile(
         self,
         projectname: str,

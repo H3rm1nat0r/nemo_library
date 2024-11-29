@@ -20,6 +20,11 @@ ENDPOINT_URL_PROJECTS_ALL = "/api/nemo-projects/projects"
 Endpoint to retrieve all projects.
 """
 
+ENDPOINT_URL_PROJECTS_CREATE = "/api/nemo-persistence/metadata/Project"
+"""
+Endpoint to create a new project
+"""
+
 ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE = (
     "/api/nemo-projects/file-re-upload/initialize"
 )

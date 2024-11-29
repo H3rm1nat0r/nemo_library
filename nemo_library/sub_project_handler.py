@@ -7,6 +7,7 @@ from nemo_library.sub_connection_handler import connection_get_headers
 from nemo_library.sub_symbols import (
     ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES,
     ENDPOINT_URL_PROJECTS_ALL,
+    ENDPOINT_URL_PROJECTS_CREATE,
 )
 
 
@@ -92,3 +93,53 @@ def getProjectProperty(config: ConfigHandler, projectname: str, propertyname: st
         )
 
     return response.text[1:-1]  # cut off leading and trailing "
+
+
+def createProject(config: ConfigHandler, projectname: str, description: str):
+    """
+    Creates a new project using the specified configuration and project name.
+
+    This function sends a POST request to the NEMO API to create a project with
+    the given name. The project is initialized with default settings and a
+    specific structure, ready for further processing.
+
+    Args:
+        config (ConfigHandler): An object that provides the necessary configuration
+                                for connecting to the NEMO API, such as headers and URL.
+        projectname (str): The name of the project to be created.
+
+    Raises:
+        Exception: If the request to create the project fails, an exception is raised
+                   with the HTTP status code and error details.
+
+    Returns:
+        None: The function does not return any value. If the project is created
+              successfully, it completes without errors.
+
+    Example:
+        config = ConfigHandler()  # Assume this is initialized with necessary details
+        createProject(config, "MyProject")
+    """
+    headers = connection_get_headers(config)
+    ENDPOINT_URL = config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_CREATE
+    data = {
+        "autoDataRefresh": True,
+        "displayName": projectname,
+        "description": description,
+        "type": "IndividualData",
+        "status": "Active",
+        "tableName": f"PROJECT_{projectname.upper()}",
+        "importErrorType": "NoError",
+        "id": "",
+        "s3DataSourcePath": "",
+        "showInitialConfiguration": True,
+        "tenant": config.config_get_tenant(),
+        "type": "0",
+    }
+
+    response = requests.post(ENDPOINT_URL, headers=headers, json=data)
+
+    if response.status_code != 201:
+        raise Exception(
+            f"Request failed. Status: {response.status_code}, error: {response.text}"
+        )

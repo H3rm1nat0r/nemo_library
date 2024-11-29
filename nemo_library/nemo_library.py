@@ -4,6 +4,7 @@ from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_file_upload_handler import ReUploadFileIngestion
 from nemo_library.sub_hubspot_handler import CRM_Activities_handler
 from nemo_library.sub_project_handler import (
+    createProject,
     getProjectID,
     getProjectList,
     getProjectProperty,
@@ -78,6 +79,32 @@ class NemoLibrary:
         """
         return getProjectProperty(self.config, projectname, propertyname)
 
+    def createProject(self, projectname: str, description: str = None):
+        """
+        Creates a new project using the specified configuration and project name.
+
+        This function sends a POST request to the NEMO API to create a project with
+        the given name. The project is initialized with default settings and a
+        specific structure, ready for further processing.
+
+        Args:
+            projectname (str): The name of the project to be created.
+
+        Raises:
+            Exception: If the request to create the project fails, an exception is raised
+                    with the HTTP status code and error details.
+
+        Returns:
+            None: The function does not return any value. If the project is created
+                successfully, it completes without errors.
+
+        """
+        createProject(
+            config=self.config,
+            projectname=projectname,
+            description=description,
+        )
+
     def ReUploadFile(
         self,
         projectname: str,
@@ -121,7 +148,7 @@ class NemoLibrary:
         Synchronizes the columns in a CSV file with the imported columns in the project.
 
         This function reads the column names from the first line of a specified CSV file and compares
-        them with the imported columns for a given project. If a column from the CSV is not found in 
+        them with the imported columns for a given project. If a column from the CSV is not found in
         the list of imported columns, it creates a new record for that column in the system.
 
         Args:
@@ -244,5 +271,3 @@ class NemoLibrary:
             the CRM data in the NEMO system.
         """
         CRM_Activities_handler(config=self.config, projectname=projectname)
-
-

@@ -1,3 +1,4 @@
+import re
 import pandas as pd
 import requests
 import json
@@ -122,13 +123,17 @@ def createProject(config: ConfigHandler, projectname: str, description: str):
     """
     headers = connection_get_headers(config)
     ENDPOINT_URL = config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_CREATE
+    table_name = re.sub(r'[^A-Z0-9_]', '_', projectname.upper()).strip()
+    if not table_name.startswith("PROJECT_"):
+        table_name = "PROJECT_" + table_name
+
     data = {
         "autoDataRefresh": True,
         "displayName": projectname,
         "description": description,
         "type": "IndividualData",
         "status": "Active",
-        "tableName": f"PROJECT_{projectname.upper()}",
+        "tableName": table_name,
         "importErrorType": "NoError",
         "id": "",
         "s3DataSourcePath": "",

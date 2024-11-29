@@ -15,6 +15,8 @@ from nemo_library.sub_symbols import (
     ENDPOINT_URL_REPORT_UPDATE,
     ENDPOINT_URL_REPORTS_LIST,
     ENDPOINT_URL_RULE_CREATE,
+    ENDPOINT_URL_RULE_LIST,
+    ENDPOINT_URL_RULE_UPDATE,
 )
 
 
@@ -351,7 +353,7 @@ def CreateOrUpdateReport(
             )
 
 
-def createRule(
+def CreateOrUpdateRule(
     config: ConfigHandler,
     projectname: str,
     displayName: str,
@@ -393,23 +395,46 @@ def createRule(
     if not internalName:
         internalName = re.sub(r"[^a-z0-9_]", "_", displayName.lower()).strip()
 
+    # load list of reports first
+    response = requests.get(
+        config.config_get_nemo_url() + ENDPOINT_URL_RULE_LIST.format(projectId=project_id),
+        headers=headers,
+    )
+    resultjs = json.loads(response.text)
+    df = pd.json_normalize(resultjs)
+    internalNames = df["internalName"].to_list()
+    rule_exist = internalName in internalNames
+
     data = {
         "active": True,
         "projectId": project_id,
         "displayName": displayName,
         "internalName": internalName,
         "tenant": config.config_get_tenant(),
-        "description": description,
+        "description": description if description else "",
         "ruleGroup": ruleGroup,
         "ruleSourceInternalName": ruleSourceInternalName,
     }
 
-    response = requests.post(
-        config.config_get_nemo_url() + ENDPOINT_URL_RULE_CREATE,
-        headers=headers,
-        json=data,
-    )
-    if response.status_code != 201:
-        raise Exception(
-            f"Request failed. Status: {response.status_code}, error: {response.text}"
+    if rule_exist:
+        df_filtered = df[df["internalName"] == internalName].iloc[0]
+        data["id"] = df_filtered["id"]
+        response = requests.put(
+            config.config_get_nemo_url() + ENDPOINT_URL_RULE_UPDATE.format(id=df_filtered["id"]),
+            headers=headers,
+            json=data,
         )
+        if response.status_code != 200:
+            raise Exception(
+                f"Request failed. Status: {response.status_code}, error: {response.text}"
+            )    
+    else:
+        response = requests.post(
+            config.config_get_nemo_url() + ENDPOINT_URL_RULE_CREATE,
+            headers=headers,
+            json=data,
+        )
+        if response.status_code != 201:
+            raise Exception(
+                f"Request failed. Status: {response.status_code}, error: {response.text}"
+            )

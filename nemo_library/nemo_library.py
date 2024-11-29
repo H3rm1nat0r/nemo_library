@@ -7,7 +7,7 @@ from nemo_library.sub_project_handler import (
     createImportedColumn,
     createProject,
     CreateOrUpdateReport,
-    createRule,
+    CreateOrUpdateRule,
     getProjectID,
     getProjectList,
     getProjectProperty,
@@ -210,7 +210,7 @@ class NemoLibrary:
             description=description,
         )
 
-    def createRule(
+    def CreateOrUpdateRule(
         self,
         projectname: str,
         displayName: str,
@@ -247,7 +247,7 @@ class NemoLibrary:
             - The function sends a POST request to the NEMO API to create the rule.
         """
                 
-        createRule(
+        CreateOrUpdateRule(
             config=self.config,
             projectname=projectname,
             displayName=displayName,

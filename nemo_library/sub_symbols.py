@@ -45,6 +45,16 @@ ENDPOINT_URL_RULE_CREATE = "/api/nemo-persistence/metadata/Rule"
 Endpoint to create a new rule (for deficiency mininig)
 """
 
+ENDPOINT_URL_RULE_UPDATE = "/api/nemo-persistence/metadata/Rule/{id}"
+"""
+Endpoint to update a rule
+"""
+
+ENDPOINT_URL_RULE_LIST = "/api/nemo-persistence/metadata/Rule/project/{projectId}/rules"
+"""
+Endpoint to get list of rules
+"""
+
 ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE = (
     "/api/nemo-projects/file-re-upload/initialize"
 )

@@ -25,6 +25,16 @@ ENDPOINT_URL_PROJECTS_CREATE = "/api/nemo-persistence/metadata/Project"
 Endpoint to create a new project
 """
 
+ENDPOINT_URL_REPORT_CREATE = "/api/nemo-report/report"
+"""
+Endpoint to create a new report
+"""
+
+ENDPOINT_URL_RULE_CREATE = "/api/nemo-persistence/metadata/Rule"
+"""
+Endpoint to create a new rule (for deficiency mininig)
+"""
+
 ENDPOINT_URL_PROJECTS_FILE_RE_UPLOAD_INITIALIZE = (
     "/api/nemo-projects/file-re-upload/initialize"
 )

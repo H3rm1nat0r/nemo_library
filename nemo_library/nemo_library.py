@@ -6,7 +6,7 @@ from nemo_library.sub_hubspot_handler import CRM_Activities_handler
 from nemo_library.sub_project_handler import (
     createImportedColumn,
     createProject,
-    createReport,
+    CreateOrUpdateReport,
     createRule,
     getProjectID,
     getProjectList,
@@ -173,7 +173,7 @@ class NemoLibrary:
             description=description,
         )
 
-    def createReport(
+    def CreateOrUpdateReport(
         self,
         projectname: str,
         displayName: str,
@@ -201,7 +201,7 @@ class NemoLibrary:
             - The function relies on the `ConfigHandler` to manage authentication headers and
             endpoint configurations.
         """
-        createReport(
+        CreateOrUpdateReport(
             config=self.config,
             projectname=projectname,
             displayName=displayName,

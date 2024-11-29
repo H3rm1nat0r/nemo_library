@@ -30,6 +30,16 @@ ENDPOINT_URL_REPORT_CREATE = "/api/nemo-persistence/metadata/Reports"
 Endpoint to create a new report
 """
 
+ENDPOINT_URL_REPORT_UPDATE = "/api/nemo-persistence/metadata/Reports/{id}"
+"""
+Endpoint to update a report
+"""
+
+ENDPOINT_URL_REPORTS_LIST = "/api/nemo-persistence/metadata/Reports/project/{projectId}/reports"
+"""
+Endpoint to get list of reports
+"""
+
 ENDPOINT_URL_RULE_CREATE = "/api/nemo-persistence/metadata/Rule"
 """
 Endpoint to create a new rule (for deficiency mininig)

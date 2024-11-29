@@ -304,10 +304,10 @@ def createReport(
         internalName = re.sub(r"[^a-z0-9_]", "_", displayName.lower()).strip()
 
     data = {
-        "project_id": project_id,
-        "display_name": displayName,
-        "internal_name": internalName,
-        "query_syntax": querySyntax,
+        "projectId": project_id,
+        "displayName": displayName,
+        "internalName": internalName,
+        "querySyntax": querySyntax,
         "description": description,
         "tenant": config.config_get_tenant(),
     }
@@ -317,7 +317,7 @@ def createReport(
         headers=headers,
         json=data,
     )
-    if response.status_code != 200:
+    if response.status_code != 201:
         raise Exception(
             f"Request failed. Status: {response.status_code}, error: {response.text}"
         )

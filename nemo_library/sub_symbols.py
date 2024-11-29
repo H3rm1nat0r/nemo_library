@@ -25,7 +25,7 @@ ENDPOINT_URL_PROJECTS_CREATE = "/api/nemo-persistence/metadata/Project"
 Endpoint to create a new project
 """
 
-ENDPOINT_URL_REPORT_CREATE = "/api/nemo-report/report"
+ENDPOINT_URL_REPORT_CREATE = "/api/nemo-persistence/metadata/Reports"
 """
 Endpoint to create a new report
 """

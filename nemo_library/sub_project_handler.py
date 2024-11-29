@@ -6,6 +6,8 @@ import json
 from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_connection_handler import connection_get_headers
 from nemo_library.sub_symbols import (
+    ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
+    ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
     ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES,
     ENDPOINT_URL_PROJECTS_ALL,
     ENDPOINT_URL_PROJECTS_CREATE,
@@ -96,6 +98,53 @@ def getProjectProperty(config: ConfigHandler, projectname: str, propertyname: st
     return response.text[1:-1]  # cut off leading and trailing "
 
 
+def getImportedColumns(config: ConfigHandler, projectname: str) -> pd.DataFrame:
+    """
+    Fetches and returns the imported columns metadata for a given project in the form of a pandas DataFrame.
+
+    Args:
+        config (ConfigHandler): Configuration handler instance to access settings and credentials.
+        projectname (str): The name of the project for which the imported columns metadata is requested.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the imported columns metadata.
+
+    Raises:
+        Exception: If the project ID cannot be retrieved or the HTTP request fails.
+
+    Process:
+        1. Initializes request headers using `connection_get_headers`.
+        2. Retrieves the project ID using `getProjectID`.
+        3. Sends an HTTP GET request to the configured NEMO API endpoint for imported columns.
+        4. Parses the JSON response and normalizes it into a pandas DataFrame.
+        5. Handles errors such as missing project ID or failed requests.
+    """
+    try:
+
+        # initialize reqeust
+        headers = connection_get_headers(config)
+        project_id = getProjectID(config, projectname)
+        response = requests.get(
+            config.config_get_nemo_url()
+            + ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS.format(
+                projectId=project_id
+            ),
+            headers=headers,
+        )
+        if response.status_code != 200:
+            raise Exception(
+                f"request failed. Status: {response.status_code}, error: {response.text}"
+            )
+        resultjs = json.loads(response.text)
+        df = pd.json_normalize(resultjs)
+        return df
+
+    except Exception as e:
+        if project_id == None:
+            raise Exception("process stopped, no project_id available")
+        raise Exception("process aborted")
+
+
 def createProject(config: ConfigHandler, projectname: str, description: str):
     """
     Creates a new project using the specified configuration and project name.
@@ -123,7 +172,7 @@ def createProject(config: ConfigHandler, projectname: str, description: str):
     """
     headers = connection_get_headers(config)
     ENDPOINT_URL = config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_CREATE
-    table_name = re.sub(r'[^A-Z0-9_]', '_', projectname.upper()).strip()
+    table_name = re.sub(r"[^A-Z0-9_]", "_", projectname.upper()).strip()
     if not table_name.startswith("PROJECT_"):
         table_name = "PROJECT_" + table_name
 
@@ -147,4 +196,70 @@ def createProject(config: ConfigHandler, projectname: str, description: str):
     if response.status_code != 201:
         raise Exception(
             f"Request failed. Status: {response.status_code}, error: {response.text}"
+        )
+
+
+def createImportedColumn(
+    config: ConfigHandler,
+    projectname: str,
+    displayName: str,
+    dataType: str,
+    importName: str = None,
+    internalName: str = None,
+    description: str = None,
+) -> None:
+    """
+    Creates an imported column in the specified project within the system.
+
+    This function constructs a new imported column using provided metadata
+    and posts it to the appropriate endpoint for persistence. If `importName`
+    or `internalName` is not provided, it generates them based on the `displayName`.
+
+    Args:
+        config (ConfigHandler): Configuration handler containing system-specific details.
+        projectname (str): The name of the project where the column will be created.
+        displayName (str): The display name of the column.
+        dataType (str): The data type of the column (e.g., "string", "integer").
+        importName (str, optional): The import name for the column. Defaults to a sanitized version of `displayName`.
+        internalName (str, optional): The internal name for the column. Defaults to a sanitized version of `displayName`.
+        description (str, optional): A brief description of the column's purpose or content.
+
+    Raises:
+        Exception: If the HTTP request to create the column fails, an exception is raised with status code and error details.
+
+    Returns:
+        None: The function does not return a value; it creates the column via a POST request.
+    """
+    headers = connection_get_headers(config)
+    project_id = getProjectID(config, projectname)
+
+    if not importName:
+        importName = re.sub(r"[^a-z0-9_]", "_", displayName.lower()).strip()
+    if not internalName:
+        internalName = re.sub(r"[^a-z0-9_]", "_", displayName.lower()).strip()
+
+    data = {
+        "categorialType": True,
+        "columnType": "ExportedColumn",
+        "containsSensitiveData": False,
+        "dataType": dataType,
+        "description": description,
+        "displayName": displayName,
+        "importName": importName,
+        "internalName": internalName,
+        "id": "",
+        "unit": "",
+        "tenant": config.config_get_tenant(),
+        "projectId": project_id,
+    }
+
+    response = requests.post(
+        config.config_get_nemo_url()
+        + ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
+        headers=headers,
+        json=data,
+    )
+    if response.status_code != 201:
+        raise Exception(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
         )

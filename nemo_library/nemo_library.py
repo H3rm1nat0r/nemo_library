@@ -4,16 +4,17 @@ from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_file_upload_handler import ReUploadFileIngestion
 from nemo_library.sub_hubspot_handler import CRM_Activities_handler
 from nemo_library.sub_project_handler import (
+    createImportedColumn,
     createProject,
     getProjectID,
     getProjectList,
     getProjectProperty,
+    getImportedColumns,
 )
 from nemo_library.sub_infozoom_handler import synchMetadataWithFocus, exportMetadata
 
 from nemo_library.sub_report_handler import LoadReport
 from nemo_library.sub_synch_file_columns_handler import (
-    getImportedColumns,
     synchronizeCsvColsAndImportedColumns,
 )
 
@@ -110,23 +111,66 @@ class NemoLibrary:
         """
         Retrieve the imported columns for a given project.
 
-        This method fetches the data about imported columns associated with the 
-        specified project name. It utilizes the current configuration and the 
+        This method fetches the data about imported columns associated with the
+        specified project name. It utilizes the current configuration and the
         project ID resolved by the `getProjectID` method.
 
         Args:
-            projectname (str): The name of the project for which to retrieve 
+            projectname (str): The name of the project for which to retrieve
                             the imported columns.
 
         Returns:
-            pd.DataFrame: A DataFrame containing information about the imported 
+            pd.DataFrame: A DataFrame containing information about the imported
                         columns for the specified project.
 
         Raises:
             Exception: If the project name is invalid or the columns cannot be retrieved.
         """
-        return getImportedColumns(config=self.config, project_id=self.getProjectID(projectname=projectname))    
-    
+        return getImportedColumns(
+            config=self.config,
+            projectname=projectname,
+        )
+
+    def createImportedColumnn(
+        self,
+        projectname: str,
+        displayName: str,
+        importName: str = None,
+        internalName: str = None,
+        dataType: str = None,
+        description: str = None,
+    ):
+        """
+        Creates an imported column in the specified project within the system.
+
+        This function constructs a new imported column using provided metadata
+        and posts it to the appropriate endpoint for persistence. If `importName`
+        or `internalName` is not provided, it generates them based on the `displayName`.
+
+        Args:
+            projectname (str): The name of the project where the column will be created.
+            displayName (str): The display name of the column.
+            dataType (str): The data type of the column (e.g., "string", "integer").
+            importName (str, optional): The import name for the column. Defaults to a sanitized version of `displayName`.
+            internalName (str, optional): The internal name for the column. Defaults to a sanitized version of `displayName`.
+            description (str, optional): A brief description of the column's purpose or content.
+
+        Raises:
+            Exception: If the HTTP request to create the column fails, an exception is raised with status code and error details.
+
+        Returns:
+            None: The function does not return a value; it creates the column via a POST request.
+        """        
+        createImportedColumn(
+            config=self.config,
+            projectname=projectname,
+            displayName=displayName,
+            importName=importName,
+            internalName=internalName,
+            dataType=dataType,
+            description=description,
+        )
+
     def ReUploadFile(
         self,
         projectname: str,

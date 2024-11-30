@@ -314,7 +314,11 @@ def CreateOrUpdateReport(
     )
     resultjs = json.loads(response.text)
     df = pd.json_normalize(resultjs)
-    internalNames = df["internalName"].to_list()
+    df = pd.json_normalize(resultjs)
+    if df.empty:
+        internalNames = []
+    else:
+        internalNames = df["internalName"].to_list()
     report_exist = internalName in internalNames
 
     data = {
@@ -402,7 +406,10 @@ def CreateOrUpdateRule(
     )
     resultjs = json.loads(response.text)
     df = pd.json_normalize(resultjs)
-    internalNames = df["internalName"].to_list()
+    if df.empty:
+        internalNames = []
+    else:
+        internalNames = df["internalName"].to_list()
     rule_exist = internalName in internalNames
 
     data = {

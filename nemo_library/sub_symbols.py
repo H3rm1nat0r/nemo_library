@@ -35,7 +35,9 @@ ENDPOINT_URL_REPORT_UPDATE = "/api/nemo-persistence/metadata/Reports/{id}"
 Endpoint to update a report
 """
 
-ENDPOINT_URL_REPORTS_LIST = "/api/nemo-persistence/metadata/Reports/project/{projectId}/reports"
+ENDPOINT_URL_REPORTS_LIST = (
+    "/api/nemo-persistence/metadata/Reports/project/{projectId}/reports"
+)
 """
 Endpoint to get list of reports
 """
@@ -94,6 +96,20 @@ ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS = (
 )
 """
 Endpoint to retrieve imported columns metadata for a project.
+"""
+
+ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_PROJECTS_ATTRIBUTES = (
+    "/api/nemo-persistence/focus/AttributeTree/projects/{projectId}/attributes"
+)
+"""
+Endpoint to retrieve attributes in attribute tree
+"""
+
+ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_MOVE = (
+    "/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/move"
+)
+"""
+Endpoint to move an attribute
 """
 
 ENDPOINT_URL_PERSISTENCE_METADATA_ATTRIBUTE_GROUPS = (

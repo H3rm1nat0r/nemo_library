@@ -6,8 +6,9 @@ from nemo_library.sub_hubspot_handler import CRM_Activities_handler
 from nemo_library.sub_project_handler import (
     createImportedColumn,
     createProject,
-    CreateOrUpdateReport,
-    CreateOrUpdateRule,
+    createOrUpdateReport,
+    createOrUpdateRule,
+    focusMoveAttributeBefore,
     getProjectID,
     getProjectList,
     getProjectProperty,
@@ -201,7 +202,7 @@ class NemoLibrary:
             - The function relies on the `ConfigHandler` to manage authentication headers and
             endpoint configurations.
         """
-        CreateOrUpdateReport(
+        createOrUpdateReport(
             config=self.config,
             projectname=projectname,
             displayName=displayName,
@@ -227,7 +228,7 @@ class NemoLibrary:
             projectname (str): The name of the project where the rule will be created.
             displayName (str): The human-readable name for the rule.
             ruleSourceInternalName (str): The internal name of the rule's source.
-            internalName (str, optional): A unique internal identifier for the rule. If not provided, it will be generated 
+            internalName (str, optional): A unique internal identifier for the rule. If not provided, it will be generated
                                         from the `displayName` by replacing non-alphanumeric characters with underscores.
             ruleGroup (str, optional): The group to which the rule belongs. Defaults to None.
             description (str, optional): A brief description of the rule. Defaults to None.
@@ -246,15 +247,50 @@ class NemoLibrary:
             - A valid project ID is fetched using the `getProjectID` function.
             - The function sends a POST request to the NEMO API to create the rule.
         """
-                
-        CreateOrUpdateRule(
+
+        createOrUpdateRule(
             config=self.config,
             projectname=projectname,
             displayName=displayName,
             ruleSourceInternalName=ruleSourceInternalName,
             internalName=internalName,
             ruleGroup=ruleGroup,
-            description=description
+            description=description,
+        )
+
+    def focusMoveAttributeBefore(
+        self,
+        projectname: str,
+        sourceDisplayName: str,
+        targetDisplayName: str = None,
+    ) -> None:
+
+        """
+        Moves an attribute within the attribute tree of a project in the NEMO system.
+
+        This function interacts with the NEMO API to reposition an attribute by specifying 
+        a source attribute and an optional target attribute within a project's attribute tree.
+
+        Args:
+            projectname (str): The name of the project in which the attribute resides.
+            sourceDisplayName (str): The display name of the source attribute to be moved.
+            targetDisplayName (str, optional): The display name of the target attribute. 
+                If not specified, the source attribute is moved to the top of the attribute tree.
+
+        Raises:
+            Exception: If the API requests to fetch the attribute tree or move the attribute fail.
+
+        Details:
+            1. Fetches the project ID corresponding to the given project name.
+            2. Retrieves the attribute tree for the project from the NEMO API.
+            3. Identifies the IDs of the source and target attributes using their display names.
+            4. Sends a PUT request to the NEMO API to move the source attribute before the target.
+        """
+        focusMoveAttributeBefore(
+            config=self.config,
+            projectname=projectname,
+            sourceDisplayName=sourceDisplayName,
+            targetDisplayName=targetDisplayName,
         )
 
     def ReUploadFile(

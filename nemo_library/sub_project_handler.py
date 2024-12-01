@@ -6,6 +6,8 @@ import json
 from nemo_library.sub_config_handler import ConfigHandler
 from nemo_library.sub_connection_handler import connection_get_headers
 from nemo_library.sub_symbols import (
+    ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_MOVE,
+    ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_PROJECTS_ATTRIBUTES,
     ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
     ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
     ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES,
@@ -271,7 +273,7 @@ def createImportedColumn(
         )
 
 
-def CreateOrUpdateReport(
+def createOrUpdateReport(
     config: ConfigHandler,
     projectname: str,
     displayName: str,
@@ -309,7 +311,8 @@ def CreateOrUpdateReport(
 
     # load list of reports first
     response = requests.get(
-        config.config_get_nemo_url() + ENDPOINT_URL_REPORTS_LIST.format(projectId=project_id),
+        config.config_get_nemo_url()
+        + ENDPOINT_URL_REPORTS_LIST.format(projectId=project_id),
         headers=headers,
     )
     resultjs = json.loads(response.text)
@@ -334,7 +337,8 @@ def CreateOrUpdateReport(
         df_filtered = df[df["internalName"] == internalName].iloc[0]
         data["id"] = df_filtered["id"]
         response = requests.put(
-            config.config_get_nemo_url() + ENDPOINT_URL_REPORT_UPDATE.format(id=df_filtered["id"]),
+            config.config_get_nemo_url()
+            + ENDPOINT_URL_REPORT_UPDATE.format(id=df_filtered["id"]),
             headers=headers,
             json=data,
         )
@@ -350,14 +354,14 @@ def CreateOrUpdateReport(
             headers=headers,
             json=data,
         )
-        
+
         if response.status_code != 201:
             raise Exception(
                 f"Request failed. Status: {response.status_code}, error: {response.text}"
             )
 
 
-def CreateOrUpdateRule(
+def createOrUpdateRule(
     config: ConfigHandler,
     projectname: str,
     displayName: str,
@@ -374,7 +378,7 @@ def CreateOrUpdateRule(
         projectname (str): The name of the project where the rule will be created.
         displayName (str): The human-readable name for the rule.
         ruleSourceInternalName (str): The internal name of the rule's source.
-        internalName (str, optional): A unique internal identifier for the rule. If not provided, it will be generated 
+        internalName (str, optional): A unique internal identifier for the rule. If not provided, it will be generated
                                       from the `displayName` by replacing non-alphanumeric characters with underscores.
         ruleGroup (str, optional): The group to which the rule belongs. Defaults to None.
         description (str, optional): A brief description of the rule. Defaults to None.
@@ -401,7 +405,8 @@ def CreateOrUpdateRule(
 
     # load list of reports first
     response = requests.get(
-        config.config_get_nemo_url() + ENDPOINT_URL_RULE_LIST.format(projectId=project_id),
+        config.config_get_nemo_url()
+        + ENDPOINT_URL_RULE_LIST.format(projectId=project_id),
         headers=headers,
     )
     resultjs = json.loads(response.text)
@@ -427,14 +432,15 @@ def CreateOrUpdateRule(
         df_filtered = df[df["internalName"] == internalName].iloc[0]
         data["id"] = df_filtered["id"]
         response = requests.put(
-            config.config_get_nemo_url() + ENDPOINT_URL_RULE_UPDATE.format(id=df_filtered["id"]),
+            config.config_get_nemo_url()
+            + ENDPOINT_URL_RULE_UPDATE.format(id=df_filtered["id"]),
             headers=headers,
             json=data,
         )
         if response.status_code != 200:
             raise Exception(
                 f"Request failed. Status: {response.status_code}, error: {response.text}"
-            )    
+            )
     else:
         response = requests.post(
             config.config_get_nemo_url() + ENDPOINT_URL_RULE_CREATE,
@@ -445,3 +451,80 @@ def CreateOrUpdateRule(
             raise Exception(
                 f"Request failed. Status: {response.status_code}, error: {response.text}"
             )
+
+
+def focusMoveAttributeBefore(
+    config: ConfigHandler,
+    projectname: str,
+    sourceDisplayName: str,
+    targetDisplayName: str = None,
+) -> None:
+    """
+    Moves an attribute within the attribute tree of a project in the NEMO system.
+
+    This function interacts with the NEMO API to reposition an attribute by specifying 
+    a source attribute and an optional target attribute within a project's attribute tree.
+
+    Args:
+        config (ConfigHandler): Configuration handler object to manage API connections.
+        projectname (str): The name of the project in which the attribute resides.
+        sourceDisplayName (str): The display name of the source attribute to be moved.
+        targetDisplayName (str, optional): The display name of the target attribute. 
+            If not specified, the source attribute is moved to the top of the attribute tree.
+
+    Raises:
+        Exception: If the API requests to fetch the attribute tree or move the attribute fail.
+
+    Details:
+        1. Fetches the project ID corresponding to the given project name.
+        2. Retrieves the attribute tree for the project from the NEMO API.
+        3. Identifies the IDs of the source and target attributes using their display names.
+        4. Sends a PUT request to the NEMO API to move the source attribute before the target.
+    """
+    headers = connection_get_headers(config)
+    project_id = getProjectID(config, projectname)
+
+    # load attribute tree
+    response = requests.get(
+        config.config_get_nemo_url()
+        + ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_PROJECTS_ATTRIBUTES.format(
+            projectId=project_id
+        ),
+        headers=headers,
+    )
+    if response.status_code != 200:
+        raise Exception(
+            f"Request failed. Status: {response.status_code}, error: {response.text}"
+        )
+    
+    resultjs = json.loads(response.text)
+    df = pd.json_normalize(resultjs)
+
+    # locate source and target object
+    sourceid = df[df["label"] == sourceDisplayName].iloc[0]["id"]
+    targetid = (
+        df[df["label"] == targetDisplayName].iloc[0]["id"]
+        if targetDisplayName
+        else None
+    )
+
+    # now move the attribute
+    data = {
+        "sourceAttributes": [sourceid],
+        "targetPreviousElementId": targetid,
+        # "groupInternalName": "",
+    }
+
+    response = requests.put(
+        config.config_get_nemo_url()
+        + ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_MOVE.format(
+            projectId=project_id
+        ),
+        headers=headers,
+        json=data,
+    )
+
+    if response.status_code != 204:
+        raise Exception(
+            f"Request failed. Status: {response.status_code}, error: {response.text}"
+        )

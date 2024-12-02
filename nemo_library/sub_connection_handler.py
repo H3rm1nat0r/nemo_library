@@ -55,6 +55,7 @@ def connection_get_cognito_url(config: ConfigHandler):
     appclient_ids = {
         "demo": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1ZbUITj21",
         "dev": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE",
+        "test": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_778axETqE",
         "prod": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF",
         "challenge": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_U2V9y0lzx",
     }

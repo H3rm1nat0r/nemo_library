@@ -84,6 +84,7 @@ def connection_get_cognito_appclientid(config: ConfigHandler):
     appclient_ids = {
         "demo": "7tvfugcnunac7id3ebgns6n66u",
         "dev": "4lr89aas81m844o0admv3pfcrp",
+        "test": "4lr89aas81m844o0admv3pfcrp",
         "prod": "8t32vcmmdvmva4qvb79gpfhdn",
         "challenge": "43lq8ej98uuo8hvnoi1g880onp",
     }

@@ -5,7 +5,6 @@ import json
 
 from nemo_library.features.config import Config
 from nemo_library.features.projects import getProjectID
-from nemo_library.utils.symbols import ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_MOVE, ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_PROJECTS_ATTRIBUTES
 
 
 def focusMoveAttributeBefore(
@@ -21,7 +20,7 @@ def focusMoveAttributeBefore(
     # load attribute tree
     response = requests.get(
         config.config_get_nemo_url()
-        + ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_PROJECTS_ATTRIBUTES.format(
+        + "/api/nemo-persistence/focus/AttributeTree/projects/{projectId}/attributes".format(
             projectId=project_id
         ),
         headers=headers,
@@ -51,7 +50,7 @@ def focusMoveAttributeBefore(
 
     response = requests.put(
         config.config_get_nemo_url()
-        + ENDPOINT_URL_PERSISTENCE_FOCUS_ATTRIBUTETREE_MOVE.format(
+        + "/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/move".format(
             projectId=project_id
         ),
         headers=headers,

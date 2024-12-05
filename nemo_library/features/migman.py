@@ -7,6 +7,7 @@ import os
 import tempfile
 from faker import Faker
 from decimal import Decimal
+import openpyxl
 
 
 from nemo_library.features.config import Config
@@ -24,8 +25,19 @@ from nemo_library.utils.utils import display_name, import_name, internal_name
 __all__ = ["createProjectsForMigMan"]
 
 
-def createProjectsForMigMan(config: Config, projects: list[str]) -> None:
+def createProjectsForMigMan(
+    config: Config, projects: list[str] = None, proALPHA_project_status_file: str = None
+) -> None:
     """Create projects for MigMan based on given config and project list."""
+
+    if proALPHA_project_status_file:
+        projects = getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
+
+    if not projects or len(projects)==0:
+        error_message = "no projects given"
+        logging.error(error_message)
+        raise ValueError(error_message)
+        
     for project in projects:
         logging.info(f"Scanning project '{project}'")
 
@@ -555,7 +567,7 @@ $schema.$table"""
 
     # create the report
     report_display_name = f"(DEFICIENCIES) GLOBAL"
-    report_internal_name =internal_name(report_display_name)
+    report_internal_name = internal_name(report_display_name)
 
     createOrUpdateReport(
         config=config,
@@ -577,3 +589,31 @@ $schema.$table"""
 
     logging.info(f"Project {projectname}: {len(frags_checked)} checks implemented...")
     return len(frags_checked)
+
+
+def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
+    workbook = openpyxl.load_workbook(file)
+    worksheet = workbook["Status Datenübernahme"]
+
+    data = []
+    for row in worksheet.iter_rows(
+        min_row=10, max_row=300, min_col=1, max_col=10, values_only=True
+    ):
+        data.append(row)
+
+    # Create a DataFrame from the extracted data
+    columns = [
+        worksheet.cell(row=9, column=i).value for i in range(1, 11)
+    ]  # Headers in row 9
+    dataframe = pd.DataFrame(data, columns=columns)
+
+    # Drop rows where "Importreihenfolge" is NaN or empty
+    if "Importreihenfolge" in dataframe.columns:
+        dataframe = dataframe.dropna(subset=["Importreihenfolge"])
+    else:
+        raise ValueError("The column 'Importreihenfolge' does not exist in the data.")
+
+    if "Name des Importprograms / Name der Erfassungsmaske" in dataframe.columns:
+        return dataframe[dataframe["Migrationsart"] == "NEMO"]["Name des Importprograms / Name der Erfassungsmaske"].to_list()
+    else:
+        raise ValueError("The column 'Name des Importprograms / Name der Erfassungsmaske' does not exist in the data.")

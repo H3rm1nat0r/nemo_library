@@ -59,13 +59,19 @@ class NemoLibrary:
         report_guid: str,
         max_pages=None,
     ) -> pd.DataFrame:
-        return LoadReport(self.config,projectname,report_guid,max_pages)
-        
+        return LoadReport(self.config, projectname, report_guid, max_pages)
+
     def createProject(self, projectname: str, description: str) -> None:
         return createProject(self.config, projectname, description)
 
-    def createProjectsForMigMan(self, projects: list[str]) -> None:
-        createProjectsForMigMan(self.config, projects=projects)
+    def createProjectsForMigMan(
+        self, projects: list[str] = None, proALPHA_project_status_file: str = None
+    ) -> None:
+        createProjectsForMigMan(
+            self.config,
+            projects=projects,
+            proALPHA_project_status_file=proALPHA_project_status_file,
+        )
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:
         return getImportedColumns(self.config, projectname)
@@ -79,7 +85,15 @@ class NemoLibrary:
         internalName: str = None,
         description: str = None,
     ) -> None:
-        createImportedColumn(self.config,projectname,displayName,dataType,importName,internalName,description)
+        createImportedColumn(
+            self.config,
+            projectname,
+            displayName,
+            dataType,
+            importName,
+            internalName,
+            description,
+        )
 
     def ReUploadFile(
         self,
@@ -91,7 +105,16 @@ class NemoLibrary:
         version: int = 2,
         trigger_only: bool = False,
     ) -> None:
-        ReUploadFile(self.config,projectname,filename,update_project_settings,datasource_ids,global_fields_mapping,version,trigger_only)
+        ReUploadFile(
+            self.config,
+            projectname,
+            filename,
+            update_project_settings,
+            datasource_ids,
+            global_fields_mapping,
+            version,
+            trigger_only,
+        )
 
     def createOrUpdateReport(
         self,
@@ -101,7 +124,14 @@ class NemoLibrary:
         internalName: str = None,
         description: str = None,
     ) -> None:
-        createOrUpdateReport(self.config,projectname,displayName,querySyntax,internalName,description)
+        createOrUpdateReport(
+            self.config,
+            projectname,
+            displayName,
+            querySyntax,
+            internalName,
+            description,
+        )
 
     def createOrUpdateRule(
         self,
@@ -112,14 +142,22 @@ class NemoLibrary:
         ruleGroup: str = None,
         description: str = None,
     ) -> None:
-        createOrUpdateRule(self.config,projectname,displayName,ruleSourceInternalName,internalName,ruleGroup,description)
+        createOrUpdateRule(
+            self.config,
+            projectname,
+            displayName,
+            ruleSourceInternalName,
+            internalName,
+            ruleGroup,
+            description,
+        )
 
     def synchronizeCsvColsAndImportedColumns(
         self,
         projectname: str,
         filename: str,
     ) -> None:
-        synchronizeCsvColsAndImportedColumns(self.config,projectname,filename)
+        synchronizeCsvColsAndImportedColumns(self.config, projectname, filename)
 
     def focusMoveAttributeBefore(
         self,
@@ -127,7 +165,9 @@ class NemoLibrary:
         sourceDisplayName: str,
         targetDisplayName: str = None,
     ) -> None:
-        focusMoveAttributeBefore(self.config,projectname,sourceDisplayName,targetDisplayName)
-        
+        focusMoveAttributeBefore(
+            self.config, projectname, sourceDisplayName, targetDisplayName
+        )
+
     def FetchDealFromHubSpotAndUploadToNEMO(self, projectname: str) -> None:
-        FetchDealFromHubSpotAndUploadToNEMO(self.config,projectname)
+        FetchDealFromHubSpotAndUploadToNEMO(self.config, projectname)

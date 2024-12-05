@@ -4,20 +4,6 @@ import requests
 import json
 
 from nemo_library.features.config import Config
-from nemo_library.utils.symbols import (
-    ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
-    ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS,
-    ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES,
-    ENDPOINT_URL_PROJECTS_ALL,
-    ENDPOINT_URL_PROJECTS_CREATE,
-    ENDPOINT_URL_REPORT_CREATE,
-    ENDPOINT_URL_REPORT_EXPORT,
-    ENDPOINT_URL_REPORT_UPDATE,
-    ENDPOINT_URL_REPORTS_LIST,
-    ENDPOINT_URL_RULE_CREATE,
-    ENDPOINT_URL_RULE_LIST,
-    ENDPOINT_URL_RULE_UPDATE,
-)
 from nemo_library.utils.utils import display_name, import_name, internal_name
 
 
@@ -28,7 +14,7 @@ def getProjectList(
     headers = config.connection_get_headers()
 
     response = requests.get(
-        config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_ALL, headers=headers
+        config.config_get_nemo_url() + "/api/nemo-projects/projects", headers=headers
     )
     if response.status_code != 200:
         raise Exception(
@@ -63,7 +49,7 @@ def getProjectProperty(
 
     ENDPOINT_URL = (
         config.config_get_nemo_url()
-        + ENDPOINT_URL_PERSISTENCE_PROJECT_PROPERTIES.format(
+        + "/api/nemo-persistence/ProjectProperty/project/{projectId}/{request}".format(
             projectId=project_id, request=propertyname
         )
     )
@@ -95,7 +81,7 @@ def LoadReport(
     report_params = {"id": report_guid, "project_id": project_id}
 
     response_report = requests.post(
-        config.config_get_nemo_url() + ENDPOINT_URL_REPORT_EXPORT,
+        config.config_get_nemo_url() + "/api/nemo-report/report_export",
         headers=headers,
         json=report_params,
     )
@@ -126,7 +112,9 @@ def createProject(
 ) -> None:
 
     headers = config.connection_get_headers()
-    ENDPOINT_URL = config.config_get_nemo_url() + ENDPOINT_URL_PROJECTS_CREATE
+    ENDPOINT_URL = (
+        config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Project"
+    )
     table_name = re.sub(r"[^A-Z0-9_]", "_", projectname.upper()).strip()
     if not table_name.startswith("PROJECT_"):
         table_name = "PROJECT_" + table_name
@@ -166,7 +154,7 @@ def getImportedColumns(
         project_id = getProjectID(config, projectname)
         response = requests.get(
             config.config_get_nemo_url()
-            + ENDPOINT_URL_PERSISTENCE_METADATA_IMPORTED_COLUMNS.format(
+            + "/api/nemo-persistence/metadata/Columns/project/{projectId}/exported".format(
                 projectId=project_id
             ),
             headers=headers,
@@ -222,8 +210,7 @@ def createImportedColumn(
     }
 
     response = requests.post(
-        config.config_get_nemo_url()
-        + ENDPOINT_URL_PERSISTENCE_METADATA_CREATE_IMPORTED_COLUMN,
+        config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Columns",
         headers=headers,
         json=data,
     )
@@ -251,7 +238,9 @@ def createOrUpdateReport(
     # load list of reports first
     response = requests.get(
         config.config_get_nemo_url()
-        + ENDPOINT_URL_REPORTS_LIST.format(projectId=project_id),
+        + "/api/nemo-persistence/metadata/Reports/project/{projectId}/reports".format(
+            projectId=project_id
+        ),
         headers=headers,
     )
     resultjs = json.loads(response.text)
@@ -277,7 +266,9 @@ def createOrUpdateReport(
         data["id"] = df_filtered["id"]
         response = requests.put(
             config.config_get_nemo_url()
-            + ENDPOINT_URL_REPORT_UPDATE.format(id=df_filtered["id"]),
+            + "/api/nemo-persistence/metadata/Reports/{id}".format(
+                id=df_filtered["id"]
+            ),
             headers=headers,
             json=data,
         )
@@ -289,7 +280,7 @@ def createOrUpdateReport(
 
     else:
         response = requests.post(
-            config.config_get_nemo_url() + ENDPOINT_URL_REPORT_CREATE,
+            config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Reports",
             headers=headers,
             json=data,
         )
@@ -319,7 +310,9 @@ def createOrUpdateRule(
     # load list of reports first
     response = requests.get(
         config.config_get_nemo_url()
-        + ENDPOINT_URL_RULE_LIST.format(projectId=project_id),
+        + "/api/nemo-persistence/metadata/Rule/project/{projectId}/rules".format(
+            projectId=project_id
+        ),
         headers=headers,
     )
     resultjs = json.loads(response.text)
@@ -346,7 +339,7 @@ def createOrUpdateRule(
         data["id"] = df_filtered["id"]
         response = requests.put(
             config.config_get_nemo_url()
-            + ENDPOINT_URL_RULE_UPDATE.format(id=df_filtered["id"]),
+            + "/api/nemo-persistence/metadata/Rule/{id}".format(id=df_filtered["id"]),
             headers=headers,
             json=data,
         )
@@ -356,7 +349,7 @@ def createOrUpdateRule(
             )
     else:
         response = requests.post(
-            config.config_get_nemo_url() + ENDPOINT_URL_RULE_CREATE,
+            config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Rule",
             headers=headers,
             json=data,
         )
@@ -365,16 +358,14 @@ def createOrUpdateRule(
                 f"Request failed. Status: {response.status_code}, error: {response.text}"
             )
 
+
 def synchronizeCsvColsAndImportedColumns(
     config: Config,
     projectname: str,
     filename: str,
 ) -> None:
 
-    headers = config.connection_get_headers()
-    project_id = getProjectID(config, projectname)
-    
-    importedColumns = getImportedColumns(config,projectname)
+    importedColumns = getImportedColumns(config, projectname)["internalName"].to_list()
 
     # Read the first line of the CSV file to get column names
     with open(filename, "r") as file:
@@ -382,15 +373,17 @@ def synchronizeCsvColsAndImportedColumns(
 
     # Split the first line into a list of column names
     csv_column_names = first_line.split(";")
+    csv_column_names = [x.strip('"') for x in csv_column_names]
+    csv_column_names = [internal_name(x) for x in csv_column_names]
 
     # Check if a record exists in the DataFrame for each column
     for column_name in csv_column_names:
         displayName = display_name(column_name)
         internalName = internal_name(column_name)
         importName = import_name(column_name)
-        
+
         # Check if the record with internal_name equal to the column name exists
-        if not importedColumns[importedColumns["internalName"] == column_name].empty:
+        if internalName in importedColumns:
             print(f"Record found for column '{column_name}' in the DataFrame.")
         else:
             print(
@@ -403,6 +396,5 @@ def synchronizeCsvColsAndImportedColumns(
                 dataType="string",
                 importName=importName,
                 internalName=internalName,
-                description=""
+                description="",
             )
-        

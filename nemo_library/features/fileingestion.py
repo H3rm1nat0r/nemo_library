@@ -10,7 +10,6 @@ import pandas as pd
 
 from nemo_library.features.config import Config
 from nemo_library.features.projects import getProjectID
-from nemo_library.utils.symbols import ENDPOINT_URL_QUEUE_ANALYZE_TABLE, ENDPOINT_URL_QUEUE_INGEST_DATA_V2, ENDPOINT_URL_QUEUE_INGEST_DATA_V3, ENDPOINT_URL_QUEUE_TASK_RUNS, ENDPOINT_URL_TVM_S3_ACCESS
 
 
 def ReUploadFile(
@@ -55,7 +54,8 @@ def ReUploadFile(
 
         # Retrieve temporary credentials from NEMO TVM
         response = requests.get(
-            config.config_get_nemo_url() + ENDPOINT_URL_TVM_S3_ACCESS,
+            config.config_get_nemo_url()
+            + "/api/nemo-tokenvendor/InternalTokenVendor/sts/s3_policy",
             headers=headers,
         )
 
@@ -109,9 +109,9 @@ def ReUploadFile(
                 data["global_fields_mappings"] = global_fields_mapping
 
         endpoint_url = (
-            ENDPOINT_URL_QUEUE_INGEST_DATA_V3
+            "/api/nemo-queue/ingest_data_kubernetes_v3"
             if version == 3
-            else ENDPOINT_URL_QUEUE_INGEST_DATA_V2
+            else "/api/nemo-queue/ingest_data_kubernetes_v2"
         )
 
         response = requests.post(
@@ -136,7 +136,7 @@ def ReUploadFile(
                     "page_size": 20,
                 }
                 response = requests.get(
-                    config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                    config.config_get_nemo_url() + "/api/nemo-queue/task_runs",
                     headers=headers,
                     json=data,
                 )
@@ -166,7 +166,8 @@ def ReUploadFile(
                 "project_id": project_id,
             }
             response = requests.post(
-                config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_ANALYZE_TABLE,
+                config.config_get_nemo_url()
+                + "/api/nemo-queue/analyze_table_kubernetes",
                 headers=headers,
                 json=data,
             )
@@ -186,7 +187,7 @@ def ReUploadFile(
                     "page_size": 20,
                 }
                 response = requests.get(
-                    config.config_get_nemo_url() + ENDPOINT_URL_QUEUE_TASK_RUNS,
+                    config.config_get_nemo_url() + "/api/nemo-queue/task_runs",
                     headers=headers,
                     json=data,
                 )

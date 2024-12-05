@@ -129,7 +129,7 @@ def createProject(
         "importErrorType": "NoError",
         "id": "",
         "s3DataSourcePath": "",
-        "showInitialConfiguration": True,
+        "showInitialConfiguration": False,
         "tenant": config.config_get_tenant(),
         "type": "0",
     }
@@ -137,6 +137,51 @@ def createProject(
     response = requests.post(ENDPOINT_URL, headers=headers, json=data)
 
     if response.status_code != 201:
+        raise Exception(
+            f"Request failed. Status: {response.status_code}, error: {response.text}"
+        )
+
+
+def setProjectMetaData(
+    config: Config,
+    projectname: str,
+    processid_column: str = None,
+    processdate_column: str = None,
+    corpcurr_value: str = None,
+) -> None:
+
+    headers = config.connection_get_headers()
+    projectID = getProjectID(config, projectname)
+
+    data = {}
+    if corpcurr_value:
+        data["corporateCurrencyValue"] = corpcurr_value
+    if processdate_column:
+        data["processDateColumnName"] = processdate_column
+    if processid_column:
+        data["processIdColumnName"] = processid_column
+
+    ENDPOINT_URL = config.config_get_nemo_url() + "/api/nemo-persistence/ProjectProperty/project/{projectId}/BusinessProcessMetadata".format(
+        projectId=projectID
+    )
+
+    response = requests.put(ENDPOINT_URL, headers=headers, json=data)
+    if response.status_code != 200:
+        raise Exception(
+            f"Request failed. Status: {response.status_code}, error: {response.text}"
+        )
+        
+def deleteProject(config: Config, projectname: str) -> None:
+
+    headers = config.connection_get_headers()
+    projectID = getProjectID(config, projectname)
+    ENDPOINT_URL = (
+        config.config_get_nemo_url()
+        + "/api/nemo-persistence/metadata/Project/{id}".format(id=projectID)
+    )
+    response = requests.delete(ENDPOINT_URL, headers=headers)
+
+    if response.status_code != 204:
         raise Exception(
             f"Request failed. Status: {response.status_code}, error: {response.text}"
         )
@@ -365,6 +410,9 @@ def synchronizeCsvColsAndImportedColumns(
     filename: str,
 ) -> None:
 
+    df = getImportedColumns(config, projectname)
+    importedColumns = df["internalName"].to_list() if not df.empty else []
+
     importedColumns = getImportedColumns(config, projectname)["internalName"].to_list()
 
     # Read the first line of the CSV file to get column names
@@ -372,12 +420,11 @@ def synchronizeCsvColsAndImportedColumns(
         first_line = file.readline().strip()
 
     # Split the first line into a list of column names
-    csv_column_names = first_line.split(";")
-    csv_column_names = [x.strip('"') for x in csv_column_names]
-    csv_column_names = [internal_name(x) for x in csv_column_names]
+    csv_display_names = first_line.split(";")
+    csv_display_names = [x.strip('"') for x in csv_display_names]
 
     # Check if a record exists in the DataFrame for each column
-    for column_name in csv_column_names:
+    for column_name in csv_display_names:
         displayName = display_name(column_name)
         internalName = internal_name(column_name)
         importName = import_name(column_name)

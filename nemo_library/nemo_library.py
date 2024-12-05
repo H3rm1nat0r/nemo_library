@@ -11,10 +11,12 @@ from nemo_library.features.projects import (
     createOrUpdateReport,
     createOrUpdateRule,
     createProject,
+    deleteProject,
     getImportedColumns,
     getProjectID,
     getProjectList,
     getProjectProperty,
+    setProjectMetaData,
     synchronizeCsvColsAndImportedColumns,
 )
 
@@ -62,7 +64,27 @@ class NemoLibrary:
         return LoadReport(self.config, projectname, report_guid, max_pages)
 
     def createProject(self, projectname: str, description: str) -> None:
-        return createProject(self.config, projectname, description)
+        return createProject(
+            config=self.config, projectname=projectname, description=description
+        )
+
+    def setProjectMetaData(
+        self,
+        projectname: str,
+        processid_column: str = None,
+        processdate_column: str = None,
+        corpcurr_value: str = None,
+    ) -> None:
+        setProjectMetaData(
+            self.config,
+            projectname,
+            processid_column,
+            processdate_column,
+            corpcurr_value,
+        )
+
+    def deleteProject(self, projectname: str) -> None:
+        deleteProject(self.config, projectname)
 
     def createProjectsForMigMan(
         self, projects: list[str] = None, proALPHA_project_status_file: str = None

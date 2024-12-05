@@ -6,6 +6,7 @@ certifi
 charset-normalizer
 coverage
 docutils
+Faker
 hubspot-api-client
 idna
 importlib_metadata
@@ -40,6 +41,7 @@ setuptools
 six
 soupsieve
 twine
+typing_extensions
 tzdata
 urllib3
 wheel

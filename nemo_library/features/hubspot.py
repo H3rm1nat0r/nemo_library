@@ -16,8 +16,8 @@ import requests
 
 from bs4 import BeautifulSoup
 
-from nemo_library.sub_config_handler import ConfigHandler
-from nemo_library.sub_file_upload_handler import ReUploadFileIngestion
+from nemo_library.features.config import Config
+from nemo_library.features.fileingestion import ReUploadFile
 
 ACTIVITY_TYPES = [
     "calls",
@@ -88,7 +88,7 @@ DEALSTAGE_MAPPING = {
 }
 
 
-def CRM_Activities_handler(config: ConfigHandler, projectname: str) -> None:
+def FetchDealFromHubSpotAndUploadToNEMO(config: Config, projectname: str) -> None:
     """
     Handles the processing and uploading of CRM deal activities to NEMO.
 
@@ -156,7 +156,7 @@ def CRM_Activities_handler(config: ConfigHandler, projectname: str) -> None:
     upload_deals_to_NEMO(config=config, projectname=projectname, deals=deals)
 
 
-def getHubSpotAPIToken(config: ConfigHandler) -> HubSpot:
+def getHubSpotAPIToken(config: Config) -> HubSpot:
     """
     Initializes and returns a HubSpot API client using the API token from the provided configuration.
 
@@ -1005,7 +1005,7 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
 
 
 def upload_deals_to_NEMO(
-    config: ConfigHandler, projectname: str, deals: pd.DataFrame
+    config: Config, projectname: str, deals: pd.DataFrame
 ) -> None:
     """
     Uploads a DataFrame of deals to the NEMO system after processing and temporarily saving it as a CSV file.
@@ -1053,7 +1053,7 @@ def upload_deals_to_NEMO(
         )
         print(f"file {temp_file_path} written. Number of records: {len(deals)}")
 
-        ReUploadFileIngestion(
+        ReUploadFile(
             config=config,
             projectname=projectname,
             filename=temp_file_path,

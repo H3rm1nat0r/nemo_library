@@ -14,6 +14,8 @@ from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
     createImportedColumn,
+    createOrUpdateReport,
+    createOrUpdateRule,
     createProject,
     getProjectList,
 )
@@ -25,29 +27,24 @@ __all__ = ["createProjectsForMigMan"]
 def createProjectsForMigMan(config: Config, projects: list[str]) -> None:
     """Create projects for MigMan based on given config and project list."""
     for project in projects:
-        scan_project(config, project)
+        logging.info(f"Scanning project '{project}'")
 
+        # Get matching files
+        matching_files = get_matching_files(project)
+        if not matching_files:
+            error_message = (
+                f"No files found for project '{project}'. Please check for typos"
+            )
+            logging.error(error_message)
+            raise ValueError(error_message)
 
-def scan_project(config: Config, project: str) -> None:
-    """Scan a single project and process its files."""
-    logging.info(f"Scanning project '{project}'")
+        # Sort files
+        sorted_files = sort_files(matching_files)
 
-    # Get matching files
-    matching_files = get_matching_files(project)
-    if not matching_files:
-        error_message = (
-            f"No files found for project '{project}'. Please check for typos"
-        )
-        logging.error(error_message)
-        raise ValueError(error_message)
-
-    # Sort files
-    sorted_files = sort_files(matching_files)
-
-    # Process each file
-    for filename in sorted_files:
-        postfix = extract_postfix(filename)
-        process_file(config, project, filename, postfix)
+        # Process each file
+        for filename in sorted_files:
+            postfix = extract_postfix(filename)
+            process_file(config, project, filename, postfix)
 
 
 def get_matching_files(project: str) -> list[str]:
@@ -120,7 +117,9 @@ def process_file(config: Config, project: str, filename: str, postfix: str) -> N
 
             process_columns(config, projectname, df)
 
-        uploadData(config, projectname, df)
+            uploadData(config, projectname, df)
+
+        updateReports(config, projectname, df)
 
 
 def process_columns(
@@ -134,10 +133,10 @@ def process_columns(
     for idx, row in df.iterrows():
 
         logging.info(f"process column {row["Column"]} with index {idx}")
-        displayName = display_name(row["Location in proALPHA"],idx)
-        internalName = internal_name(row["Location in proALPHA"],idx)
-        importName = import_name(row["Location in proALPHA"],idx)
-        
+        displayName = display_name(row["Location in proALPHA"], idx)
+        internalName = internal_name(row["Location in proALPHA"], idx)
+        importName = import_name(row["Location in proALPHA"], idx)
+
         # column already exists?
         if True:
             logging.info(
@@ -171,7 +170,7 @@ def uploadData(config: Config, projectname: str, df: pd.DataFrame) -> None:
     faker = Faker("de_DE")
 
     columns = [
-        import_name(idx, row["Location in proALPHA"]) for idx, row in df.iterrows()
+        import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
     ]
     data_types = df["Data Type"].to_list()
     formats = df["Format"].to_list()
@@ -355,3 +354,226 @@ def uploadData(config: Config, projectname: str, df: pd.DataFrame) -> None:
         logging.info(f"upload to project {projectname} completed")
 
 
+def updateReports(
+    config: Config,
+    projectname: str,
+    df: pd.DataFrame,
+) -> None:
+
+    logging.info(
+        f"Update deficiency mining reports and rules for project {projectname}"
+    )
+
+    # create deficiency mining reports
+    displayNames = [
+        display_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+    ]
+    internalNames = [
+        internal_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+    ]
+    dataTypes = df["Data Type"].to_list()
+    formats = df["Format"].to_list()
+
+    # create column specific fragments
+    frags_checked = []
+    frags_msg = []
+    for displayName, columnNameInternal, dataType, format in zip(
+        displayNames, internalNames, dataTypes, formats
+    ):
+
+        frag_check = []
+        frag_msg = []
+
+        # # mandatory fields
+        # if row["pflicht"] == "ja":
+        #     frag_check.append(
+        #         f"{column_name_internal} IS NULL or TRIM({column_name_internal}) = ''"
+        #     )
+        #     frag_msg.append(f"{column_name} is mandatory")
+
+        # data type specific checks
+        match dataType.lower():
+            case "character":
+                # Parse format to get maximum length
+                match = re.search(r"x\((\d+)\)", format)
+                field_length = int(match.group(1)) if match else len(format)
+                frag_check.append(f"LENGTH({columnNameInternal}) > {field_length}")
+                frag_msg.append(
+                    f"{displayName} exceeds field length (max {field_length} digits)"
+                )
+
+            case "integer" | "decimal":
+                # Parse format
+                negative_numbers = "-" in format
+                if negative_numbers:
+                    format = format.replace("-", "")
+
+                if not negative_numbers:
+                    frag_check.append(
+                        f"LEFT(TRIM({columnNameInternal}), 1) = '-' OR RIGHT(TRIM({columnNameInternal}), 1) = '-'"
+                    )
+                    frag_msg.append(f"{displayName} must not be negative")
+
+                # decimals?
+                decimals = len(format.split(".")[1]) if "." in format else 0
+                if decimals > 0:
+                    format = format[: len(format) - decimals - 1]
+                    frag_check.append(
+                        f"""LOCATE(TO_VARCHAR(TRIM({columnNameInternal})), '.') > 0 AND 
+            LENGTH(RIGHT(TO_VARCHAR(TRIM({columnNameInternal})), 
+                        LENGTH(TO_VARCHAR(TRIM({columnNameInternal}))) - 
+                        LOCATE(TO_VARCHAR(TRIM({columnNameInternal})), '.'))) > {decimals}"""
+                    )
+                    frag_msg.append(
+                        f"{displayName} has too many decimals ({decimals} allowed)"
+                    )
+
+                match = re.search(r"z\((\d+)\)", format)
+                field_length = int(match.group(1)) if match else len(format)
+
+                frag_check.append(
+                    f"""LENGTH(
+                    LEFT(
+                        REPLACE(TO_VARCHAR(TRIM({columnNameInternal})), '-', ''), 
+                        LOCATE('.', REPLACE(TO_VARCHAR(TRIM({columnNameInternal})), '-', '')) - 1
+                    )
+                ) > {field_length}"""
+                )
+                frag_msg.append(
+                    f"{displayName} has too many digits before the decimal point ({field_length} allowed)"
+                )
+
+                frag_check.append(
+                    f"NOT {columnNameInternal} LIKE_REGEXPR('^[-]?[0-9]+(\\.[0-9]+)?[-]?$')"
+                )
+                frag_msg.append(f"{displayName} is not a valid number")
+
+            case "date":
+                frag_check.append(
+                    f"NOT {columnNameInternal} LIKE_REGEXPR('^(\\d{{4}})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$')"
+                )
+                frag_msg.append(f"{displayName} is not a valid date")
+
+            case "logical":
+                pass
+
+        # special fields
+
+        if "mail" in columnNameInternal:
+            frag_check.append(
+                f"NOT {columnNameInternal} LIKE_REGEXPR('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{{2,}}$')"
+            )
+            frag_msg.append(f"{displayName} is not a valid email")
+
+        if (
+            ("phone" in columnNameInternal)
+            or ("telefon" in columnNameInternal)
+            or ("fax" in columnNameInternal)
+        ):
+            frag_check.append(
+                f"NOT {columnNameInternal} LIKE_REGEXPR('^\\+?[0-9\\s\\-()]{5,15}$')"
+            )
+            frag_msg.append(f"{displayName} is not a valid phone number")
+
+        # now build deficiency mining report for this column (if there are checks)
+        if frag_check:
+
+            # save checks and messages for total report
+            frags_checked.extend(frag_check)
+            frags_msg.extend(frag_msg)
+            sorted_columns = [columnNameInternal] + [
+                col for col in internalNames if col != columnNameInternal
+            ]
+
+            # case statements for messages and dm report
+            case_statement_specific = " ||\n\t".join(
+                [
+                    f"CASE\n\t\tWHEN {check}\n\t\tTHEN CHAR(10) || '{msg}'\n\t\tELSE ''\n\tEND"
+                    for check, msg in zip(frag_check, frag_msg)
+                ]
+            )
+
+            status_conditions = " OR ".join(frag_check)
+
+            sql_statement = f"""SELECT
+\t{',\n\t'.join(sorted_columns)}
+\t,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
+\t,CASE 
+\t\tWHEN {status_conditions} THEN 'check'
+    ELSE 'ok'
+END AS STATUS
+FROM
+$schema.$table"""
+
+            # create the report
+            report_display_name = f"(DEFICIENCIES) {displayName}"
+            report_internal_name = internal_name(report_display_name)
+
+            createOrUpdateReport(
+                config=config,
+                projectname=projectname,
+                displayName=report_display_name,
+                internalName=report_internal_name,
+                querySyntax=sql_statement,
+                description=f"Deficiency Mining Report for column '{displayName}' in project '{projectname}'",
+            )
+
+            createOrUpdateRule(
+                config=config,
+                projectname=projectname,
+                displayName=displayName,
+                ruleSourceInternalName=report_internal_name,
+                ruleGroup="02 Columns",
+                description=f"Deficiency Mining Rule for column '{displayName}' in project '{projectname}'",
+            )
+
+        logging.info(
+            f"project: {projectname}, column: {displayName}: {len(frag_check)} frags added"
+        )
+
+    # now setup global dm report and rule
+
+    # case statements for messages and dm report
+    case_statement_specific = " ||\n\t".join(
+        [
+            f"CASE\n\t\tWHEN {check}\n\t\tTHEN  CHAR(10) || '{msg}'\n\t\tELSE ''\n\tEND"
+            for check, msg in zip(frags_checked, frags_msg)
+        ]
+    )
+
+    status_conditions = " OR ".join(frags_checked)
+
+    sql_statement = f"""SELECT
+\t{',\n\t'.join(internalNames)}
+\t,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
+\t,CASE 
+\t\tWHEN {status_conditions} THEN 'check'
+\t\tELSE 'ok'
+\tEND AS STATUS
+FROM
+$schema.$table"""
+
+    # create the report
+    report_display_name = f"(DEFICIENCIES) GLOBAL"
+    report_internal_name =internal_name(report_display_name)
+
+    createOrUpdateReport(
+        config=config,
+        projectname=projectname,
+        displayName=report_display_name,
+        internalName=report_internal_name,
+        querySyntax=sql_statement,
+        description=f"Deficiency Mining Report for  project '{projectname}'",
+    )
+
+    createOrUpdateRule(
+        config=config,
+        projectname=projectname,
+        displayName="Global",
+        ruleSourceInternalName=report_internal_name,
+        ruleGroup="01 Global",
+        description=f"Deficiency Mining Rule for project '{projectname}'",
+    )
+
+    logging.info(f"Project {projectname}: {len(frags_checked)} checks implemented...")
+    return len(frags_checked)

@@ -23,7 +23,7 @@ NEMO_URLS = {
     "dev": "http://development.enter.nemo-ai.com",
     "test": "http://test.enter.nemo-ai.com",
     "prod": "https://enter.nemo-ai.com",
-    "challenge": "http://challenge.enter.nemo-ai.com",
+    "challenge": "https://challenge.enter.nemo-ai.com",
 }
 
 

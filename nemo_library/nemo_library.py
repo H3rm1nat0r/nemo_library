@@ -59,7 +59,7 @@ class NemoLibrary:
         Logs:
             Error: If the API request fails (e.g., non-200 status code).
         """
-        
+
         return getProjectList(self.config)
 
     def getProjectID(self, projectname: str) -> str:
@@ -214,14 +214,17 @@ class NemoLibrary:
         deleteProject(self.config, projectname)
 
     def createProjectsForMigMan(
-        self, projects: list[str] = None, proALPHA_project_status_file: str = None
+        self,
+        projects: list[str] = None,
+        proALPHA_project_status_file: str = None,
+        csv_files_directory : str = None
     ) -> None:
         """
         Creates projects for MigMan based on a provided project list or a proALPHA project status file.
 
         Args:
             projects (list[str], optional): A list of project names to create. Defaults to None.
-            proALPHA_project_status_file (str, optional): Path to a proALPHA migration status file 
+            proALPHA_project_status_file (str, optional): Path to a proALPHA migration status file
                                                         to generate the project list. Defaults to None.
 
         Returns:
@@ -468,7 +471,7 @@ class NemoLibrary:
         projectname: str,
         sourceDisplayName: str,
         targetDisplayName: str = None,
-        groupInternalName : str = None,
+        groupInternalName: str = None,
     ) -> None:
         """
         Moves an attribute in the focus tree of a specified project, positioning it before a target attribute.
@@ -494,7 +497,11 @@ class NemoLibrary:
         """
 
         focusMoveAttributeBefore(
-            self.config, projectname, sourceDisplayName, targetDisplayName,groupInternalName
+            self.config,
+            projectname,
+            sourceDisplayName,
+            targetDisplayName,
+            groupInternalName,
         )
 
     def FetchDealFromHubSpotAndUploadToNEMO(self, projectname: str) -> None:

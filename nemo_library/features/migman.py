@@ -24,9 +24,14 @@ from nemo_library.utils.utils import display_name, import_name, internal_name, l
 
 __all__ = ["createProjectsForMigMan"]
 
+CALCULATED_FIELD = "CALCULATED_FIELD"
+
 
 def createProjectsForMigMan(
-    config: Config, projects: list[str] = None, proALPHA_project_status_file: str = None
+    config: Config,
+    projects: list[str] = None,
+    proALPHA_project_status_file: str = None,
+    csv_files_directory: str = None,
 ) -> None:
     """
     Creates projects for MigMan based on a provided project list or a proALPHA project status file.
@@ -34,7 +39,7 @@ def createProjectsForMigMan(
     Args:
         config (Config): Configuration object containing connection details and headers.
         projects (list[str], optional): A list of project names to create. Defaults to None.
-        proALPHA_project_status_file (str, optional): Path to a proALPHA migration status file 
+        proALPHA_project_status_file (str, optional): Path to a proALPHA migration status file
                                                       to generate the project list. Defaults to None.
 
     Returns:
@@ -52,22 +57,20 @@ def createProjectsForMigMan(
             - Extracting a postfix and processing each file using `process_file`.
         - Logs errors and exceptions if files are missing or the project list is invalid.
     """
-    
+
     if proALPHA_project_status_file:
         projects = getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
 
-    if not projects or len(projects)==0:
+    if not projects or len(projects) == 0:
         log_error("no projects given")
-        
+
     for project in projects:
         logging.info(f"Scanning project '{project}'")
 
         # Get matching files
         matching_files = get_matching_files(project)
         if not matching_files:
-            log_error(
-                f"No files found for project '{project}'. Please check for typos"
-            )
+            log_error(f"No files found for project '{project}'. Please check for typos")
 
         # Sort files
         sorted_files = sort_files(matching_files)
@@ -75,12 +78,14 @@ def createProjectsForMigMan(
         # Process each file
         for filename in sorted_files:
             postfix = extract_postfix(filename)
-            process_file(config, project, filename, postfix)
+            process_file(config, filename, postfix, csv_files_directory)
 
 
 def get_matching_files(project: str) -> list[str]:
     """Get all matching files for the given project."""
-    pattern = re.compile(f"^Template {project} (MAIN|Add\\d+)\\.csv$", re.IGNORECASE)
+    pattern = re.compile(
+        f"^Template {re.escape(project)} (MAIN|ADD\\d+)\\.csv$", re.IGNORECASE
+    )
     return [
         resource
         for resource in importlib.resources.contents("nemo_library.migmantemplates")
@@ -110,9 +115,23 @@ def extract_postfix(filename: str) -> str:
         raise ValueError(error_message)
 
 
-def process_file(config: Config, project: str, filename: str, postfix: str) -> None:
+def process_file(
+    config: Config, filename: str, postfix: str, csv_files_directory: str = None
+) -> None:
     """Process a single file and create a project."""
-    logging.info(f"Processing file {filename} (postfix {postfix})")
+
+    pattern = re.compile(
+        r"^Template (?P<project>.*?) (MAIN|Add\d+)\.csv$", re.IGNORECASE
+    )
+    match = pattern.match(filename)
+    if match:
+        project = match.group("project")
+    else:
+        log_error(f"filename '{filename}' does not match expected pattern")
+
+    logging.info(
+        f"Processing file {filename} (postfix {postfix}) for project '{project}'"
+    )
     with importlib.resources.open_binary(
         "nemo_library.migmantemplates", filename
     ) as file:
@@ -135,6 +154,14 @@ def process_file(config: Config, project: str, filename: str, postfix: str) -> N
         df["Location in proALPHA"] = df["Description / Remark"]
         df.drop(columns=["Description / Remark"], inplace=True)
 
+        df.loc[df["Location in proALPHA"].isna(), "Column Name"] = df["Column"]
+        df.loc[df["Location in proALPHA"].isna(), "Data Type"] = "CHARACTER"
+        df.loc[df["Location in proALPHA"].isna(), "Format"] = "x(20)"
+        df.loc[df["Location in proALPHA"].isna(), "Location in proALPHA"] = (
+            CALCULATED_FIELD + " " + df.loc[df["Location in proALPHA"].isna(), "Column"]
+        )
+        # df.loc[df["Location in proALPHA"].isna(),"Location in proALPHA"] = f"{CALCULATED_FIELD} {df['Column']}"
+
         projectname = f"{project} ({postfix})" if postfix != "MAIN" else project
 
         # project already exists?
@@ -148,9 +175,9 @@ def process_file(config: Config, project: str, filename: str, postfix: str) -> N
 
             process_columns(config, projectname, df)
 
-            uploadData(config, projectname, df)
+            uploadData(config, projectname, df, csv_files_directory, postfix)
 
-        updateReports(config, projectname, df)
+            updateReports(config, projectname, df)
 
 
 def process_columns(
@@ -195,7 +222,41 @@ def process_columns(
         lastDisplayName = displayName
 
 
-def uploadData(config: Config, projectname: str, df: pd.DataFrame) -> None:
+def uploadData(
+    config: Config,
+    projectname: str,
+    df: pd.DataFrame,
+    csv_files_directory: str = None,
+    postfix: str = None,
+) -> None:
+
+    # "real" data given? let's take this instead of the dummy file
+    if csv_files_directory:
+        if not postfix:
+            postfix = "MAIN"
+        file_path = os.path.join(csv_files_directory, f"{projectname} {postfix}.csv")
+        if os.path.exists(file_path):
+            uploadRealData(config, projectname, df, file_path)
+            return
+
+    # otherwise, we upload dummy data
+    uploadDummyData(config, projectname, df)
+
+
+def uploadRealData(
+    config: Config,
+    projectname: str,
+    df: pd.DataFrame,
+    file_path: str,
+):
+    logging.info(f"file '{file_path}' found - load data from this file")
+
+
+def uploadDummyData(
+    config: Config,
+    projectname: str,
+    df: pd.DataFrame,
+):
     logging.info(f"Upload dummy file for project {projectname}")
 
     faker = Faker("de_DE")
@@ -206,9 +267,9 @@ def uploadData(config: Config, projectname: str, df: pd.DataFrame) -> None:
     data_types = df["Data Type"].to_list()
     formats = df["Format"].to_list()
 
-    def generate_column_data(dtype, format, num_rows):
+    def generate_column_data(data_type, format, num_rows):
 
-        match dtype:
+        match data_type.lower():
             case "character":
                 # Parse format to get maximum length
                 match = re.search(r"x\((\d+)\)", format)
@@ -294,7 +355,15 @@ def uploadData(config: Config, projectname: str, df: pd.DataFrame) -> None:
             case "date" | "datetime" | "datetime-tz":
                 return [faker.date_this_decade() for _ in range(num_rows)]
             case "logical":
-                return [faker.boolean() for _ in range(num_rows)]
+                format_options = format.split("/")
+                return [
+                    (
+                        format_options[0]
+                        if random.choice([True, False])
+                        else format_options[1]
+                    )
+                    for _ in range(num_rows)
+                ]
             case _:
                 return [faker.text() for _ in range(num_rows)]
 
@@ -309,7 +378,7 @@ def uploadData(config: Config, projectname: str, df: pd.DataFrame) -> None:
             dtype = data_types[col_idx]
             format = formats[col_idx]
 
-            match dtype:
+            match dtype.lower():
                 case "character":
                     match = re.search(r"x\((\d+)\)", format)
                     field_length = int(match.group(1)) if match else len(format)
@@ -350,8 +419,10 @@ def uploadData(config: Config, projectname: str, df: pd.DataFrame) -> None:
 
     num_rows = 500
     data = {
-        col: generate_column_data(dtype, format, num_rows)
-        for col, format, dtype in zip(columns, formats, data_types)
+        column: generate_column_data(
+            data_type=data_type, format=format, num_rows=num_rows
+        )
+        for column, format, data_type in zip(columns, formats, data_types)
     }
 
     dummy_df = pd.DataFrame(data)
@@ -486,7 +557,13 @@ def updateReports(
                 frag_msg.append(f"{displayName} is not a valid date")
 
             case "logical":
-                pass
+                format_for_regex = format.replace("/", "|")
+                frag_check.append(
+                    f"NOT {columnNameInternal} LIKE_REGEXPR('^({format_for_regex})$')"
+                )
+                frag_msg.append(
+                    f'{displayName}: logical value does not match format "{format}"'
+                )
 
         # special fields
 
@@ -633,6 +710,21 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
         raise ValueError("The column 'Importreihenfolge' does not exist in the data.")
 
     if "Name des Importprograms / Name der Erfassungsmaske" in dataframe.columns:
-        return dataframe[dataframe["Migrationsart"] == "NEMO"]["Name des Importprograms / Name der Erfassungsmaske"].to_list()
+        nemosteps = dataframe[dataframe["Migrationsart"] == "NEMO"][
+            "Name des Importprograms / Name der Erfassungsmaske"
+        ].to_list()
+        replacements = {
+            "european article numbers": "global trade item numbers",
+            "part-storage areas relationship": "part-storage areas relationships",
+        }
+
+        nemosteps = [
+            replacements[item] if item in replacements else item
+            for item in nemosteps
+        ]
+
+        return nemosteps
     else:
-        raise ValueError("The column 'Name des Importprograms / Name der Erfassungsmaske' does not exist in the data.")
+        raise ValueError(
+            "The column 'Name des Importprograms / Name der Erfassungsmaske' does not exist in the data."
+        )

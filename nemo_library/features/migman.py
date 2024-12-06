@@ -32,6 +32,7 @@ def updateProjectsForMigMan(
     projects: list[str] = None,
     proALPHA_project_status_file: str = None,
     csv_files_directory: str = None,
+    multi_projects: dict[str, str] = None,
 ) -> None:
     """
     Creates projects for MigMan based on a provided project list or a proALPHA project status file.
@@ -78,7 +79,13 @@ def updateProjectsForMigMan(
         # Process each file
         for filename in sorted_files:
             postfix = extract_postfix(filename)
-            process_file(config, filename, postfix, csv_files_directory)
+            process_file(
+                config=config,
+                filename=filename,
+                postfix=postfix,
+                csv_files_directory=csv_files_directory,
+                multi_projects=multi_projects
+            )
 
 
 def get_matching_files(project: str) -> list[str]:
@@ -116,7 +123,11 @@ def extract_postfix(filename: str) -> str:
 
 
 def process_file(
-    config: Config, filename: str, postfix: str, csv_files_directory: str = None
+    config: Config,
+    filename: str,
+    postfix: str,
+    csv_files_directory: str = None,
+    multi_projects: dict[str, str] = None,
 ) -> None:
     """Process a single file and create a project."""
 
@@ -160,26 +171,29 @@ def process_file(
         df.loc[df["Location in proALPHA"].isna(), "Location in proALPHA"] = (
             CALCULATED_FIELD + " " + df.loc[df["Location in proALPHA"].isna(), "Column"]
         )
-        # df.loc[df["Location in proALPHA"].isna(),"Location in proALPHA"] = f"{CALCULATED_FIELD} {df['Column']}"
 
-        projectname = f"{project} ({postfix})" if postfix != "MAIN" else project
+        addons = multi_projects[project] if multi_projects and project in multi_projects.keys() else [""]       
+        for addon in addons:        
+            projectname = f"{project} {addon} {'(' + postfix + ')' if postfix != 'MAIN' else ''}" 
+            projectname = re.sub(r'\s+', ' ', projectname)
+            projectname = projectname.strip()
+        
+            # project already exists?
+            new_project = False
+            if not projectname in getProjectList(config)["displayName"].to_list():
+                new_project = True
+                logging.info(f"Project not found in NEMO. Create it...")
+                createProject(
+                    config=config,
+                    projectname=projectname,
+                    description=f"Data Model for Mig Man table '{project}'",
+                )
 
-        # project already exists?
-        new_project = False
-        if not projectname in getProjectList(config)["displayName"].to_list():
-            new_project = True
-            logging.info(f"Project not found in NEMO. Create it...")
-            createProject(
-                config=config,
-                projectname=projectname,
-                description=f"Data Model for Mig Man table '{project}'",
-            )
+                process_columns(config, projectname, df)
 
-            process_columns(config, projectname, df)
+                updateReports(config, projectname, df)
 
-            updateReports(config, projectname, df)
-
-        uploadData(config, projectname, df, csv_files_directory, postfix,new_project)
+            uploadData(config, projectname, df, csv_files_directory, postfix, new_project)
 
 
 def process_columns(
@@ -249,6 +263,7 @@ def uploadData(
     if new_project:
         uploadDummyData(config, projectname, df)
 
+
 def uploadRealData(
     config: Config,
     projectname: str,
@@ -264,26 +279,30 @@ def uploadRealData(
         first_line = file.readline().strip()
 
     csv_display_names = first_line.split(";")
-    csv_display_names = [x.strip().strip('"').replace("\ufeff", "") for x in csv_display_names]
+    csv_display_names = [
+        x.strip().strip('"').replace("\ufeff", "") for x in csv_display_names
+    ]
 
-    nemo_import_names = [import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()]    
+    nemo_import_names = [
+        import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+    ]
 
     for csv_display_name in csv_display_names:
         if not csv_display_name in nemo_import_names:
             log_error(f"column '{csv_display_name}' not defined.")
 
     # now, we are sure that the file is formattted property. Load file and add missing columns
-    df = pd.read_csv(file_path,sep=";")
-    
+    df = pd.read_csv(file_path, sep=";")
+
     # Add missing columns
     # Identify missing columns
     missing_columns = [col for col in nemo_import_names if col not in df.columns]
 
     if missing_columns:
-        
+
         # Create a DataFrame with missing columns and default values
         missing_df = pd.DataFrame({col: [""] * len(df) for col in missing_columns})
-        
+
         # Concatenate the original DataFrame with the missing columns
         df = pd.concat([df, missing_df], axis=1)
 
@@ -308,7 +327,8 @@ def uploadRealData(
             update_project_settings=False,
         )
         logging.info(f"upload to project {projectname} completed")
-    
+
+
 def uploadDummyData(
     config: Config,
     projectname: str,
@@ -776,8 +796,7 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
         }
 
         nemosteps = [
-            replacements[item] if item in replacements else item
-            for item in nemosteps
+            replacements[item] if item in replacements else item for item in nemosteps
         ]
 
         return nemosteps

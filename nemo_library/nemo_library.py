@@ -218,6 +218,7 @@ class NemoLibrary:
         projects: list[str] = None,
         proALPHA_project_status_file: str = None,
         csv_files_directory: str = None,
+        multi_projects: dict[str, str] = None,
     ) -> None:
         """
         Updates/creates projects for MigMan based on a provided project list or a proALPHA project status file.
@@ -247,6 +248,7 @@ class NemoLibrary:
             projects=projects,
             proALPHA_project_status_file=proALPHA_project_status_file,
             csv_files_directory=csv_files_directory,
+            multi_projects=multi_projects,
         )
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:

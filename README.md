@@ -8,7 +8,6 @@ Welcome to the **NEMO Library**, a Python library designed to bring simplicity a
 ## Key Features
 
 - **Data Processing:** Transform, clean, and manage your data with ease.
-- **AI-Powered Insights:** Leverage state-of-the-art algorithms for analytics and decision-making.
 - **Integration-Friendly:** Seamlessly integrate into your existing Python workflows or applications.
 - **Scalable Solutions:** Designed to work efficiently with both small datasets and large-scale applications.
 
@@ -30,10 +29,10 @@ For detailed installation instructions, refer to the [Installation Guide](https:
 
 Here’s a quick overview of what you can do with the NEMO Library:
 
-1. Import the library and start analyzing data.
-2. Utilize pre-built AI models for predictions.
-3. Automate repetitive tasks with simple configurations.
-
+1. load reports from NEMO
+1. create and update projects
+1. create reports and deficiency mining rules
+   
 For a comprehensive guide, refer to the [Usage Documentation](https://github.com/H3rm1nat0r/nemo_library/blob/master/docs/usage_guide.md).
 
 ---

@@ -118,7 +118,8 @@ def getProjectProperty(
 def LoadReport(
     config: Config,
     projectname: str,
-    report_guid: str,
+    report_guid: str = None,
+    report_name: str = None,
     max_pages=None,
 ) -> pd.DataFrame:
     """
@@ -144,12 +145,27 @@ def LoadReport(
         - Removes the `_RECORD_COUNT` column if present in the dataset.
         - Logs errors and raises exceptions for failed requests or data processing issues.
     """
-    
+
     project_id = getProjectID(config=config, projectname=projectname)
+    headers = config.connection_get_headers()
+
+    # if name was given, we have to resolve this into a guid
+    if report_name:
+        response = requests.get(
+            config.config_get_nemo_url()
+            + "/api/nemo-persistence/metadata/Reports/project/{projectId}/reports".format(
+                projectId=project_id
+            ),
+            headers=headers,
+        )
+        resultjs = json.loads(response.text)
+        df = pd.json_normalize(resultjs)
+        df = df[df["displayName"]==report_name]
+        if df.empty:
+            log_error(f"could not find report '{report_name}' in project {projectname}")
+        report_guid = df.iloc[0]["id"]
 
     logging.info(f"Loading report: {report_guid} from project {projectname}")
-
-    headers = config.connection_get_headers()
 
     # INIT REPORT PAYLOAD (REQUEST BODY)
     report_params = {"id": report_guid, "project_id": project_id}
@@ -204,7 +220,7 @@ def createProject(
         - Sends a POST request to the project creation endpoint with the required metadata.
         - Logs an error if the request fails and raises an exception.
     """
-    
+
     headers = config.connection_get_headers()
     ENDPOINT_URL = (
         config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Project"
@@ -265,7 +281,7 @@ def setProjectMetaData(
         - Sends an HTTP PUT request to update the project's business process metadata.
         - Logs an error if the request fails and raises an exception.
     """
-    
+
     headers = config.connection_get_headers()
     projectID = getProjectID(config, projectname)
 
@@ -286,7 +302,8 @@ def setProjectMetaData(
         log_error(
             f"Request failed. Status: {response.status_code}, error: {response.text}"
         )
-        
+
+
 def deleteProject(config: Config, projectname: str) -> None:
     """
     Deletes a specified project from the NEMO system.
@@ -306,7 +323,7 @@ def deleteProject(config: Config, projectname: str) -> None:
         - Sends an HTTP DELETE request to the endpoint associated with the project's metadata.
         - Logs an error if the request fails and raises an exception.
     """
-    
+
     headers = config.connection_get_headers()
     projectID = getProjectID(config, projectname)
     ENDPOINT_URL = (
@@ -344,7 +361,7 @@ def getImportedColumns(
         - Parses the JSON response and converts it into a normalized Pandas DataFrame.
         - Logs errors and raises exceptions for failed requests or invalid responses.
     """
-    
+
     # initialize reqeust
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)

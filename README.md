@@ -2,6 +2,9 @@
 
 This library helps you with access to NEMO APIs
 
+## Additional Documentation
+- [Setup Guide](docs/setup_guide.md)
+
 # Installation
 
 ```

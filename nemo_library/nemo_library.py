@@ -4,7 +4,7 @@ from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
-from nemo_library.features.migman import updateProjectsForMigMan
+from nemo_library.features.migman import updateMappingForMigman, updateProjectsForMigMan
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumn,
@@ -106,7 +106,8 @@ class NemoLibrary:
     def LoadReport(
         self,
         projectname: str,
-        report_guid: str,
+        report_guid: str = None,
+        report_name: str = None,
         max_pages=None,
     ) -> pd.DataFrame:
         """
@@ -131,7 +132,13 @@ class NemoLibrary:
             - Removes the `_RECORD_COUNT` column if present in the dataset.
             - Logs errors and raises exceptions for failed requests or data processing issues.
         """
-        return LoadReport(self.config, projectname, report_guid, max_pages)
+        return LoadReport(
+            config=self.config,
+            projectname=projectname,
+            report_guid=report_guid,
+            report_name=report_name,
+            max_pages=max_pages,
+        )
 
     def createProject(self, projectname: str, description: str) -> None:
         """
@@ -250,6 +257,12 @@ class NemoLibrary:
             csv_files_directory=csv_files_directory,
             multi_projects=multi_projects,
         )
+
+    def updateMappingForMigman(
+        self,
+        fields: list[str] = None,
+    ):
+        updateMappingForMigman(self.config, fields=fields)
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:
         """

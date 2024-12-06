@@ -22,12 +22,12 @@ from nemo_library.features.projects import (
 )
 from nemo_library.utils.utils import display_name, import_name, internal_name, log_error
 
-__all__ = ["createProjectsForMigMan"]
+__all__ = ["updateProjectsForMigMan"]
 
 CALCULATED_FIELD = "CALCULATED_FIELD"
 
 
-def createProjectsForMigMan(
+def updateProjectsForMigMan(
     config: Config,
     projects: list[str] = None,
     proALPHA_project_status_file: str = None,
@@ -165,7 +165,9 @@ def process_file(
         projectname = f"{project} ({postfix})" if postfix != "MAIN" else project
 
         # project already exists?
+        new_project = False
         if not projectname in getProjectList(config)["displayName"].to_list():
+            new_project = True
             logging.info(f"Project not found in NEMO. Create it...")
             createProject(
                 config=config,
@@ -175,9 +177,9 @@ def process_file(
 
             process_columns(config, projectname, df)
 
-            uploadData(config, projectname, df, csv_files_directory, postfix)
-
             updateReports(config, projectname, df)
+
+        uploadData(config, projectname, df, csv_files_directory, postfix,new_project)
 
 
 def process_columns(
@@ -228,20 +230,24 @@ def uploadData(
     df: pd.DataFrame,
     csv_files_directory: str = None,
     postfix: str = None,
+    new_project: bool = False,
 ) -> None:
 
     # "real" data given? let's take this instead of the dummy file
     if csv_files_directory:
         if not postfix:
             postfix = "MAIN"
-        file_path = os.path.join(csv_files_directory, f"{projectname} {postfix}.csv")
+        if postfix == "MAIN":
+            postfix = ""
+        postfix = (" " + postfix).strip()
+        file_path = os.path.join(csv_files_directory, f"{projectname}{postfix}.csv")
         if os.path.exists(file_path):
             uploadRealData(config, projectname, df, file_path)
             return
 
-    # otherwise, we upload dummy data
-    uploadDummyData(config, projectname, df)
-
+    # otherwise, we upload dummy data, but only for newly created projects
+    if new_project:
+        uploadDummyData(config, projectname, df)
 
 def uploadRealData(
     config: Config,
@@ -249,9 +255,60 @@ def uploadRealData(
     df: pd.DataFrame,
     file_path: str,
 ):
-    logging.info(f"file '{file_path}' found - load data from this file")
+    logging.info(f"file '{file_path}' found - load real data from this file")
 
+    # ensure that the CSV file has proper formatting. All columns must be defined, but not all are needed
 
+    # Read the first line of the CSV file to get column names
+    with open(file_path, "r") as file:
+        first_line = file.readline().strip()
+
+    csv_display_names = first_line.split(";")
+    csv_display_names = [x.strip().strip('"').replace("\ufeff", "") for x in csv_display_names]
+
+    nemo_import_names = [import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()]    
+
+    for csv_display_name in csv_display_names:
+        if not csv_display_name in nemo_import_names:
+            log_error(f"column '{csv_display_name}' not defined.")
+
+    # now, we are sure that the file is formattted property. Load file and add missing columns
+    df = pd.read_csv(file_path,sep=";")
+    
+    # Add missing columns
+    # Identify missing columns
+    missing_columns = [col for col in nemo_import_names if col not in df.columns]
+
+    if missing_columns:
+        
+        # Create a DataFrame with missing columns and default values
+        missing_df = pd.DataFrame({col: [""] * len(df) for col in missing_columns})
+        
+        # Concatenate the original DataFrame with the missing columns
+        df = pd.concat([df, missing_df], axis=1)
+
+    # Write to a temporary file and upload
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_path = os.path.join(temp_dir, "tempfile.csv")
+
+        df.to_csv(
+            temp_file_path,
+            index=False,
+            sep=";",
+            na_rep="",
+        )
+        logging.info(
+            f"dummy file {temp_file_path} written for project '{projectname}'. Uploading data to NEMO now..."
+        )
+
+        ReUploadFile(
+            config=config,
+            projectname=projectname,
+            filename=temp_file_path,
+            update_project_settings=False,
+        )
+        logging.info(f"upload to project {projectname} completed")
+    
 def uploadDummyData(
     config: Config,
     projectname: str,

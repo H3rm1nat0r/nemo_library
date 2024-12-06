@@ -54,6 +54,7 @@ def ReUploadFile(
     project_id = None
     headers = None
     project_id = None
+    gzipped_filename = None
     
     try:
         project_id = getProjectID(config, projectname)
@@ -228,3 +229,7 @@ def ReUploadFile(
         if project_id is None:
             log_error("Upload stopped, no project_id available")
         raise log_error(f"Upload aborted: {e}")
+
+    finally:
+        if gzipped_filename:
+            os.remove(gzipped_filename)

@@ -4,7 +4,7 @@ from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
-from nemo_library.features.migman import createProjectsForMigMan
+from nemo_library.features.migman import updateProjectsForMigMan
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumn,
@@ -213,14 +213,14 @@ class NemoLibrary:
         """
         deleteProject(self.config, projectname)
 
-    def createProjectsForMigMan(
+    def updateProjectsForMigMan(
         self,
         projects: list[str] = None,
         proALPHA_project_status_file: str = None,
-        csv_files_directory : str = None
+        csv_files_directory: str = None,
     ) -> None:
         """
-        Creates projects for MigMan based on a provided project list or a proALPHA project status file.
+        Updates/creates projects for MigMan based on a provided project list or a proALPHA project status file.
 
         Args:
             projects (list[str], optional): A list of project names to create. Defaults to None.
@@ -242,10 +242,11 @@ class NemoLibrary:
                 - Extracting a postfix and processing each file using `process_file`.
             - Logs errors and exceptions if files are missing or the project list is invalid.
         """
-        createProjectsForMigMan(
+        updateProjectsForMigMan(
             self.config,
             projects=projects,
             proALPHA_project_status_file=proALPHA_project_status_file,
+            csv_files_directory=csv_files_directory,
         )
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:

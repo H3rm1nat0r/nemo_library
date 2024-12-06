@@ -158,7 +158,7 @@ def test_createProjectsForMigMan():
         nl.deleteProject(MM_PROJECT_NAME)
 
     # now we can create the project
-    nl.createProjectsForMigMan([MM_PROJECT_NAME])
+    nl.updateProjectsForMigMan([MM_PROJECT_NAME])
     projects = nl.getProjectList()["displayName"].to_list()
     assert MM_PROJECT_NAME in projects
 

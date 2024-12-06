@@ -16,7 +16,6 @@ def getNL():
 def test_getProjectList():
     nl = getNL()
     df = nl.getProjectList()
-    print(df)
     assert len(df) > 0
     first_row = df.iloc[0]
     assert first_row["id"] == "00000000-0000-0000-0000-000000000001"
@@ -171,6 +170,12 @@ def test_createProjectsForMigMan():
 
 def test_FetchDealFromHubSpotAndUploadToNEMO():
     nl = getNL()
+
+    # check if project exists (should not)
+    projects = nl.getProjectList()["displayName"].to_list()
+    if HS_PROJECT_NAME in projects:
+        nl.deleteProject(HS_PROJECT_NAME)
+    
     nl.createProject(HS_PROJECT_NAME,"project for unit tests")
     nl.FetchDealFromHubSpotAndUploadToNEMO(HS_PROJECT_NAME)
     nl.deleteProject(HS_PROJECT_NAME)

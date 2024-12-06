@@ -25,13 +25,7 @@ The central class of the library. Instantiating this class gives access to all f
 from nemo_library import NemoLibrary
 
 # Example instance
-nemo = NemoLibrary(
-    environment="your_environment",
-    tenant="your_tenant",
-    userid="your_userid",
-    password="your_password",
-    hubspot_api_token="your_hubspot_api_token"
-)
+nemo = NemoLibrary()
 ```
 
 ---

@@ -34,7 +34,7 @@ Here’s a quick overview of what you can do with the NEMO Library:
 2. Utilize pre-built AI models for predictions.
 3. Automate repetitive tasks with simple configurations.
 
-For a comprehensive guide, refer to the [Usage Documentation](#).
+For a comprehensive guide, refer to the [Usage Documentation](https://github.com/H3rm1nat0r/nemo_library/blob/master/docs/usage_guide.md).
 
 ---
 

@@ -216,7 +216,7 @@ def ReUploadFile(
                         f"Analyze_table request failed, task ID not found in tasks list"
                     )
                 status = df_filtered["status"].iloc[0]
-                logging.info("Status: ", status)
+                logging.info(f"Status: {status}")
                 if status == "failed":
                     log_error("Analyze_table request failed, status: FAILED")
                 if status == "finished":

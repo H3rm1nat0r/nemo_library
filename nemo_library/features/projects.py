@@ -373,15 +373,6 @@ def createImportedColumn(
     internalName: str = None,
     description: str = None,
 ) -> None:
-def createImportedColumn(
-    config: Config,
-    projectname: str,
-    displayName: str,
-    dataType: str,
-    importName: str = None,
-    internalName: str = None,
-    description: str = None,
-) -> None:
     """
     Creates a new imported column for a specified project in the NEMO system.
 
@@ -442,14 +433,6 @@ def createImportedColumn(
         )
 
 
-def createOrUpdateReport(
-    config: Config,
-    projectname: str,
-    displayName: str,
-    querySyntax: str,
-    internalName: str = None,
-    description: str = None,
-) -> None:
 def createOrUpdateReport(
     config: Config,
     projectname: str,

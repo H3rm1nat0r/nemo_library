@@ -1,3 +1,4 @@
+import logging
 import sys
 import keyring
 
@@ -36,13 +37,13 @@ if __name__ == "__main__":
 
     # Set password
     pm.set_password(password)
-    print(
+    logging.info(
         f"Password for user '{username}' in service '{service_name}' has been stored."
     )
 
     # Retrieve password
     retrieved_password = pm.get_password()
     if retrieved_password:
-        print(f"The stored password for user '{username}' is: {retrieved_password}")
+        logging.info(f"The stored password for user '{username}' is: {retrieved_password}")
     else:
-        print(f"No password found for user '{username}' in service '{service_name}'.")
+        logging.info(f"No password found for user '{username}' in service '{service_name}'.")

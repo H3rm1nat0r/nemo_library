@@ -20,7 +20,7 @@ from nemo_library.features.projects import (
     createProject,
     getProjectList,
 )
-from nemo_library.utils.utils import display_name, import_name, internal_name
+from nemo_library.utils.utils import display_name, import_name, internal_name, log_error
 
 __all__ = ["createProjectsForMigMan"]
 
@@ -28,15 +28,36 @@ __all__ = ["createProjectsForMigMan"]
 def createProjectsForMigMan(
     config: Config, projects: list[str] = None, proALPHA_project_status_file: str = None
 ) -> None:
-    """Create projects for MigMan based on given config and project list."""
+    """
+    Creates projects for MigMan based on a provided project list or a proALPHA project status file.
 
+    Args:
+        config (Config): Configuration object containing connection details and headers.
+        projects (list[str], optional): A list of project names to create. Defaults to None.
+        proALPHA_project_status_file (str, optional): Path to a proALPHA migration status file 
+                                                      to generate the project list. Defaults to None.
+
+    Returns:
+        None
+
+    Raises:
+        ValueError: If no projects are provided or the project list is empty.
+        RuntimeError: If no matching files are found for a given project.
+
+    Notes:
+        - If `proALPHA_project_status_file` is provided, the project list is generated from the file.
+        - Each project is processed by:
+            - Finding matching files.
+            - Sorting the files.
+            - Extracting a postfix and processing each file using `process_file`.
+        - Logs errors and exceptions if files are missing or the project list is invalid.
+    """
+    
     if proALPHA_project_status_file:
         projects = getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
 
     if not projects or len(projects)==0:
-        error_message = "no projects given"
-        logging.error(error_message)
-        raise ValueError(error_message)
+        log_error("no projects given")
         
     for project in projects:
         logging.info(f"Scanning project '{project}'")
@@ -44,11 +65,9 @@ def createProjectsForMigMan(
         # Get matching files
         matching_files = get_matching_files(project)
         if not matching_files:
-            error_message = (
+            log_error(
                 f"No files found for project '{project}'. Please check for typos"
             )
-            logging.error(error_message)
-            raise ValueError(error_message)
 
         # Sort files
         sorted_files = sort_files(matching_files)

@@ -1,4 +1,5 @@
 import csv
+import logging
 import os
 import pandas as pd
 import re
@@ -18,6 +19,7 @@ from bs4 import BeautifulSoup
 
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
+from nemo_library.utils.utils import log_error
 
 ACTIVITY_TYPES = [
     "calls",
@@ -90,35 +92,26 @@ DEALSTAGE_MAPPING = {
 
 def FetchDealFromHubSpotAndUploadToNEMO(config: Config, projectname: str) -> None:
     """
-    Handles the processing and uploading of CRM deal activities to NEMO.
+    Fetches deal data from HubSpot, processes it, and uploads the combined information to a specified NEMO project.
 
-    This function interacts with HubSpot's API to retrieve deal information, activity history,
-    and associated details, then merges and enriches the data before uploading it to the NEMO system.
-
-    Parameters:
-    -----------
-    config : ConfigHandler
-        An instance of ConfigHandler containing configuration settings, including API credentials
-        and other necessary parameters.
-
-    projectname : str
-        The name of the project to which the deal data should be uploaded in NEMO.
-
-    Process:
-    --------
-    1. Retrieves the HubSpot API token using the provided configuration.
-    2. Loads deals from the CRM system.
-    3. Loads and processes deal change history and activity data.
-    4. Merges deal history and activity data with deal details.
-    5. Resolves internal fields (e.g., company ID, user ID) to their corresponding plain text representations.
-    6. Maps deal stages to their respective descriptive names.
-    7. Uploads the processed deal data to the specified project in NEMO.
+    Args:
+        config (Config): Configuration object containing connection details and headers.
+        projectname (str): The name of the NEMO project where the deal data will be uploaded.
 
     Returns:
-    --------
-    None
-        This function does not return any values. It performs operations that affect the state of
-        the CRM data in the NEMO system.
+        None
+
+    Raises:
+        RuntimeError: If any step in the HubSpot data retrieval or NEMO upload process fails.
+
+    Notes:
+        - Authenticates with HubSpot using the provided configuration.
+        - Retrieves deals, deal history, and deal activities from HubSpot.
+        - Merges deal history and activities with deal details.
+        - Resolves internal fields (e.g., `companyId`, `userId`) to human-readable information.
+        - Processes the deal data to map deal stages and other fields.
+        - Finally, uploads the processed deal data to the specified NEMO project using `upload_deals_to_NEMO`.
+        - Includes optional debugging capability for saving/loading intermediate data as a pickle file.
     """
 
     hs = getHubSpotAPIToken(config=config)
@@ -195,7 +188,6 @@ def load_deals_from_HubSpot(hs: HubSpot) -> pd.DataFrame:
     - Drops any columns provided by the API that were not explicitly requested.
     - Renames columns to ensure consistency, with all columns prefixed by "deal_".
     - Optionally filters the DataFrame to keep only specific deals (commented out by default).
-    - Prints the number of deals loaded from the CRM for debugging purposes.
     """
 
     # load all deals
@@ -238,7 +230,7 @@ def load_deals_from_HubSpot(hs: HubSpot) -> pd.DataFrame:
     # ]
     # deals_df = deals_df[deals_df["deal_id"].isin(deal_ids_to_keep)]
 
-    print(f"{len(deals_df)} deals loaded from CRM")
+    logging.info(f"{len(deals_df)} deals loaded from CRM")
 
     return deals_df
 
@@ -270,7 +262,6 @@ def load_deal_history(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
 
     Notes:
         - The API has a batch limit, and the function processes the deals in batches of up to 50.
-        - After processing each batch, a status message is printed to indicate progress.
         - Historical changes are sorted by timestamp before processing to ensure chronological order.
     """
 
@@ -330,12 +321,12 @@ def load_deal_history(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
                         )  # Update previous value to current value
 
         else:
-            print(
+            log_error(
                 f"Failed to process batch {i//batch_size + 1} of {num_deal_ids//batch_size + 1}: {response.text}"
             )
 
         # Status message after processing each batch
-        print(
+        logging.info(
             f"deal history: {min(i + batch_size, num_deal_ids)} out of {num_deal_ids} records processed"
         )
 
@@ -447,7 +438,7 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
             )
 
         # Status message after processing each batch
-        print(
+        logging.info(
             f"company association: {min(i + batch_size, total_companies)} out of {total_companies} records processed"
         )
 
@@ -492,7 +483,6 @@ def load_activities(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
         hs = HubSpot(api_key="your_api_key")
         deals = pd.DataFrame({"deal_id": [123, 456, 789]})
         activity_associations = load_activities(hs, deals)
-        print(activity_associations)
     """
 
     activity_association_rows = []
@@ -518,7 +508,7 @@ def load_activities(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
                 )
 
         # Format the output string so that the colon is aligned
-        print(f"{activity_type} loaded...")
+        logging.info(f"{activity_type} loaded...")
 
     # Create a DataFrame from the expanded rows
     activity_association_df = pd.DataFrame(activity_association_rows)
@@ -560,10 +550,6 @@ def fetch_activity_details_batch_via_rest(
     -----
     - The function processes the activity IDs in batches of up to 100 to avoid exceeding
       HubSpot API limits.
-    - The function prints the progress of the batch processing, including the number of items
-      processed and any errors encountered.
-    - In case of an error during the API request, an error message is printed along with the
-      HTTP status code and response text.
 
     Example:
     --------
@@ -606,11 +592,11 @@ def fetch_activity_details_batch_via_rest(
                 results.append(activity_details)
 
             processed_count = min(i + 100, total_items)
-            print(
+            logging.info(
                 f"Processed {processed_count} of {total_items} items for {activity_type}."
             )
         else:
-            print(
+            log_error(
                 f"Error fetching batch for {activity_type}: {response.status_code}, {response.text}"
             )
 
@@ -768,15 +754,6 @@ def beautify_deals_handle_date_fields(deals: pd.DataFrame) -> pd.DataFrame:
     - The function handles errors during conversion by coercing problematic values
       to `NaT` (for datetime) or `NaN` (for dates), ensuring that the DataFrame remains
       consistent.
-
-    Example:
-    --------
-    >>> import pandas as pd
-    >>> data = {'createdate': ['2021-08-29T14:48:00Z', '2022-02-10T11:23:45Z'],
-                'update_closedate_new_value': ['2021-12-01', '2022-03-15']}
-    >>> df = pd.DataFrame(data)
-    >>> beautified_df = beautify_deals_handle_date_fields(df)
-    >>> print(beautified_df)
     """
 
     # Refine the date_columns selection to exclude columns that are not dates
@@ -1029,7 +1006,6 @@ def upload_deals_to_NEMO(
 
     Notes:
         - The temporary CSV file is automatically deleted after the upload process is complete.
-        - The function prints the path of the temporary file and the number of records before uploading.
         - The file is saved with a semicolon (;) as the delimiter in the CSV format.
 
     """
@@ -1051,7 +1027,7 @@ def upload_deals_to_NEMO(
             sep=";",
             na_rep="",
         )
-        print(f"file {temp_file_path} written. Number of records: {len(deals)}")
+        logging.info(f"file {temp_file_path} written. Number of records: {len(deals)}")
 
         ReUploadFile(
             config=config,
@@ -1059,7 +1035,7 @@ def upload_deals_to_NEMO(
             filename=temp_file_path,
             update_project_settings=True,
         )
-        print(f"upload to project {projectname} completed")
+        logging.info(f"upload to project {projectname} completed")
 
 
 def add_user_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
@@ -1084,18 +1060,6 @@ def add_user_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
         The modified DataFrame with additional columns where owner or user IDs have been replaced by their corresponding names.
         The original ID columns remain unchanged, and the new name columns are added next to them.
 
-    Example:
-    --------
-    >>> hs_client = HubSpot(api_key="your_api_key")
-    >>> deals_df = pd.DataFrame({
-    >>>     "deal_owner_id": [123, 456],
-    >>>     "deal_user_id": [789, 101]
-    >>> })
-    >>> enriched_deals_df = add_user_information(hs_client, deals_df)
-    >>> print(enriched_deals_df)
-       deal_owner_id  deal_user_id   deal_owner_name   deal_user_name
-    0            123           789   John Doe         Jane Smith
-    1            456           101   Alice Johnson    Bob Brown
     """
     # Load HubSpot owners and create a mapping from hubspot_owner_id to owner name
     owners = hs.crm.owners.get_all()

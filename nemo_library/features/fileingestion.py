@@ -1,4 +1,5 @@
 import gzip
+import logging
 import shutil
 import os
 import time
@@ -10,6 +11,7 @@ import pandas as pd
 
 from nemo_library.features.config import Config
 from nemo_library.features.projects import getProjectID
+from nemo_library.utils.utils import log_error
 
 
 def ReUploadFile(
@@ -23,34 +25,49 @@ def ReUploadFile(
     trigger_only: bool = False,
 ) -> None:
     """
-    Uploads a file to a project and optionally updates project settings or triggers analyze tasks.
+    Re-uploads a file to a specified project in the NEMO system and triggers data ingestion.
 
     Args:
-        projectname (str): Name of the project.
-        filename (str): Name of the file to be uploaded.
-        update_project_settings (bool, optional): Whether to update project settings after ingestion. Defaults to True.
-        datasource_ids (list[dict], optional): List of datasource identifiers for V3 ingestion. Defaults to None.
-        global_fields_mapping (list[dict], optional): Global fields mapping for V3 ingestion. Defaults to None.
-        version (int, optional): Version of the ingestion process (2 or 3). Defaults to 2.
-        trigger_only (bool, optional): Whether to trigger only without waiting for task completion. Applicable for V3. Defaults to False.
+        config (Config): Configuration object containing connection details and headers.
+        projectname (str): The name of the project to which the file will be uploaded.
+        filename (str): The path to the file to upload.
+        update_project_settings (bool, optional): Whether to trigger the "analyze_table" task after ingestion (version 2 only). Defaults to True.
+        datasource_ids (list[dict], optional): Data source identifiers for version 3 ingestion. Defaults to None.
+        global_fields_mapping (list[dict], optional): Field mappings for version 3 ingestion. Defaults to None.
+        version (int, optional): The ingestion version (2 or 3). Defaults to 2.
+        trigger_only (bool, optional): If True, skips waiting for task completion. Defaults to False.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If any step of the file upload, data ingestion, or subsequent tasks fails.
+
+    Notes:
+        - Compresses the file into gzip format before uploading.
+        - Retrieves temporary AWS S3 credentials from NEMO's Token Vendor and uploads the file to S3.
+        - Sends a request to ingest the uploaded data and optionally waits for task completion.
+        - Triggers "analyze_table" task if version 2 and `update_project_settings` is True.
+        - Logs and raises exceptions for any errors encountered during the process.
     """
 
     project_id = None
     headers = None
-
+    project_id = None
+    
     try:
         project_id = getProjectID(config, projectname)
 
         headers = config.connection_get_headers()
 
-        print(f"Upload of file '{filename}' into project '{projectname}' initiated...")
+        logging.info(f"Upload of file '{filename}' into project '{projectname}' initiated...")
 
         # Zip the file before uploading
         gzipped_filename = filename + ".gz"
         with open(filename, "rb") as f_in:
             with gzip.open(gzipped_filename, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
-        print(f"File {filename} has been compressed to {gzipped_filename}")
+        logging.info(f"File {filename} has been compressed to {gzipped_filename}")
 
         # Retrieve temporary credentials from NEMO TVM
         response = requests.get(
@@ -90,11 +107,11 @@ def ReUploadFile(
                 "nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs",
                 s3filename,
             )
-            print(f"File {filename} uploaded successfully to s3 ({s3filename})")
+            logging.info(f"File {filename} uploaded successfully to s3 ({s3filename})")
         except FileNotFoundError:
-            print(f"The file {filename} was not found.")
+            log_error(f"The file {filename} was not found.",FileNotFoundError)
         except NoCredentialsError:
-            print("Credentials not available or incorrect.")
+            log_error(f"The file {filename} was not found.",NoCredentialsError)
 
         # Prepare data for ingestion
         data = {
@@ -123,7 +140,7 @@ def ReUploadFile(
             raise Exception(
                 f"Request failed. Status: {response.status_code}, error: {response.text}"
             )
-        print("Ingestion successful")
+        logging.info("Ingestion successful")
 
         # Wait for task to be completed if not trigger_only
         if version == 2 or not trigger_only:
@@ -148,15 +165,15 @@ def ReUploadFile(
                         f"Data ingestion request failed, task ID not found in tasks list"
                     )
                 status = df_filtered["status"].iloc[0]
-                print("Status: ", status)
+                logging.info("Status: ", status)
                 if status == "failed":
-                    raise Exception("Data ingestion request failed, status: FAILED")
+                    log_error("Data ingestion request failed, status: FAILED")
                 if status == "finished":
                     if version == 2:
                         records = df_filtered["records"].iloc[0]
-                        print(f"Ingestion finished. {records} records loaded")
+                        logging.info(f"Ingestion finished. {records} records loaded")
                     else:
-                        print("Ingestion finished.")
+                        logging.info("Ingestion finished.")
                     break
                 time.sleep(1 if version == 2 else 5)
 
@@ -175,7 +192,7 @@ def ReUploadFile(
                 raise Exception(
                     f"Request failed. Status: {response.status_code}, error: {response.text}"
                 )
-            print("Analyze_table triggered")
+            logging.info("Analyze_table triggered")
 
             # Wait for task to be completed
             taskid = response.text.replace('"', "")
@@ -199,15 +216,15 @@ def ReUploadFile(
                         f"Analyze_table request failed, task ID not found in tasks list"
                     )
                 status = df_filtered["status"].iloc[0]
-                print("Status: ", status)
+                logging.info("Status: ", status)
                 if status == "failed":
-                    raise Exception("Analyze_table request failed, status: FAILED")
+                    log_error("Analyze_table request failed, status: FAILED")
                 if status == "finished":
-                    print("Analyze_table finished.")
+                    logging.info("Analyze_table finished.")
                     break
                 time.sleep(1)
 
     except Exception as e:
         if project_id is None:
-            raise Exception("Upload stopped, no project_id available")
-        raise Exception(f"Upload aborted: {e}")
+            log_error("Upload stopped, no project_id available")
+        raise log_error(f"Upload aborted: {e}")

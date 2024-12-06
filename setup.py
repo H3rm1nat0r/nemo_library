@@ -12,7 +12,7 @@ with open(requirements_path) as f:
 # Setup configuration for the Python package
 setup(
     name='nemo_library',  # Name of the package
-    version='1.2.8',  # Version of the package
+    version='1.2.9',  # Version of the package
     packages=find_packages(),  # Automatically find and include all packages
     install_requires=required,  # List of dependencies from requirements.txt
     author='Gunnar Schug',  # Author of the package
@@ -20,7 +20,6 @@ setup(
     description='A library for uploading data to and downloading reports from NEMO cloud solution',  # Short description of the package
     long_description=open('README.rst').read(),  # Long description read from README.rst
     long_description_content_type='text/x-rst',  # Content type for the long description
-    include_package_data=True,
     classifiers=[
         'Programming Language :: Python :: 3.13',  # Classifier indicating supported Python version
     ],

@@ -165,7 +165,7 @@ def ReUploadFile(
                         f"Data ingestion request failed, task ID not found in tasks list"
                     )
                 status = df_filtered["status"].iloc[0]
-                logging.info("Status: ", status)
+                logging.info(f"Status: {status}")
                 if status == "failed":
                     log_error("Data ingestion request failed, status: FAILED")
                 if status == "finished":

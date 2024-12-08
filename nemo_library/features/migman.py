@@ -566,8 +566,8 @@ def updateReports(
     # create column specific fragments
     frags_checked = []
     frags_msg = []
-    for displayName, columnNameInternal, dataType, format in zip(
-        displayNames, internalNames, dataTypes, formats
+    for idx, (displayName, columnNameInternal, dataType, format) in enumerate(zip(
+        displayNames, internalNames, dataTypes, formats)
     ):
 
         frag_check = []
@@ -701,7 +701,7 @@ FROM
 $schema.$table"""
 
             # create the report
-            report_display_name = f"(DEFICIENCIES) {displayName}"
+            report_display_name = f"(DEFICIENCIES) {idx:03} {displayName}"
             report_internal_name = internal_name(report_display_name)
 
             createOrUpdateReport(
@@ -716,7 +716,7 @@ $schema.$table"""
             createOrUpdateRule(
                 config=config,
                 projectname=projectname,
-                displayName=displayName,
+                displayName=f"DM_{idx:03}: {displayName}",
                 ruleSourceInternalName=report_internal_name,
                 ruleGroup="02 Columns",
                 description=f"Deficiency Mining Rule for column '{displayName}' in project '{projectname}'",

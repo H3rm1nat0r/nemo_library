@@ -1,4 +1,4 @@
-Kostenstelle;Kostenart;Buchungsdatum;Geschäftsjahr;Buchungsperiode;Betrag;Betrag fix;Betrag variabel;Buchungstext;Menge;Bezugsgröße;Belegnummer;Belegdatum;Benutzer;Mitarbeiter;Kunde/Lieferant;Fehler
+KS_Buchung.KostenStelle;KS_Buchung.KostenArt;KS_Buchung.BuchungsDatum;KS_Buchung.BuchungsJahr;KS_Buchung.BuchungsPeriode;KS_Buchung.Betrag;KS_Buchung.FixBetrag;KS_Buchung.VarBetrag;KS_Buchung.BuchungsText;KS_Buchung.Menge;KS_Buchung.BezugsGroesse;KS_Buchung.BelegNummer;KS_Buchung.BelegDatum;KS_Buchung.Benutzer;KS_Buchung.Mitarbeiter;KS_Buchung.Konto;KS_Buchung.Fehler
 0;0;today;0;0;0;0;0;;0;;0;today;;0;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kostenstelle;Cost Center;KS_Buchung.KostenStelle;INTEGER;zzzzzzz9;

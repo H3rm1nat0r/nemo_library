@@ -1,4 +1,4 @@
-Ergebniskonto;Suchbegriff;Selektion;Kontenart;Bezeichnung;Verteilergruppe;fixer Anteil;fixer Zuschlag;prop Zuschlag;archiviert;direkt bebuchbar;Bezugskonto
+S_ErgKonto.ErgKonto;S_ErgKonto.Suchbegriff;S_ErgKonto.Selektion;S_ErgKonto.Art;S_ErgKontoSpr.Bezeichnung;BBM_WflWorkGroup.BBM_WflWorkGroup_ID;S_ErgKonto.Fix;S_ErgKonto.FixZuschlag;S_ErgKonto.PropZuschlag;S_ErgKonto.Archived;S_ErgKonto.Direkt_Bebuchbar;S_ErgKonto.BezugsKonto
 0;;;E;;;100;0;0;no;yes;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Ergebniskonto;Income Account;S_ErgKonto.ErgKonto;INTEGER;zzzzzzzz;

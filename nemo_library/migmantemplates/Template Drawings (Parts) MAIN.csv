@@ -1,4 +1,4 @@
-Zeichnung;Teil;Hauptzeichnung;Druckfolge;Maﬂtabelle
+P_ZeichnungArtikel.Zeichnung;P_ZeichnungArtikel.Artikel;P_ZeichnungArtikel.Hauptzeichnung;P_ZeichnungArtikel.Druckfolge;P_ZeichnungArtikel.MassTabelle
 ;;no;1;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Zeichnung;Drawing;P_ZeichnungArtikel.Zeichnung;CHARACTER;x(30);

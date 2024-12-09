@@ -1,4 +1,4 @@
-Gruppe;gültig ab;Konto;Steuerschlüssel;ISO-Alpha2-Code;Kontenbereich;Find EU Country via Country;UnterKtoGr;Konto 2
+S_KtoZuord.Gruppe;S_KtoZuord.gueltig_ab;S_KtoZuord.Konto;S_Steuer.Steuer;S_Staat.IsoAlpha2Code;S_KtoZuord.Bereich;c_XXX_suche_mit_staat;SBM_SubAcctGroup.SBM_SubAcctGroup_ID;S_KtoZuord.F_PurchasingAcc
 0;today;0;0;;K;;;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Gruppe;Revenue Group/Purchasing Group;S_KtoZuord.Gruppe;INTEGER;zz9;

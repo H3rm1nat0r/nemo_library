@@ -1,4 +1,4 @@
-Teil;Sprache;Bezeichnung1;Bezeichnung2;Bezeichnung3;Bezeichnung4
+S_ArtikelSpr.Artikel;S_ArtikelSpr.Sprache;S_ArtikelSpr.Bezeichnung1;S_ArtikelSpr.Bezeichnung2;S_ArtikelSpr.Bezeichnung3;S_ArtikelSpr.Bezeichnung4
 ;D;;;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;S_ArtikelSpr.Artikel;CHARACTER;x(20);

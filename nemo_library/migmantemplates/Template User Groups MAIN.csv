@@ -1,4 +1,4 @@
-Benutzergruppe;Bezeichnung;aktiv;freigeg Firmen
+BU_Gruppe.GruppenName;BU_Gruppe.Bezeichnung;BU_Gruppe.isActive;BU_Gruppe.freigegebene_Firmen
 ;;yes;*
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Benutzergruppe;Group;BU_Gruppe.GruppenName;CHARACTER;x(12);

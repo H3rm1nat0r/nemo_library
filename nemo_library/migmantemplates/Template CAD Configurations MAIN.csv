@@ -1,4 +1,4 @@
-Zeichnung;Indexnummer;Konfiguration;Bezeichnung;Bezeichnung 2;Bezeichnung 3;Bezeichnung 4
+PMM_Drawing.PMM_Drawing_ID;PMM_Drawing.IndexNo;PMM_Drawing.CadConfiguration;DBM_ShortDescription.ShortDesc1;DBM_ShortDescription.ShortDesc2;DBM_ShortDescription.ShortDesc3;DBM_ShortDescription.ShortDesc4
 ;;;;;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Zeichnung;Drawing;PMM_Drawing.PMM_Drawing_ID;CHARACTER;x(30);

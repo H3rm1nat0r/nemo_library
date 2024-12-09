@@ -1,4 +1,4 @@
-Währung;Bezeichnung;ISO-KurzBez;KurzBez Währung;Staat;Kursfaktor;kleinste Einheit;NKSt Währung;Eurofaktor;Euroraum ab
+S_Waehrung.Waehrung;S_WaehrungSpr.Bezeichnung;S_Waehrung.ISO_KurzBez;S_WaehrungSpr.KurzBez;S_Waehrung.Staat;S_Waehrung.KursFaktor;S_Waehrung.kleinste_Einheit;S_Waehrung.R_Nachkomma;S_Waehrung.EuroFaktor;S_Waehrung.EuroRaum_ab
 0;;;;;1;0,01;2;0;?
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Währung;Currency;S_Waehrung.Waehrung;INTEGER;zz9;

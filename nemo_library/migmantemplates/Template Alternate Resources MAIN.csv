@@ -1,4 +1,4 @@
-Alternativgruppe;Bezeichnung;Ressourcenart;archiviert
+M_RessAltGr.AltGruppe;M_RessAltGrSpr.Bezeichnung;M_RessAltGr.RessArt;M_RessAltGr.Archived
 ;;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Alternativgruppe;Alternate Group;M_RessAltGr.AltGruppe;CHARACTER;x(20);

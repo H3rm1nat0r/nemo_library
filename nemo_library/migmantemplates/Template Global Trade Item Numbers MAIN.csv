@@ -1,4 +1,4 @@
-GTIN;Mengeneinheit;Lieferant;Teil
+S_EAN.EAN;S_EAN.MengenEinheit;S_EAN.Lieferant;S_EAN.Artikel
 ;0;0;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;GTIN;GTIN;S_EAN.EAN;CHARACTER;x(14);

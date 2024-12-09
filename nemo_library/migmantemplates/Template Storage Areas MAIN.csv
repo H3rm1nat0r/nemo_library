@@ -1,4 +1,4 @@
-Lagerort;Bezeichnung;Wertgruppe;Adressnummer;Lagertyp;Dispobereich;Abladestelle (EDI);Strategie;disponibel;BuSp;Sperrlager;Kunde/Lieferant;Pufferbereich;LLZ-Nummer;Kundennummer;Werk Lieferant EDI;LVS-ID;Träger;Kostenstelle
+ML_Ort.LagerOrt;ML_OrtSpr.Bezeichnung;MLM_StockValueGroup.MLM_StockValueGroup_ID;ML_Ort.AdressNr;ML_Ort.StorageType;ML_Ort.Lagergruppe;ML_Ort.UnloadingPoint;ML_Ort.MPStrategie;ML_Ort.Disponibel;ML_Ort.Buchungssperre;ML_Ort.gesperrt;ML_Ort.Konto;ML_Ort.LagerBereich;ML_Ort.SupLogCenter;ML_Ort.KundenNummer;ML_Ort.uCI_WerkLieferantEdi;ML_Ort.uCI_WMS_ID;ML_Ort.uCI_CostIncObject;ML_Ort.uCI_CostCenter
 0;;0;?;0;0;;man;yes;no;no;0;?;0;;;;;?
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Lagerort;Storage Area;ML_Ort.LagerOrt;INTEGER;zzzzzzz9;

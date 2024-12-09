@@ -1,4 +1,4 @@
-Hersteller;Teil;Hersteller-TeileNr;HerstellerTeileBez;Gebindeeinheit;Lieferzeit;ZE Lieferzeit;Gebindemenge;Standard
+USM_PartManufacturer.Manufacturer;USM_PartManufacturer.Part;USM_PartManufacturer.OrderNumber;USM_PartManufacturer.ManDescription;USM_PartManufacturer.PackagingQuantityUnit;USM_PartManufacturer.DeliveryTime;USM_PartManufacturer.DeliveryTimeUnit;USM_PartManufacturer.PackagingQuantity;USM_PartManufacturer.StandardPONumber
 0;;;;0;0;4;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Hersteller;Manufacturer (Supplier Number);USM_PartManufacturer.Manufacturer;INTEGER;zzzzzzz9;

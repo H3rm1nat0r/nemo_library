@@ -1,4 +1,4 @@
-Platz;Bezeichnung
+M_Platz.Platz;M_PlatzSpr.Bezeichnung
 ;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Platz;Location;M_Platz.Platz;CHARACTER;x(10);

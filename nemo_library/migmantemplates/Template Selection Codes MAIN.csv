@@ -1,4 +1,4 @@
-Selektionscode;Bezeichnung
+S_Selektionscode.Selektionscode;S_SelektionscodeSpr.Bezeichnung
 0;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Selektionscode;Selection Code;S_Selektionscode.Selektionscode;INTEGER;z9;

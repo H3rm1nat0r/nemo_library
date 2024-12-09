@@ -1,4 +1,4 @@
-Teil;VerpackungsME;Faktor LME-VME;Größe;Gewicht;VerpVorschrift;Füllmenge;Haupt-VME
+S_ArtME.Artikel;S_ArtME.MengenEinheit;S_ArtME.VME_Faktor;S_ArtME.Groesse;S_ArtME.Gewicht;S_ArtME.Vorschrift;S_ArtME.Fuellmenge;S_ArtME.HauptVME
 ;0;1;;0;;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;S_ArtME.Artikel;CHARACTER;x(20);

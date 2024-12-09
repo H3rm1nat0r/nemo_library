@@ -1,4 +1,4 @@
-Preisliste;Versandart;gültig ab;Zuschlag;Auftragswert
+S_FrachtZuschlag.PreisGruppe;S_FrachtZuschlag.VersandArt;S_FrachtZuschlag.gueltig_ab;S_FrachtZuschlag.Zuschlag;S_FrachtZuschlag.Auftragswert
 ;0;?;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Preisliste;Price Group;S_FrachtZuschlag.PreisGruppe;CHARACTER;x(6);

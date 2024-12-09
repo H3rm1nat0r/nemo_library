@@ -1,4 +1,4 @@
-Kontaktklasse;Bezeichnung;Anzeigefolge
+VC_Kontaktklasse.Kontaktklasse;VC_KontaktklasseSpr.Bezeichnung;VC_Kontaktklasse.AnzeigeFolge
 ;;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kontaktklasse;Contact Class;VC_Kontaktklasse.Kontaktklasse;CHARACTER;x(8);

@@ -1,4 +1,4 @@
-UnterKtoGr;UnterKtoGrArt;Bezeichnung;Materialkonto;BNK-Konto;Lohnkonto;Maschinenkonto;Zusatzkonto 1;Zusatzkonto 2
+SBM_SubAcctGroup.SBM_SubAcctGroup_ID;SBM_SubAcctGroup.SubAcctGroupCategory;DBM_ShortDescription.ShortDesc1;SBM_SubAcctGroup.Material;SBM_SubAcctGroup.DeliveryCosts;SBM_SubAcctGroup.Labor;SBM_SubAcctGroup.Machine;SBM_SubAcctGroup.AddDim1;SBM_SubAcctGroup.AddDim2
 ;0;;0;0;0;0;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;UnterKtoGr;Subaccount Group;SBM_SubAcctGroup.SBM_SubAcctGroup_ID;CHARACTER;x(6);

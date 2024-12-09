@@ -1,4 +1,4 @@
-Sparte;Bezeichnung
+S_Sparte.Sparte;S_SparteSpr.Bezeichnung
 ;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Sparte;Business Unit;S_Sparte.Sparte;CHARACTER;x(6);

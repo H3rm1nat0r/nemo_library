@@ -1,4 +1,4 @@
-Kostenträger;Bezeichnung;Suchbegriff;Selektion;Kostenträgerart;Verteilergruppe;gültig ab;gültig bis;direkt bebuchbar;Verantwortlich
+S_KoTraeger.KostenTraeger;DBM_ShortDescription.ShortDesc1;S_KoTraeger.Suchbegriff;S_KoTraeger.Selektion;S_KoTraeger.Art;BBM_WflWorkGroup.BBM_WflWorkGroup_ID;S_KoTraeger.StartTermin;S_KoTraeger.EndTermin;S_KoTraeger.Direkt_Bebuchbar;S_KoTraeger.Verantwortlicher
 ;;;;B;;01/01/0001;12/31/9999;yes;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kostenträger;Cost Object;S_KoTraeger.KostenTraeger;CHARACTER;x(20);

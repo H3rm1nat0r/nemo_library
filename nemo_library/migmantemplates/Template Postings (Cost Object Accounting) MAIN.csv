@@ -1,4 +1,4 @@
-Kostenträger;Kostenart;Buchungsdatum;Geschäftsjahr;Buchungsperiode;Betrag;Betrag fix;Betrag variabel;Buchungstext;Menge;Bezugsgröße;Kostenstelle;Belegnummer;Belegdatum;Benutzer;Mitarbeiter;Kunde/Lieferant;Fehler
+TS_Buchung.KostenTraeger;TS_Buchung.TrKoArt;TS_Buchung.BuchungsDatum;TS_Buchung.BuchungsJahr;TS_Buchung.BuchungsPeriode;TS_Buchung.Betrag;TS_Buchung.FixBetrag;TS_Buchung.VarBetrag;TS_Buchung.BuchungsText;TS_Buchung.Menge;TS_Buchung.BezugsGroesse;TS_Buchung.Kostenstelle;TS_Buchung.BelegNummer;TS_Buchung.BelegDatum;TS_Buchung.Benutzer;TS_Buchung.Mitarbeiter;TS_Buchung.GeschPartner;KS_Buchung.Fehler
 ;0;today;0;0;0;0;0;;0;;0;0;today;;0;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kostenträger;Cost Object;TS_Buchung.KostenTraeger;CHARACTER;x(20);

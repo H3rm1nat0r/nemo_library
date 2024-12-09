@@ -1,4 +1,4 @@
-Bezugsgröße;Relevanz;VerrSatzArt;gültig ab;fixer KoSatz;variabler KoSatz
+S_BezugDatum.BezugsGroesse;S_BezugDatum.Bwl;S_BezugDatum.Art;S_BezugDatum.gueltig_ab;S_BezugDatum.fix;S_BezugDatum.variabel
 ;yes;;?;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Bezugsgröße;Base Measure;S_BezugDatum.BezugsGroesse;CHARACTER;x(4);

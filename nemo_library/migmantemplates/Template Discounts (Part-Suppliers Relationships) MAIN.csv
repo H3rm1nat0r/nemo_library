@@ -1,4 +1,4 @@
-Teil;Lieferant;gültig ab;gültig bis;Währung;Staffelgruppe;ab Menge;% R/Z;% R/Z 2;% R/Z 3;% R/Z 4;% R/Z 5;wertm R/Z;wertm R/Z 2;wertm R/Z 3;wertm R/Z 4;wertm R/Z 5;Automatically Create Part-Suppliers Relationship
+E_ArtLiefRabStaffel.Artikel;E_ArtLiefRabStaffel.Lieferant;E_ArtLiefRabStaffel.gueltig_ab;E_ArtLiefRabStaffel.gueltig_bis;E_ArtLiefRabStaffel.Waehrung;E_ArtLiefRabDatum.StaffelGruppe;E_ArtLiefRabStaffel.StaffelMenge;E_ArtLiefRabStaffel.proz_RZ_1;E_ArtLiefRabStaffel.proz_RZ_2;E_ArtLiefRabStaffel.proz_RZ_3;E_ArtLiefRabStaffel.proz_RZ_4;E_ArtLiefRabStaffel.proz_RZ_5;E_ArtLiefRabStaffel.Wert_RZ_1;E_ArtLiefRabStaffel.Wert_RZ_2;E_ArtLiefRabStaffel.Wert_RZ_3;E_ArtLiefRabStaffel.Wert_RZ_4;E_ArtLiefRabStaffel.Wert_RZ_5;c_XXXtlbauto
 ;0;?;?;0;;0;0;0;0;0;0;0;0;0;0;0;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;E_ArtLiefRabStaffel.Artikel;CHARACTER;x(20);

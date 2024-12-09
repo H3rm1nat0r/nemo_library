@@ -1,4 +1,4 @@
-Kunde;Teil;gültig ab;gültig bis;Staffelgruppe;ab Menge;Rabatt1;Rabatt2;Rabatt3
+S_ArtKundeRabDatum.Kunde;S_ArtKundeRabDatum.Artikel;S_ArtKundeRabDatum.gueltig_ab;S_ArtKundeRabDatum.gueltig_bis;S_ArtKundeRabDatum.StaffelGruppe;S_ArtKundeRabStaffel.StaffelMenge;S_ArtKundeRabStaffel.Rabatt1;S_ArtKundeRabStaffel.Rabatt2;S_ArtKundeRabStaffel.Rabatt3
 0;;?;?;;0;0;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kunde;Customer;S_ArtKundeRabDatum.Kunde;INTEGER;zzzzzzzz;

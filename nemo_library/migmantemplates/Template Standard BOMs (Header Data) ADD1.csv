@@ -1,4 +1,4 @@
-Teil;Variante;Position;Teil;Variante;Mng Kuppelprodukt;Wertvert Material;Wertvert Aktivität
+PMM_BomHeadMaster.Part;PMM_BomHeadMaster.PartVariant;PMM_BomPart.BOMPartPosition;PMM_BomPart.Part;PMM_BomPart.PartVariant;PMM_BomPart.QtyPerJointProduct;PMM_BomPart.MaterialQtyFactor;PMM_BomPart.OperationValueFactor
 ;;0;;;1;1;1
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;PMM_BomHeadMaster.Part;CHARACTER;x(20);

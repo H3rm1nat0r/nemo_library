@@ -1,4 +1,4 @@
-Inventarnummer;Bewertungsbereich;Nutzungsdauer;Abschreibungsart;Jahr Saldovortrag;Per Saldovortrag;kum Betrag;kum Betrag;kum Betrag;kum Betrag;kum Betrag;kum Betrag;kum Betrag
+S_Anlage.Anlage;A_AnlageBereich.Bereich;A_AnlageBereich.Nutzungsdauer;A_AnlageBereich.AfA;A_AnlageBereich.SV_BuJahr;A_AnlageBereich.SV_Periode;AB_Vortrag.kumBetrag.zug;AB_Vortrag.kumBetrag.nab;AB_Vortrag.kumBetrag.zuh;AB_Vortrag.kumBetrag.zus;AB_Vortrag.kumBetrag.kzi;AB_Vortrag.kumBetrag.wbw;AB_Vortrag.kumBetrag.wbv
 ;;0;0;?;?;0;0;0;0;0;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Inventarnummer;Fixed Asset Number;S_Anlage.Anlage;CHARACTER;x(20);

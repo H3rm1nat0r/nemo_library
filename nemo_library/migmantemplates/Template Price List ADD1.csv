@@ -1,4 +1,4 @@
-Preisliste;gültig ab;Zuschlag;Auftragswert
+S_AuftrWert.PreisGruppe;S_AuftrWert.gueltig_ab;S_AuftrWert.Zuschlag;S_AuftrWert.Auftragswert
 ;?;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Preisliste;Price Group;S_AuftrWert.PreisGruppe;CHARACTER;x(6);

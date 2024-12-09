@@ -1,4 +1,4 @@
-Kostenart;Suchbegriff;Selektion;Kostenartenart;Bezeichnung;Verteilergruppe;fixer Anteil;EntlastKSt;EntlastKoA;Bezugskostenart;bwl fix;bwl prop;steuerlich fix %;steuerlich prop %;direkt bebuchbar;bwl relevant;steuerl relevant;Bezugsgröße;bwl fix;bwl var;steu fix;steu var;Zuschlagsart
+S_TrKoArt.TrKoArt;S_TrKoArt.Suchbegriff;S_TrKoArt.Selektion;S_TrKoArt.Art;S_TrKoArtSpr.Bezeichnung;BBM_WflWorkGroup.BBM_WflWorkGroup_ID;S_TrKoArt.Fix;S_TrKoArt.entlast_KoSt;S_TrKoArt.entlast_KoArt;S_TrKoArt.BezugsKoA;S_TrKoArt.bwl_fix;S_TrKoArt.bwl_prop;S_TrKoArt.st_fix;S_TrKoArt.st_prop;S_TrKoArt.Direkt_Bebuchbar;S_TrKoArt.Bwl;S_TrKoArt.Steu;S_TrKoArt.BezugsGroesse;S_TrKoArt.BwlFixBetrag;S_TrKoArt.BwlVarBetrag;S_TrKoArt.StFixBetrag;S_TrKoArt.StVarBetrag;S_TrKoArt.ZuschlArt
 0;;;B;;;100;0;0;0;0;0;0;0;yes;yes;yes;;0;0;0;0;yes
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kostenart;Cost Item;S_TrKoArt.TrKoArt;INTEGER;zzzzzzzz;

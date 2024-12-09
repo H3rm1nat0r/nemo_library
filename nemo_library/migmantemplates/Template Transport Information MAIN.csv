@@ -1,4 +1,4 @@
-Kunde;Versandart;Lieferant;Transportpartner;Frachtführername;LKW-Art;Transportmittel;TransportmittelNr;Lieferadresse;Abladestelle
+MMM_Transport.Kunde;MMM_Transport.Versandart;MMM_Transport.Lieferant;MMM_Transport.TransportPartnerID;MMM_Transport.Carrier;MMM_Transport.LorryType;MMM_Transport.MeansOfTransport;MMM_Transport.MeansOfTransportNo;MMM_Transport.Lieferadresse;MMM_Transport.Abladestelle
 0;0;0;;;0;0;;?;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kunde;Customer;MMM_Transport.Kunde;INTEGER;zzzzzzzz;

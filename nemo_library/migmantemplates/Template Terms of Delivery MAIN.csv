@@ -1,4 +1,4 @@
-Lieferbedingung;Bezeichnung;Selektion;Suchbegriff;Bestimmungsort;archiviert;Fracht berechnen;Incoterm;ident statWert;Verp berechnen;Fracht berechnen
+S_LieferBed.LieferBedingung;S_LieferBedSpr.Bezeichnung;S_LieferBed.Selektion;S_LieferBed.Suchbegriff;S_LieferBed.Bestimmungsort;S_LieferBed.Archived;S_LieferBed.Fracht_berechnen;S_LieferBed.Incoterm;S_LieferBed.Statistikwert;S_LieferBed.uCA_ChargePackaging;S_LieferBed.uCA_FreightOriginType
 0;;;;1;no;no;;no;no;1
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Lieferbedingung;Terms of Delivery;S_LieferBed.LieferBedingung;INTEGER;zz9;

@@ -1,4 +1,4 @@
-Betriebskalender;Bezeichnung;Samstags arbeiten;Sonntags arbeiten;VorlagenkalenderNr
+S_BetrKalender.Betriebskalender;S_BetrKalenderSpr.Bezeichnung;S_BetrKalender.Samstagsarbeit;S_BetrKalender.Sonntagsarbeit;S_BetrKalender.VorlagenKalenderNr
 0;;no;no;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Betriebskalender;Company Calendar;S_BetrKalender.Betriebskalender;INTEGER;zzzzzzz9;

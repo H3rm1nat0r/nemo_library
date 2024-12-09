@@ -1,4 +1,4 @@
-Größe;enthält von Größe;Anzahl
+S_GroesseKap.Groesse;S_GroesseKap.Groesse2;S_GroesseKap.Kapazitaet
 ;;1
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Größe;Size;S_GroesseKap.Groesse;CHARACTER;x(6);

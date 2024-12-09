@@ -1,4 +1,4 @@
-Table ID;Key 1;Key 2;Identifikationsart;FormatID;Identnummer;gültig ab;gültig bis
+c_TableID;c_TableKey1;c_TableKey2;BMM_UniqueIdType.BMM_UniqueIdType_ID;BMM_UniqueIdFormat.BMM_UniqueIdFormat_ID;BMT_UniqueIdNumber.IdNumber;BMT_UniqueIdNumber.ValidFrom;BMT_UniqueIdNumber.ValidTo
 ;;;0;0;;today;?
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Table ID;;;;;

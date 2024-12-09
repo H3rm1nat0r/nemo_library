@@ -1,4 +1,4 @@
-Aktionstyp;Bezeichnung;Anzeigefolge;Besuchsplanung;Aktionstyp E-Mail;ergebnisrelevant
+VC_Aktionstyp.Aktionstyp;VC_AktionstypSpr.Bezeichnung;VC_Aktionstyp.AnzeigeFolge;VC_Aktionstyp.BesuchsPlan;VC_Aktionstyp.ATypEMail;VC_Aktionstyp.ergebnisrelevant
 0;;0;no;no;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Aktionstyp;Activity Type;VC_Aktionstyp.Aktionstyp;INTEGER;zzz9;

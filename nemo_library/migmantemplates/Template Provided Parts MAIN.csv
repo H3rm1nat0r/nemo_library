@@ -1,4 +1,4 @@
-Teil;Lieferant;Beistellnummer;Beistellteil;Variante;Mengenfaktor;Vorlaufzeit;ZE Vorlaufzeit;KonsigLagerort;Lagerort;StüLiAuflösung;kommbez Beist
+E_ArtLiefBei.Artikel;E_ArtLiefBei.Lieferant;E_ArtLiefBei.BeistellNr;E_ArtLiefBei.BeistellArtikel;E_ArtLiefBei.ArtVar;E_ArtLiefBei.Mengenfaktor;E_ArtLiefBei.Vorlaufzeit;E_ArtLiefBei.Vorlaufzeiteinheit;E_ArtLiefBei.KO_LagerOrt;E_ArtLiefBei.LagerOrt;E_ArtLiefBei.BOMExplosion;E_ArtLiefBei.KommissionsBezug
 ;0;1;;;1;0;4;?;?;0;yes
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;E_ArtLiefBei.Artikel;CHARACTER;x(20);

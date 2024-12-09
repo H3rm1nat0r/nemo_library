@@ -1,4 +1,4 @@
-Bereich LT;Packmittelpool;Buchungsschlüssel;Bemerkung;Lagerort;Pufferbereich;Lagerplatz;Menge;Packmittel;Zubehör;Fremdbestand;Pool
+M_PackKonto.Bereich;M_PackKonto.Konto;M_PackKonto.Buchungsschl;M_PackKonto.Bemerkung;M_PackKonto.LagerOrt;M_PackKonto.LagerBereich;M_PackKonto.LagerPlatz;M_PackKonto.Menge;M_PackKonto.Packmittel;M_PackKonto.Zubehoer;M_PackKonto.Fremdeigentum;M_PackKonto.PoolKonto
 V;0;;;?;;;0;;no;no;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Bereich LT;Book;M_PackKonto.Bereich;CHARACTER;x;

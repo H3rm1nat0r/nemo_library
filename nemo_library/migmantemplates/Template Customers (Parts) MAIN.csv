@@ -1,4 +1,4 @@
-Teil;Kunde;Kunden-TeileNr;Bezeichnung1;Bezeichnung2;Bezeichnung3;Bezeichnung4;Lieferbedingung;Preisliste;Grundmenge;Mindestmenge;Grundmenge beacht;Packmittelpool;Restlaufzeit;Nummernformat
+S_ArtKunde.Artikel;S_ArtKunde.Kunde;S_ArtKunde.ArtikelNr;S_ArtKunde.Bezeichnung1;S_ArtKunde.Bezeichnung2;S_ArtKunde.Bezeichnung3;S_ArtKunde.Bezeichnung4;S_ArtKunde.LieferBedingung;S_ArtKunde.PreisGruppe;S_ArtKunde.Grundmenge;S_ArtKunde.Mindestmenge;S_ArtKunde.GrundmengeBeachten;S_ArtKunde.uCI_Account;S_ArtKunde.uCW_MinDaysToExp;S_ArtKunde.IndexFormat
 ;0;;;;;;?;;0;0;no;0;?;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;S_ArtKunde.Artikel;CHARACTER;x(20);

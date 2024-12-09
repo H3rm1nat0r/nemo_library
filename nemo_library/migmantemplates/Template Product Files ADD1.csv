@@ -1,4 +1,4 @@
-Seriennummer;SNRArt;Akte;Position;c_MS_PRODAKTEPOShierarchie;Teil;Menge brutto;Menge getauscht;ZeichnungsPos;Bemerkung1;Bemerkung2;Bemerkung3;Bemerkung4;Chargennummer;Verwendungsart;Variante;Formel;SNRArt Pos;Seriennummer Pos
+MS_ProdAktePos.Seriennummer;MS_ProdAktePos.SNRArt;MS_ProdAktePos.Akte;MS_ProdAktePos.PositionsNr;c_MS_PRODAKTEPOShierarchie;MS_ProdAktePos.Artikel;MS_ProdAktePos.MengeBrutto;MS_ProdAktePos.MengeTausch;MS_ProdAktePos.ZeichnungsPosition;MS_ProdAktePos.Bemerkung1;MS_ProdAktePos.Bemerkung2;MS_ProdAktePos.Bemerkung3;MS_ProdAktePos.Bemerkung4;MS_ProdAktePos.Charge;MS_ProdAktePos.StkZeilenArt;MS_ProdAktePos.ArtVar;MS_ProdAktePos.StkFormel;MS_ProdAktePos.SNRArt_1;MS_ProdAktePos.Seriennummer_1
 ;;0;0;;;1;0;;;;;;;;;0;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Seriennummer;Serial Number;MS_ProdAktePos.Seriennummer;CHARACTER;x(20);

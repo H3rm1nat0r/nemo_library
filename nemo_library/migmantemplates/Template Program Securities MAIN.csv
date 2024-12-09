@@ -1,4 +1,4 @@
-Instance Name;freigeg Gruppen
+DRC_Instance.DRC_Instance_ID;BU_Prog.freigegebene_Gruppen
 ;*
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Instance Name;Instance Name;DRC_Instance.DRC_Instance_ID;CHARACTER;x(60);

@@ -1,4 +1,4 @@
-Lagerort;Lagerbereich;Lagerplatz;Platzgröße
+ML_Ort.LagerOrt;MP_Bereich.LagerBereich;MP_Platz.LagerPlatz;MP_Platz.Groesse
 0;;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Lagerort;Storage Area;ML_Ort.LagerOrt;INTEGER;zzzzzzz9;

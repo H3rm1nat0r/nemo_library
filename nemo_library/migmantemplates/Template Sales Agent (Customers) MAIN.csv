@@ -1,4 +1,4 @@
-Kunde;Vertreter;gültig ab;gültig bis;Provisionssatz;Hauptvertreter;Vertreter fixiert
+S_KundeVertreter.Kunde;S_KundeVertreter.Vertreter;S_KunVtrDatum.gueltig_ab;S_KunVtrDatum.gueltig_bis;S_KunVtrDatum.Provision;S_KundeVertreter.Hauptvertreter;S_KundeVertreter.VtrFixiert
 0;0;?;?;0;no;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kunde;Customer;S_KundeVertreter.Kunde;INTEGER;zzzzzzzz;

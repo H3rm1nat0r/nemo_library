@@ -1,4 +1,4 @@
-Kontengruppe;Steuergruppe;Erlöse;Wareneinkauf
+S_ArtKtoStGr.KontenGruppe;S_ArtKtoStGr.Steuergruppe;S_ArtKtoStGr.VK_Gruppe;S_ArtKtoStGr.EK_Gruppe
 ;1;?;?
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kontengruppe;Account Group;S_ArtKtoStGr.KontenGruppe;CHARACTER;x(6);

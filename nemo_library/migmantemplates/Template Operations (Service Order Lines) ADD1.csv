@@ -1,4 +1,4 @@
-Index;Ressourcenposition;Ressourcenart;Alternativgruppe;Ressource;Bemerkung;Alternativgruppe (ja/nein)
+c_Index;MB_Ressource.RessPos;MB_Ressource.RessArt;MB_Ressource.AltGruppe;MB_Ressource.Ressource;MB_Ressource.Bemerkung;MB_Ressource.AlternativGr
 ;0;0;;;;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Index;;;;;

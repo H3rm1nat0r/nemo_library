@@ -1,4 +1,4 @@
-Zahlungsziel;Bezugstag;Fälligkeitstag;Valutamonate;Fälligkeitstag Sko;Valutamonate Sko
+S_ZahlZiel.ZahlungsZiel;SBM_CreditTermRef.ReferenceDay;SBM_CreditTermRef.DueDay;SBM_CreditTermRef.DueMonth;SBM_CreditTermRef.DueDayCashDisc;SBM_CreditTermRef.DueMonthCashDisc
 0;0;0;0;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Zahlungsziel;Credit Terms;S_ZahlZiel.ZahlungsZiel;INTEGER;zz9;

@@ -1,4 +1,4 @@
-VerpVorschrift;Bemerkung;Suchbegriff;Bezeichnung;PrKat Verpackung
+M_PackVorschrift.Vorschrift;M_PackVorschrift.Bemerkung;M_PackVorschrift.Suchbegriff;M_PackVorschriftSpr.Bezeichnung;M_PackVorschrift.uCA_PriceID
 ;;;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;VerpVorschrift;Packaging Instruction;M_PackVorschrift.Vorschrift;CHARACTER;x(20);

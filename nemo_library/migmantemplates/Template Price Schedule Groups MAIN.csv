@@ -1,4 +1,4 @@
-Staffelgruppe;Bezeichnung;flexibel;ab Menge
+S_StaffelGruppe.StaffelGruppe;S_StaffelGruppeSpr.Bezeichnung;S_StaffelGruppe.flexibel;S_Staffel.Staffelmenge
 ;;no;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Staffelgruppe;Price Schedule Group;S_StaffelGruppe.StaffelGruppe;CHARACTER;x(6);

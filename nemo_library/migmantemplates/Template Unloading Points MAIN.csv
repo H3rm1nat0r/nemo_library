@@ -1,4 +1,4 @@
-Abladestelle;Bez Abladestelle1;Bez Abladestelle2;Bez Abladestelle3;Bez Abladestelle4;Kunde;Lieferadresse;Sammellieferschein
+S_Abladestelle.Abladestelle;S_Abladestelle.Bezeichnung1;S_Abladestelle.Bezeichnung2;S_Abladestelle.Bezeichnung3;S_Abladestelle.Bezeichnung4;S_Abladestelle.Kunde;S_Abladestelle.LieferAdresse;S_Abladestelle.uCA_Sammellieferschein
 ;;;;;0;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Abladestelle;Unloading Point;S_Abladestelle.Abladestelle;CHARACTER;x(17);

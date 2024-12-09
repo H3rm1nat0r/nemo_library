@@ -1,4 +1,4 @@
-Firma;Benutzer;Benutzerrolle;Revoke User Role
+BU_UserGroupRole.Company;BU_UserGroupRole.UserName;BU_UserGroupRole.Role;c_XXXentziehen
 ;;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Firma;Company;BU_UserGroupRole.Company;CHARACTER;x(10);

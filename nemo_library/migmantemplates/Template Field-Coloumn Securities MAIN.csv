@@ -1,4 +1,4 @@
-Tabellenname;Spaltenname;Gruppen Anzeige;Gruppen Eingabe
+BU_Spalte.Tabellenname;BU_Spalte.Spaltenname;BU_Spalte.Gruppen_Anzeige;BU_Spalte.Gruppen_Eingabe
 ;;*;*
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Tabellenname;Table Name;BU_Spalte.Tabellenname;CHARACTER;x(25);

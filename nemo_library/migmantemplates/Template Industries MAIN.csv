@@ -1,4 +1,4 @@
-Branche;Bezeichnung
+S_Branche.Branche;S_BrancheSpr.Bezeichnung
 ;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Branche;Industry;S_Branche.Branche;CHARACTER;x(6);

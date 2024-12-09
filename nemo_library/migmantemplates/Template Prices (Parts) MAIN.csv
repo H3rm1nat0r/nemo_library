@@ -1,4 +1,4 @@
-Teil;Preisliste;gültig ab;gültig bis;Staffelgruppe;ab Menge;Preis;Automatically Create Price List;Währung
+S_ArtPreiseStaffel.Artikel;S_ArtPreiseStaffel.PreisGruppe;S_ArtPreiseStaffel.gueltig_ab;S_ArtPreiseStaffel.gueltig_bis;S_ArtPreiseDatum.StaffelGruppe;S_ArtPreiseStaffel.StaffelMenge;S_ArtPreiseStaffel.Preis;c_XXXplauto;S_PreisGruppe.Waehrung
 ;;?;?;;0;0;;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;S_ArtPreiseStaffel.Artikel;CHARACTER;x(20);

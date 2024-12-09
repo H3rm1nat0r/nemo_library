@@ -1,4 +1,4 @@
-Lieferant;Teil;gültig ab;gültig bis;Staffelgruppe;ab Menge;Währung;Preis;Zusatzkosten;Zusatzkosten rel;mengenabhängig
+E_ArtLiefDatum.Lieferant;E_ArtLiefDatum.Artikel;E_ArtLiefDatum.gueltig_ab;E_ArtLiefDatum.gueltig_bis;E_ArtLiefDatum.StaffelGruppe;E_ArtLiefStaffel.StaffelMenge;E_ArtLiefDatum.Waehrung;E_ArtLiefStaffel.Preis;E_ArtLiefDatum.uCA_AddCosts;E_ArtLiefDatum.uCA_AddCostActive;E_ArtLiefDatum.uCA_AddCostMinOrdQ
 0;;?;?;;0;0;0;0;yes;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Lieferant;Supplier;E_ArtLiefDatum.Lieferant;INTEGER;zzzzzzzz;

@@ -1,4 +1,4 @@
-Projekt;PSC;PSC;AnordBeziehung;Zeitabstand
+JBT_Project.Projekt;JBT_ProjectStr.PSC;JBT_ProjectStr.PSC;JBT_ProjSeqRel.AOB;JBT_ProjSeqRel.Pufferzeit
 ;;;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Projekt;Project;JBT_Project.Projekt;CHARACTER;x(20);

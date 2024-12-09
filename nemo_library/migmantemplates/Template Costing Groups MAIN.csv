@@ -1,4 +1,4 @@
-Kalkulationsgruppe;Bezeichnung;Bezeichnung 2;KostenträgerRechg;ErgebnisRechg;KostenstellenRechg;Materialkosten;Bezugsnebenkosten;Lohnkosten;Maschinenkosten;Zusatzkosten;Zusatzkosten 2
+SBM_CostingGroup.SBM_CostingGroup_ID;DBM_ShortDescription.ShortDesc1;DBM_ShortDescription.ShortDesc2;SBM_CostingGroup.CostDriverAcc;SBM_CostingGroup.IncomeDriverAcc;SBM_CostingGroup.CostCenterAcc;SBM_CostingGroup.Material;SBM_CostingGroup.DeliveryCosts;SBM_CostingGroup.Labor;SBM_CostingGroup.Machine;SBM_CostingGroup.AddDim1;SBM_CostingGroup.AddDim2
 0;;;no;no;no;0;0;0;0;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kalkulationsgruppe;Costing Group;SBM_CostingGroup.SBM_CostingGroup_ID;INTEGER;zzzzzzz9;

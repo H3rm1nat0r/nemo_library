@@ -1,4 +1,4 @@
-Kontenbereich;Kunde/Lieferant;Umsatzsteuer-ID;bestätigt;Default
+S_UStID.Kontenbereich;S_UStID.Konto;S_UStID.UStID;S_UStID.bestaetigt;S_UStID.IsDefault
 0;0;;no;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kontenbereich;Range of Accounts;S_UStID.Kontenbereich;INTEGER;9;

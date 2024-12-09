@@ -1,4 +1,4 @@
-Ressource;Ressource Mit
+PMM_EmployeePool.PoolResource_ID;PMM_EmployeePool.EmplResource_ID
 ;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Ressource;Resource;PMM_EmployeePool.PoolResource_ID;CHARACTER;x(20);

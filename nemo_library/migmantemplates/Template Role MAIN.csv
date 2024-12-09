@@ -1,4 +1,4 @@
-Benutzerrolle;Bezeichnung;freigeg Gruppen
+BU_Role.BU_Role_ID;BU_Role.Description;BU_Role.GroupList
 ;;*
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Benutzerrolle;User Role;BU_Role.BU_Role_ID;CHARACTER;x(30);

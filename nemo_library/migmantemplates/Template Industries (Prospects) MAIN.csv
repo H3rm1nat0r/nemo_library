@@ -1,4 +1,4 @@
-Branche;Bezeichnung;Branchengruppe
+VC_Branche.Branche;VC_BrancheSpr.Bezeichnung;VC_Branche.Branchengruppe
 ;;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Branche;Industry;VC_Branche.Branche;CHARACTER;x(6);

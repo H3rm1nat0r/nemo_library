@@ -1,4 +1,4 @@
-Packmittelpool;Packmittel
+M_PackPool.Konto;M_PackPool.Packmittel
 0;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Packmittelpool;Packaging Pool;M_PackPool.Konto;INTEGER;zzzzzzzz;

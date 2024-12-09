@@ -1,4 +1,4 @@
-Belegnummer;Position;Plain Text
+V_BELEGPOS.belegnummer;V_BELEGPOS.positionsnr;BT_KOPF.PlainText
 0;1;?
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Belegnummer;Document Number;V_BELEGPOS.belegnummer;INTEGER;zzzzzzz9;

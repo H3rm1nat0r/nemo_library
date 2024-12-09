@@ -1,4 +1,4 @@
-Teil;Hersteller;Hersteller-TeileNr;HerstellerTeileBez;Herstellerstatus
+S_ArtHerst.Artikel;S_ArtHerst.Hersteller;S_ArtHerst.BestellNummer;S_ArtHerst.HerstellerBez;S_ArtHerst.HstStatus
 ;0;;;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;S_ArtHerst.Artikel;CHARACTER;x(20);

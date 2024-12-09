@@ -1,4 +1,4 @@
-laufende Nr;Baugruppe LT;Schlüssel 2;Packmittel;Fremdbestand;Rückgabe;Menge;Anzahl Lagen;Auffüllen;Formularnummer;Anzahl Formulare;Druck Anhänger;Kostenstelle;Verwendung Zubehör;Packmittelpool;Lagerort PM;Gesamtgewicht man;Breite;Höhe;Tiefe;Beleg gedruckt;Gewicht;Kostenträger;in PPS spiegeln;LO Abgang WE;Stapelfaktor;PrKat Verpackung
+M_LTPos.LfdNr;M_LTPos.Baugruppe;M_LTPos.Herk_Schluessel2;M_LTPos.Packmittel;M_LTPos.Fremdeigentum;M_LTPos.Rueckgabe;M_LTPos.Menge;M_LTPos.Anz_Lagen;M_LTPos.Auffuellen;M_LTPos.FormularNr;M_LTPos.FormularAnzahl;M_LTPos.Labeldruck;S_KostenStelle.Kostenstelle;M_LTPos.verw_zubehoer;M_LTPos.Konto;M_LTPos.LagerOrt;M_LTPos.GewichtManuell;M_LTPos.Breite;M_LTPos.Hoehe;M_LTPos.Tiefe;M_LTPos.gedruckt;M_LTPos.Gewicht;S_KoTraeger.Kostentraeger;M_LTPos.ReplicatePPS;M_LTPos.uCI_SAOutPurchasing;M_LTPos.uCI_StackingFactor;M_LTPos.uCA_PriceID
 0;0;;;no;no;0;0;0;?;1;0;0;0;0;?;0;0;0;0;no;0;;no;?;1;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;laufende Nr;Counter;M_LTPos.LfdNr;INTEGER;zzzzzzz9;

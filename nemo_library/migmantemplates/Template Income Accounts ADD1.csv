@@ -1,4 +1,4 @@
-Ergebniskonto;gültig ab;Reference Account;fixer Zuschlag;prop Zuschlag
+S_ErgKonto.ErgKonto;SBD_IAccSurchDat.gueltig_ab;c_SBD_IAccSurchDatBezugskto;SBD_IAccSurchDat.FixZuschlag;SBD_IAccSurchDat.PropZuschlag
 0;?;;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Ergebniskonto;Income Account;S_ErgKonto.ErgKonto;INTEGER;zzzzzzzz;

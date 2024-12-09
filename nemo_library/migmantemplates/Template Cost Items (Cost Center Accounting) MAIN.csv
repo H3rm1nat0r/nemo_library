@@ -1,4 +1,4 @@
-Kostenart;Suchbegriff;Selektion;Kostenartenart;Bezeichnung;Verteilergruppe;fixer Anteil;kalk Kostenart;EntlastKoA;direkt bebuchbar;bwl relevant;steuerl relevant
+S_KostenArt.KostenArt;S_KostenArt.Suchbegriff;S_KostenArt.Selektion;S_KostenArt.Art;S_KostenArtSpr.Bezeichnung;BBM_WflWorkGroup.BBM_WflWorkGroup_ID;S_KostenArt.Fix;S_KostenArt.Kalk_KoA;S_KostenArt.Entl_KostenArt;S_KostenArt.Direkt_Bebuchbar;S_KostenArt.Bwl;S_KostenArt.Steu
 0;;;B;;;100;?;0;yes;yes;yes
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kostenart;Cost Item;S_KostenArt.KostenArt;INTEGER;zzzzzzzz;

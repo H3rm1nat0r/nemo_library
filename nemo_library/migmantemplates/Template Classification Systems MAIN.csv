@@ -1,4 +1,4 @@
-Merkmalsart;Merkmalsleiste;Bezeichnung;drucken
+BS_Kopf.SMArt;BS_Kopf.SMLeiste;BS_KopfSpr.Bezeichnung;BS_Kopf.Drucken
 ;;;yes
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Merkmalsart;ClassSystem Type;BS_Kopf.SMArt;CHARACTER;x(3);

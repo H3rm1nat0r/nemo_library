@@ -1,4 +1,4 @@
-Aktivität;Ressourcenposition;Ressourcenart;Ressource;Alternativgruppe;Intensität;Bemerkung;aktiv;Hilfsressource
+M_AktRess.Aktivitaet;M_AktRess.RessPos;M_AktRess.RessArt;M_AktRess.Ressource;M_AktRess.AltGruppe;M_AktRess.Intensitaet;M_AktRess.Bemerkung;M_AktRess.Aktiv;M_AktRess.HelpRes
 ;0;0;;;1;;yes;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Aktivität;Operation;M_AktRess.Aktivitaet;CHARACTER;x(20);

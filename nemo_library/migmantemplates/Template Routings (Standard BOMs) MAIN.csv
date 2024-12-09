@@ -1,4 +1,4 @@
-Teil;Prozess;Basisprozess;BPro DispoBer
+PMM_BomHeadRoutingRel.Part;PMM_BomHeadRoutingRel.PMM_Routing_ID;PMM_BomHeadRoutingRel.BasicRouting;PMM_BomHeadRoutingRel.IsMRPBaseProcess
 ;;no;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;PMM_BomHeadRoutingRel.Part;CHARACTER;x(20);

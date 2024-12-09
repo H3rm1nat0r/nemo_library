@@ -1,4 +1,4 @@
-Bundesland;Bezeichnung;Staat;ISOAlpha2 BLa;Schl Bundesland;Bundesland FA;ELSTER-Präfix;Road Permit
+S_Bundesland.Bundesland;S_Bundesland.Bezeichnung;S_Bundesland.Staat;S_Bundesland.ISOAlpha2Code;S_Bundesland.SchluesselBundesland;S_Bundesland.FinanceOffice;S_Bundesland.ElsterPraefix;S_Bundesland.cIN_RoadPermit
 ;;;;0;0;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Bundesland;State;S_Bundesland.Bundesland;CHARACTER;x(3);

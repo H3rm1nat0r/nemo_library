@@ -1,4 +1,4 @@
-Region;Bezeichnung
+S_Region.Region;S_RegionSpr.Bezeichnung
 ;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Region;Region;S_Region.Region;CHARACTER;x(6);

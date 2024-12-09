@@ -1,4 +1,4 @@
-Zahlungsziel;Suchbegriff;Selektion;Bezeichnung;Skontofrist;Skontofrist 2;Nettofrist;Mahnfrist;% Skontosatz;% Skontosatz 2;Skonto aus ValDat;manuell erfasst;Druckmaske;Druckmaske 2;Druckmaske 3;relevant für;Periodentyp;Monatsletzter;Letztes Nettodatum;Mahnfrist NettoDat;Betriebskalender;Kalendertage;Monatsletzter;Steuer
+S_ZahlZiel.ZahlungsZiel;S_ZahlZiel.Suchbegriff;S_ZahlZiel.Selektion;S_ZahlZielSpr.Bezeichnung;S_ZahlZiel.SkontoFrist1;S_ZahlZiel.SkontoFrist2;S_ZahlZiel.Nettofrist;S_ZahlZiel.MahnFrist;S_ZahlZiel.SkontoSatz1;S_ZahlZiel.SkontoSatz2;S_ZahlZiel.SkontoausValDat;S_ZahlZiel.Manuell;S_ZahlZielSpr.Druckmaske1;S_ZahlZielSpr.Druckmaske2;S_ZahlZielSpr.Druckmaske3;S_ZahlZiel.RelevantToModule;S_ZahlZiel.F_PeriodType;S_ZahlZiel.F_LastOfMonth;S_ZahlZiel.F_LastNetDate;S_ZahlZiel.F_GraceOnNet;S_ZahlZiel.H_CalendarNo;S_ZahlZiel.I_CalendarDays;S_ZahlZiel.I_LastOfMonth;S_ZahlZiel.I_Tax
 0;;;;0;0;0;0;0;0;yes;no;;;;0;0;no;0;yes;?;yes;no;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Zahlungsziel;Credit Terms;S_ZahlZiel.ZahlungsZiel;INTEGER;zz9;

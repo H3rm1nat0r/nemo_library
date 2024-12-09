@@ -1,4 +1,4 @@
-Kostenstelle;Bezeichnung;Suchbegriff;Selektion;Kostenstellenart;gültig ab;gültig bis;Bezugsgröße;direkt bebuchbar;Verantwortlich
+S_KostenStelle.Kostenstelle;S_KostenStelleSpr.Bezeichnung;S_KostenStelle.Suchbegriff;S_KostenStelle.Selektion;S_KostenStelle.Art;S_KostenStelle.StartTermin;S_KostenStelle.EndTermin;S_KostenStelle.BezugsGroesse;S_KostenStelle.Direkt_Bebuchbar;S_KostenStelle.Verantwortlicher
 0;;;;B;01/01/0001;12/31/9999;;yes;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kostenstelle;Cost Center;S_KostenStelle.Kostenstelle;INTEGER;zzzzzzz9;

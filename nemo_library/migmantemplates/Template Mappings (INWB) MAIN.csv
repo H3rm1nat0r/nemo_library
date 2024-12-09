@@ -1,4 +1,4 @@
-Mapping;Teilnehmer;Empfänger;Default-Typ;Default-Wert;Bezeichnung
+BOM_Mapping.BOM_Mapping_ID;BOM_Participant.BOM_Participant_Id;BOM_AffiliateType.Receiver_BOM_Participant_Id;BOM_Mapping.DefaultType;BOM_Mapping.DefaultValue;DBM_ShortDescription.ShortDesc1
 ;;;4;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Mapping;Mapping ID;BOM_Mapping.BOM_Mapping_ID;CHARACTER;x(60);

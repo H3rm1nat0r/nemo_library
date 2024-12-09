@@ -1,4 +1,4 @@
-Zeitmengeneinheit;Bezeichnung;Kurzbezeichnung;Faktor
+P_ZeitMngEinh.ZeitMengenEinheit;P_ZeitMngEinhSpr.Bezeichnung;P_ZeitMngEinhSpr.KurzBez;P_ZeitMngEinh.Faktor
 0;;;1
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Zeitmengeneinheit;Time Unit of Measure;P_ZeitMngEinh.ZeitMengenEinheit;INTEGER;zz9;

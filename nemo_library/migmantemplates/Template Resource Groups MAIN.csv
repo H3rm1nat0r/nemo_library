@@ -1,4 +1,4 @@
-Ressourcengruppe;Bezeichnung;Frozen Zone;OptBereich;PlanKapProzent;Adressnummer;Standardkalender
+M_RessGruppe.RessGruppe;M_RessGruppeSpr.Bezeichnung;M_RessGruppe.FrozenZone;M_RessGruppe.Server;M_RessGruppe.PlanKapProzent;M_RessGruppe.AdressNr;M_RessGruppe.Kalender
 ;;?;;0;?;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Ressourcengruppe;Resource Group;M_RessGruppe.RessGruppe;CHARACTER;x(6);

@@ -1,4 +1,4 @@
-Merkmalsart;Merkmalsleiste;Merkmal;Ausprägung;Auto Create Specification;Teil;Kunde/Lieferant;Kontenbereich;AnsprechNr;Kostenträger;Kunde;Lieferant;Kontakt;Zeichnung;Wettbewerber;Prozess;Aktivitätenart;Aktivität;SNRArt;Seriennummer;Chargennummer
+BS_Zuord.SMArt;BS_Zuord.SMLeiste;BS_Zuord.Merkmal;BS_Zuord.Auspr;c_XXXausprauto;S_Artikel.Artikel;S_Ansprech.Konto;S_Ansprech.Kontenbereich;S_Ansprech.AnsprechNr;S_KoTraeger.KostenTraeger;S_Kunde.Kunde;S_Lieferant.Lieferant;VC_Interessent.Interessent;PMM_DrawingMaster.PMM_Drawing_ID;VC_Wettbewerber.Wettbewerber;PMM_RoutingMaster.PMM_Routing_ID;M_Aktivitaet.AktArt;M_Aktivitaet.Aktivitaet;MS_SNR.SNRArt;MS_SNR.Seriennummer;MC_Charge.Charge
 ;;;;;;0;0;0;;0;0;0;;0;;0;;;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Merkmalsart;ClassSystem Type;BS_Zuord.SMArt;CHARACTER;x(3);

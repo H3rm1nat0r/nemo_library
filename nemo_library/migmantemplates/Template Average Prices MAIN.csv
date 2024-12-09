@@ -1,4 +1,4 @@
-Teil;Wertgruppe;DPr Material var;DPr Material fix;DPr BzgNebKo var;DPr BzgNebKo fix;DPr Lohn var;DPr Lohn fix;DPr Masch var;DPr Masch fix;DPr Zusatz 1 var;DPr Zusatz 1 fix;DPr Zusatz 2 var;DPr Zusatz 2 fix
+MLA_PartValue.Part;MLM_StockValueGroup.MLM_StockValueGroup_ID;MLA_PartValue.AverageCostsMatVar;MLA_PartValue.AverageCostsMatFix;MLA_PartValue.AverageCostsDelCostsVar;MLA_PartValue.AverageCostsDelCostsFix;MLA_PartValue.AverageCostsLaborVar;MLA_PartValue.AverageCostsLaborFix;MLA_PartValue.AverageCostsMachineVar;MLA_PartValue.AverageCostsMachineFix;MLA_PartValue.AverageCostsAdd1Var;MLA_PartValue.AverageCostsAdd1Fix;MLA_PartValue.AverageCostsAdd2Var;MLA_PartValue.AverageCostsAdd2Fix
 ;0;0;0;0;0;0;0;0;0;0;0;0;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;MLA_PartValue.Part;CHARACTER;x(20);

@@ -1,4 +1,4 @@
-Dispositionsgruppe;Bezeichnung;Benutzer;Benutzer;Benutzer
+S_DispoGruppe.DispoGruppe;S_DispoGruppeSpr.Bezeichnung;BU_Benutzer.Benutzer.MRP_Specialist;BU_Benutzer.Benutzer.PurchaseSP;BU_Benutzer.Benutzer.ProductionSP
 ;;;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Dispositionsgruppe;MRP Team;S_DispoGruppe.DispoGruppe;CHARACTER;x(6);

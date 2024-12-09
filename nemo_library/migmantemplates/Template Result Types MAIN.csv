@@ -1,4 +1,4 @@
-Ergebnistyp;Bezeichnung;Anzeigefolge
+VC_Ergebnistyp.Ergebnistyp;VC_ErgebnistypSpr.Bezeichnung;VC_Ergebnistyp.AnzeigeFolge
 0;;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Ergebnistyp;Result Type;VC_Ergebnistyp.Ergebnistyp;INTEGER;zzz9;

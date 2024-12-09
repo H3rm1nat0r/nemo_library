@@ -1,4 +1,4 @@
-Belegnummer;Position;Textschlüssel;Plain Text
+E_RA_Kopf.BelegNummer;E_RA_Pos.PositionsNr;E_RA_Pos.TextSchluessel;BT_Kopf.PlainText
 0;1;;?
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Belegnummer;Document Number;E_RA_Kopf.BelegNummer;INTEGER;zzzzzzz9;

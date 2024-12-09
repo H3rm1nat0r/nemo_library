@@ -1,4 +1,4 @@
-Teil;Lieferant;Zeichnung
+E_ArtLiefZeich.Artikel;E_ArtLiefZeich.Lieferant;PMM_Drawing.PMM_Drawing_ID
 ;0;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;E_ArtLiefZeich.Artikel;CHARACTER;x(20);

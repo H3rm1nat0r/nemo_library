@@ -1,4 +1,4 @@
-Kunde;Teil;gültig ab;gültig bis;Staffelgruppe;ab Menge;Währung;Preis;ausgelistet
+S_ArtKundeDatum.Kunde;S_ArtKundeDatum.Artikel;S_ArtKundeDatum.gueltig_ab;S_ArtKundeDatum.gueltig_bis;S_ArtKundeDatum.StaffelGruppe;S_ArtKundeStaffel.StaffelMenge;S_Kunde.Waehrung;S_ArtKundeStaffel.Preis;S_ArtKundeDatum.uCW_Delisted
 0;;?;?;;0;0;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Kunde;Customer;S_ArtKundeDatum.Kunde;INTEGER;zzzzzzzz;

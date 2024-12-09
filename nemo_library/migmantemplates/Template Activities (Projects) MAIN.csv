@@ -1,4 +1,4 @@
-Tag;Ressource;Buchungstext;Kostenträger;Projekt;Projektvorgang;PSC;Tätigkeit;Kostenart;Zeit;Kostenstelle;keine Verwendung;Kostenart KTr
+JBT_Activity.Tag;JBT_Activity.Ressource;JBT_Activity.Buchungstext;S_KoTraeger.Kostentraeger;JBT_Activity.Projekt;JBT_Activity.Projektvorgang;JBT_ProjectStr.PSC;JBT_Activity.Taetigkeit;JBT_Activity.Kostenart;JBT_Activity.Zeit;S_Kostenstelle.Kostenstelle;c_xxx_bezugsgroesse;JBT_Activity.TrKoArt
 today;;;;;;;0;0;0;0;;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Tag;Day;JBT_Activity.Tag;DATE;99.99.9999;

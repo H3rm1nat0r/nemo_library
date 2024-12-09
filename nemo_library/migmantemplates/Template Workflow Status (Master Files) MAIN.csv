@@ -1,4 +1,4 @@
-Bereich;Zustand;Funktion;Zuord archivieren;archiviert;Beschreibung
+BB_Bereich.Bereich;BBM_WflLockStatus.BBM_WflLockStatus_ID;BBM_WflLockStatus.LockFunction;BBM_WflLockStatus.archiveAct;BBM_WflLockStatus.Archived;DBM_Description.Description1
 ;0;;no;no;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Bereich;Category;BB_Bereich.Bereich;CHARACTER;x(6);

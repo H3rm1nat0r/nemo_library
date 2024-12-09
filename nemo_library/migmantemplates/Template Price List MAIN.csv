@@ -1,4 +1,4 @@
-Preisliste;Bezeichnung;Währung;Bruttobeleg
+S_PreisGruppe.PreisGruppe;S_PreisGruppeSpr.Bezeichnung;S_PreisGruppe.Waehrung;S_PreisGruppe.Brutto
 ;;0;no
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Preisliste;Price Group;S_PreisGruppe.PreisGruppe;CHARACTER;x(6);

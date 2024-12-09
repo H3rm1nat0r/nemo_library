@@ -1,4 +1,4 @@
-Preiseinheit;Bezeichnung;Kurzbezeichnung;Mengenfaktor
+S_PreisEinheit.Preiseinheit;S_PreisEinheitSpr.Bezeichnung;S_PreisEinheitSpr.KurzBez;S_PreisEinheit.Faktor
 0;;;1
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Preiseinheit;Price Unit;S_PreisEinheit.Preiseinheit;INTEGER;zz9;

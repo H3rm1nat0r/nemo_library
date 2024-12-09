@@ -1,4 +1,4 @@
-Alternativgruppe;Ressource;Priorität
+M_RessAlt.AltGruppe;M_RessAlt.Ressource;M_RessAlt.Prioritaet
 ;;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Alternativgruppe;Alternate Group;M_RessAlt.AltGruppe;CHARACTER;x(20);

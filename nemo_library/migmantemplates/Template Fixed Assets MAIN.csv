@@ -1,4 +1,4 @@
-Inventarnummer;Suchbegriff;Selektion;Bezeichnung1;Bezeichnung2;Bezeichnung3;Bezeichnung4;Anlagenart;Hauptanlagengut;Kostenstelle;Anlagennummer;Zugangsdatum;Inbetriebnahme;Teil;Lieferant;Hersteller;Mng Anlagen;Abgangsdatum;VersVtg gemäß AnlA;realisiert;Bild;gültig bis;Gewerbesteuer;GewerbesteuerBetr;Kostenträger
+S_Anlage.Anlage;S_Anlage.Suchbegriff;S_Anlage.Selektion;S_AnlageSpr.Bezeichnung1;S_AnlageSpr.Bezeichnung2;S_AnlageSpr.Bezeichnung3;S_AnlageSpr.Bezeichnung4;S_Anlage.AnlageArt;S_Anlage.Hauptanlage;S_Anlage.Kostenstelle;S_Anlage.AnlageNr;S_Anlage.ZugangsDatum;S_Anlage.InbetriebDatum;S_Anlage.Artikel;S_Anlage.Lieferant;S_Anlage.Hersteller;S_Anlage.Menge;S_Anlage.AbgangsDatum;S_Anlage.VtgAnlA;S_Anlage.realisiert;S_Anlage.Bild;S_Anlage.gueltig_bis;S_Anlage.F_TradeTax;S_Anlage.F_TradeTaxAmount;S_KoTraeger.KostenTraeger
 ;;;;;;;;?;0;;?;?;;0;0;0;?;yes;no;;?;no;0;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Inventarnummer;Fixed Asset Number;S_Anlage.Anlage;CHARACTER;x(20);

@@ -1,4 +1,4 @@
-Wettbewerber;Name;Name 2;Name 3;Suchbegriff;Selektion;Telefon;Telefax;Straﬂe;Hausnummer;Staat;Postleitzahl;Ort;Bundesland;PLZ Postfach;Postfach;E-Mail;Homepage;L‰ngengrad;Breitengrad;Bemerkung
+VC_Wettbewerber.Wettbewerber;VC_Wettbewerber.Name1;VC_Wettbewerber.Name2;VC_Wettbewerber.Name3;VC_Wettbewerber.Suchbegriff;VC_Wettbewerber.Selektion;VC_Wettbewerber.Telefon;VC_Wettbewerber.Telefax;VC_Wettbewerber.Strasse;VC_Wettbewerber.Hausnummer;VC_Wettbewerber.Staat;VC_Wettbewerber.PLZ;VC_Wettbewerber.Ort;VC_Wettbewerber.Bundesland;VC_Wettbewerber.PLZ_Postfach;VC_Wettbewerber.Postfach;VC_Wettbewerber.EMail;VC_Wettbewerber.HomePage;VC_Wettbewerber.Longitude;VC_Wettbewerber.Latitude;VC_Wettbewerber.Bemerkung
 0;;;;;;;;;;;;;;;;;;0;0;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Wettbewerber;Competitor;VC_Wettbewerber.Wettbewerber;INTEGER;zzzzzzz9;

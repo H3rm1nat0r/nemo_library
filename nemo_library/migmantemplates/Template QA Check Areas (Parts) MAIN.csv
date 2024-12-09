@@ -1,4 +1,4 @@
-Teil;Prüfungsbereich
+S_Artikel.Artikel;SBM_QualityCheck.CheckArea
 ;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Teil;Part;S_Artikel.Artikel;CHARACTER;x(20);

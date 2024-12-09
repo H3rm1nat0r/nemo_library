@@ -1,4 +1,4 @@
-Lieferung;Position;Belegnummer;Abladestelle;bestätigte Menge;Eintreffdatum;Lieferadresse;LS-Datum;LieferscheinNr;LS Position;Lieferstatus;Menge
+VU_RA_lieferung.lieferung;VU_RA_Lieferung.PositionsNr;V_Belegpos.BelegNummer;VU_RA_Lieferung.Abladestelle;VU_RA_Lieferung.bestaetigte_Menge;VU_RA_Lieferung.EintreffDatum;VU_RA_Lieferung.Lieferadresse;VU_RA_Lieferung.LieferscheinDatum;VU_RA_Lieferung.LieferscheinNr;VU_RA_Lieferung.LieferscheinPos;VU_RA_Lieferung.Lieferstatus;VU_RA_Lieferung.Menge
 0;1;0;;0;?;?;?;?;1;;0
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Lieferung;Delivery Number;VU_RA_lieferung.lieferung;INTEGER;zzzzz9;

@@ -1,4 +1,4 @@
-Bezeichnung;Bereich;Key1;Key2;Key3;Key4;Key5;Key6;Key7;Key8;Remark;befristet ab;befristet bis;Merkmalsart;Merkmalsleiste;Merkmal;Ausprägung;c_XXXausprauto
+BMT_Note.Subject;BB_Bereich.Bereich;c_schluessel1;c_schluessel2;c_schluessel3;c_schluessel4;c_schluessel5;c_schluessel6;c_schluessel7;c_schluessel8;BMT_Note.NoteText;BMT_Note.LimitedFrom;BMT_Note.LimitedTo;BS_Zuord.SMArt;BS_Zuord.SMLeiste;BS_Zuord.Merkmal;BS_Zuord.Auspr;c_XXXausprauto
 ;;;;;;;;;;;?;?;;;;;
 Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
 1;Bezeichnung;Subject;BMT_Note.Subject;CHARACTER;x(80);

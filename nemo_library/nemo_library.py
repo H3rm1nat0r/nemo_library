@@ -4,7 +4,8 @@ from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
-from nemo_library.features.migman import updateMappingForMigman, updateProjectsForMigMan
+from nemo_library.features.migman_mapping import updateMappingForMigman
+from nemo_library.features.migman_projects import updateProjectsForMigMan
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumn,
@@ -260,9 +261,13 @@ class NemoLibrary:
 
     def updateMappingForMigman(
         self,
-        fields: list[str] = None,
+        fields: list[str],
+        folderForMappingFiles: str,
+        additionalfields: dict[str, str] = None,
     ):
-        updateMappingForMigman(self.config, fields=fields)
+        updateMappingForMigman(
+            self.config, fields=fields, additionalfields=additionalfields,folderForMappingFiles=folderForMappingFiles
+        )
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:
         """

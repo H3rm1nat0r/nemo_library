@@ -155,55 +155,68 @@ def process_file(
         # 2;Adressnummer;Address Number;S_Adresse.AdressNr;INTEGER;zzzzzzz9;
         # 3;Name;Name 1;S_Adresse.Name1;CHARACTER;x(80);
 
-        df = pd.read_csv(
+        dfdummy = pd.read_csv(
+            file,
+            nrows=1,
+            encoding="ISO-8859-1",
+            sep=";",
+        )
+        dummyheaders = dfdummy.columns
+
+    with importlib.resources.open_binary(
+        "nemo_library.migmantemplates", filename
+    ) as file:
+        dfdesc = pd.read_csv(
             file,
             skiprows=2,
             encoding="ISO-8859-1",
             sep=";",
         )
 
-        df["Format"] = df["Data Type"]
-        df["Data Type"] = df["Location in proALPHA"]
-        df["Location in proALPHA"] = df["Description / Remark"]
-        df.drop(columns=["Description / Remark"], inplace=True)
+    dfdesc["headers"] = dummyheaders
 
-        df.loc[df["Location in proALPHA"].isna(), "Column Name"] = df["Column"]
-        df.loc[df["Location in proALPHA"].isna(), "Data Type"] = "CHARACTER"
-        df.loc[df["Location in proALPHA"].isna(), "Format"] = "x(20)"
-        df.loc[df["Location in proALPHA"].isna(), "Location in proALPHA"] = (
-            CALCULATED_FIELD + " " + df.loc[df["Location in proALPHA"].isna(), "Column"]
+    dfdesc["Format"] = dfdesc["Data Type"]
+    dfdesc["Data Type"] = dfdesc["Location in proALPHA"]
+    dfdesc["Location in proALPHA"] = dfdesc["Description / Remark"]
+    dfdesc.drop(columns=["Description / Remark"], inplace=True)
+
+    dfdesc.loc[dfdesc["Location in proALPHA"].isna(), "Location in proALPHA"] = dfdesc[
+        "headers"
+    ]
+    dfdesc.loc[dfdesc["Column Name"].isna(), "Column Name"] = dfdesc["Column"]
+    dfdesc.loc[dfdesc["Data Type"].isna(), "Data Type"] = "CHARACTER"
+    dfdesc.loc[dfdesc["Format"].isna(), "Format"] = "x(20)"
+
+    addons = (
+        multi_projects[project]
+        if multi_projects and project in multi_projects.keys()
+        else [""]
+    )
+    for addon in addons:
+        projectname = (
+            f"{project} {addon} {'(' + postfix + ')' if postfix != 'MAIN' else ''}"
         )
+        projectname = re.sub(r"\s+", " ", projectname)
+        projectname = projectname.strip()
 
-        addons = (
-            multi_projects[project]
-            if multi_projects and project in multi_projects.keys()
-            else [""]
+        # project already exists?
+        new_project = False
+        if not projectname in getProjectList(config)["displayName"].to_list():
+            new_project = True
+            logging.info(f"Project not found in NEMO. Create it...")
+            createProject(
+                config=config,
+                projectname=projectname,
+                description=f"Data Model for Mig Man table '{project}'",
+            )
+
+            process_columns(config, projectname, dfdesc)
+
+            updateReports(config, projectname, dfdesc)
+
+        uploadData(
+            config, projectname, dfdesc, csv_files_directory, postfix, new_project
         )
-        for addon in addons:
-            projectname = (
-                f"{project} {addon} {'(' + postfix + ')' if postfix != 'MAIN' else ''}"
-            )
-            projectname = re.sub(r"\s+", " ", projectname)
-            projectname = projectname.strip()
-
-            # project already exists?
-            new_project = False
-            if not projectname in getProjectList(config)["displayName"].to_list():
-                new_project = True
-                logging.info(f"Project not found in NEMO. Create it...")
-                createProject(
-                    config=config,
-                    projectname=projectname,
-                    description=f"Data Model for Mig Man table '{project}'",
-                )
-
-                process_columns(config, projectname, df)
-
-                updateReports(config, projectname, df)
-
-            uploadData(
-                config, projectname, df, csv_files_directory, postfix, new_project
-            )
 
 
 def process_columns(
@@ -258,6 +271,7 @@ def uploadData(
 ) -> None:
 
     # "real" data given? let's take this instead of the dummy file
+    file_path = None
     if csv_files_directory:
         if not postfix:
             postfix = "MAIN"
@@ -265,9 +279,14 @@ def uploadData(
             postfix = ""
         postfix = (" " + postfix).strip()
         file_path = os.path.join(csv_files_directory, f"{projectname}{postfix}.csv")
+        logging.info(f"checking for data file {file_path}")
+
+    if file_path:
         if os.path.exists(file_path):
             uploadRealData(config, projectname, df, file_path)
             return
+        else:
+            logging.warning(f"file {file_path} for project {projectname} not found!")
 
     # otherwise, we upload dummy data, but only for newly created projects
     if new_project:
@@ -566,19 +585,12 @@ def updateReports(
     # create column specific fragments
     frags_checked = []
     frags_msg = []
-    for idx, (displayName, columnNameInternal, dataType, format) in enumerate(zip(
-        displayNames, internalNames, dataTypes, formats)
+    for idx, (displayName, columnNameInternal, dataType, format) in enumerate(
+        zip(displayNames, internalNames, dataTypes, formats)
     ):
 
         frag_check = []
         frag_msg = []
-
-        # # mandatory fields
-        # if row["pflicht"] == "ja":
-        #     frag_check.append(
-        #         f"{column_name_internal} IS NULL or TRIM({column_name_internal}) = ''"
-        #     )
-        #     frag_msg.append(f"{column_name} is mandatory")
 
         # data type specific checks
         match dataType.lower():
@@ -676,8 +688,10 @@ def updateReports(
             # save checks and messages for total report
             frags_checked.extend(frag_check)
             frags_msg.extend(frag_msg)
-            sorted_columns = [columnNameInternal] + [
-                col for col in internalNames if col != columnNameInternal
+            sorted_columns = [f'{columnNameInternal} AS "{displayName}"'] + [
+                f'{intname} AS "{dispname}"'
+                for dispname, intname in zip(displayNames, internalNames)
+                if intname != columnNameInternal
             ]
 
             # case statements for messages and dm report
@@ -691,12 +705,12 @@ def updateReports(
             status_conditions = " OR ".join(frag_check)
 
             sql_statement = f"""SELECT
-\t{',\n\t'.join(sorted_columns)}
-\t,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
-\t,CASE 
+\tCASE 
 \t\tWHEN {status_conditions} THEN 'check'
     ELSE 'ok'
 END AS STATUS
+\t,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
+\t,{',\n\t'.join(sorted_columns)}
 FROM
 $schema.$table"""
 
@@ -813,145 +827,4 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
     else:
         raise ValueError(
             "The column 'Name des Importprograms / Name der Erfassungsmaske' does not exist in the data."
-        )
-
-
-def updateMappingForMigman(
-    config: Config,
-    fields: list[str] = None,
-):
-
-    # iterate all fields to map and check whether there is already a project
-    projectList = getProjectList(config=config)["displayName"].to_list()
-    for field in fields:
-        projectName = f"Mapping {field}"
-        logging.info(f"checking for project '{projectName}'")
-
-        unique_values = []
-        
-        # if project already exists then preserve data
-        if projectName in projectList:
-            mappedvalues = LoadReport(config=config,projectname=projectName,report_name="(MAPPING) Non-NULL target values")
-            print(df)
-            continue
-            
-        if not projectName in projectList:
-            logging.info(f"No project found. Create it.")
-            createProject(
-                config=config,
-                projectname=projectName,
-                description=f"Mapping for field '{field}'",
-            )
-
-            createImportedColumn(
-                config=config,
-                projectname=projectName,
-                displayName="sourcevalue",
-                internalName="sourcevalue",
-                importName="sourcevalue",
-                dataType="string",
-                description="values from source system",
-            )
-
-            createImportedColumn(
-                config=config,
-                projectname=projectName,
-                displayName="targetvalue",
-                internalName="targetvalue",
-                importName="targetvalue",
-                dataType="string",
-                description="mapped values for target system",
-            )
-
-        # let's get some data now
-        for project in projectList:
-            if project in ["Business Processes", "Master Data"] or project.startswith(
-                "Mapping "
-            ):
-                continue
-
-            imported_columns = getImportedColumns(config=config, projectname=project)[
-                "displayName"
-            ].to_list()
-            result = next(
-                (
-                    entry
-                    for entry in imported_columns
-                    if re.match(rf"^{re.escape(field)} \(\d{{3}}\)$", entry)
-                ),
-                None,
-            )
-            if result:
-                logging.info(f"Found field '{result}' in project '{project}'")
-
-                # create report in that project for that field to get data
-                sqlquery = f"""SELECT DISTINCT 
-	{internal_name(result)} AS SOURCEVALUE
-FROM 
-	$schema.PROJECT_{internal_name(project)}
-WHERE 
-    {internal_name(result)}  IS NOT NULL"""
-
-                displayname = display_name(
-                    f"(MAPPING) Distinct Values for mapping of {field}"
-                )
-                internalname = internal_name(displayname)
-                createOrUpdateReport(
-                    config=config,
-                    projectname=project,
-                    displayName=displayname,
-                    internalName=internalname,
-                    querySyntax=sqlquery,
-                    description="load distinct values of field {result} to support mapping of field {field}",
-                )
-
-                df = LoadReport(
-                    config=config, projectname=project, report_name=displayname
-                )
-
-                unique_values.extend(df["SOURCEVALUE"].tolist())
-
-        mappingdf = pd.DataFrame(unique_values, columns=["sourcevalue"])
-        mappingdf["targetvalue"] = ""
-
-        # Write to a temporary file and upload
-        with tempfile.TemporaryDirectory() as temp_dir:
-            temp_file_path = os.path.join(temp_dir, "tempfile.csv")
-
-            mappingdf.to_csv(
-                temp_file_path,
-                index=False,
-                sep=";",
-                na_rep="",
-            )
-            logging.info(
-                f"dummy file {temp_file_path} written for project '{projectName}'. Uploading data to NEMO now..."
-            )
-
-            ReUploadFile(
-                config=config,
-                projectname=projectName,
-                filename=temp_file_path,
-                update_project_settings=False,
-            )
-            logging.info(f"upload to project {projectName} completed")
-            
-        # create a report to load all data from this table
-        sqlquery = f"""SELECT 
-    sourcevalue
-    , targetvalue
-FROM
-    $schema.$table
-WHERE
-    targetvalue is not NULL
-"""
-        displayname = "(MAPPING) Non-NULL target values"
-        internalname = internal_name(displayname)
-        createOrUpdateReport(
-            config=config,
-            projectname=projectName,
-            displayName=displayname,
-            internalName=internalname,
-            querySyntax=sqlquery,
-            description="load all records that have a non-NULL target value",
         )

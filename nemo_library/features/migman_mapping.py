@@ -1,8 +1,10 @@
 import logging
 import os
 import re
+import tempfile
 import pandas as pd
 from nemo_library.features.config import Config
+from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumn,
@@ -29,24 +31,38 @@ def updateMappingForMigman(
             additionalfields[field] if field in additionalfields else None
         )
 
-        # update project
-        projectName = createMappingProject(
-            config=config,
-            field=field,
-        )
+        # create project if needed
+        projectList = getProjectList(config=config)["displayName"].to_list()
+        projectame = f"Mapping {field}"
 
-        # update list of fields
-        createMappingImportedColumnns(
-            config=config,
-            projectName=projectName,
-            field=field,
-            additionalFields=additionalFields,
-        )
+        newProject = False
+        if not projectame in projectList:
+            newProject = True
+            createMappingProject(config=config, field=field, projectname=projectame)
+
+            # update list of fields
+            createMappingImportedColumnns(
+                config=config,
+                projectname=projectame,
+                field=field,
+                additionalFields=additionalFields,
+            )
+
+            # we need to ensure that the table in the database is created. Either we have data,
+            # then we upload it. Or we have to create dummy data
+            loadData(
+                config=config,
+                projectname=projectame,
+                field=field,
+                additionalFields=additionalFields,
+                folderForMappingFiles=folderForMappingFiles,
+                newProject=newProject,
+            )
 
         # collect data
         collectData(
             config=config,
-            projectName=projectName,
+            projectname=projectame,
             field=field,
             additionalFields=additionalFields,
             folderForMappingFiles=folderForMappingFiles,
@@ -55,6 +71,7 @@ def updateMappingForMigman(
 
 def createMappingProject(
     config: Config,
+    projectname: str,
     field: str,
 ) -> str:
     """
@@ -72,23 +89,17 @@ def createMappingProject(
         str: The name of the mapping project.
     """
 
-    projectList = getProjectList(config=config)["displayName"].to_list()
-    projectName = f"Mapping {field}"
-
-    if not projectName in projectList:
-        logging.info(f"'{projectName}' not found, create it")
-        createProject(
-            config=config,
-            projectname=projectName,
-            description=f"Mapping for field '{field}'",
-        )
-
-    return projectName
+    logging.info(f"'{projectname}' not found, create it")
+    createProject(
+        config=config,
+        projectname=projectname,
+        description=f"Mapping for field '{field}'",
+    )
 
 
 def createMappingImportedColumnns(
     config: Config,
-    projectName: str,
+    projectname: str,
     field: str,
     additionalFields: list[str],
 ) -> dict[str, str]:
@@ -102,7 +113,7 @@ def createMappingImportedColumnns(
             fields.append(display_name(f"source {additionalField}"))
             fields.append(display_name(f"target {additionalField}"))
 
-    importedColumnsList = getImportedColumns(config=config, projectname=projectName)
+    importedColumnsList = getImportedColumns(config=config, projectname=projectname)
     importedColumnsList = (
         importedColumnsList["displayName"].to_list()
         if not importedColumnsList.empty
@@ -113,7 +124,7 @@ def createMappingImportedColumnns(
         if not fld in importedColumnsList:
             createImportedColumn(
                 config=config,
-                projectname=projectName,
+                projectname=projectname,
                 displayName=fld,
                 internalName=internal_name(fld),
                 importName=import_name(fld),
@@ -122,9 +133,66 @@ def createMappingImportedColumnns(
             )
 
 
+def loadData(
+    config: Config,
+    projectname: str,
+    field: str,
+    additionalFields: list[str],
+    folderForMappingFiles,
+    newProject: bool,
+) -> None:
+
+    # project is new and table does not exist. We have to upload dummy-data to enforce creation of database table
+
+    # "real" data given? let's take this instead of the dummy file
+    file_path = os.path.join(folderForMappingFiles, f"{projectname}.csv")
+    logging.info(f"checking for data file {file_path}")
+
+    if os.path.exists(file_path):
+        ReUploadFile(
+            config=config,
+            projectname=projectname,
+            filename=file_path,
+            update_project_settings=False,
+        )
+        logging.info(f"upload to project {projectname} completed")
+    else:
+        if newProject:
+            logging.info(
+                f"file {file_path} for project {file_path} not found. Uploading dummy data"
+            )
+            fields = getImportedColumns(config=config, projectname=projectname)[
+                "importName"
+            ]
+            data = {field: ["xxx"] * 5 for field in fields}
+            df = pd.DataFrame(data)
+
+            # Write to a temporary file and upload
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_file_path = os.path.join(temp_dir, "tempfile.csv")
+
+                df.to_csv(
+                    temp_file_path,
+                    index=False,
+                    sep=";",
+                    na_rep="",
+                )
+                logging.info(
+                    f"dummy file {temp_file_path} written for project '{projectname}'. Uploading data to NEMO now..."
+                )
+
+                ReUploadFile(
+                    config=config,
+                    projectname=projectname,
+                    filename=temp_file_path,
+                    update_project_settings=False,
+                )
+                logging.info(f"upload to project {projectname} completed")
+
+
 def collectData(
     config: Config,
-    projectName: str,
+    projectname: str,
     field: str,
     additionalFields: list[str],
     folderForMappingFiles: None,
@@ -143,7 +211,15 @@ def collectData(
             ctefields[project] = fields
 
     if len(ctefields) > 0:
-        queryforreport = sqlQuery(ctefields)
+        queryforreport = sqlQuery(project=projectname, ctefields=ctefields)
+        createOrUpdateReport(
+            config=config,
+            projectname=projectname,
+            displayName="source mapping",
+            querySyntax=queryforreport,
+            description="load all source values and map them"            
+        )
+
 
 def collectDataFieldsForProject(
     config: Config,
@@ -197,51 +273,79 @@ def collectDataFieldsForProject(
     # we have found all relevant fields in project. Now we are going to collect data
     return fieldList
 
-def sqlQuery(ctefields : dict[str,str]) -> str:
-    
-    # setup CTEs to load data from source projects 
+
+def sqlQuery(project: str, ctefields: dict[str, str]) -> str:
+
+    # setup CTEs to load data from source projects
     ctes = []
     for ctekey, ctevalue in ctefields.items():
-        
-        subselect = [f'{fldvalue} AS "source {fldkey}"' for fldkey, fldvalue in ctevalue.items()]
-        
-        ctes.append(f"""CTE_{internal_name(ctekey)} AS (
+
+        subselect = [
+            f'{fldvalue} AS "{fldkey}"' for fldkey, fldvalue in ctevalue.items()
+        ]
+
+        ctes.append(
+            f"""CTE_{internal_name(ctekey)} AS (
     SELECT DISTINCT
         {"\n\t,".join(subselect)}
     FROM 
-        PROJECT_{internal_name(ctekey)}
-)""")
+        $schema.PROJECT_{internal_name(ctekey)}
+)"""
+        )
 
     # create a union for all CTEs
     globfrags = []
     for ctekey, ctevalue in ctefields.items():
-        
-        subselect = [f'"source {fldkey}"' for fldkey, fldvalue in ctevalue.items()]
-        
-        globfrags.append(f"""\tSELECT
+
+        subselect = [f'"{fldkey}"' for fldkey, fldvalue in ctevalue.items()]
+
+        globfrags.append(
+            f"""\tSELECT
     {"\n\t,".join(subselect)}
     FROM 
-        CTE_{internal_name(ctekey)}""")
-    ctes.append(f"""CTE_ALL AS (
-{"\nUNION ALL\n".join(globfrags)})""")
-                
+        CTE_{internal_name(ctekey)}"""
+        )
+    ctes.append(
+        f"""CTE_ALL AS (
+{"\nUNION ALL\n".join(globfrags)})"""
+    )
+
     # and finally one for distinct value and join it with potentially existing data
-    
+
     # we need to get a list of the fields itself. We assume they are the same in every CTE
-    first_key = next(iter(ctefields))  
-    first_value = ctefields[first_key]  
-    subselect = [f'"source {fldkey}"' for fldkey, fldvalue in first_value.items()]
-    
-    query = f"""WITH {"\n,".join(ctes)}
+    first_key = next(iter(ctefields))
+    first_value = ctefields[first_key]
+    subselect = [f'"{fldkey}"' for fldkey, fldvalue in first_value.items()]
+
+    queryctes = f"""WITH {"\n,".join(ctes)}
 ,CTE_ALL_DISTINCT AS (
     SELECT DISTINCT
         {'\n\t,'.join(subselect)}
     FROM 
         CTE_ALL
-)
-SELECT  
-{'\n\t,'.join(subselect)}
+)"""
+
+    subselectsrc = [
+        f'cte."{fldkey}" as "source {fldkey}"'
+        for fldkey, fldvalue in first_value.items()
+    ]
+    subselecttgt = [
+        f'mapping.TARGET_{internal_name(fldkey)} as "target {fldkey}"'
+        for fldkey, fldvalue in first_value.items()
+    ]
+    subselectjoin = [
+        f'mapping.SOURCE_{internal_name(fldkey)} = cte."{fldkey}"'
+        for fldkey, fldvalue in first_value.items()
+    ]
+    finalquery = f"""{queryctes}
+SELECT
+    {'\n\t,'.join(subselectsrc)}
+    , {'\n\t,'.join(subselecttgt)}
 FROM
-    CTE_ALL_DISTINCT
+    CTE_ALL_DISTINCT cte
+LEFT JOIN
+    $schema.$table mapping
+ON  
+    {'\n\t AND '.join(subselectjoin)}
 """
-    print(query)
+    return finalquery

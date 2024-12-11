@@ -350,6 +350,7 @@ def generateTemplateFile(
                 csvfilepath(projectname, local_project_path, postfix, True),
                 index=False,
                 sep=";",
+                encoding="UTF-8",
             )
 
 
@@ -381,7 +382,11 @@ def uploadRealData(
             log_error(f"column '{csv_display_name}' not defined.")
 
     # now, we are sure that the file is formattted property. Load file and add missing columns
-    df = pd.read_csv(file_path, sep=";")
+    df = pd.read_csv(
+        file_path,
+        sep=";",
+        dtype=str,
+    )
 
     # Add missing columns
     # Identify missing columns
@@ -404,6 +409,7 @@ def uploadRealData(
             index=False,
             sep=";",
             na_rep="",
+            encoding="UTF-8",
         )
         logging.info(
             f"dummy file {temp_file_path} written for project '{projectname}'. Uploading data to NEMO now..."
@@ -608,6 +614,7 @@ def uploadDummyData(
             index=False,
             sep=";",
             na_rep="",
+            encoding="UTF-8",
         )
         logging.info(
             f"dummy file {temp_file_path} written for project '{projectname}'. Uploading data to NEMO now..."

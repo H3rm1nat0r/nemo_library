@@ -55,18 +55,20 @@ def ReUploadFile(
     headers = None
     project_id = None
     gzipped_filename = None
-    
+
     try:
         project_id = getProjectID(config, projectname)
 
         headers = config.connection_get_headers()
 
-        logging.info(f"Upload of file '{filename}' into project '{projectname}' initiated...")
+        logging.info(
+            f"Upload of file '{filename}' into project '{projectname}' initiated..."
+        )
 
         # Zip the file before uploading
         gzipped_filename = filename + ".gz"
         with open(filename, "rb") as f_in:
-            with gzip.open(gzipped_filename, "wb") as f_out:
+            with gzip.open(gzipped_filename, "wb", compresslevel=1) as f_out:
                 shutil.copyfileobj(f_in, f_out)
         logging.info(f"File {filename} has been compressed to {gzipped_filename}")
 
@@ -110,9 +112,9 @@ def ReUploadFile(
             )
             logging.info(f"File {filename} uploaded successfully to s3 ({s3filename})")
         except FileNotFoundError:
-            log_error(f"The file {filename} was not found.",FileNotFoundError)
+            log_error(f"The file {filename} was not found.", FileNotFoundError)
         except NoCredentialsError:
-            log_error(f"The file {filename} was not found.",NoCredentialsError)
+            log_error(f"The file {filename} was not found.", NoCredentialsError)
 
         # Prepare data for ingestion
         data = {
@@ -230,6 +232,6 @@ def ReUploadFile(
             log_error("Upload stopped, no project_id available")
         raise log_error(f"Upload aborted: {e}")
 
-    finally:
-        if gzipped_filename:
-            os.remove(gzipped_filename)
+    # finally:
+    #     if gzipped_filename:
+    #         os.remove(gzipped_filename)

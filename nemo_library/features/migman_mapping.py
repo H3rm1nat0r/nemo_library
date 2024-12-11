@@ -1,3 +1,4 @@
+import csv
 import logging
 import os
 import re
@@ -70,7 +71,7 @@ def updateMappingForMigman(
             local_project_path=local_project_path,
             newProject=False,  # project is not new any longer, we can access it's data (maybe uploaded in former steps)
         )
-    
+
 
 def createMappingProject(
     config: Config,
@@ -148,7 +149,7 @@ def loadData(
     # project is new and table does not exist. We have to upload dummy-data to enforce creation of database table
 
     # "real" data given? let's take this instead of the dummy file
-    file_path = getMappingFilePath(projectname,local_project_path)
+    file_path = getMappingFilePath(projectname, local_project_path)
     logging.info(f"checking for data file {file_path}")
 
     if os.path.exists(file_path):
@@ -161,7 +162,7 @@ def loadData(
         logging.info(f"upload to project {projectname} completed")
     else:
         logging.info(f"file {file_path} not found")
-        
+
         if newProject:
             logging.info(
                 f"file {file_path} for project {file_path} not found. Uploading source data"
@@ -190,6 +191,10 @@ def loadData(
                 index=False,
                 sep=";",
                 na_rep="",
+                quotechar='"',
+                quoting=csv.QUOTE_ALL,
+                lineterminator="\n",
+                encoding="UTF-8",
             )
             logging.info(f"mapping file '{file_path}' generated with source contents")
 
@@ -251,7 +256,7 @@ def collectData(
         config=config, projectname=projectname, report_name="source mapping"
     )
 
-    file_path = getMappingFilePath(projectname,local_project_path)
+    file_path = getMappingFilePath(projectname, local_project_path)
 
     # export file as a template for mappings
     df.to_csv(
@@ -259,6 +264,10 @@ def collectData(
         index=False,
         sep=";",
         na_rep="",
+        quotechar='"',
+        quoting=csv.QUOTE_ALL,
+        lineterminator="\n",
+        encoding="UTF-8",
     )
 
     # and upload it immediately

@@ -37,28 +37,32 @@ def updateProjectsForMigMan(
     multi_projects: dict[str, str] = None,
 ) -> None:
     """
-    Creates projects for MigMan based on a provided project list or a proALPHA project status file.
+    Update projects for the Migration Manager by processing project-specific CSV templates.
+
+    This method performs the following steps for each project:
+    1. If a proALPHA migration status file is provided, extract project steps from it.
+    2. Validate that projects are provided and non-empty.
+    3. Retrieve and sort matching template files for each project.
+    4. Process each file by:
+    - Extracting and adjusting column metadata.
+    - Creating or updating projects in the NEMO platform.
+    - Uploading real or dummy data based on availability.
+    - Generating template files for missing data if necessary.
+    - Creating deficiency mining reports and rules.
 
     Args:
-        config (Config): Configuration object containing connection details and headers.
-        projects (list[str], optional): A list of project names to create. Defaults to None.
-        proALPHA_project_status_file (str, optional): Path to a proALPHA migration status file
-                                                      to generate the project list. Defaults to None.
+        config (Config): Configuration object for the NEMO platform.
+        projects (list[str], optional): List of project names to process. Defaults to None.
+        proALPHA_project_status_file (str, optional): Path to the proALPHA migration status file. Defaults to None.
+        csv_files_directory (str, optional): Directory containing CSV files for data upload. Defaults to None.
+        multi_projects (dict[str, str], optional): Dictionary mapping projects to additional configurations. Defaults to None.
 
     Returns:
         None
 
     Raises:
-        ValueError: If no projects are provided or the project list is empty.
-        RuntimeError: If no matching files are found for a given project.
+        ValueError: If no projects are provided or if required columns are missing in the migration status file.
 
-    Notes:
-        - If `proALPHA_project_status_file` is provided, the project list is generated from the file.
-        - Each project is processed by:
-            - Finding matching files.
-            - Sorting the files.
-            - Extracting a postfix and processing each file using `process_file`.
-        - Logs errors and exceptions if files are missing or the project list is invalid.
     """
 
     if proALPHA_project_status_file:
@@ -271,6 +275,7 @@ def csvfilepath(
     projectname: str,
     csv_files_directory: str = None,
     postfix: str = None,
+    template: bool = False,
 ) -> str:
     file_path = None
     if csv_files_directory:
@@ -279,7 +284,7 @@ def csvfilepath(
         if postfix == "MAIN":
             postfix = ""
         postfix = (" " + postfix).strip()
-        file_path = os.path.join(csv_files_directory, f"{projectname}{postfix}.csv")
+        file_path = os.path.join(csv_files_directory, f"{'TEMPLATE_' if template else ''}{projectname}{postfix}.csv")
 
     return file_path
 
@@ -294,7 +299,7 @@ def uploadData(
 ) -> None:
 
     # "real" data given? let's take this instead of the dummy file
-    file_path = csvfilepath(projectname, csv_files_directory, postfix)
+    file_path = csvfilepath(projectname, csv_files_directory, postfix,False)
     if file_path:
         logging.info(f"checking for data file {file_path}")
         if os.path.exists(file_path):
@@ -307,6 +312,7 @@ def uploadData(
     if new_project:
         uploadDummyData(config, projectname, df)
 
+
 def generateTemplateFile(
     config: Config,
     projectname: str,
@@ -315,22 +321,28 @@ def generateTemplateFile(
     postfix: str = None,
     new_project: bool = False,
 ) -> None:
-    
+
     # "real" data given? then we don't touch it
-    file_path = csvfilepath(projectname, csv_files_directory, postfix)
+    file_path = csvfilepath(projectname, csv_files_directory, postfix,False)
     if file_path:
         logging.info(f"checking for data file {file_path}")
         if os.path.exists(file_path):
-            logging.info(f"file {file_path} already exist. We don't need to generate a template for you")
+            logging.info(
+                f"file {file_path} already exist. We don't need to generate a template for you"
+            )
             return
         else:
-            logging.info(f"file {file_path} for project {projectname} not found! We create an empty template for you")
+            logging.info(
+                f"file {file_path} for project {projectname} not found! We create an empty template for you"
+            )
             nemo_import_names = [
-                import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+                import_name(row["Location in proALPHA"], idx)
+                for idx, row in df.iterrows()
             ]
-            data = {col:[""] for col in nemo_import_names}
-            templatedf = pd.DataFrame(data,columns=nemo_import_names)
-            templatedf.to_csv(file_path,index=False,sep=";")
+            data = {col: [""] for col in nemo_import_names}
+            templatedf = pd.DataFrame(data, columns=nemo_import_names)
+            templatedf.to_csv(csvfilepath(projectname, csv_files_directory, postfix,True), index=False, sep=";")
+
 
 def uploadRealData(
     config: Config,

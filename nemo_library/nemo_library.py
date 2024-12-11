@@ -229,28 +229,34 @@ class NemoLibrary:
         multi_projects: dict[str, str] = None,
     ) -> None:
         """
-        Updates/creates projects for MigMan based on a provided project list or a proALPHA project status file.
+        Update projects for the Migration Manager by processing project-specific CSV templates.
+
+        This method performs the following steps for each project:
+        1. If a proALPHA migration status file is provided, extract project steps from it.
+        2. Validate that projects are provided and non-empty.
+        3. Retrieve and sort matching template files for each project.
+        4. Process each file by:
+        - Extracting and adjusting column metadata.
+        - Creating or updating projects in the NEMO platform.
+        - Uploading real or dummy data based on availability.
+        - Generating template files for missing data if necessary.
+        - Creating deficiency mining reports and rules.
 
         Args:
-            projects (list[str], optional): A list of project names to create. Defaults to None.
-            proALPHA_project_status_file (str, optional): Path to a proALPHA migration status file
-                                                        to generate the project list. Defaults to None.
+            config (Config): Configuration object for the NEMO platform.
+            projects (list[str], optional): List of project names to process. Defaults to None.
+            proALPHA_project_status_file (str, optional): Path to the proALPHA migration status file. Defaults to None.
+            csv_files_directory (str, optional): Directory containing CSV files for data upload. Defaults to None.
+            multi_projects (dict[str, str], optional): Dictionary mapping projects to additional configurations. Defaults to None.
 
         Returns:
             None
 
         Raises:
-            ValueError: If no projects are provided or the project list is empty.
-            RuntimeError: If no matching files are found for a given project.
+            ValueError: If no projects are provided or if required columns are missing in the migration status file.
 
-        Notes:
-            - If `proALPHA_project_status_file` is provided, the project list is generated from the file.
-            - Each project is processed by:
-                - Finding matching files.
-                - Sorting the files.
-                - Extracting a postfix and processing each file using `process_file`.
-            - Logs errors and exceptions if files are missing or the project list is invalid.
         """
+
         updateProjectsForMigMan(
             self.config,
             projects=projects,

@@ -199,7 +199,7 @@ def process_file(
         projectname = re.sub(r"\s+", " ", projectname)
         projectname = projectname.strip()
 
-        # project already exists?
+        # project already exists? if not, create project, imported columns, reports and rules
         new_project = False
         if not projectname in getProjectList(config)["displayName"].to_list():
             new_project = True
@@ -214,7 +214,13 @@ def process_file(
 
             updateReports(config, projectname, dfdesc)
 
+        # if there is already data, upload it (otherwise, we upload fake data)
         uploadData(
+            config, projectname, dfdesc, csv_files_directory, postfix, new_project
+        )
+
+        # generate template (if file was not already given)
+        generateTemplateFile(
             config, projectname, dfdesc, csv_files_directory, postfix, new_project
         )
 
@@ -261,6 +267,23 @@ def process_columns(
         lastDisplayName = displayName
 
 
+def csvfilepath(
+    projectname: str,
+    csv_files_directory: str = None,
+    postfix: str = None,
+) -> str:
+    file_path = None
+    if csv_files_directory:
+        if not postfix:
+            postfix = "MAIN"
+        if postfix == "MAIN":
+            postfix = ""
+        postfix = (" " + postfix).strip()
+        file_path = os.path.join(csv_files_directory, f"{projectname}{postfix}.csv")
+
+    return file_path
+
+
 def uploadData(
     config: Config,
     projectname: str,
@@ -271,17 +294,9 @@ def uploadData(
 ) -> None:
 
     # "real" data given? let's take this instead of the dummy file
-    file_path = None
-    if csv_files_directory:
-        if not postfix:
-            postfix = "MAIN"
-        if postfix == "MAIN":
-            postfix = ""
-        postfix = (" " + postfix).strip()
-        file_path = os.path.join(csv_files_directory, f"{projectname}{postfix}.csv")
-        logging.info(f"checking for data file {file_path}")
-
+    file_path = csvfilepath(projectname, csv_files_directory, postfix)
     if file_path:
+        logging.info(f"checking for data file {file_path}")
         if os.path.exists(file_path):
             uploadRealData(config, projectname, df, file_path)
             return
@@ -292,6 +307,30 @@ def uploadData(
     if new_project:
         uploadDummyData(config, projectname, df)
 
+def generateTemplateFile(
+    config: Config,
+    projectname: str,
+    df: pd.DataFrame,
+    csv_files_directory: str = None,
+    postfix: str = None,
+    new_project: bool = False,
+) -> None:
+    
+    # "real" data given? then we don't touch it
+    file_path = csvfilepath(projectname, csv_files_directory, postfix)
+    if file_path:
+        logging.info(f"checking for data file {file_path}")
+        if os.path.exists(file_path):
+            logging.info(f"file {file_path} already exist. We don't need to generate a template for you")
+            return
+        else:
+            logging.info(f"file {file_path} for project {projectname} not found! We create an empty template for you")
+            nemo_import_names = [
+                import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+            ]
+            data = {col:[""] for col in nemo_import_names}
+            templatedf = pd.DataFrame(data,columns=nemo_import_names)
+            templatedf.to_csv(file_path,index=False,sep=";")
 
 def uploadRealData(
     config: Config,

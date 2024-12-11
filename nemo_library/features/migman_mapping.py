@@ -66,6 +66,7 @@ def updateMappingForMigman(
             field=field,
             additionalFields=additionalFields,
             folderForMappingFiles=folderForMappingFiles,
+            newProject=newProject,
         )
 
 
@@ -161,6 +162,7 @@ def loadData(
             logging.info(
                 f"file {file_path} for project {file_path} not found. Uploading dummy data"
             )
+
             fields = getImportedColumns(config=config, projectname=projectname)[
                 "importName"
             ]
@@ -196,6 +198,7 @@ def collectData(
     field: str,
     additionalFields: list[str],
     folderForMappingFiles: None,
+    newProject: bool,
 ):
 
     projectList = getProjectList(config=config)["displayName"].to_list()
@@ -211,13 +214,15 @@ def collectData(
             ctefields[project] = fields
 
     if len(ctefields) > 0:
-        queryforreport = sqlQuery(project=projectname, ctefields=ctefields)
+        queryforreport = sqlQuery(
+            project=projectname, ctefields=ctefields, newProject=newProject
+        )
         createOrUpdateReport(
             config=config,
             projectname=projectname,
             displayName="source mapping",
             querySyntax=queryforreport,
-            description="load all source values and map them"            
+            description="load all source values and map them",
         )
 
 
@@ -274,7 +279,7 @@ def collectDataFieldsForProject(
     return fieldList
 
 
-def sqlQuery(project: str, ctefields: dict[str, str]) -> str:
+def sqlQuery(project: str, ctefields: dict[str, str], newProject: bool) -> str:
 
     # setup CTEs to load data from source projects
     ctes = []
@@ -329,10 +334,15 @@ def sqlQuery(project: str, ctefields: dict[str, str]) -> str:
         f'cte."{fldkey}" as "source {fldkey}"'
         for fldkey, fldvalue in first_value.items()
     ]
-    subselecttgt = [
-        f'mapping.TARGET_{internal_name(fldkey)} as "target {fldkey}"'
-        for fldkey, fldvalue in first_value.items()
-    ]
+    if newProject:
+        subselecttgt = [
+            f'NULL as "target {fldkey}"' for fldkey, fldvalue in first_value.items()
+        ]
+    else:
+        subselecttgt = [
+            f'mapping.TARGET_{internal_name(fldkey)} as "target {fldkey}"'
+            for fldkey, fldvalue in first_value.items()
+        ]
     subselectjoin = [
         f'mapping.SOURCE_{internal_name(fldkey)} = cte."{fldkey}"'
         for fldkey, fldvalue in first_value.items()
@@ -342,10 +352,13 @@ SELECT
     {'\n\t,'.join(subselectsrc)}
     , {'\n\t,'.join(subselecttgt)}
 FROM
-    CTE_ALL_DISTINCT cte
+    CTE_ALL_DISTINCT cte"""
+
+    if not newProject:
+        finalquery += f"""
 LEFT JOIN
     $schema.$table mapping
 ON  
-    {'\n\t AND '.join(subselectjoin)}
-"""
+    {'\n\t AND '.join(subselectjoin)}"""
+
     return finalquery

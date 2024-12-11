@@ -1,1 +1,1 @@
-{"resources":{"21_BWA_42.sql":{"default-datasource":"sap_hana-190b4b510ba-7adf7c973a8efb41","default-schema":"CUSTOMER_ADMIN"}}}
+{"resources":{"21_BWA_42.sql":{"default-schema":"CUSTOMER_ADMIN","default-datasource":"sap_hana-190b4b510ba-7adf7c973a8efb41"},"Scripts/Test.sql":{"default-datasource":"sap_hana-193b4f270c2-19cbab1b7af0e0f2","default-schema":"MIG"}}}

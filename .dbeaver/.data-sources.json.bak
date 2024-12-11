@@ -1,21 +1,20 @@
 {
 	"folders": {},
 	"connections": {
-		"sap_hana-193b4f270c2-19cbab1b7af0e0f2": {
+		"sap_hana-190b4b510ba-7adf7c973a8efb41": {
 			"provider": "hana",
 			"driver": "sap_hana",
-			"name": "10.0.0.80",
+			"name": "10.0.0.214",
 			"save-password": true,
-			"virtual-model-id": "sap_hana-193777138f7-77c879d6d09deede",
 			"configuration": {
-				"host": "10.0.0.80",
+				"host": "10.0.0.214",
 				"port": "30013",
-				"url": "jdbc:sap://10.0.0.80:30013",
+				"url": "jdbc:sap://10.0.0.214:30013",
 				"configurationType": "MANUAL",
 				"type": "dev",
-				"closeIdleConnection": true,
+				"closeIdleConnection": false,
 				"properties": {
-					"databaseName": "mig"
+					"databaseName": "PAG"
 				},
 				"provider-properties": {
 					"edition": "PLATFORM_TENANT_DB",
@@ -25,7 +24,6 @@
 			}
 		}
 	},
-	"virtual-models": {"sap_hana-193777138f7-77c879d6d09deede":{"MIG":{":PROJECT_PART_DISCOUNT_GROUPS__CUSTOMERS_":{"constraints":{"VIRTUAL_PK":{"type":"vpk","attributes":["S_KUNARABDATUM_KUNDE"]}}}}}},
 	"connection-types": {
 		"dev": {
 			"name": "Development",
@@ -35,7 +33,7 @@
 			"confirm-execute": false,
 			"confirm-data-change": false,
 			"smart-commit": false,
-			"smart-commit-recover": true,
+			"smart-commit-recover": false,
 			"auto-close-transactions": true,
 			"close-transactions-period": 1800,
 			"auto-close-connections": true,

@@ -14,14 +14,13 @@ from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
-    LoadReport,
     createImportedColumn,
     createOrUpdateReport,
     createOrUpdateRule,
     createProject,
-    getImportedColumns,
     getProjectList,
 )
+from nemo_library.utils.migmanutils import initializeFolderStructure
 from nemo_library.utils.utils import display_name, import_name, internal_name, log_error
 
 __all__ = ["updateProjectsForMigMan"]
@@ -31,9 +30,9 @@ CALCULATED_FIELD = "CALCULATED_FIELD"
 
 def updateProjectsForMigMan(
     config: Config,
+    local_project_path: str,
     projects: list[str] = None,
     proALPHA_project_status_file: str = None,
-    csv_files_directory: str = None,
     multi_projects: dict[str, str] = None,
 ) -> None:
     """
@@ -65,6 +64,9 @@ def updateProjectsForMigMan(
 
     """
 
+    # if not already existing, create folder structure
+    initializeFolderStructure(local_project_path)
+
     if proALPHA_project_status_file:
         projects = getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
 
@@ -89,7 +91,7 @@ def updateProjectsForMigMan(
                 config=config,
                 filename=filename,
                 postfix=postfix,
-                csv_files_directory=csv_files_directory,
+                local_project_path=local_project_path,
                 multi_projects=multi_projects,
             )
 
@@ -132,7 +134,7 @@ def process_file(
     config: Config,
     filename: str,
     postfix: str,
-    csv_files_directory: str = None,
+    local_project_path: str = None,
     multi_projects: dict[str, str] = None,
 ) -> None:
     """Process a single file and create a project."""
@@ -220,12 +222,12 @@ def process_file(
 
         # if there is already data, upload it (otherwise, we upload fake data)
         uploadData(
-            config, projectname, dfdesc, csv_files_directory, postfix, new_project
+            config, projectname, dfdesc, local_project_path, postfix, new_project
         )
 
         # generate template (if file was not already given)
         generateTemplateFile(
-            config, projectname, dfdesc, csv_files_directory, postfix, new_project
+            config, projectname, dfdesc, local_project_path, postfix, new_project
         )
 
 
@@ -273,18 +275,21 @@ def process_columns(
 
 def csvfilepath(
     projectname: str,
-    csv_files_directory: str = None,
+    local_project_path: str,
     postfix: str = None,
     template: bool = False,
 ) -> str:
     file_path = None
-    if csv_files_directory:
-        if not postfix:
-            postfix = "MAIN"
-        if postfix == "MAIN":
-            postfix = ""
-        postfix = (" " + postfix).strip()
-        file_path = os.path.join(csv_files_directory, f"{'TEMPLATE_' if template else ''}{projectname}{postfix}.csv")
+    if not postfix:
+        postfix = "MAIN"
+    if postfix == "MAIN":
+        postfix = ""
+    postfix = (" " + postfix).strip()
+    file_path = os.path.join(
+        local_project_path,
+        "templates" if template else "srcdata",
+        f"{projectname}{postfix}.csv",
+    )
 
     return file_path
 
@@ -293,13 +298,13 @@ def uploadData(
     config: Config,
     projectname: str,
     df: pd.DataFrame,
-    csv_files_directory: str = None,
+    local_project_path: str,
     postfix: str = None,
     new_project: bool = False,
 ) -> None:
 
     # "real" data given? let's take this instead of the dummy file
-    file_path = csvfilepath(projectname, csv_files_directory, postfix,False)
+    file_path = csvfilepath(projectname, local_project_path, postfix, False)
     if file_path:
         logging.info(f"checking for data file {file_path}")
         if os.path.exists(file_path):
@@ -317,13 +322,13 @@ def generateTemplateFile(
     config: Config,
     projectname: str,
     df: pd.DataFrame,
-    csv_files_directory: str = None,
+    local_project_path: str = None,
     postfix: str = None,
     new_project: bool = False,
 ) -> None:
 
     # "real" data given? then we don't touch it
-    file_path = csvfilepath(projectname, csv_files_directory, postfix,False)
+    file_path = csvfilepath(projectname, local_project_path, postfix, False)
     if file_path:
         logging.info(f"checking for data file {file_path}")
         if os.path.exists(file_path):
@@ -341,7 +346,11 @@ def generateTemplateFile(
             ]
             data = {col: [""] for col in nemo_import_names}
             templatedf = pd.DataFrame(data, columns=nemo_import_names)
-            templatedf.to_csv(csvfilepath(projectname, csv_files_directory, postfix,True), index=False, sep=";")
+            templatedf.to_csv(
+                csvfilepath(projectname, local_project_path, postfix, True),
+                index=False,
+                sep=";",
+            )
 
 
 def uploadRealData(

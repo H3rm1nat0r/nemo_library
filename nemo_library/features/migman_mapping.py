@@ -1,8 +1,6 @@
 import logging
 import os
 import re
-import tempfile
-import pandas as pd
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.projects import (
@@ -13,6 +11,7 @@ from nemo_library.features.projects import (
     getImportedColumns,
     getProjectList,
 )
+from nemo_library.utils.migmanutils import getMappingFilePath, initializeFolderStructure
 from nemo_library.utils.utils import display_name, import_name, internal_name
 
 __all__ = ["updateMappingForMigman"]
@@ -20,12 +19,15 @@ __all__ = ["updateMappingForMigman"]
 
 def updateMappingForMigman(
     config: Config,
-    fields: list[str],
-    folderForMappingFiles: str,
+    mapping_fields: list[str],
+    local_project_path: str,
     additionalfields: dict[str, str] = None,
 ):
 
-    for field in fields:
+    # if not already existing, create folder structure
+    initializeFolderStructure(local_project_path)
+
+    for field in mapping_fields:
 
         additionalFields = (
             additionalfields[field] if field in additionalfields else None
@@ -48,16 +50,16 @@ def updateMappingForMigman(
                 additionalFields=additionalFields,
             )
 
-            # we need to ensure that the table in the database is created. Either we have data,
-            # then we upload it. Or we have to create dummy data
-            loadData(
-                config=config,
-                projectname=projectame,
-                field=field,
-                additionalFields=additionalFields,
-                folderForMappingFiles=folderForMappingFiles,
-                newProject=newProject,
-            )
+        # if there is data provided (as a CSV-file), we upload this now.
+        # if there is no data AND the project just have been created, we upload source data and create a template file
+        loadData(
+            config=config,
+            projectname=projectame,
+            field=field,
+            additionalFields=additionalFields,
+            local_project_path=local_project_path,
+            newProject=newProject,
+        )
 
         # collect data
         collectData(
@@ -65,10 +67,10 @@ def updateMappingForMigman(
             projectname=projectame,
             field=field,
             additionalFields=additionalFields,
-            folderForMappingFiles=folderForMappingFiles,
-            newProject=newProject,
+            local_project_path=local_project_path,
+            newProject=False,  # project is not new any longer, we can access it's data (maybe uploaded in former steps)
         )
-
+    
 
 def createMappingProject(
     config: Config,
@@ -139,14 +141,14 @@ def loadData(
     projectname: str,
     field: str,
     additionalFields: list[str],
-    folderForMappingFiles,
+    local_project_path: str,
     newProject: bool,
 ) -> None:
 
     # project is new and table does not exist. We have to upload dummy-data to enforce creation of database table
 
     # "real" data given? let's take this instead of the dummy file
-    file_path = os.path.join(folderForMappingFiles, f"{projectname}.csv")
+    file_path = getMappingFilePath(projectname,local_project_path)
     logging.info(f"checking for data file {file_path}")
 
     if os.path.exists(file_path):
@@ -158,51 +160,56 @@ def loadData(
         )
         logging.info(f"upload to project {projectname} completed")
     else:
+        logging.info(f"file {file_path} not found")
+        
         if newProject:
             logging.info(
-                f"file {file_path} for project {file_path} not found. Uploading dummy data"
+                f"file {file_path} for project {file_path} not found. Uploading source data"
             )
 
-            fields = getImportedColumns(config=config, projectname=projectname)[
-                "importName"
-            ]
-            data = {field: ["xxx"] * 5 for field in fields}
-            df = pd.DataFrame(data)
+            ctefields = getctefields(
+                config=config, field=field, additionalFields=additionalFields
+            )
+            queryforreport = sqlQuery(
+                project=projectname, ctefields=ctefields, newProject=newProject
+            )
+            createOrUpdateReport(
+                config=config,
+                projectname=projectname,
+                displayName="source mapping",
+                querySyntax=queryforreport,
+                description="load all source values and map them",
+            )
+            df = LoadReport(
+                config=config, projectname=projectname, report_name="source mapping"
+            )
 
-            # Write to a temporary file and upload
-            with tempfile.TemporaryDirectory() as temp_dir:
-                temp_file_path = os.path.join(temp_dir, "tempfile.csv")
+            # export file as a template for mappings
+            df.to_csv(
+                file_path,
+                index=False,
+                sep=";",
+                na_rep="",
+            )
+            logging.info(f"mapping file '{file_path}' generated with source contents")
 
-                df.to_csv(
-                    temp_file_path,
-                    index=False,
-                    sep=";",
-                    na_rep="",
-                )
-                logging.info(
-                    f"dummy file {temp_file_path} written for project '{projectname}'. Uploading data to NEMO now..."
-                )
-
-                ReUploadFile(
-                    config=config,
-                    projectname=projectname,
-                    filename=temp_file_path,
-                    update_project_settings=False,
-                )
-                logging.info(f"upload to project {projectname} completed")
+            # and upload it immediately
+            ReUploadFile(
+                config=config,
+                projectname=projectname,
+                filename=file_path,
+                update_project_settings=False,
+            )
+            logging.info(f"upload to project {projectname} completed")
 
 
-def collectData(
+def getctefields(
     config: Config,
-    projectname: str,
     field: str,
     additionalFields: list[str],
-    folderForMappingFiles: None,
-    newProject: bool,
-):
-
-    projectList = getProjectList(config=config)["displayName"].to_list()
+) -> list[str]:
     ctefields = {}
+    projectList = getProjectList(config=config)["displayName"].to_list()
     for project in projectList:
         fields = collectDataFieldsForProject(
             config=config,
@@ -213,17 +220,55 @@ def collectData(
         if fields:
             ctefields[project] = fields
 
-    if len(ctefields) > 0:
-        queryforreport = sqlQuery(
-            project=projectname, ctefields=ctefields, newProject=newProject
-        )
-        createOrUpdateReport(
-            config=config,
-            projectname=projectname,
-            displayName="source mapping",
-            querySyntax=queryforreport,
-            description="load all source values and map them",
-        )
+    return ctefields
+
+
+def collectData(
+    config: Config,
+    projectname: str,
+    field: str,
+    additionalFields: list[str],
+    local_project_path: str,
+    newProject: bool,
+):
+
+    ctefields = getctefields(
+        config=config, field=field, additionalFields=additionalFields
+    )
+
+    queryforreport = sqlQuery(
+        project=projectname, ctefields=ctefields, newProject=newProject
+    )
+    createOrUpdateReport(
+        config=config,
+        projectname=projectname,
+        displayName="source mapping",
+        querySyntax=queryforreport,
+        description="load all source values and map them",
+    )
+
+    df = LoadReport(
+        config=config, projectname=projectname, report_name="source mapping"
+    )
+
+    file_path = getMappingFilePath(projectname,local_project_path)
+
+    # export file as a template for mappings
+    df.to_csv(
+        file_path,
+        index=False,
+        sep=";",
+        na_rep="",
+    )
+
+    # and upload it immediately
+    ReUploadFile(
+        config=config,
+        projectname=projectname,
+        filename=file_path,
+        update_project_settings=False,
+    )
+    logging.info(f"upload to project {projectname} completed")
 
 
 def collectDataFieldsForProject(

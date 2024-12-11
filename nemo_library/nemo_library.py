@@ -223,56 +223,27 @@ class NemoLibrary:
 
     def updateProjectsForMigMan(
         self,
+        local_project_path: str,
         projects: list[str] = None,
         proALPHA_project_status_file: str = None,
-        csv_files_directory: str = None,
         multi_projects: dict[str, str] = None,
     ) -> None:
-        """
-        Update projects for the Migration Manager by processing project-specific CSV templates.
-
-        This method performs the following steps for each project:
-        1. If a proALPHA migration status file is provided, extract project steps from it.
-        2. Validate that projects are provided and non-empty.
-        3. Retrieve and sort matching template files for each project.
-        4. Process each file by:
-        - Extracting and adjusting column metadata.
-        - Creating or updating projects in the NEMO platform.
-        - Uploading real or dummy data based on availability.
-        - Generating template files for missing data if necessary.
-        - Creating deficiency mining reports and rules.
-
-        Args:
-            config (Config): Configuration object for the NEMO platform.
-            projects (list[str], optional): List of project names to process. Defaults to None.
-            proALPHA_project_status_file (str, optional): Path to the proALPHA migration status file. Defaults to None.
-            csv_files_directory (str, optional): Directory containing CSV files for data upload. Defaults to None.
-            multi_projects (dict[str, str], optional): Dictionary mapping projects to additional configurations. Defaults to None.
-
-        Returns:
-            None
-
-        Raises:
-            ValueError: If no projects are provided or if required columns are missing in the migration status file.
-
-        """
-
         updateProjectsForMigMan(
             self.config,
             projects=projects,
             proALPHA_project_status_file=proALPHA_project_status_file,
-            csv_files_directory=csv_files_directory,
+            local_project_path=local_project_path,
             multi_projects=multi_projects,
         )
 
     def updateMappingForMigman(
         self,
-        fields: list[str],
-        folderForMappingFiles: str,
-        additionalfields: dict[str, str] = None,
+        local_project_path: str,
+        mapping_fields: list[str],
+        additional_fields: dict[str, str] = None,
     ):
         updateMappingForMigman(
-            self.config, fields=fields, additionalfields=additionalfields,folderForMappingFiles=folderForMappingFiles
+            self.config, mapping_fields=mapping_fields, additionalfields=additional_fields,local_project_path=local_project_path
         )
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:

@@ -232,6 +232,6 @@ def ReUploadFile(
             log_error("Upload stopped, no project_id available")
         raise log_error(f"Upload aborted: {e}")
 
-    # finally:
-    #     if gzipped_filename:
-    #         os.remove(gzipped_filename)
+    finally:
+        if gzipped_filename:
+            os.remove(gzipped_filename)

@@ -13,6 +13,12 @@ from nemo_library.features.config import Config
 from nemo_library.features.projects import getProjectID
 from nemo_library.utils.utils import log_error
 
+def GetFileSize(filepath:str):
+    # filesize in byte
+    filesize_in_byte = os.path.getsize(filepath)
+    # byte to MB (1 MB = 1024 * 1024 Byte)
+    filesize_in_mb = filesize_in_byte / (1024 * 1024)
+    return filesize_in_mb
 
 def ReUploadFile(
     config: Config,
@@ -55,8 +61,20 @@ def ReUploadFile(
     headers = None
     project_id = None
     gzipped_filename = None
-
+    compress_level = 3
     try:
+        filesize = GetFileSize(filename)
+
+        logging.info(
+            f"Size of the file: {filesize} MB"
+        )
+
+        if filesize < 5 :
+            compress_level = 0
+            logging.info(
+                f"Compress Level: {compress_level}"
+            )
+            
         project_id = getProjectID(config, projectname)
 
         headers = config.connection_get_headers()
@@ -68,7 +86,7 @@ def ReUploadFile(
         # Zip the file before uploading
         gzipped_filename = filename + ".gz"
         with open(filename, "rb") as f_in:
-            with gzip.open(gzipped_filename, "wb", compresslevel=1) as f_out:
+            with gzip.open(gzipped_filename, "wb", compresslevel=compress_level) as f_out:
                 shutil.copyfileobj(f_in, f_out)
         logging.info(f"File {filename} has been compressed to {gzipped_filename}")
 

@@ -103,7 +103,9 @@ def get_matching_files(project: str) -> list[str]:
     )
     return [
         resource
-        for resource in importlib.resources.contents("nemo_library.templates.migmantemplates")
+        for resource in importlib.resources.contents(
+            "nemo_library.templates.migmantemplates"
+        )
         if pattern.match(resource)
     ]
 
@@ -221,14 +223,10 @@ def process_file(
             updateReports(config, projectname, dfdesc)
 
         # if there is already data, upload it (otherwise, we upload fake data)
-        uploadData(
-            config, projectname, dfdesc, local_project_path, postfix, new_project
-        )
+        uploadData(config, projectname, dfdesc, local_project_path, new_project)
 
         # generate template (if file was not already given)
-        generateTemplateFile(
-            config, projectname, dfdesc, local_project_path, postfix, new_project
-        )
+        generateTemplateFile(config, projectname, dfdesc, local_project_path)
 
 
 def process_columns(
@@ -276,19 +274,13 @@ def process_columns(
 def csvfilepath(
     projectname: str,
     local_project_path: str,
-    postfix: str = None,
     template: bool = False,
 ) -> str:
     file_path = None
-    if not postfix:
-        postfix = "MAIN"
-    if postfix == "MAIN":
-        postfix = ""
-    postfix = (" " + postfix).strip()
     file_path = os.path.join(
         local_project_path,
         "templates" if template else "srcdata",
-        f"{projectname}{postfix}.csv",
+        f"{projectname}.csv",
     )
 
     return file_path
@@ -299,22 +291,59 @@ def uploadData(
     projectname: str,
     df: pd.DataFrame,
     local_project_path: str,
-    postfix: str = None,
     new_project: bool = False,
 ) -> None:
 
     # "real" data given? let's take this instead of the dummy file
-    file_path = csvfilepath(projectname, local_project_path, postfix, False)
+    file_path = csvfilepath(projectname, local_project_path, False)
     if file_path:
-        logging.info(f"checking for data file {file_path}")
+        logging.info(f"checking for data file {file_path} for project {projectname}")
         if os.path.exists(file_path):
             uploadRealData(config, projectname, df, file_path)
             return
-        else:
-            logging.warning(f"file {file_path} for project {projectname} not found!")
+
+    # if no data was provided, we check for ready2run packages
+    basename = os.path.basename(file_path)
+    if importlib.resources.is_resource("nemo_library.templates.ready2run", basename):
+        logging.info(
+            f"ready2run package found. Load this now into project {projectname}"
+        )
+        with importlib.resources.open_text(
+            "nemo_library.templates.ready2run", basename
+        ) as file:
+            df = pd.read_csv(
+                file,
+                sep=";",
+                dtype=str,
+            )
+            # Write to a temporary file and upload
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_file_path = os.path.join(temp_dir, "tempfile.csv")
+
+                df.to_csv(
+                    temp_file_path,
+                    index=False,
+                    sep=";",
+                    na_rep="",
+                    encoding="UTF-8",
+                )
+                logging.info(
+                    f"dummy file {temp_file_path} written for project '{projectname}'. Uploading data to NEMO now..."
+                )
+
+                ReUploadFile(
+                    config=config,
+                    projectname=projectname,
+                    filename=temp_file_path,
+                    update_project_settings=False,
+                )
+                logging.info(f"upload to project {projectname} completed")
+
+        return
 
     # otherwise, we upload dummy data, but only for newly created projects
     if new_project:
+        logging.info(f"upload fake data for project {projectname}")
         uploadDummyData(config, projectname, df)
 
 
@@ -323,12 +352,10 @@ def generateTemplateFile(
     projectname: str,
     df: pd.DataFrame,
     local_project_path: str = None,
-    postfix: str = None,
-    new_project: bool = False,
 ) -> None:
 
     # "real" data given? then we don't touch it
-    file_path = csvfilepath(projectname, local_project_path, postfix, False)
+    file_path = csvfilepath(projectname, local_project_path, False)
     if file_path:
         logging.info(f"checking for data file {file_path}")
         if os.path.exists(file_path):
@@ -347,7 +374,7 @@ def generateTemplateFile(
             data = {col: [""] for col in nemo_import_names}
             templatedf = pd.DataFrame(data, columns=nemo_import_names)
             templatedf.to_csv(
-                csvfilepath(projectname, local_project_path, postfix, True),
+                csvfilepath(projectname, local_project_path, True),
                 index=False,
                 sep=";",
                 encoding="UTF-8",

@@ -103,7 +103,7 @@ def get_matching_files(project: str) -> list[str]:
     )
     return [
         resource
-        for resource in importlib.resources.contents("nemo_library.migmantemplates")
+        for resource in importlib.resources.contents("nemo_library.templates.migmantemplates")
         if pattern.match(resource)
     ]
 
@@ -152,7 +152,7 @@ def process_file(
         f"Processing file {filename} (postfix {postfix}) for project '{project}'"
     )
     with importlib.resources.open_binary(
-        "nemo_library.migmantemplates", filename
+        "nemo_library.templates.migmantemplates", filename
     ) as file:
 
         # there is a bug in the migman exporter. It has too many separators and the columns are "shifted". This is the csv in plain text
@@ -170,7 +170,7 @@ def process_file(
         dummyheaders = dfdummy.columns
 
     with importlib.resources.open_binary(
-        "nemo_library.migmantemplates", filename
+        "nemo_library.templates.migmantemplates", filename
     ) as file:
         dfdesc = pd.read_csv(
             file,

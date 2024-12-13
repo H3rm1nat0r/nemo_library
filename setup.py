@@ -12,8 +12,12 @@ with open(requirements_path) as f:
 # Setup configuration for the Python package
 setup(
     name='nemo_library',  # Name of the package
-    version='1.2.14',  # Version of the package
+    version='1.2.15',  # Version of the package
     packages=find_packages(),  # Automatically find and include all packages
+    include_package_data=True,  # add package data
+    package_data={
+        "nemo_library": ["migmantemplates/*.csv"],  # include all csv files
+    },   
     install_requires=required,  # List of dependencies from requirements.txt
     author='Gunnar Schug',  # Author of the package
     author_email='GunnarSchug81@gmail.com',  # Author's email address

@@ -482,38 +482,19 @@ def applyMapping(
         
         columnstobemapped = []
         # check for columns in this project that are mapped
-        for key, value in mappingfieldsall.items():
-            result = next(
-                (
-                    entry
+        for key, values in mappingfieldsall.items():
+
+            # Check if ALL values in 'values' match
+            all_match = all(
+                any(
+                    re.match(rf"^{re.escape(val)} \(\d{{3}}\)$", entry)
                     for entry in importedcolumns
-                    if re.match(rf"^{re.escape(key)} \(\d{{3}}\)$", entry)
-                ),
-                None,
+                )
+                for val in values
             )
-            if result:
-                columnstobemapped.append(result)
-                
+            
+            if all_match:  # Only add if ALL values match
+                columnstobemapped.extend(values)
+                        
         print(project,":",columnstobemapped)                
             
-        
-    # otherProjects = list(set(projectList) - set(mappingprojects))
-
-    # for project in otherProjects:
-    #     if project in ["Business Processes", "Master Data"]:
-    #         continue
-
-    #     # search mapping columns in this project
-    #     importedcolumns = getImportedColumns(config=config,projectname=project)["displayName"].to_list()
-    #     mappingcolumns = []
-    #     # result = next(
-    #     #     (
-    #     #         entry
-    #     #         for entry in imported_columns
-    #     #         if re.match(rf"^{re.escape(field)} \(\d{{3}}\)$", entry)
-    #     #     ),
-    #     #     None,
-    #     # )
-    #     # if result:
-        
-    #     print(project,":", mappingcolumns)

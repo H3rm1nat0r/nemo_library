@@ -31,19 +31,19 @@ def updateMappingForMigman(
     projectList = getProjectList(config=config)["displayName"].to_list()
 
     # create mapping projects and upload data
-    # updateMappings(
-    #     config=config,
-    #     mapping_fields=mapping_fields,
-    #     local_project_path=local_project_path,
-    #     additionalfields=additionalfields,
-    #     projectList=projectList,
-    # )
-
-    # apply mappings to related projects
-    applyMapping(
+    updateMappings(
         config=config,
+        mapping_fields=mapping_fields,
+        local_project_path=local_project_path,
+        additionalfields=additionalfields,
         projectList=projectList,
     )
+
+    # apply mappings to related projects
+    # applyMapping(
+    #     config=config,
+    #     projectList=projectList,
+    # )
 
 
 def createMappingProject(
@@ -88,7 +88,6 @@ def createMappingImportedColumnns(
     if additionalFields:
         for additionalField in additionalFields:
             fields.append(display_name(f"source {additionalField}"))
-            fields.append(display_name(f"target {additionalField}"))
 
     importedColumnsList = getImportedColumns(config=config, projectname=projectname)
     importedColumnsList = (
@@ -142,10 +141,12 @@ def loadData(
                 f"file {file_path} for project {file_path} not found. Uploading source data"
             )
 
-            queryforreport = sqlQuery(
+            queryforreport = sqlQueryInMappingTable(
                 config=config,
+                projectname=projectname,
                 field=field,
                 additionalFields=additionalFields,
+                local_project_path=local_project_path,
                 newProject=newProject,
                 relatedfields=relatedfields,
             )
@@ -213,10 +214,12 @@ def collectData(
     relatedfields: list[str],
 ):
 
-    queryforreport = sqlQuery(
+    queryforreport = sqlQueryInMappingTable(
         config=config,
+        projectname=projectname,
         field=field,
         additionalFields=additionalFields,
+        local_project_path=local_project_path,
         newProject=newProject,
         relatedfields=relatedfields,
     )
@@ -309,10 +312,12 @@ def collectDataFieldsForProject(
     return fieldList
 
 
-def sqlQuery(
+def sqlQueryInMappingTable(
     config: Config,
+    projectname: str,
     field: str,
     additionalFields: list[str],
+    local_project_path: str,
     newProject: bool,
     relatedfields: list[str],
 ) -> str:
@@ -370,15 +375,6 @@ def sqlQuery(
         f'cte."{fldkey}" as "source {fldkey}"'
         for fldkey, fldvalue in first_value.items()
     ]
-    if newProject:
-        subselecttgt = [
-            f'NULL as "target {fldkey}"' for fldkey, fldvalue in first_value.items()
-        ]
-    else:
-        subselecttgt = [
-            f'mapping.TARGET_{internal_name(fldkey)} as "target {fldkey}"'
-            for fldkey, fldvalue in first_value.items()
-        ]
     subselectjoin = [
         f'mapping.SOURCE_{internal_name(fldkey)} = cte."{fldkey}"'
         for fldkey, fldvalue in first_value.items()
@@ -386,7 +382,7 @@ def sqlQuery(
     finalquery = f"""{queryctes}
 SELECT
     {'\n\t,'.join(subselectsrc)}
-    , {'\n\t,'.join(subselecttgt)}
+    , {"NULL" if newProject else f"mapping.TARGET_{internal_name(field)}"} AS "target {field}"
 FROM
     CTE_ALL_DISTINCT cte"""
 
@@ -468,19 +464,34 @@ def applyMapping(
     # It might happen, that the user does not run our library will all mapping fields given that exists.
     # In any case, we have to check for ALL mappings defined to create the right reports. So here we ignore
     # the mapping fields that have been given - we collect all the mappings by ourselves
-    mappingprojects = [x[len("Mapping "):] for x in projectList if x.startswith("Mapping ")]
+    mappingprojects = [
+        x[len("Mapping ") :] for x in projectList if x.startswith("Mapping ")
+    ]
     mappingfieldsall = {}
     for project in mappingprojects:
-        importedcolumns = getImportedColumns(config=config,projectname=f"Mapping {project}")["displayName"].to_list()
-        mappingfieldsprj = [x[len("source "):] for x in importedcolumns if x.startswith("source ")]
+        importedcolumns = getImportedColumns(
+            config=config, projectname=f"Mapping {project}"
+        )["displayName"].to_list()
+        mappingfieldsprj = [
+            x[len("source ") :] for x in importedcolumns if x.startswith("source ")
+        ]
         mappingfieldsall[project] = mappingfieldsprj
-        
-    # scan all the other projects now whether they contain these fields or not    
-    dataprojects = [x for x in projectList if not x.startswith("Mapping") and not x in ["Business Processes","Master Data"]]
+
+    # scan all the other projects now whether they contain these fields or not
+    dataprojects = [
+        x
+        for x in projectList
+        if not x.startswith("Mapping")
+        and not x in ["Business Processes", "Master Data"]
+    ]
+
+    dataprojects = ["Customers"]
     for project in dataprojects:
-        importedcolumns = getImportedColumns(config=config,projectname=project)["displayName"].to_list()
-        
-        columnstobemapped = []
+        importedcolumns = getImportedColumns(config=config, projectname=project)[
+            "displayName"
+        ].to_list()
+
+        columnstobemapped = {}
         # check for columns in this project that are mapped
         for key, values in mappingfieldsall.items():
 
@@ -492,9 +503,53 @@ def applyMapping(
                 )
                 for val in values
             )
-            
+
             if all_match:  # Only add if ALL values match
-                columnstobemapped.extend(values)
-                        
-        print(project,":",columnstobemapped)                
-            
+                columnstobemapped[key] = values
+
+        # if there are mapped columns in this project, we are going to add mapped fields for that project now
+        if columnstobemapped:
+            sqlQuery = sqlQueryInDataTable(
+                config=config,
+                project=project,
+                columnstobemapped=columnstobemapped,
+            )
+            print(sqlQuery)
+            return
+
+
+def sqlQueryInDataTable(
+    config: Config,
+    project: str,
+    columnstobemapped: dict[str, list[str]],
+) -> str:
+
+    print(columnstobemapped)
+    print("-" * 80)
+    importedcolumnsdf = getImportedColumns(config=config, projectname=project)
+    datafrags = [
+        f'data.{row["internalName"]} AS "{row["displayName"]}"'
+        for idx, row in importedcolumnsdf.iterrows()
+    ]
+    datafrags += [
+        f'Mapping_{internal_name(item)}.TARGET_{internal_name(item)} AS "Mapped_{item}"'
+        for sublist in columnstobemapped.values()
+        for item in sublist
+    ]
+    joins = []
+    for key, value in columnstobemapped.items():
+        selects = [f"{field}" for field in value]
+        joins.append(
+            f"""LEFT JOIN
+$schema.PROJECT_MAPPING_{internal_name(key)} MAPPING_{internal_name(key)}
+    ON {"\n\tAND ".join(selects)}"""
+        )
+
+    query = f"""
+SELECT
+    {"\n\t,".join(datafrags)}c
+FROM
+    $schema.$table data
+{"\n".join(joins)}
+"""
+    return query

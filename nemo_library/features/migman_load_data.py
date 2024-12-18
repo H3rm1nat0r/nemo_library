@@ -183,9 +183,9 @@ def _load_data(
                 prev_col = col
 
         # now we have created all columns in NEMO. Upload data
-        # upload_dataframe(
-        #     config=config_var.get(), project_name=project_name, df=datadf_cleaned
-        # )
+        upload_dataframe(
+            config=config_var.get(), project_name=project_name, df=datadf_cleaned
+        )
 
         # if there are new columns, update all reports
         columns_created = datadf_cleaned.columns.to_list()

@@ -4,7 +4,7 @@ import re
 from typing import Tuple
 import pandas as pd
 from nemo_library.features.config import Config
-from nemo_library.utils.utils import display_name, import_name, internal_name, log_error
+from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name, log_error
 
 __all__ = ["MigManInitDatabase"]
 
@@ -101,7 +101,7 @@ def _import_datadescription(resource: str, dummyheaders: pd.DataFrame) -> pd.Dat
 def _add_calculated_fields(dfdesc: pd.DataFrame, project:str, postfix:str) -> pd.DataFrame:
     dfdesc["project_name"] = project
     dfdesc["postfix"] = postfix if postfix != "MAIN" else ""
-    dfdesc["display_name"] = dfdesc.apply(lambda row: display_name(row["Location in proALPHA"], row.name), axis=1)
-    dfdesc["internal_name"] = dfdesc.apply(lambda row: internal_name(row["Location in proALPHA"], row.name), axis=1)
-    dfdesc["import_name"] = dfdesc.apply(lambda row: import_name(row["Location in proALPHA"], row.name), axis=1)
+    dfdesc["display_name"] = dfdesc.apply(lambda row: get_display_name(row["Location in proALPHA"], row.name), axis=1)
+    dfdesc["internal_name"] = dfdesc.apply(lambda row: get_internal_name(row["Location in proALPHA"], row.name), axis=1)
+    dfdesc["import_name"] = dfdesc.apply(lambda row: get_import_name(row["Location in proALPHA"], row.name), axis=1)
     return dfdesc

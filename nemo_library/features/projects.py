@@ -5,7 +5,7 @@ import requests
 import json
 
 from nemo_library.features.config import Config
-from nemo_library.utils.utils import display_name, import_name, internal_name, log_error
+from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name, log_error
 
 
 def getProjectList(
@@ -677,9 +677,9 @@ def synchronizeCsvColsAndImportedColumns(
 
     # Check if a record exists in the DataFrame for each column
     for column_name in csv_display_names:
-        displayName = display_name(column_name)
-        internalName = internal_name(column_name)
-        importName = import_name(column_name)
+        displayName = get_display_name(column_name)
+        internalName = get_internal_name(column_name)
+        importName = get_import_name(column_name)
 
         # Check if the record with internal_name equal to the column name exists
         if internalName in importedColumns:

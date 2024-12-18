@@ -3,19 +3,19 @@ import re
 from typing import Type
 
 
-def display_name(column: str,idx: int=None) -> str:
+def get_display_name(column: str,idx: int=None) -> str:
     if idx:
         return f"{column} ({idx:03})"
     else:
         return column
 
-def internal_name(column: str,idx: int=None) -> str:
-    return sanitized_name(display_name(column,idx))
+def get_internal_name(column: str,idx: int=None) -> str:
+    return get_sanitized_name(get_display_name(column,idx))
 
-def import_name(column: str,idx: int=None) -> str:
-    return display_name(column,idx)
+def get_import_name(column: str,idx: int=None) -> str:
+    return get_display_name(column,idx)
 
-def sanitized_name(displayName: str) -> str:
+def get_sanitized_name(displayName: str) -> str:
     return re.sub(r"[^a-z0-9_]", "_", displayName.lower()).strip()
 
 def log_error(error_message: str, error_type: Type[BaseException] = ValueError) -> None:

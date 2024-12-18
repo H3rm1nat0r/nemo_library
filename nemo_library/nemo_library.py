@@ -5,7 +5,10 @@ from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
 from nemo_library.features.migman_init_database import MigManInitDatabase
-from nemo_library.features.migman_create_project_templates import MigManCreateProjectTemplates
+from nemo_library.features.migman_create_project_templates import (
+    MigManCreateProjectTemplates,
+)
+from nemo_library.features.migman_load_data import MigManLoadData
 from nemo_library.features.migman_mapping import updateMappingForMigman
 from nemo_library.features.migman_projects import updateProjectsForMigMan
 from nemo_library.features.projects import (
@@ -234,6 +237,22 @@ class NemoLibrary:
         multi_projects: dict[str, str] = None,
     ) -> None:
         MigManCreateProjectTemplates(
+            self.config,
+            projects=projects,
+            proALPHA_project_status_file=proALPHA_project_status_file,
+            local_project_directory=local_project_directory,
+            multi_projects=multi_projects,
+        )
+
+    def MigManLoadData(
+        self,
+        local_project_directory: str,
+        projects: list[str] = None,
+        proALPHA_project_status_file: str = None,
+        multi_projects: dict[str, str] = None,
+    ) -> None:
+
+        MigManLoadData(
             self.config,
             projects=projects,
             proALPHA_project_status_file=proALPHA_project_status_file,

@@ -14,7 +14,7 @@ from nemo_library.features.projects import (
     getProjectList,
 )
 from nemo_library.utils.migmanutils import getMappingFilePath, initializeFolderStructure
-from nemo_library.utils.utils import display_name, import_name, internal_name
+from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name
 
 __all__ = ["updateMappingForMigman"]
 
@@ -83,12 +83,12 @@ def createMappingImportedColumnns(
 ) -> dict[str, str]:
 
     fields = []
-    fields.append(display_name(f"source {field}"))
-    fields.append(display_name(f"target {field}"))
+    fields.append(get_display_name(f"source {field}"))
+    fields.append(get_display_name(f"target {field}"))
 
     if additionalFields:
         for additionalField in additionalFields:
-            fields.append(display_name(f"source {additionalField}"))
+            fields.append(get_display_name(f"source {additionalField}"))
 
     importedColumnsList = getImportedColumns(config=config, projectname=projectname)
     importedColumnsList = (
@@ -103,8 +103,8 @@ def createMappingImportedColumnns(
                 config=config,
                 projectname=projectname,
                 displayName=fld,
-                internalName=internal_name(fld),
-                importName=import_name(fld),
+                internalName=get_internal_name(fld),
+                importName=get_import_name(fld),
                 dataType="string",
                 description="",
             )
@@ -287,7 +287,7 @@ def collectDataFieldsForProject(
     if result:
         logging.info(f"Found field '{result}' in project '{project}'")
 
-        fieldList = {field: internal_name(result)}
+        fieldList = {field: get_internal_name(result)}
 
         # check for additional fields now
         if additionalFields:
@@ -307,7 +307,7 @@ def collectDataFieldsForProject(
                         f"Field '{additionalField}' not found in project '{project}'. Skip this project"
                     )
 
-                fieldList[additionalField] = internal_name(result)
+                fieldList[additionalField] = get_internal_name(result)
 
     # we have found all relevant fields in project. Now we are going to collect data
     return fieldList
@@ -332,11 +332,11 @@ def sqlQueryInMappingTable(
         ]
 
         ctes.append(
-            f"""CTE_{internal_name(ctekey)} AS (
+            f"""CTE_{get_internal_name(ctekey)} AS (
     SELECT DISTINCT
         {"\n\t,".join(subselect)}
     FROM 
-        $schema.PROJECT_{internal_name(ctekey)}
+        $schema.PROJECT_{get_internal_name(ctekey)}
 )"""
         )
 
@@ -350,7 +350,7 @@ def sqlQueryInMappingTable(
             f"""\tSELECT
     {"\n\t,".join(subselect)}
     FROM 
-        CTE_{internal_name(ctekey)}"""
+        CTE_{get_internal_name(ctekey)}"""
         )
     ctes.append(
         f"""CTE_ALL AS (
@@ -377,13 +377,13 @@ def sqlQueryInMappingTable(
         for fldkey, fldvalue in first_value.items()
     ]
     subselectjoin = [
-        f'mapping.SOURCE_{internal_name(fldkey)} = cte."{fldkey}"'
+        f'mapping.SOURCE_{get_internal_name(fldkey)} = cte."{fldkey}"'
         for fldkey, fldvalue in first_value.items()
     ]
     finalquery = f"""{queryctes}
 SELECT
     {'\n\t,'.join(subselectsrc)}
-    , {"NULL" if newProject else f"mapping.TARGET_{internal_name(field)}"} AS "target {field}"
+    , {"NULL" if newProject else f"mapping.TARGET_{get_internal_name(field)}"} AS "target {field}"
 FROM
     CTE_ALL_DISTINCT cte"""
 
@@ -590,7 +590,7 @@ def sqlQueryInDataTable(
 
     # now add all mapped values
     datafrags += [
-        f'Mapping_{internal_name(key)}.TARGET_{internal_name(key)} AS "{value[0][1]}"'
+        f'Mapping_{get_internal_name(key)}.TARGET_{get_internal_name(key)} AS "{value[0][1]}"'
         for key, value in columnstobemapped.items()
     ]
 
@@ -598,12 +598,12 @@ def sqlQueryInDataTable(
     joins = []
     for key, value in columnstobemapped.items():
         selects = [
-            f"MAPPING_{internal_name(key)}.SOURCE_{internal_name(src)} = data.{internal_name(tgt)}"
+            f"MAPPING_{get_internal_name(key)}.SOURCE_{get_internal_name(src)} = data.{get_internal_name(tgt)}"
             for src, tgt in value
         ]
         joins.append(
             f"""LEFT JOIN
-    $schema.PROJECT_MAPPING_{internal_name(key)} MAPPING_{internal_name(key)}
+    $schema.PROJECT_MAPPING_{get_internal_name(key)} MAPPING_{get_internal_name(key)}
     ON {"\n\tAND ".join(selects)}"""
         )
 

@@ -1,7 +1,12 @@
 import importlib
+import logging
 import os
+import tempfile
 import openpyxl
 import pandas as pd
+
+from nemo_library.features.config import Config
+from nemo_library.features.fileingestion import ReUploadFile
 
 
 def initializeFolderStructure(
@@ -25,7 +30,9 @@ def load_database() -> pd.DataFrame:
 
     return df
 
-
+def getProjectName(project:str,addon:str,postfix:str) -> str:
+    return f"{project}{" " + addon if addon else ""}{(" (" + postfix + ")") if postfix else ""}"
+    
 def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
     workbook = openpyxl.load_workbook(file)
     worksheet = workbook["Status Datenübernahme"]
@@ -71,3 +78,31 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
         raise ValueError(
             "The column 'Name des Importprograms / Name der Erfassungsmaske' does not exist in the data."
         )
+
+
+def upload_dataframe(config: Config,project_name : str,df : pd.DataFrame):
+    
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_path = os.path.join(temp_dir, "tempfile.csv")
+
+        df.to_csv(
+            temp_file_path,
+            index=False,
+            sep=";",
+            na_rep="",
+            encoding="UTF-8",
+        )
+        logging.info(
+            f"dummy file {temp_file_path} written for project '{project_name}'. Uploading data to NEMO now..."
+        )
+
+        ReUploadFile(
+            config=config,
+            projectname=project_name,
+            filename=temp_file_path,
+            update_project_settings=False,
+            version=3,
+            datasource_ids=[{"key": "datasource_id", "value": project_name}]
+        )
+        logging.info(f"upload to project {project_name} completed")
+    

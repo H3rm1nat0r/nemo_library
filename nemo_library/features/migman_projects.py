@@ -21,7 +21,7 @@ from nemo_library.features.projects import (
     getProjectList,
 )
 from nemo_library.utils.migmanutils import getNEMOStepsFrompAMigrationStatusFile, initializeFolderStructure
-from nemo_library.utils.utils import display_name, import_name, internal_name, log_error
+from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name, log_error
 
 __all__ = ["updateProjectsForMigMan"]
 
@@ -239,9 +239,9 @@ def process_columns(
     lastDisplayName = None
     for idx, row in df.iterrows():
 
-        displayName = display_name(row["Location in proALPHA"], idx)
-        internalName = internal_name(row["Location in proALPHA"], idx)
-        importName = import_name(row["Location in proALPHA"], idx)
+        displayName = get_display_name(row["Location in proALPHA"], idx)
+        internalName = get_internal_name(row["Location in proALPHA"], idx)
+        importName = get_import_name(row["Location in proALPHA"], idx)
 
         # column already exists?
         if True:
@@ -368,7 +368,7 @@ def generateTemplateFile(
                 f"file {file_path} for project {projectname} not found! We create an empty template for you"
             )
             nemo_import_names = [
-                import_name(row["Location in proALPHA"], idx)
+                get_import_name(row["Location in proALPHA"], idx)
                 for idx, row in df.iterrows()
             ]
             data = {col: [""] for col in nemo_import_names}
@@ -401,7 +401,7 @@ def uploadRealData(
     ]
 
     nemo_import_names = [
-        import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+        get_import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
     ]
 
     for csv_display_name in csv_display_names:
@@ -463,7 +463,7 @@ def uploadDummyData(
     faker = Faker("de_DE")
 
     columns = [
-        import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+        get_import_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
     ]
     data_types = df["Data Type"].to_list()
     formats = df["Format"].to_list()
@@ -672,10 +672,10 @@ def updateReports(
 
     # create deficiency mining reports
     displayNames = [
-        display_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+        get_display_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
     ]
     internalNames = [
-        internal_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
+        get_internal_name(row["Location in proALPHA"], idx) for idx, row in df.iterrows()
     ]
     dataTypes = df["Data Type"].to_list()
     formats = df["Format"].to_list()
@@ -814,7 +814,7 @@ $schema.$table"""
 
             # create the report
             report_display_name = f"(DEFICIENCIES) {idx:03} {displayName}"
-            report_internal_name = internal_name(report_display_name)
+            report_internal_name = get_internal_name(report_display_name)
 
             createOrUpdateReport(
                 config=config,
@@ -862,7 +862,7 @@ $schema.$table"""
 
     # create the report
     report_display_name = f"(DEFICIENCIES) GLOBAL"
-    report_internal_name = internal_name(report_display_name)
+    report_internal_name = get_internal_name(report_display_name)
 
     createOrUpdateReport(
         config=config,

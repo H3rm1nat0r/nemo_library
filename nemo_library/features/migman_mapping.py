@@ -2,6 +2,7 @@ import csv
 import logging
 import os
 import re
+import tempfile
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.projects import (
@@ -31,19 +32,19 @@ def updateMappingForMigman(
     projectList = getProjectList(config=config)["displayName"].to_list()
 
     # create mapping projects and upload data
-    updateMappings(
-        config=config,
-        mapping_fields=mapping_fields,
-        local_project_path=local_project_path,
-        additionalfields=additionalfields,
-        projectList=projectList,
-    )
-
-    # apply mappings to related projects
-    # applyMapping(
+    # updateMappings(
     #     config=config,
+    #     mapping_fields=mapping_fields,
+    #     local_project_path=local_project_path,
+    #     additionalfields=additionalfields,
     #     projectList=projectList,
     # )
+
+    # apply mappings to related projects
+    applyMapping(
+        config=config,
+        projectList=projectList,
+    )
 
 
 def createMappingProject(
@@ -485,7 +486,6 @@ def applyMapping(
         and not x in ["Business Processes", "Master Data"]
     ]
 
-    dataprojects = ["Customers"]
     for project in dataprojects:
         importedcolumns = getImportedColumns(config=config, projectname=project)[
             "displayName"
@@ -495,17 +495,32 @@ def applyMapping(
         # check for columns in this project that are mapped
         for key, values in mappingfieldsall.items():
 
-            # Check if ALL values in 'values' match
-            all_match = all(
-                any(
-                    re.match(rf"^{re.escape(val)} \(\d{{3}}\)$", entry)
-                    for entry in importedcolumns
-                )
-                for val in values
-            )
+            matched_originals = []
 
-            if all_match:  # Only add if ALL values match
-                columnstobemapped[key] = values
+            # Flag to ensure ALL values in `values` must have a match
+            all_match = True  # Start with the assumption that all values will match
+
+            # Iterate over each value to check for matches in `importedcolumns`
+            for val in values:
+                match_found = False  # Track if the current value has a match
+
+                for entry in importedcolumns:
+                    # Check if the entry matches the pattern (value followed by a 3-digit number in parentheses)
+                    if re.match(rf"^{re.escape(val)} \(\d{{3}}\)$", entry):
+                        matched_originals.append(entry)  # Save the matching entry
+                        match_found = True  # Mark that a match was found
+                        break  # Exit the loop as we only need the first match for this value
+
+                if not match_found:  # If no match was found for the current value
+                    all_match = (
+                        False  # Set the flag to False as not all values can match
+                    )
+                    break  # Exit the outer loop since we already know not all values match
+
+            if all_match:  # Only proceed if ALL values in `values` matched
+                columnstobemapped[key] = [
+                    (src, tgt) for src, tgt in zip(values, matched_originals)
+                ]
 
         # if there are mapped columns in this project, we are going to add mapped fields for that project now
         if columnstobemapped:
@@ -514,8 +529,44 @@ def applyMapping(
                 project=project,
                 columnstobemapped=columnstobemapped,
             )
-            print(sqlQuery)
-            return
+            createOrUpdateReport(
+                config=config,
+                projectname=project,
+                displayName="(MAPPING) map data",
+                querySyntax=sqlQuery,
+                internalName="MAPPING_map_data",
+                description="Map data",
+            )
+            df = LoadReport(
+                config=config,
+                projectname=project,
+                report_name="(MAPPING) map data",
+            )
+
+            # Write to a temporary file and upload
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_file_path = os.path.join(temp_dir, "tempfile.csv")
+
+                df.to_csv(
+                    temp_file_path,
+                    index=False,
+                    sep=";",
+                    na_rep="",
+                    encoding="UTF-8",
+                )
+                logging.info(
+                    f"dummy file {temp_file_path} written for project '{project}'. Uploading data to NEMO now..."
+                )
+
+                ReUploadFile(
+                    config=config,
+                    projectname=project,
+                    filename=temp_file_path,
+                    update_project_settings=False,
+                    version=3,
+                    datasource_ids=[{"key": "datasource_id", "value": project}],
+                )
+                logging.info(f"upload to project {project} completed")
 
 
 def sqlQueryInDataTable(
@@ -524,30 +575,42 @@ def sqlQueryInDataTable(
     columnstobemapped: dict[str, list[str]],
 ) -> str:
 
-    print(columnstobemapped)
-    print("-" * 80)
+    # we start with the easy one: select all columns that are defined
     importedcolumnsdf = getImportedColumns(config=config, projectname=project)
+    
+    # filter original-values, they will be re-created again
+    importedcolumnsdf = importedcolumnsdf[~importedcolumnsdf["displayName"].str.startswith("Original_")]
+
+    # add new column with display names without numbers    
+    importedcolumnsdf["strippedDisplayName"] = importedcolumnsdf["displayName"].str.replace(r" \(\d{3}\)$", "", regex=True)
     datafrags = [
-        f'data.{row["internalName"]} AS "{row["displayName"]}"'
+        f'data.{row["internalName"]} AS "{"Original_" if row["strippedDisplayName"] in columnstobemapped.keys() else""}{row["displayName"]}"'
         for idx, row in importedcolumnsdf.iterrows()
     ]
+
+    # now add all mapped values
     datafrags += [
-        f'Mapping_{internal_name(item)}.TARGET_{internal_name(item)} AS "Mapped_{item}"'
-        for sublist in columnstobemapped.values()
-        for item in sublist
+        f'Mapping_{internal_name(key)}.TARGET_{internal_name(key)} AS "{value[0][1]}"'
+        for key, value in columnstobemapped.items()
     ]
+
+    # and now, we join the mapping tables
     joins = []
     for key, value in columnstobemapped.items():
-        selects = [f"{field}" for field in value]
+        selects = [
+            f"MAPPING_{internal_name(key)}.SOURCE_{internal_name(src)} = data.{internal_name(tgt)}"
+            for src, tgt in value
+        ]
         joins.append(
             f"""LEFT JOIN
-$schema.PROJECT_MAPPING_{internal_name(key)} MAPPING_{internal_name(key)}
+    $schema.PROJECT_MAPPING_{internal_name(key)} MAPPING_{internal_name(key)}
     ON {"\n\tAND ".join(selects)}"""
         )
 
+    # and finally build the query
     query = f"""
 SELECT
-    {"\n\t,".join(datafrags)}c
+    {"\n\t,".join(datafrags)}
 FROM
     $schema.$table data
 {"\n".join(joins)}

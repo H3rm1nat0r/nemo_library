@@ -20,7 +20,7 @@ from nemo_library.features.projects import (
     createProject,
     getProjectList,
 )
-from nemo_library.utils.migmanutils import initializeFolderStructure
+from nemo_library.utils.migmanutils import getNEMOStepsFrompAMigrationStatusFile, initializeFolderStructure
 from nemo_library.utils.utils import display_name, import_name, internal_name, log_error
 
 __all__ = ["updateProjectsForMigMan"]
@@ -239,7 +239,6 @@ def process_columns(
     lastDisplayName = None
     for idx, row in df.iterrows():
 
-        logging.info(f"process column {row["Column"]} with index {idx}")
         displayName = display_name(row["Location in proALPHA"], idx)
         internalName = internal_name(row["Location in proALPHA"], idx)
         importName = import_name(row["Location in proALPHA"], idx)
@@ -260,7 +259,6 @@ def process_columns(
                 description=description,
             )
 
-            logging.info(f"Move column {displayName} to position {idx} in focus")
             focusMoveAttributeBefore(
                 config=config,
                 projectname=projectname,
@@ -336,6 +334,8 @@ def uploadData(
                     projectname=projectname,
                     filename=temp_file_path,
                     update_project_settings=False,
+                    version=3,
+                    datasource_ids=[{"key": "datasource_id", "value": projectname}],
                 )
                 logging.info(f"upload to project {projectname} completed")
 
@@ -447,6 +447,8 @@ def uploadRealData(
             projectname=projectname,
             filename=temp_file_path,
             update_project_settings=False,
+            version=3,
+            datasource_ids=[{"key": "datasource_id", "value": projectname}],
         )
         logging.info(f"upload to project {projectname} completed")
 
@@ -652,6 +654,8 @@ def uploadDummyData(
             projectname=projectname,
             filename=temp_file_path,
             update_project_settings=False,
+            version=3,
+            datasource_ids=[{"key": "datasource_id", "value": projectname}]
         )
         logging.info(f"upload to project {projectname} completed")
 
@@ -881,44 +885,3 @@ $schema.$table"""
     logging.info(f"Project {projectname}: {len(frags_checked)} checks implemented...")
     return len(frags_checked)
 
-
-def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
-    workbook = openpyxl.load_workbook(file)
-    worksheet = workbook["Status Datenübernahme"]
-
-    data = []
-    for row in worksheet.iter_rows(
-        min_row=10, max_row=300, min_col=1, max_col=10, values_only=True
-    ):
-        data.append(row)
-
-    # Create a DataFrame from the extracted data
-    columns = [
-        worksheet.cell(row=9, column=i).value for i in range(1, 11)
-    ]  # Headers in row 9
-    dataframe = pd.DataFrame(data, columns=columns)
-
-    # Drop rows where "Importreihenfolge" is NaN or empty
-    if "Importreihenfolge" in dataframe.columns:
-        dataframe = dataframe.dropna(subset=["Importreihenfolge"])
-    else:
-        raise ValueError("The column 'Importreihenfolge' does not exist in the data.")
-
-    if "Name des Importprograms / Name der Erfassungsmaske" in dataframe.columns:
-        nemosteps = dataframe[dataframe["Migrationsart"] == "NEMO"][
-            "Name des Importprograms / Name der Erfassungsmaske"
-        ].to_list()
-        replacements = {
-            "european article numbers": "global trade item numbers",
-            "part-storage areas relationship": "part-storage areas relationships",
-        }
-
-        nemosteps = [
-            replacements[item] if item in replacements else item for item in nemosteps
-        ]
-
-        return nemosteps
-    else:
-        raise ValueError(
-            "The column 'Name des Importprograms / Name der Erfassungsmaske' does not exist in the data."
-        )

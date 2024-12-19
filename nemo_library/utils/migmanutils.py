@@ -30,9 +30,11 @@ def load_database() -> pd.DataFrame:
 
     return df
 
-def getProjectName(project:str,addon:str,postfix:str) -> str:
+
+def getProjectName(project: str, addon: str, postfix: str) -> str:
     return f"{project}{" " + addon if addon else ""}{(" (" + postfix + ")") if postfix else ""}"
-    
+
+
 def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
     workbook = openpyxl.load_workbook(file)
     worksheet = workbook["Status Datenübernahme"]
@@ -59,14 +61,18 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
         nemosteps = dataframe[dataframe["Migrationsart"] == "NEMO"][
             "Name des Importprograms / Name der Erfassungsmaske"
         ].to_list()
-        
-        nemosteps = [x.title() for x in nemosteps]
+
+        nemosteps = [x.title().strip() for x in nemosteps]
         replacements = {
             "European Article Numbers": "Global Trade Item Numbers",
             "Part-Storage Areas Relationship": "Part-Storage Areas Relationships",
             "Sales Tax Id": "Sales Tax ID",
             "Mrp Parameters": "MRP Parameters",
-            "Sales Units Of Measure": "Sales Units of Measure"
+            "Sales Units Of Measure": "Sales Units of Measure",
+            "Standard Boms (Header Data)": "Standard BOMs (Header Data)",
+            "Standard Boms (Line Data)": "Standard BOMs (Line Data)",
+            "Routings (Standard Boms)": "Routings (Standard BOMs)",
+            "Bills Of Materials For Operations (Routings Production)": "Bills of Materials for Operations (Routings Production)"
         }
 
         nemosteps = [
@@ -80,8 +86,8 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
         )
 
 
-def upload_dataframe(config: Config,project_name : str,df : pd.DataFrame):
-    
+def upload_dataframe(config: Config, project_name: str, df: pd.DataFrame):
+
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_file_path = os.path.join(temp_dir, "tempfile.csv")
 
@@ -102,7 +108,6 @@ def upload_dataframe(config: Config,project_name : str,df : pd.DataFrame):
             filename=temp_file_path,
             update_project_settings=False,
             version=3,
-            datasource_ids=[{"key": "datasource_id", "value": project_name}]
+            datasource_ids=[{"key": "datasource_id", "value": project_name}],
         )
         logging.info(f"upload to project {project_name} completed")
-    

@@ -12,9 +12,10 @@ with open(requirements_path) as f:
 # Setup configuration for the Python package
 setup(
     name='nemo_library',  # Name of the package
-    version='1.2.17',  # Version of the package
+    version='1.2.24',  # Version of the package
     packages=find_packages(),  # Automatically find and include all packages
     install_requires=required,  # List of dependencies from requirements.txt
+    include_package_data=True,
     author='Gunnar Schug',  # Author of the package
     author_email='GunnarSchug81@gmail.com',  # Author's email address
     description='A library for uploading data to and downloading reports from NEMO cloud solution',  # Short description of the package

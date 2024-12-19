@@ -5,8 +5,10 @@ import requests
 import json
 
 from nemo_library.features.config import Config
-from nemo_library.features.projects import getProjectID
+from nemo_library.features.projects import getImportedColumns, getProjectID
 from nemo_library.utils.utils import log_error
+
+__all__ = ["focusMoveAttributeBefore", "focusCoupleAttributes"]
 
 
 def focusMoveAttributeBefore(
@@ -39,30 +41,18 @@ def focusMoveAttributeBefore(
         - Sends a PUT request to update the position of the source attribute in the attribute tree.
         - Logs errors and raises exceptions for failed requests or missing attributes.
     """
-    
+
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)
 
-    # load attribute tree
-    response = requests.get(
-        config.config_get_nemo_url()
-        + "/api/nemo-persistence/focus/AttributeTree/projects/{projectId}/attributes".format(
-            projectId=project_id
-        ),
-        headers=headers,
-    )
-    if response.status_code != 200:
-        raise Exception(
-            f"Request failed. Status: {response.status_code}, error: {response.text}"
-        )
-
-    resultjs = json.loads(response.text)
-    df = pd.json_normalize(resultjs)
+    df = _get_attribute_tree(config=config, projectname=projectname)
 
     # locate source and target object
     filtereddf = df[df["label"] == sourceDisplayName]
     if filtereddf.empty:
-        log_error(f"could not find source column '{sourceDisplayName}' to move in focus")
+        log_error(
+            f"could not find source column '{sourceDisplayName}' to move in focus"
+        )
     sourceid = filtereddf.iloc[0]["id"]
 
     if targetDisplayName:
@@ -96,3 +86,81 @@ def focusMoveAttributeBefore(
             f"Request failed. Status: {response.status_code}, error: {response.text}"
         )
 
+
+def focusCoupleAttributes(
+    config: Config,
+    projectname: str,
+    attributenames: list[str],
+    previous_attribute: str,
+) -> None:
+
+    # init
+    headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
+
+    # map attribute names to internal names
+    imported_columnns_df = getImportedColumns(config=config, projectname=projectname)
+
+    attribute_ids = imported_columnns_df[
+        imported_columnns_df["displayName"].isin(attributenames)
+    ]["id"].to_list()
+    if len(attribute_ids) != len(attributenames):
+        log_error(
+            f"Could not map all attributes to internal ids. Names given: {json.dumps(attributenames,indent=2)}, ids found: {json.dumps(attribute_ids,indent=2)}"
+        )
+
+    if previous_attribute:
+        filterdf = imported_columnns_df[
+            imported_columnns_df["displayName"] == previous_attribute
+        ]
+        if len(filterdf) != 1:
+            log_error(f"could not find previous attribute '{previous_attribute}'")
+        else:
+            previous_attribute_id = filterdf.iloc[0]["id"]
+    else:
+        previous_attribute_id = None
+
+    # we can execute the API call now
+    data = {
+        "attributeIds": attribute_ids,
+        "previousElementId": previous_attribute_id,
+        "containingGroupInternalName": None,
+    }
+
+    response = requests.post(
+        config.config_get_nemo_url()
+        + "/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/couple".format(
+            projectId=project_id
+        ),
+        headers=headers,
+        json=data,
+    )
+
+    if response.status_code != 201:
+        raise Exception(
+            f"Request failed. Status: {response.status_code}, error: {response.text}"
+        )
+
+
+def _get_attribute_tree(
+    config: Config,
+    projectname: str,
+) -> pd.DataFrame:
+    headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
+
+    # load attribute tree
+    response = requests.get(
+        config.config_get_nemo_url()
+        + "/api/nemo-persistence/focus/AttributeTree/projects/{projectId}/attributes".format(
+            projectId=project_id
+        ),
+        headers=headers,
+    )
+    if response.status_code != 200:
+        raise Exception(
+            f"Request failed. Status: {response.status_code}, error: {response.text}"
+        )
+
+    resultjs = json.loads(response.text)
+    return pd.json_normalize(resultjs)

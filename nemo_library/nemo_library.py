@@ -2,14 +2,15 @@ import pandas as pd
 
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
-from nemo_library.features.focus import focusMoveAttributeBefore
+from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
+from nemo_library.features.migman_apply_mapping import MigManApplyMapping
 from nemo_library.features.migman_init_database import MigManInitDatabase
 from nemo_library.features.migman_create_project_templates import (
     MigManCreateProjectTemplates,
 )
 from nemo_library.features.migman_load_data import MigManLoadData
-from nemo_library.features.migman_mapping import updateMappingForMigman
+from nemo_library.features.migman_load_mapping import MigManLoadMapping
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumn,
@@ -259,17 +260,24 @@ class NemoLibrary:
             multi_projects=multi_projects,
         )
 
-    def updateMappingForMigman(
+    def MigManLoadMapping(
         self,
         local_project_directory: str,
         mapping_fields: list[str],
         additional_fields: dict[str, str] = None,
     ):
-        updateMappingForMigman(
+        MigManLoadMapping(
             self.config,
             mapping_fields=mapping_fields,
             additionalfields=additional_fields,
             local_project_directory=local_project_directory,
+        )
+
+    def MigManApplyMapping(
+        self,
+    ):
+        MigManApplyMapping(
+            self.config,
         )
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:
@@ -526,6 +534,19 @@ class NemoLibrary:
             sourceDisplayName,
             targetDisplayName,
             groupInternalName,
+        )
+
+    def focusCoupleAttributes(
+        self,
+        projectname: str,
+        attributenames: list[str],
+        previous_attribute: str,
+    ) -> None:
+        focusCoupleAttributes(
+            self.config,
+            projectname=projectname,
+            attributenames=attributenames,
+            previous_attribute=previous_attribute,
         )
 
     def FetchDealFromHubSpotAndUploadToNEMO(self, projectname: str) -> None:

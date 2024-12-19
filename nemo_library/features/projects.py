@@ -380,6 +380,33 @@ def getImportedColumns(
     df = pd.json_normalize(resultjs)
     return df
 
+def createImportedColumns(
+    config: Config,
+    projectname: str,
+    columns : dict    
+) -> None:
+
+    # add generic data
+    project_id = getProjectID(config, projectname)
+    tenant = config.config_get_tenant()
+    for col in columns:
+        col["tenant"] = tenant
+        col["projectId"] = project_id 
+        col["unit"] = col["unit"] if "unit" in col.keys() else ""
+    
+    # initialize reqeust
+    headers = config.connection_get_headers()
+    
+    response = requests.post(
+        config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Columns/project/{projectId}/Columns".format(projectId=project_id),
+        headers=headers,
+        json=columns,
+    )
+    if response.status_code != 200:
+        raise Exception(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
+        )
+    
 
 def createImportedColumn(
     config: Config,

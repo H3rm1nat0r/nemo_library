@@ -1,14 +1,14 @@
 from contextvars import ContextVar
+import json
 import logging
 import os
 import re
 import pandas as pd
 
 from nemo_library.features.config import Config
-from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
-    createImportedColumn,
+    createImportedColumns,
     createOrUpdateReport,
     createOrUpdateRule,
     createProject,
@@ -23,7 +23,6 @@ from nemo_library.utils.migmanutils import (
 )
 from nemo_library.utils.utils import (
     get_display_name,
-    get_import_name,
     get_internal_name,
     log_error,
 )
@@ -124,7 +123,7 @@ def _load_data(
         datadf_cleaned = datadf.drop(columns=columns_to_drop)
         if not columns_to_drop.empty:
             logging.info(
-                f"totally empty columns removed. Here is the list {columns_to_drop.to_list()}"
+                f"totally empty columns removed. Here is the list {json.dumps(columns_to_drop.to_list(),indent=2)}"
             )
 
         dbdf = database_var.get()
@@ -135,7 +134,7 @@ def _load_data(
             [] if columns_nemo.empty else columns_nemo["importName"].to_list()
         )
 
-        columns_created = []
+        new_columns = []
         for col in datadf_cleaned.columns:
             if not col in columns_migman:
                 log_error(
@@ -148,39 +147,26 @@ def _load_data(
                     f"column '{col}' not found in project {project_name}. Create it."
                 )
 
-                columns_created.append(col)
-
                 coldb = dbdf.iloc[columns_migman.index(col)]
                 description = "\n".join(
                     [f"{key}: {value}" for key, value in coldb.items()]
                 )
-                createImportedColumn(
-                    config=config_var.get(),
-                    projectname=project_name,
-                    displayName=coldb["display_name"],
-                    internalName=coldb["internal_name"],
-                    importName=coldb["import_name"],
-                    dataType="string",  # we try a string-only-project to avoid importing errors
-                    description=description,
+                new_columns.append(
+                    {
+                        "displayName": coldb["display_name"],
+                        "importName": coldb["import_name"],
+                        "internalName": coldb["internal_name"],
+                        "description": description,
+                        "dataType": "string",
+                        "focusOrder" : f"{columns_migman.index(col):03}"
+                    }
                 )
-
-        # if there are new columns, we have to re-arrange focus order
-        if columns_created:
-            columns_migman_and_created = [
-                x for x in columns_migman if x in columns_created
-            ]
-            prev_col = None
-            for idx, col in enumerate(columns_migman_and_created):
-                logging.info(
-                    f"Move column '{col}' to position {idx + 1} in project '{project_name}'"
-                )
-                focusMoveAttributeBefore(
-                    config=config_var.get(),
-                    projectname=project_name,
-                    sourceDisplayName=get_display_name(col),
-                    targetDisplayName=get_display_name(prev_col),
-                )
-                prev_col = col
+        if new_columns:
+            createImportedColumns(
+                config=config_var.get(),
+                projectname=project_name,
+                columns=new_columns,
+            )
 
         # now we have created all columns in NEMO. Upload data
         upload_dataframe(
@@ -188,12 +174,10 @@ def _load_data(
         )
 
         # if there are new columns, update all reports
-        columns_created = datadf_cleaned.columns.to_list()
-        if columns_created:
+        if new_columns:
             _update_reports(
                 project_name=project_name,
                 columns_in_file=datadf_cleaned.columns,
-                columns_created=columns_created,
                 dbdf=dbdf,
             )
 
@@ -201,7 +185,6 @@ def _load_data(
 def _update_reports(
     project_name: str,
     columns_in_file: list[str],
-    columns_created: list[str],
     dbdf: pd.DataFrame,
 ) -> None:
 
@@ -326,8 +309,7 @@ def _update_reports(
                     for dispname, intname in zip(
                         dbdf["display_name"], dbdf["internal_name"]
                     )
-                    if intname != internal_name
-                    and dispname in columns_in_file
+                    if intname != internal_name and dispname in columns_in_file
                 ]
 
                 # case statements for messages and dm report

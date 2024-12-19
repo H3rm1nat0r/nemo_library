@@ -22,29 +22,29 @@ __all__ = ["updateMappingForMigman"]
 def updateMappingForMigman(
     config: Config,
     mapping_fields: list[str],
-    local_project_path: str,
+    local_project_directory: str,
     additionalfields: dict[str, str] = None,
 ):
 
     # if not already existing, create folder structure
-    initializeFolderStructure(local_project_path)
+    initializeFolderStructure(local_project_directory)
 
     projectList = getProjectList(config=config)["displayName"].to_list()
 
     # create mapping projects and upload data
-    # updateMappings(
-    #     config=config,
-    #     mapping_fields=mapping_fields,
-    #     local_project_path=local_project_path,
-    #     additionalfields=additionalfields,
-    #     projectList=projectList,
-    # )
-
-    # apply mappings to related projects
-    applyMapping(
+    updateMappings(
         config=config,
+        mapping_fields=mapping_fields,
+        local_project_path=local_project_directory,
+        additionalfields=additionalfields,
         projectList=projectList,
     )
+
+    # apply mappings to related projects
+    # applyMapping(
+    #     config=config,
+    #     projectList=projectList,
+    # )
 
 
 def createMappingProject(

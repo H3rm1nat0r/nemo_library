@@ -10,7 +10,6 @@ from nemo_library.features.migman_create_project_templates import (
 )
 from nemo_library.features.migman_load_data import MigManLoadData
 from nemo_library.features.migman_mapping import updateMappingForMigman
-from nemo_library.features.migman_projects import updateProjectsForMigMan
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumn,
@@ -260,24 +259,9 @@ class NemoLibrary:
             multi_projects=multi_projects,
         )
 
-    def updateProjectsForMigMan(
-        self,
-        local_project_path: str,
-        projects: list[str] = None,
-        proALPHA_project_status_file: str = None,
-        multi_projects: dict[str, str] = None,
-    ) -> None:
-        updateProjectsForMigMan(
-            self.config,
-            projects=projects,
-            proALPHA_project_status_file=proALPHA_project_status_file,
-            local_project_path=local_project_path,
-            multi_projects=multi_projects,
-        )
-
     def updateMappingForMigman(
         self,
-        local_project_path: str,
+        local_project_directory: str,
         mapping_fields: list[str],
         additional_fields: dict[str, str] = None,
     ):
@@ -285,7 +269,7 @@ class NemoLibrary:
             self.config,
             mapping_fields=mapping_fields,
             additionalfields=additional_fields,
-            local_project_path=local_project_path,
+            local_project_directory=local_project_directory,
         )
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:

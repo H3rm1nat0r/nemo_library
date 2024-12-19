@@ -2,6 +2,8 @@ from .config import *
 from .fileingestion import *
 from .focus import *
 from .hubspot import *
-from .migman_projects import *
 from .migman_mapping import *
 from .projects import *
+from .migman_create_project_templates import *
+from .migman_init_database import *
+from .migman_load_data import *

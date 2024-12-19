@@ -18,6 +18,7 @@ __all__ = ["MigManApplyMapping"]
 
 config_var = ContextVar("config")
 
+
 def MigManApplyMapping(
     config: Config,
 ) -> None:
@@ -47,9 +48,11 @@ def MigManApplyMapping(
     if not mappingfieldsall:
         logging.info("no mapping fields found.")
         return
-    
-    logging.info(f"Mapping fields found. Here is the list: {json.dumps(mappingfieldsall,indent=2)}")
-    
+
+    logging.info(
+        f"Mapping fields found. Here is the list: {json.dumps(mappingfieldsall,indent=2)}"
+    )
+
     # scan all the other projects now whether they contain these fields or not
     dataprojects = [
         x
@@ -96,14 +99,15 @@ def MigManApplyMapping(
 
         # if there are mapped columns in this project, we are going to add mapped fields for that project now
         if columnstobemapped:
-            
-            logging.info(f"columns to be mapped found in project '{project}'. Here is the list: {json.dumps(columnstobemapped,indent=2)}")
+
+            logging.info(
+                f"columns to be mapped found in project '{project}'. Here is the list: {json.dumps(columnstobemapped,indent=2)}"
+            )
             sqlQuery = _SQL_Query_in_data_table(
-                config=config,
                 project=project,
                 columnstobemapped=columnstobemapped,
             )
-        
+
             createOrUpdateReport(
                 config=config,
                 projectname=project,
@@ -151,12 +155,16 @@ def _SQL_Query_in_data_table(
 
     # we start with the easy one: select all columns that are defined
     importedcolumnsdf = getImportedColumns(config=config_var.get(), projectname=project)
-    
-    # filter original-values, they will be re-created again
-    importedcolumnsdf = importedcolumnsdf[~importedcolumnsdf["displayName"].str.startswith("Original_")]
 
-    # add new column with display names without numbers    
-    importedcolumnsdf["strippedDisplayName"] = importedcolumnsdf["displayName"].str.replace(r" \(\d{3}\)$", "", regex=True)
+    # filter original-values, they will be re-created again
+    importedcolumnsdf = importedcolumnsdf[
+        ~importedcolumnsdf["displayName"].str.startswith("Original_")
+    ]
+
+    # add new column with display names without numbers
+    importedcolumnsdf["strippedDisplayName"] = importedcolumnsdf[
+        "displayName"
+    ].str.replace(r" \(\d{3}\)$", "", regex=True)
     datafrags = [
         f'data.{row["internalName"]} AS "{"Original_" if row["strippedDisplayName"] in columnstobemapped.keys() else""}{row["displayName"]}"'
         for idx, row in importedcolumnsdf.iterrows()
@@ -168,7 +176,7 @@ def _SQL_Query_in_data_table(
         for key, value in columnstobemapped.items()
         for src, tgt in value
         if src == key
-    )    
+    )
 
     # and now, we join the mapping tables
     joins = []

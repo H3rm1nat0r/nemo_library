@@ -3,13 +3,12 @@ import csv
 import logging
 import os
 import re
-import tempfile
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes
 from nemo_library.features.projects import (
     LoadReport,
-    createImportedColumn,
+    createImportedColumns,
     createOrUpdateReport,
     createProject,
     getImportedColumns,
@@ -60,14 +59,12 @@ def MigManLoadMapping(
         newProject = False
         if not projectname in projectList:
             newProject = True
-            createMappingProject(config=config, field=field, projectname=projectname)
+            createMappingProject(field=field, projectname=projectname)
 
             # update list of fields
             createMappingImportedColumnns(
-                config=config,
                 projectname=projectname,
                 field=field,
-                additionalFields=additionalFields,
             )
         else:
             logging.info(f"project {projectname} found.")
@@ -75,25 +72,22 @@ def MigManLoadMapping(
         # if there is data provided (as a CSV-file), we upload this now.
         # if there is no data AND the project just have been created, we upload source data and create a template file
         relatedfields = getRelatedFields(field=field)
-
+    
         loadData(
-            config=config,
             projectname=projectname,
             field=field,
-            additionalFields=additionalFields,
-            newProject=newProject,
+            # newProject=newProject,
+            newProject=True,
             relatedfields=relatedfields,
         )
 
-        # couple attributes in focus
-        coupleAttributes(field=field,projectname=projectname)
+        # # couple attributes in focus
+        coupleAttributes(projectname=projectname)
 
         # collect data
         collectData(
-            config=config,
             projectname=projectname,
             field=field,
-            additionalFields=additionalFields,
             newProject=False,  # project is not new any longer, we can access it's data (maybe uploaded in former steps)
             relatedfields=relatedfields,
         )
@@ -101,8 +95,8 @@ def MigManLoadMapping(
 
 def coupleAttributes(
     projectname: str,
-    field: str,
 ) -> None:
+
     imported_columns = getImportedColumns(
         config=config_var.get(),
         projectname=projectname,
@@ -148,31 +142,43 @@ def createMappingImportedColumnns(
 ) -> dict[str, str]:
 
     fields = []
+
+    additionalfields = additionalfields_var.get()
+    additionalfields_filtered = additionalfields[field]
+    if additionalfields_filtered:
+        for additionalField in additionalfields_filtered:
+            fields.append(get_display_name(f"source {additionalField}"))
     fields.append(get_display_name(f"source {field}"))
     fields.append(get_display_name(f"target {field}"))
 
-    if additionalfields_var.get():
-        for additionalField in additionalfields_var.get():
-            fields.append(get_display_name(f"source {additionalField}"))
-
-    importedColumnsList = getImportedColumns(config=config_var.get(), projectname=projectname)
+    importedColumnsList = getImportedColumns(
+        config=config_var.get(), projectname=projectname
+    )
     importedColumnsList = (
         importedColumnsList["displayName"].to_list()
         if not importedColumnsList.empty
         else []
     )
 
-    for fld in fields:
+    new_columns = []
+    for idx, fld in enumerate(fields):
         if not fld in importedColumnsList:
-            createImportedColumn(
-                config=config_var.get(),
-                projectname=projectname,
-                displayName=fld,
-                internalName=get_internal_name(fld),
-                importName=get_import_name(fld),
-                dataType="string",
-                description="",
+            new_columns.append(
+                {
+                    "displayName": fld,
+                    "importName": get_import_name(fld),
+                    "internalName": get_internal_name(fld),
+                    "description": "",
+                    "dataType": "string",
+                    "focusOrder": f"{idx:03}",
+                }
             )
+    if new_columns:
+        createImportedColumns(
+            config=config_var.get(),
+            projectname=projectname,
+            columns=new_columns,
+        )
 
 
 def loadData(
@@ -209,6 +215,7 @@ def loadData(
                 newProject=newProject,
                 relatedfields=relatedfields,
             )
+
             createOrUpdateReport(
                 config=config_var.get(),
                 projectname=projectname,
@@ -248,7 +255,7 @@ def loadData(
 def getRelatedFields(
     field: str,
 ) -> list[str]:
-    ctefields = {}
+    related_fields = {}
     projectList = getProjectList(config=config_var.get())["displayName"].to_list()
     for project in projectList:
         fields = collectDataFieldsForProject(
@@ -256,9 +263,9 @@ def getRelatedFields(
             field=field,
         )
         if fields:
-            ctefields[project] = fields
+            related_fields[project] = fields
 
-    return ctefields
+    return related_fields
 
 
 def collectData(
@@ -320,6 +327,9 @@ def collectDataFieldsForProject(
     ):
         return None
 
+    additionalfields = additionalfields_var.get()
+    additionalfields_filtered = additionalfields[field]
+
     imported_columns = getImportedColumns(config=config_var.get(), projectname=project)[
         "displayName"
     ].to_list()
@@ -337,8 +347,8 @@ def collectDataFieldsForProject(
         fieldList = {field: get_internal_name(result)}
 
         # check for additional fields now
-        if additionalfields_var.get():
-            for additionalField in additionalfields_var.get():
+        if additionalfields_filtered:
+            for additionalField in additionalfields_filtered:
                 result = next(
                     (
                         entry

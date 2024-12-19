@@ -1,4 +1,5 @@
 from contextvars import ContextVar
+from datetime import datetime
 import json
 import logging
 import os
@@ -8,6 +9,7 @@ import pandas as pd
 from nemo_library.features.config import Config
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
+    LoadReport,
     createImportedColumns,
     createOrUpdateReport,
     createOrUpdateRule,
@@ -99,6 +101,7 @@ def _load_data(
         )
 
         # does project exist? if not, create it
+        new_project = False
         if (
             not project_name
             in getProjectList(config_var.get())["displayName"].to_list()
@@ -110,6 +113,20 @@ def _load_data(
                 projectname=project_name,
                 description=f"Data Model for Mig Man table '{project}'",
             )
+
+        # check whether file is newer than uploaded data
+        time_stamp_file = datetime.fromtimestamp(os.path.getmtime(file_name)).strftime(
+            "%d.%m.%Y %H:%M:%S"
+        )
+        if not new_project:
+            df = LoadReport(
+                config=config_var.get(),
+                projectname=project_name,
+                report_name="static information"
+            )
+            if df["TIMESTAMP_FILE"].iloc[0] == time_stamp_file:
+                logging.info(f"file and data in NEMO has the same time stamp ('{time_stamp_file}'). Ignore this file")
+                return
 
         # read the file now and check the fields that are filled in that file
         datadf = pd.read_csv(
@@ -158,7 +175,7 @@ def _load_data(
                         "internalName": coldb["internal_name"],
                         "description": description,
                         "dataType": "string",
-                        "focusOrder" : f"{columns_migman.index(col):03}"
+                        "focusOrder": f"{columns_migman.index(col):03}",
                     }
                 )
         if new_columns:
@@ -169,20 +186,44 @@ def _load_data(
             )
 
         # now we have created all columns in NEMO. Upload data
+        datadf_cleaned["timestamp_file"] = time_stamp_file
         upload_dataframe(
             config=config_var.get(), project_name=project_name, df=datadf_cleaned
         )
+        _update_static_report(project_name=project_name)
 
         # if there are new columns, update all reports
         if new_columns:
-            _update_reports(
+            _update_deficiency_mining(
                 project_name=project_name,
                 columns_in_file=datadf_cleaned.columns,
                 dbdf=dbdf,
             )
 
 
-def _update_reports(
+def _update_static_report(
+    project_name: str,
+) -> None:
+
+    sql_query = """
+SELECT  
+    MAX(timestamp_file) AS timestamp_file
+FROM 
+    $schema.$table
+WHERE
+    not timestamp_file = 'timestamp_file'
+"""
+    createOrUpdateReport(
+        config=config_var.get(),
+        projectname=project_name,
+        displayName="static information",
+        querySyntax=sql_query,
+        internalName="static_information",
+        description="return static information",
+    )
+
+
+def _update_deficiency_mining(
     project_name: str,
     columns_in_file: list[str],
     dbdf: pd.DataFrame,

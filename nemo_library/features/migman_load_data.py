@@ -71,7 +71,7 @@ def MigManLoadData(
         # init project
         multi_projects_list = (
             multi_projects[project] if project in multi_projects else None
-        )
+        ) if multi_projects else None
         if multi_projects_list:
             for addon in multi_projects_list:
                 for postfix in postfixes:

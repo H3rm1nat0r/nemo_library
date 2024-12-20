@@ -235,10 +235,6 @@ def loadData(
                 index=False,
                 sep=";",
                 na_rep="",
-                quotechar='"',
-                quoting=csv.QUOTE_ALL,
-                lineterminator="\n",
-                encoding="UTF-8",
             )
             logging.info(f"mapping file '{file_path}' generated with source contents")
 
@@ -300,10 +296,6 @@ def collectData(
         index=False,
         sep=";",
         na_rep="",
-        quotechar='"',
-        quoting=csv.QUOTE_ALL,
-        lineterminator="\n",
-        encoding="UTF-8",
     )
 
     # and upload it immediately

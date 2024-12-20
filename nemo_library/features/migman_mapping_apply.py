@@ -6,13 +6,19 @@ import re
 import tempfile
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
+from nemo_library.features.focus import focusCoupleAttributes
 from nemo_library.features.projects import (
     LoadReport,
+    createImportedColumns,
     createOrUpdateReport,
     getImportedColumns,
     getProjectList,
 )
-from nemo_library.utils.utils import get_internal_name
+from nemo_library.utils.utils import (
+    get_display_name,
+    get_import_name,
+    get_internal_name,
+)
 
 __all__ = ["MigManApplyMapping"]
 
@@ -103,6 +109,30 @@ def MigManApplyMapping(
             logging.info(
                 f"columns to be mapped found in project '{project}'. Here is the list: {json.dumps(columnstobemapped,indent=2)}"
             )
+
+            # create columns for "original values" if they do not exist already
+            new_columns = []
+            for col in columnstobemapped:
+                maplist = columnstobemapped[col]
+                mapcol = f"Original_{maplist[0][1]}"
+                if not mapcol in importedcolumns:
+                    new_columns.append(
+                        {
+                            "displayName": get_display_name(mapcol),
+                            "importName": get_import_name(mapcol),
+                            "internalName": get_internal_name(mapcol),
+                            "description": f"Original value of {maplist[0][1]}",
+                            "dataType": "string",
+                        }
+                    )
+            if new_columns:
+                logging.info(f"Create Original-Columns...{json.dumps(new_columns)}")
+                createImportedColumns(
+                    config=config_var.get(),
+                    projectname=project,
+                    columns=new_columns,
+                )
+
             sqlQuery = _SQL_Query_in_data_table(
                 project=project,
                 columnstobemapped=columnstobemapped,
@@ -146,6 +176,25 @@ def MigManApplyMapping(
                     datasource_ids=[{"key": "datasource_id", "value": project}],
                 )
                 logging.info(f"upload to project {project} completed")
+
+            # couple attributes
+            importedcolumns = getImportedColumns(config=config, projectname=project)[
+                "displayName"
+            ].to_list()
+            pairs = []
+            for col in importedcolumns:
+                original_col = f"Original_{col}"
+                if original_col in importedcolumns:
+                    pairs.append((col, original_col))
+
+            for col, original_col in pairs:
+                logging.info(f"Couple pairs: {col} & {original_col}")
+                focusCoupleAttributes(
+                    config=config,
+                    projectname=project,
+                    attributenames=[col, original_col],
+                    previous_attribute=col
+                )
 
 
 def _SQL_Query_in_data_table(

@@ -1,6 +1,7 @@
 import pandas as pd
 
 from nemo_library.features.config import Config
+from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
@@ -471,6 +472,12 @@ class NemoLibrary:
             description,
         )
 
+    def createOrUpdateRulesByConfigFile(
+        self,
+        filename: str,        
+    ) -> None:
+        createOrUpdateRulesByConfigFile(self.config,filename)
+        
     def synchronizeCsvColsAndImportedColumns(
         self,
         projectname: str,

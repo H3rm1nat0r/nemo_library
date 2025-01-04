@@ -130,9 +130,43 @@ def _process_restriction(
             report_field_list=report_field_list,
             fieldsdf=fieldsdf,
         )
-        global_frags_check.append(fieldfrags_check)
-        global_frags_msg.append(field_frags_msg)
+    
+        global_frags_check.extend(fieldfrags_check)
+        global_frags_msg.extend(field_frags_msg)
+    
+    select = f"""SELECT 
+\tCASE WHEN
+\t\t{"\n\t\t  OR ".join(global_frags_check)} THEN 'check' ELSE 'ok'
+\tEND AS STATUS
+\t, CASE {"\n\t\t".join(global_frags_msg)} END AS DEFICIENCY_MESSAGE
+\t, {"\n\t, ".join(report_field_list)}
+FROM
+    $schema.$table
+WHERE
+    ({restriction})
+AND ({restriction_excpetion})
+"""
+    # create the report
+    report_display_name = f"(DEFICIENCIES) {restriction_description}"
+    report_internal_name = get_internal_name(report_display_name)
 
+    createOrUpdateReport(
+        config=config,
+        projectname=project_name,
+        displayName=report_display_name,
+        internalName=report_internal_name,
+        querySyntax=select,
+        description=f"Deficiency Mining Report for restriction {restriction_description} in project '{project_name}'",
+    )
+
+    createOrUpdateRule(
+        config=config,
+        projectname=project_name,
+        displayName=f"{restriction_description}",
+        ruleSourceInternalName=report_internal_name,
+        ruleGroup=restriction_description,
+        description=f"Deficiency Mining Report for restriction {restriction_description} in project '{project_name}'",
+    )
 
 def _process_field(
     config: Config,
@@ -169,7 +203,7 @@ AND ({restriction_excpetion})
 """
 
     # create the report
-    report_display_name = f"(DEFICIENCIES) {restriction_description} {field}"
+    report_display_name = f"(DEFICIENCIES) {restriction_description} field {field}"
     report_internal_name = get_internal_name(report_display_name)
 
     createOrUpdateReport(
@@ -184,7 +218,7 @@ AND ({restriction_excpetion})
     createOrUpdateRule(
         config=config,
         projectname=project_name,
-        displayName=f"{restriction_description} {field}",
+        displayName=f"{restriction_description} field {field}",
         ruleSourceInternalName=report_internal_name,
         ruleGroup=restriction_description,
         description=f"Deficiency Mining Report for restriction {restriction_description} column '{field}' in project '{project_name}'",

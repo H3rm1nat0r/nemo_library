@@ -10,6 +10,8 @@ from nemo_library.features.projects import (
 )
 from nemo_library.utils.utils import get_internal_name
 
+LEVELS = ["PROJECT_NAME", "RULE_GROUP", "RULE_NAME"]
+
 
 def createOrUpdateRulesByConfigFile(
     config: Config,
@@ -23,70 +25,177 @@ def createOrUpdateRulesByConfigFile(
         f"file '{filename}' sucessfully imported. {len(configdf)} records found"
     )
 
-    # outer loop: projects
-    projects = configdf["NEMO_PROJECT_NAME"].unique().tolist()
-    for project_name in projects:
-        _process_project(
+    # iterate first level
+    level0_list = configdf[LEVELS[0]].unique().tolist()
+    for level0_item in level0_list:
+        _process_level0(
             config=config,
             configdf=configdf,
-            project_name=project_name,
+            level0_item=level0_item,
         )
 
-def _process_project(
+
+def _process_level0(
     config: Config,
     configdf: pd.DataFrame,
-    project_name: str,
+    level0_item: str,
 ) -> str:
 
-    logging.info(f"working on project '{project_name}'")
+    logging.info(f"working on {LEVELS[0]}: '{level0_item}'")
 
-    # next level: same restrictions
-    restrictions = (
-        configdf[configdf["NEMO_PROJECT_NAME"] == project_name][
-            "NEMO_DEFICIENCY_RESTRICTIONS"
-        ]
+    # iterate second level
+    level1_list = (
+        configdf[configdf[LEVELS[0]] == level0_item][LEVELS[1]].unique().tolist()
+    )
+    for level1_item in level1_list:
+        _process_level1(
+            config=config,
+            configdf=configdf,
+            level0_item=level0_item,
+            level1_item=level1_item,
+        )
+
+
+def _process_level1(
+    config: Config,
+    configdf: pd.DataFrame,
+    level0_item: str,
+    level1_item: str,
+) -> str:
+
+    logging.info(
+        f"working on {LEVELS[0]}: '{level0_item}', {LEVELS[1]}: '{level1_item}'"
+    )
+
+    # iterate third level
+    level2_list = (
+        configdf[
+            (configdf[LEVELS[0]] == level0_item) & (configdf[LEVELS[1]] == level1_item)
+        ][LEVELS[2]]
         .unique()
         .tolist()
     )
-    for restriction in restrictions:
-        _process_restriction(
+    for level2_item in level2_list:
+        _process_level2(
             config=config,
             configdf=configdf,
-            project_name=project_name,
-            restriction=restriction,
+            level0_item=level0_item,
+            level1_item=level1_item,
+            level2_item=level2_item,
         )
 
 
-def _process_restriction(
+def _process_level2(
     config: Config,
     configdf: pd.DataFrame,
-    project_name: str,
-    restriction: str,
-) -> None:
-    logging.info(f"working on project '{project_name}', restriction '{restriction}'")
+    level0_item: str,
+    level1_item: str,
+    level2_item: str,
+) -> str:
+
+    logging.info(
+        f"working on {LEVELS[0]}: '{level0_item}', {LEVELS[1]}: '{level1_item}', {LEVELS[2]}: '{level2_item}'"
+    )
 
     filtereddf = configdf[
-        (configdf["NEMO_PROJECT_NAME"] == project_name)
-        & (configdf["NEMO_DEFICIENCY_RESTRICTIONS"] == restriction)
+        (configdf[LEVELS[0]] == level0_item)
+        & (configdf[LEVELS[1]] == level1_item)
+        & (configdf[LEVELS[2]] == level2_item)
     ]
 
-    # read values from df and check whether the values are unique
-    restriction_description = _validate_restriction(
-        filtereddf, project_name, "NEMO_DEFICIENCY_RESTRICTIONS_DESCRIPTION"
-    )[0]
-    restriction_excpetion = _validate_restriction(
-        filtereddf, project_name, "NEMO_DEFICIENCY_EXCEPTIONS"
-    )[0]
-    report_field_groups = _validate_restriction(
-        filtereddf, project_name, "NEMO_DEFICIENCY_REPORT_FIELD_GROUPS"
+    # some attributes must be unique within this group of fields
+    unique_attributes = [
+        "RESTRICTION",
+        "REPORT_FIELD_GROUPS",
+        "REPORT_FIELD_LIST",
+        "REPORT_EXCEPT_LIST",
+        "EXCEPTION",
+    ]
+
+    for attribute in unique_attributes:
+        field_value = filtereddf[attribute].unique().tolist()
+        if len(field_value) > 1:
+            raise ValueError(
+                f"""{LEVELS[0]}: '{level0_item}', {LEVELS[1]}: '{level1_item}', {LEVELS[2]}: '{level2_item}', attribute '{attribute}' is not unique!
+Values provided: {field_value}
+Please ensure that all records with same project name and same restriction have all the same value in this field"""
+            )
+        field_value = (
+            ""
+            if len(field_value) == 0 or pd.isnull(field_value[0])
+            else str(field_value[0])
+        )
+        match attribute:
+            case "RESTRICTION":
+                restriction = field_value
+            case "REPORT_FIELD_GROUPS":
+                report_field_groups = field_value.split(",")
+            case "REPORT_FIELD_LIST":
+                report_field_list = field_value.split(",")
+            case "REPORT_EXCEPT_LIST":
+                report_except_list = field_value.split(",")
+            case "EXCEPTION":
+                exception = field_value
+
+    # resolve report field list
+    report_field_list = _get_report_field_list(
+        config=config,
+        project_name=level0_item,
+        report_field_groups=report_field_groups,
+        report_field_list=report_field_list,
+        report_except_list=report_except_list,
     )
-    report_field_list = _validate_restriction(
-        filtereddf, project_name, "NEMO_DEFICIENCY_REPORT_FIELD_LIST"
+
+    # build report
+    frags_check = []
+    frags_msg = []
+    for idx, row in filtereddf.iterrows():
+        frags_check.append(f"({row["RULE_DEFINITION"]})")
+        frags_msg.append(f"WHEN ({row["RULE_DEFINITION"]}) THEN '{row['RULE_NAME']}'")
+
+    select = f"""SELECT 
+\tCASE WHEN
+\t\t{"\n\t\t  OR ".join(frags_check)} THEN 'check' ELSE 'ok'
+\tEND AS STATUS
+\t, CASE {"\n\t\t".join(frags_msg)} END AS DEFICIENCY_MESSAGE
+\t, {"\n\t, ".join(report_field_list)}
+FROM
+    $schema.$table
+WHERE
+    ({restriction})
+AND ({exception})
+"""
+
+    # create the report
+    report_display_name = f"(DEFICIENCIES) {level1_item}, {level2_item}"
+    report_internal_name = get_internal_name(report_display_name)
+
+    createOrUpdateReport(
+        config=config,
+        projectname=level0_item,
+        displayName=report_display_name,
+        internalName=report_internal_name,
+        querySyntax=select,
+        description=f"Deficiency Mining Report for {level0_item}, {level1_item}, {level2_item}'",
     )
-    report_field_except_list = _validate_restriction(
-        filtereddf, project_name, "NEMO_DEFICIENCY_REPORT_EXCEPT_LIST"
+
+    createOrUpdateRule(
+        config=config,
+        projectname=level0_item,
+        displayName=f"{level2_item}",
+        ruleSourceInternalName=report_internal_name,
+        ruleGroup=level1_item,
+        description=f"Deficiency Mining Rule for {level0_item}, {level1_item}, {level2_item}'",
     )
-    
+
+
+def _get_report_field_list(
+    config: Config,
+    project_name: str,
+    report_field_groups: list[str],
+    report_field_list: list[str],
+    report_except_list: list[str],
+) -> list[str]:
     # resolve field groups into field list
     report_field_list = (
         _resolve_field_groups(
@@ -97,7 +206,9 @@ def _process_restriction(
     )
 
     # eliminate douplicates and remove except fields
-    report_field_list = list(set(report_field_list) - set(report_field_except_list if report_field_except_list else []))
+    report_field_list = list(
+        set(report_field_list) - set(report_except_list if report_except_list else [])
+    )
 
     # fields found?
     if not report_field_list:
@@ -113,146 +224,26 @@ def _process_restriction(
             f"One or many fields not found in project: {fields_not_existing}"
         )
 
-    global_frags_check = []
-    global_frags_msg = []
-
-    # process fields now
-    field_list = filtereddf["NEMO_INTERNAL_NAME"].unique().tolist()
-    for field in field_list:
-        fieldsdf = filtereddf[filtereddf["NEMO_INTERNAL_NAME"] == field]
-        (fieldfrags_check, field_frags_msg) = _process_field(
-            config=config,
-            project_name=project_name,
-            restriction=restriction,
-            restriction_description=restriction_description,
-            restriction_excpetion=restriction_excpetion,
-            field=field,
-            report_field_list=report_field_list,
-            fieldsdf=fieldsdf,
-        )
-    
-        global_frags_check.extend(fieldfrags_check)
-        global_frags_msg.extend(field_frags_msg)
-    
-    select = f"""SELECT 
-\tCASE WHEN
-\t\t{"\n\t\t  OR ".join(global_frags_check)} THEN 'check' ELSE 'ok'
-\tEND AS STATUS
-\t, CASE {"\n\t\t".join(global_frags_msg)} END AS DEFICIENCY_MESSAGE
-\t, {"\n\t, ".join(report_field_list)}
-FROM
-    $schema.$table
-WHERE
-    ({restriction})
-AND ({restriction_excpetion})
-"""
-    # create the report
-    report_display_name = f"(DEFICIENCIES) {restriction_description}"
-    report_internal_name = get_internal_name(report_display_name)
-
-    createOrUpdateReport(
-        config=config,
-        projectname=project_name,
-        displayName=report_display_name,
-        internalName=report_internal_name,
-        querySyntax=select,
-        description=f"Deficiency Mining Report for restriction {restriction_description} in project '{project_name}'",
-    )
-
-    createOrUpdateRule(
-        config=config,
-        projectname=project_name,
-        displayName=f"{restriction_description}",
-        ruleSourceInternalName=report_internal_name,
-        ruleGroup=restriction_description,
-        description=f"Deficiency Mining Report for restriction {restriction_description} in project '{project_name}'",
-    )
-
-def _process_field(
-    config: Config,
-    project_name: str,
-    restriction: str,
-    restriction_description: str,
-    restriction_excpetion: str,
-    field: str,
-    report_field_list: list[str],
-    fieldsdf: pd.DataFrame,
-) -> (list[str], list[str]):
-    logging.info(
-        f"working on project '{project_name}', restriction '{restriction}', field '{field}'"
-    )
-    field_frags_check = []
-    field_frags_msg = []
-    for idx, row in fieldsdf.iterrows():
-        field_frags_check.append(f"({row["NEMO_DEFICIENCY_RULE_DEFINITION"]})")
-        field_frags_msg.append(
-            f"WHEN ({row["NEMO_DEFICIENCY_RULE_DEFINITION"]}) THEN '{row['NEMO_INTERNAL_NAME']} {row['NEMO_DEFICIENCY_RULE_NAME']}'"
-        )
-
-    select = f"""SELECT 
-\tCASE WHEN
-\t\t{"\n\t\t  OR ".join(field_frags_check)} THEN 'check' ELSE 'ok'
-\tEND AS STATUS
-\t, CASE {"\n\t\t".join(field_frags_msg)} END AS DEFICIENCY_MESSAGE
-\t, {"\n\t, ".join([field] + [fieldr for fieldr in report_field_list if fieldr != field ])}
-FROM
-    $schema.$table
-WHERE
-    ({restriction})
-AND ({restriction_excpetion})
-"""
-
-    # create the report
-    report_display_name = f"(DEFICIENCIES) {restriction_description} field {field}"
-    report_internal_name = get_internal_name(report_display_name)
-
-    createOrUpdateReport(
-        config=config,
-        projectname=project_name,
-        displayName=report_display_name,
-        internalName=report_internal_name,
-        querySyntax=select,
-        description=f"Deficiency Mining Report for restriction {restriction_description} column '{field}' in project '{project_name}'",
-    )
-
-    createOrUpdateRule(
-        config=config,
-        projectname=project_name,
-        displayName=f"{restriction_description} field {field}",
-        ruleSourceInternalName=report_internal_name,
-        ruleGroup=restriction_description,
-        description=f"Deficiency Mining Report for restriction {restriction_description} column '{field}' in project '{project_name}'",
-    )
-    return field_frags_check, field_frags_msg
+    return report_field_list
 
 
 def _resolve_field_groups(
-    config: Config, project_name: str, field_groups: list[str]
+    config: Config,
+    project_name: str,
+    field_groups: list[str],
 ) -> list[str]:
     df = _get_attribute_tree(config=config, projectname=project_name)
     group_internal_names = df["groupInternalName"].unique().tolist()
     groups_not_existing = set(field_groups) - set(group_internal_names)
     if groups_not_existing:
         raise ValueError(
-            f"One or many field groups not found in project: {groups_not_existing}"
+            f"""One or many field groups not found in project '{project_name}': {groups_not_existing}
+field groups provided: {field_groups}"""
         )
 
     filtereddf = df[df["groupInternalName"].isin(field_groups)]
     internalColumnName = filtereddf["internalColumnName"].to_list()
     return internalColumnName
-
-
-def _validate_restriction(
-    filtereddf: pd.DataFrame,
-    project_name: str,
-    field_name: str,
-) -> list[str]:
-    field_value = filtereddf[field_name].unique().tolist()
-    if len(field_value) != 1:
-        raise ValueError(
-            f"project: {project_name}, restriction: {filtereddf['NEMO_DEFICIENCY_RESTRICTIONS'].iloc[0][0]}: {field_name} is not unique.\nValues provided: {field_value}\nPlease ensure that all records with same project name and same restriction have all the same value in this field"
-        )
-    return str(field_value[0]).split(",") if not pd.isnull(field_value[0]) else None
 
 
 def _import_xlsx_file(
@@ -268,19 +259,16 @@ def _import_xlsx_file(
 
     # check columns
     expected_columns = [
-        "NEMO_RULE_ID",
-        "NEMO_PROJECT_NAME",
-        "NEMO_DEFICIENCY_RESTRICTIONS",
-        "NEMO_DEFICIENCY_RESTRICTIONS_DESCRIPTION",
-        "NEMO_DEFICIENCY_REPORT_FIELD_GROUPS",
-        "NEMO_DEFICIENCY_REPORT_FIELD_LIST",
-        "NEMO_DEFICIENCY_REPORT_EXCEPT_LIST",
-        "NEMO_INTERNAL_NAME",
-        "NEMO_DEFICIENCY_RULE_DEFINITION",
-        "NEMO_DEFICIENCY_RULE_NAME",
-        "NEMO_DEFICIENCY_CATEGORY",
-        "NEMO_DEFICIENCY_RULE_DESCRIPTION",
-        "NEMO_DEFICIENCY_EXCEPTIONS",
+        "PROJECT_NAME",
+        "RULE_GROUP",
+        "RULE_NAME",
+        "RESTRICTION",
+        "REPORT_FIELD_GROUPS",
+        "REPORT_FIELD_LIST",
+        "REPORT_EXCEPT_LIST",
+        "RULE_DEFINITION",
+        "EXCEPTION",
+        "INCLUDE_IN_GLOBAL",
     ]
 
     actual_columns = df.columns.to_list()
@@ -296,4 +284,7 @@ def _import_xlsx_file(
             f"Extra columns: {', '.join(extra_columns) if extra_columns else 'None'}"
         )
 
-    return df
+    # remove inactive objects
+    filtereddf = df[df["INCLUDE_IN_GLOBAL"] == True]
+
+    return filtereddf

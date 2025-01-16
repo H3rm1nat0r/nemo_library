@@ -19,7 +19,7 @@ COGNITO_APPCLIENT_IDS = {
     "challenge": "43lq8ej98uuo8hvnoi1g880onp",
 }
 NEMO_URLS = {
-    "demo": "https//demo.enter.nemo-ai.com",
+    "demo": "https://demo.enter.nemo-ai.com",
     "dev": "http://development.enter.nemo-ai.com",
     "test": "http://test.enter.nemo-ai.com",
     "prod": "https://enter.nemo-ai.com",

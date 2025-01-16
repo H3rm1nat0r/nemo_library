@@ -221,7 +221,8 @@ def _get_report_field_list(
     fields_not_existing = set(report_field_list) - set(internal_names_NEMO)
     if fields_not_existing:
         raise ValueError(
-            f"One or many fields not found in project: {fields_not_existing}"
+            f"""One or many fields not found in project: {fields_not_existing}.
+List of fields available: {internal_names_NEMO}"""
         )
 
     return report_field_list

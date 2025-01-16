@@ -201,7 +201,7 @@ def _get_report_field_list(
         _resolve_field_groups(
             config=config, project_name=project_name, field_groups=report_field_groups
         )
-        if report_field_groups
+        if report_field_groups and any(report_field_groups)
         else [] + report_field_list if report_field_list else []
     )
 

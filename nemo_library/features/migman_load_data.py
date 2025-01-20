@@ -70,8 +70,10 @@ def MigManLoadData(
 
         # init project
         multi_projects_list = (
-            multi_projects[project] if project in multi_projects else None
-        ) if multi_projects else None
+            (multi_projects[project] if project in multi_projects else None)
+            if multi_projects
+            else None
+        )
         if multi_projects_list:
             for addon in multi_projects_list:
                 for postfix in postfixes:
@@ -122,10 +124,12 @@ def _load_data(
             df = LoadReport(
                 config=config_var.get(),
                 projectname=project_name,
-                report_name="static information"
+                report_name="static information",
             )
             if df["TIMESTAMP_FILE"].iloc[0] == time_stamp_file:
-                logging.info(f"file and data in NEMO has the same time stamp ('{time_stamp_file}'). Ignore this file")
+                logging.info(
+                    f"file and data in NEMO has the same time stamp ('{time_stamp_file}'). Ignore this file"
+                )
                 return
 
         # read the file now and check the fields that are filled in that file
@@ -411,15 +415,24 @@ def _update_deficiency_mining(
 
     status_conditions = " OR ".join(frags_checked)
 
-    sql_statement = f"""SELECT
-\t{',\n\t'.join(dbdf['internal_name'].to_list())}
-\t,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
-\t,CASE 
-\t\tWHEN {status_conditions} THEN 'check'
-\t\tELSE 'ok'
-\tEND AS STATUS
-FROM
-$schema.$table"""
+    sql_statement = f"""WITH CTEDefMining AS (
+    SELECT
+        {',\n\t\t'.join([intname for intname, dispname in zip(dbdf["internal_name"],dbdf["display_name"]) if dispname in columns_in_file])}
+        ,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
+        ,CASE 
+            WHEN {status_conditions} THEN 'check'
+            ELSE 'ok'
+        END AS STATUS
+    FROM
+        $schema.$table
+)
+SELECT
+      Status
+    , DEFICIENCY_MININNG_MESSAGE
+    , {',\n\t'.join(sorted_columns)}
+FROM 
+    CTEDefMining
+"""
 
     # create the report
     report_display_name = f"(DEFICIENCIES) GLOBAL"
@@ -442,6 +455,39 @@ $schema.$table"""
         ruleGroup="01 Global",
         description=f"Deficiency Mining Rule for project '{project_name}'",
     )
+    
+    # create report for mig man
 
+    sql_statement = f"""WITH CTEDefMining AS (
+    SELECT
+        {',\n\t\t'.join([intname for intname, dispname in zip(dbdf["internal_name"],dbdf["display_name"]) if dispname in columns_in_file])}
+        ,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
+        ,CASE 
+            WHEN {status_conditions} THEN 'check'
+            ELSE 'ok'
+        END AS STATUS
+    FROM
+        $schema.$table
+)
+SELECT
+    {',\n\t'.join(sorted_columns)}
+FROM 
+    CTEDefMining
+WHERE
+    STATUS = 'ok'
+"""
+
+    # create the report
+    report_display_name = f"(MigMan) All records with no message"
+    report_internal_name = get_internal_name(report_display_name)
+
+    createOrUpdateReport(
+        config=config_var.get(),
+        projectname=project_name,
+        displayName=report_display_name,
+        internalName=report_internal_name,
+        querySyntax=sql_statement,
+        description=f"MigMan export with valid data for  project '{project_name}'",
+    )
     logging.info(f"Project {project_name}: {len(frags_checked)} checks implemented...")
     return len(frags_checked)

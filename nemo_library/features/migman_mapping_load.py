@@ -34,6 +34,7 @@ def MigManLoadMapping(
     mapping_fields: list[str],
     local_project_directory: str,
     additionalfields: dict[str, str] = None,
+    synonym_fields: dict[str, str] = None,
 ):
 
     # store parameters als global objects to avoid passing them to each and every funtion
@@ -49,12 +50,6 @@ def MigManLoadMapping(
 
     # iterate every given field and check whether to create the appropriate project and upload data
     for field in mapping_fields:
-
-        additionalFields = (
-            additionalfields[field]
-            if additionalfields and field in additionalfields
-            else None
-        )
 
         # if project does not exist, create it
         projectname = f"Mapping {field}"
@@ -73,13 +68,19 @@ def MigManLoadMapping(
 
         # if there is data provided (as a CSV-file), we upload this now.
         # if there is no data AND the project just have been created, we upload source data and create a template file
-        relatedfields = getRelatedFields(field=field)
+        relatedfields = getRelatedFields(
+            field=field,
+            synonym_fields=(
+                synonym_fields[field]
+                if synonym_fields and field in synonym_fields
+                else None
+            ),
+        )
 
         loadData(
             projectname=projectname,
             field=field,
-            # newProject=newProject,
-            newProject=True,
+            newProject=newProject, 
             relatedfields=relatedfields,
         )
 
@@ -146,7 +147,7 @@ def createMappingImportedColumnns(
     fields = []
 
     additionalfields = additionalfields_var.get()
-    additionalfields_filtered = additionalfields[field]
+    additionalfields_filtered = additionalfields[field] if additionalfields else None
     if additionalfields_filtered:
         for additionalField in additionalfields_filtered:
             fields.append(get_display_name(f"source {additionalField}"))
@@ -252,6 +253,7 @@ def loadData(
 
 def getRelatedFields(
     field: str,
+    synonym_fields: list[str],
 ) -> list[str]:
     related_fields = {}
     projectList = getProjectList(config=config_var.get())["displayName"].to_list()
@@ -259,6 +261,7 @@ def getRelatedFields(
         fields = collectDataFieldsForProject(
             project=project,
             field=field,
+            synonym_fields=synonym_fields,
         )
         if fields:
             related_fields[project] = fields
@@ -313,6 +316,7 @@ def collectData(
 def collectDataFieldsForProject(
     project: str,
     field: str,
+    synonym_fields: list[str],
 ) -> list[str]:
 
     fieldList = None
@@ -323,44 +327,49 @@ def collectDataFieldsForProject(
 
     additionalfields = additionalfields_var.get()
     additionalfields_filtered = (
-        additionalfields[field] if additionalfields and field in additionalfields else None
+        additionalfields[field]
+        if additionalfields and field in additionalfields
+        else None
     )
 
     imported_columns = getImportedColumns(config=config_var.get(), projectname=project)[
         "displayName"
     ].to_list()
-    result = next(
-        (
-            entry
-            for entry in imported_columns
-            if re.match(rf"^{re.escape(field)} \(\d{{3}}\)$", entry)
-        ),
-        None,
-    )
-    if result:
-        logging.info(f"Found field '{result}' in project '{project}'")
+    
+    search_fields = [field] + synonym_fields if synonym_fields else None
+    for search_field in search_fields:
+        result = next(
+            (
+                entry
+                for entry in imported_columns
+                if re.match(rf"^{re.escape(search_field)} \(\d{{3}}\)$", entry)
+            ),
+            None,
+        )
+        if result:
+            logging.info(f"Found field '{result}' in project '{project}'")
 
-        fieldList = {field: get_internal_name(result)}
+            fieldList = {field: get_internal_name(result)}
 
-        # check for additional fields now
-        if additionalfields_filtered:
-            for additionalField in additionalfields_filtered:
-                result = next(
-                    (
-                        entry
-                        for entry in imported_columns
-                        if re.match(
-                            rf"^{re.escape(additionalField)} \(\d{{3}}\)$", entry
-                        )
-                    ),
-                    None,
-                )
-                if not result:
-                    logging.info(
-                        f"Field '{additionalField}' not found in project '{project}'. Skip this project"
+            # check for additional fields now
+            if additionalfields_filtered:
+                for additionalField in additionalfields_filtered:
+                    result = next(
+                        (
+                            entry
+                            for entry in imported_columns
+                            if re.match(
+                                rf"^{re.escape(additionalField)} \(\d{{3}}\)$", entry
+                            )
+                        ),
+                        None,
                     )
+                    if not result:
+                        logging.info(
+                            f"Field '{additionalField}' not found in project '{project}'. Skip this project"
+                        )
 
-                fieldList[additionalField] = get_internal_name(result)
+                    fieldList[additionalField] = get_internal_name(result)
 
     # we have found all relevant fields in project. Now we are going to collect data
     return fieldList

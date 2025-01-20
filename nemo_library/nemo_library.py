@@ -266,12 +266,14 @@ class NemoLibrary:
         local_project_directory: str,
         mapping_fields: list[str],
         additional_fields: dict[str, str] = None,
+        synonym_fields: dict[str, str] = None,
     ):
         MigManLoadMapping(
             self.config,
             mapping_fields=mapping_fields,
             additionalfields=additional_fields,
             local_project_directory=local_project_directory,
+            synonym_fields=synonym_fields,
         )
 
     def MigManApplyMapping(

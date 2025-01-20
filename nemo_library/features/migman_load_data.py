@@ -404,6 +404,36 @@ def _update_deficiency_mining(
             )
 
     # now setup global dm report and rule
+    case_statement_specific, status_conditions = _create_dm_rule_global(
+        project_name=project_name,
+        columns_in_file=columns_in_file,
+        dbdf=dbdf,
+        frags_checked=frags_checked,
+        frags_msg=frags_msg,
+        sorted_columns=sorted_columns,
+    )
+
+    # create report for mig man
+    _create_migman_export(
+        project_name=project_name,
+        columns_in_file=columns_in_file,
+        dbdf=dbdf,
+        case_statement_specific=case_statement_specific,
+        status_conditions=status_conditions,
+    )
+
+    logging.info(f"Project {project_name}: {len(frags_checked)} checks implemented...")
+    return len(frags_checked)
+
+
+def _create_dm_rule_global(
+    project_name: str,
+    columns_in_file: list[str],
+    dbdf: pd.DataFrame,
+    frags_checked: list[str],
+    frags_msg: list[str],
+    sorted_columns: list[str],
+) -> (str, str):
 
     # case statements for messages and dm report
     case_statement_specific = " ||\n\t".join(
@@ -455,9 +485,17 @@ FROM
         ruleGroup="01 Global",
         description=f"Deficiency Mining Rule for project '{project_name}'",
     )
-    
-    # create report for mig man
 
+    return case_statement_specific, status_conditions
+
+
+def _create_migman_export(
+    project_name: str,
+    columns_in_file: list[str],
+    dbdf: pd.DataFrame,
+    case_statement_specific: str,
+    status_conditions: str,
+) -> None:
     sql_statement = f"""WITH CTEDefMining AS (
     SELECT
         {',\n\t\t'.join([intname for intname, dispname in zip(dbdf["internal_name"],dbdf["display_name"]) if dispname in columns_in_file])}
@@ -470,7 +508,7 @@ FROM
         $schema.$table
 )
 SELECT
-    {',\n\t'.join(sorted_columns)}
+    {',\n\t'.join([f"'{intname}' as '{paname}'" for intname,paname in zip(dbdf["internal_name"],dbdf["migman_header_label"])])}
 FROM 
     CTEDefMining
 WHERE
@@ -489,5 +527,3 @@ WHERE
         querySyntax=sql_statement,
         description=f"MigMan export with valid data for  project '{project_name}'",
     )
-    logging.info(f"Project {project_name}: {len(frags_checked)} checks implemented...")
-    return len(frags_checked)

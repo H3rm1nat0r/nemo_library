@@ -51,7 +51,9 @@ def MigManLoadMapping(
     for field in mapping_fields:
 
         additionalFields = (
-            additionalfields[field] if field in additionalfields else None
+            additionalfields[field]
+            if additionalfields and field in additionalfields
+            else None
         )
 
         # if project does not exist, create it
@@ -72,7 +74,7 @@ def MigManLoadMapping(
         # if there is data provided (as a CSV-file), we upload this now.
         # if there is no data AND the project just have been created, we upload source data and create a template file
         relatedfields = getRelatedFields(field=field)
-    
+
         loadData(
             projectname=projectname,
             field=field,
@@ -320,7 +322,9 @@ def collectDataFieldsForProject(
         return None
 
     additionalfields = additionalfields_var.get()
-    additionalfields_filtered = additionalfields[field]
+    additionalfields_filtered = (
+        additionalfields[field] if additionalfields and field in additionalfields else None
+    )
 
     imported_columns = getImportedColumns(config=config_var.get(), projectname=project)[
         "displayName"

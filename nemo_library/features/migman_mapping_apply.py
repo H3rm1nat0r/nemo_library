@@ -23,15 +23,21 @@ from nemo_library.utils.utils import (
 __all__ = ["MigManApplyMapping"]
 
 config_var = ContextVar("config")
+mapping_fields_var = ContextVar("mapping_fields")
 
 
 def MigManApplyMapping(
     config: Config,
+    mapping_fields: list[str],
+    additional_fields: dict[str, str] = None,
+    synonym_fields: dict[str, str] = None,
 ) -> None:
 
     # store parameters als global objects to avoid passing them to each and every funtion
     config_var.set(config)
+    mapping_fields_var.set(mapping_fields)
 
+    
     # get all projects
     projectList = getProjectList(config=config)["displayName"].to_list()
 
@@ -193,7 +199,7 @@ def MigManApplyMapping(
                     config=config,
                     projectname=project,
                     attributenames=[col, original_col],
-                    previous_attribute=col
+                    previous_attribute=col,
                 )
 
 

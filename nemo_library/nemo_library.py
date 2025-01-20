@@ -278,9 +278,15 @@ class NemoLibrary:
 
     def MigManApplyMapping(
         self,
+        mapping_fields: list[str],
+        additional_fields: dict[str, str] = None,
+        synonym_fields: dict[str, str] = None,
     ):
         MigManApplyMapping(
             self.config,
+            mapping_fields=mapping_fields,
+            additional_fields=additional_fields,
+            synonym_fields=synonym_fields
         )
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:

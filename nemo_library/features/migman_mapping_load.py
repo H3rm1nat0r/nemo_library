@@ -14,7 +14,7 @@ from nemo_library.features.projects import (
     getImportedColumns,
     getProjectList,
 )
-from nemo_library.utils.migmanutils import getMappingFilePath, initializeFolderStructure
+from nemo_library.utils.migmanutils import getMappingFilePath, getRelatedFields, initializeFolderStructure
 from nemo_library.utils.utils import (
     get_display_name,
     get_import_name,
@@ -69,6 +69,8 @@ def MigManLoadMapping(
         # if there is data provided (as a CSV-file), we upload this now.
         # if there is no data AND the project just have been created, we upload source data and create a template file
         relatedfields = getRelatedFields(
+            config=config,
+            additionalfields=additionalfields,
             field=field,
             synonym_fields=(
                 synonym_fields[field]
@@ -80,7 +82,7 @@ def MigManLoadMapping(
         loadData(
             projectname=projectname,
             field=field,
-            newProject=newProject, 
+            newProject=newProject,
             relatedfields=relatedfields,
         )
 
@@ -251,24 +253,6 @@ def loadData(
             logging.info(f"upload to project {projectname} completed")
 
 
-def getRelatedFields(
-    field: str,
-    synonym_fields: list[str],
-) -> list[str]:
-    related_fields = {}
-    projectList = getProjectList(config=config_var.get())["displayName"].to_list()
-    for project in projectList:
-        fields = collectDataFieldsForProject(
-            project=project,
-            field=field,
-            synonym_fields=synonym_fields,
-        )
-        if fields:
-            related_fields[project] = fields
-
-    return related_fields
-
-
 def collectData(
     projectname: str,
     field: str,
@@ -311,68 +295,6 @@ def collectData(
         update_project_settings=False,
     )
     logging.info(f"upload to project {projectname} completed")
-
-
-def collectDataFieldsForProject(
-    project: str,
-    field: str,
-    synonym_fields: list[str],
-) -> list[str]:
-
-    fieldList = None
-    if project in ["Business Processes", "Master Data"] or project.startswith(
-        "Mapping "
-    ):
-        return None
-
-    additionalfields = additionalfields_var.get()
-    additionalfields_filtered = (
-        additionalfields[field]
-        if additionalfields and field in additionalfields
-        else None
-    )
-
-    imported_columns = getImportedColumns(config=config_var.get(), projectname=project)[
-        "displayName"
-    ].to_list()
-    
-    search_fields = [field] + synonym_fields if synonym_fields else None
-    for search_field in search_fields:
-        result = next(
-            (
-                entry
-                for entry in imported_columns
-                if re.match(rf"^{re.escape(search_field)} \(\d{{3}}\)$", entry)
-            ),
-            None,
-        )
-        if result:
-            logging.info(f"Found field '{result}' in project '{project}'")
-
-            fieldList = {field: get_internal_name(result)}
-
-            # check for additional fields now
-            if additionalfields_filtered:
-                for additionalField in additionalfields_filtered:
-                    result = next(
-                        (
-                            entry
-                            for entry in imported_columns
-                            if re.match(
-                                rf"^{re.escape(additionalField)} \(\d{{3}}\)$", entry
-                            )
-                        ),
-                        None,
-                    )
-                    if not result:
-                        logging.info(
-                            f"Field '{additionalField}' not found in project '{project}'. Skip this project"
-                        )
-
-                    fieldList[additionalField] = get_internal_name(result)
-
-    # we have found all relevant fields in project. Now we are going to collect data
-    return fieldList
 
 
 def sqlQueryInMappingTable(

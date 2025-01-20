@@ -1,12 +1,15 @@
 import importlib
 import logging
 import os
+import re
 import tempfile
 import openpyxl
 import pandas as pd
 
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
+from nemo_library.features.projects import getImportedColumns, getProjectList
+from nemo_library.utils.utils import get_internal_name
 
 
 def initializeFolderStructure(
@@ -111,3 +114,86 @@ def upload_dataframe(config: Config, project_name: str, df: pd.DataFrame):
             datasource_ids=[{"key": "datasource_id", "value": project_name}],
         )
         logging.info(f"upload to project {project_name} completed")
+
+def getRelatedFields(
+    config: Config,
+    additionalfields: dict[str, str],
+    field: str,
+    synonym_fields: list[str],
+) -> list[str]:
+    related_fields = {}
+    projectList = getProjectList(config=config)["displayName"].to_list()
+    for project in projectList:
+        fields = collectDataFieldsForProject(
+            config=config,
+            additionalfields=additionalfields,
+            project=project,
+            field=field,
+            synonym_fields=synonym_fields,
+        )
+        if fields:
+            related_fields[project] = fields
+
+    return related_fields
+
+def collectDataFieldsForProject(
+    config: Config,
+    project: str,
+    field: str,
+    additionalfields: dict[str, str],
+    synonym_fields: list[str],
+) -> list[str]:
+
+    fieldList = None
+    if project in ["Business Processes", "Master Data"] or project.startswith(
+        "Mapping "
+    ):
+        return None
+
+    additionalfields_filtered = (
+        additionalfields[field]
+        if additionalfields and field in additionalfields
+        else None
+    )
+
+    imported_columns = getImportedColumns(config=config, projectname=project)[
+        "displayName"
+    ].to_list()
+    
+    search_fields = [field] + synonym_fields if synonym_fields else None
+    for search_field in search_fields:
+        result = next(
+            (
+                entry
+                for entry in imported_columns
+                if re.match(rf"^{re.escape(search_field)} \(\d{{3}}\)$", entry)
+            ),
+            None,
+        )
+        if result:
+            logging.info(f"Found field '{result}' in project '{project}'")
+
+            fieldList = {field: get_internal_name(result)}
+
+            # check for additional fields now
+            if additionalfields_filtered:
+                for additionalField in additionalfields_filtered:
+                    result = next(
+                        (
+                            entry
+                            for entry in imported_columns
+                            if re.match(
+                                rf"^{re.escape(additionalField)} \(\d{{3}}\)$", entry
+                            )
+                        ),
+                        None,
+                    )
+                    if not result:
+                        logging.info(
+                            f"Field '{additionalField}' not found in project '{project}'. Skip this project"
+                        )
+
+                    fieldList[additionalField] = get_internal_name(result)
+
+    # we have found all relevant fields in project. Now we are going to collect data
+    return fieldList

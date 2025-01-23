@@ -311,15 +311,6 @@ def _update_deficiency_mining(
                     )
                     frag_msg.append(f"{display_name} is not a valid date")
 
-                case "logical":
-                    format_for_regex = format.replace("/", "|")
-                    frag_check.append(
-                        f"NOT {internal_name} LIKE_REGEXPR('^({format_for_regex})$')"
-                    )
-                    frag_msg.append(
-                        f'{display_name}: logical value does not match format "{format}"'
-                    )
-
             # special fields
 
             if "mail" in internal_name:
@@ -327,16 +318,6 @@ def _update_deficiency_mining(
                     f"NOT {internal_name} LIKE_REGEXPR('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{{2,}}$')"
                 )
                 frag_msg.append(f"{display_name} is not a valid email")
-
-            if (
-                ("phone" in internal_name)
-                or ("telefon" in internal_name)
-                or ("fax" in internal_name)
-            ):
-                frag_check.append(
-                    f"NOT {internal_name} LIKE_REGEXPR('^\\+?[0-9\\s\\-()]{5,15}$')"
-                )
-                frag_msg.append(f"{display_name} is not a valid phone number")
 
             # now build deficiency mining report for this column (if there are checks)
             if frag_check:

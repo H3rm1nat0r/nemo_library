@@ -14,6 +14,7 @@ from nemo_library.features.projects import (
     getImportedColumns,
     getProjectList,
 )
+from nemo_library.utils.migmanutils import getRelatedFields
 from nemo_library.utils.utils import (
     get_display_name,
     get_import_name,
@@ -23,7 +24,6 @@ from nemo_library.utils.utils import (
 __all__ = ["MigManApplyMapping"]
 
 config_var = ContextVar("config")
-mapping_fields_var = ContextVar("mapping_fields")
 
 
 def MigManApplyMapping(
@@ -35,37 +35,29 @@ def MigManApplyMapping(
 
     # store parameters als global objects to avoid passing them to each and every funtion
     config_var.set(config)
-    mapping_fields_var.set(mapping_fields)
 
+    # build dictionary with fields to map
     
-    # get all projects
-    projectList = getProjectList(config=config)["displayName"].to_list()
-
-    # It might happen, that the user does not run our library will all mapping fields given that exists.
-    # In any case, we have to check for ALL mappings defined to create the right reports. So here we ignore
-    # the mapping fields that have been given - we collect all the mappings by ourselves
-    mappingprojects = [
-        x[len("Mapping ") :] for x in projectList if x.startswith("Mapping ")
-    ]
-    mappingfieldsall = {}
-    for project in mappingprojects:
-        importedcolumns = getImportedColumns(
-            config=config, projectname=f"Mapping {project}"
-        )["displayName"].to_list()
-        mappingfieldsprj = [
-            x[len("source ") :] for x in importedcolumns if x.startswith("source ")
-        ]
-        mappingfieldsall[project] = mappingfieldsprj
-
-    if not mappingfieldsall:
-        logging.info("no mapping fields found.")
-        return
-
-    logging.info(
-        f"Mapping fields found. Here is the list: {json.dumps(mappingfieldsall,indent=2)}"
-    )
-
+    fields_to_map = {}
+    for mapping_field in mapping_fields:
+        relatedfields = getRelatedFields(
+            config=config,
+            additionalfields=additional_fields,
+            field=mapping_field,
+            synonym_fields=(
+                synonym_fields[mapping_field]
+                if synonym_fields and mapping_field in synonym_fields
+                else None
+            ),
+        )
+        if relatedfields:
+            fields_to_map[mapping_field] = relatedfields
+            
+    logging.info(f"mapping fields: {json.dumps(fields_to_map)}")
+    return
+    
     # scan all the other projects now whether they contain these fields or not
+    projectList = getProjectList(config=config)["displayName"].to_list()
     dataprojects = [
         x
         for x in projectList

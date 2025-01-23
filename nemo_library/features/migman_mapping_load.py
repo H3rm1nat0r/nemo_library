@@ -149,7 +149,7 @@ def createMappingImportedColumnns(
     fields = []
 
     additionalfields = additionalfields_var.get()
-    additionalfields_filtered = additionalfields[field] if additionalfields else None
+    additionalfields_filtered = additionalfields[field] if additionalfields and field in additionalfields else None
     if additionalfields_filtered:
         for additionalField in additionalfields_filtered:
             fields.append(get_display_name(f"source {additionalField}"))

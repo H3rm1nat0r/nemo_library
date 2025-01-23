@@ -5,6 +5,7 @@ from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigF
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
+from nemo_library.features.migman_export_data import MigManExportData
 from nemo_library.features.migman_mapping_apply import MigManApplyMapping
 from nemo_library.features.migman_init_database import MigManInitDatabase
 from nemo_library.features.migman_create_project_templates import (
@@ -254,6 +255,22 @@ class NemoLibrary:
     ) -> None:
 
         MigManLoadData(
+            self.config,
+            projects=projects,
+            proALPHA_project_status_file=proALPHA_project_status_file,
+            local_project_directory=local_project_directory,
+            multi_projects=multi_projects,
+        )
+        
+    def MigManExportData(
+        self,
+        local_project_directory: str,
+        projects: list[str] = None,
+        proALPHA_project_status_file: str = None,
+        multi_projects: dict[str, str] = None,
+    ) -> None:
+
+        MigManExportData(
             self.config,
             projects=projects,
             proALPHA_project_status_file=proALPHA_project_status_file,

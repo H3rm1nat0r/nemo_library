@@ -130,7 +130,7 @@ def _load_data(
                 logging.info(
                     f"file and data in NEMO has the same time stamp ('{time_stamp_file}'). Ignore this file"
                 )
-                return
+                return 
 
         # read the file now and check the fields that are filled in that file
         datadf = pd.read_csv(
@@ -194,10 +194,10 @@ def _load_data(
         upload_dataframe(
             config=config_var.get(), project_name=project_name, df=datadf_cleaned
         )
-        _update_static_report(project_name=project_name)
+        _update_static_report(project_name=project_name)  
 
         # if there are new columns, update all reports
-        if new_columns:
+        if new_columns: 
             _update_deficiency_mining(
                 project_name=project_name,
                 columns_in_file=datadf_cleaned.columns,
@@ -397,7 +397,7 @@ def _update_deficiency_mining(
                     ruleSourceInternalName=report_internal_name,
                     ruleGroup="02 Columns",
                     description=f"Deficiency Mining Rule for column '{display_name}' in project '{project_name}'",
-                )
+                ) 
 
             logging.info(
                 f"project: {project_name}, column: {display_name}: {len(frag_check)} frags added"
@@ -414,7 +414,16 @@ def _update_deficiency_mining(
     )
 
     # create report for mig man
-    _create_migman_export(
+    _create_report_for_migman(
+        project_name=project_name,
+        columns_in_file=columns_in_file,
+        dbdf=dbdf,
+        case_statement_specific=case_statement_specific,
+        status_conditions=status_conditions,
+    )
+
+    # create report for the customer containing all errors
+    _create_report_for_customer(
         project_name=project_name,
         columns_in_file=columns_in_file,
         dbdf=dbdf,
@@ -489,7 +498,7 @@ FROM
     return case_statement_specific, status_conditions
 
 
-def _create_migman_export(
+def _create_report_for_migman(
     project_name: str,
     columns_in_file: list[str],
     dbdf: pd.DataFrame,
@@ -508,7 +517,7 @@ def _create_migman_export(
         $schema.$table
 )
 SELECT
-    {',\n\t'.join([f"'{intname}' as '{paname}'" for intname,paname in zip(dbdf["internal_name"],dbdf["migman_header_label"])])}
+    {',\n\t'.join([f"{intname} as \"{paname}\"" for intname,dispname,paname in zip(dbdf["internal_name"],dbdf["display_name"],dbdf["migman_header_label"]) if dispname in columns_in_file])}
 FROM 
     CTEDefMining
 WHERE
@@ -525,5 +534,46 @@ WHERE
         displayName=report_display_name,
         internalName=report_internal_name,
         querySyntax=sql_statement,
-        description=f"MigMan export with valid data for  project '{project_name}'",
+        description=f"MigMan export with valid data for project '{project_name}'",
+    )
+
+
+def _create_report_for_customer(
+    project_name: str,
+    columns_in_file: list[str],
+    dbdf: pd.DataFrame,
+    case_statement_specific: str,
+    status_conditions: str,
+) -> None:
+    sql_statement = f"""WITH CTEDefMining AS (
+    SELECT
+        {',\n\t\t'.join([intname for intname, dispname in zip(dbdf["internal_name"],dbdf["display_name"]) if dispname in columns_in_file])}
+        ,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
+        ,CASE 
+            WHEN {status_conditions} THEN 'check'
+            ELSE 'ok'
+        END AS STATUS
+    FROM
+        $schema.$table
+)
+SELECT
+    DEFICIENCY_MININNG_MESSAGE,
+    {',\n\t'.join([f"{intname} as \"{paname}\"" for intname,dispname,paname in zip(dbdf["internal_name"],dbdf["display_name"],dbdf["migman_header_label"]) if dispname in columns_in_file])}
+FROM 
+    CTEDefMining
+WHERE
+    STATUS <> 'ok'
+"""
+
+    # create the report
+    report_display_name = f"(Customer) All records with message"
+    report_internal_name = get_internal_name(report_display_name)
+
+    createOrUpdateReport(
+        config=config_var.get(),
+        projectname=project_name,
+        displayName=report_display_name,
+        internalName=report_internal_name,
+        querySyntax=sql_statement,
+        description=f"export invalid data for project '{project_name}'",
     )

@@ -16,7 +16,7 @@ def initializeFolderStructure(
     project_path: str,
 ) -> None:
 
-    folders = ["templates", "mappings", "srcdata", "other"]
+    folders = ["templates", "mappings", "srcdata", "other", "to_proalpha", "to_customer"]
     for folder in folders:
         os.makedirs(os.path.join(project_path, folder), exist_ok=True)
 
@@ -117,12 +117,13 @@ def upload_dataframe(config: Config, project_name: str, df: pd.DataFrame):
 
 def getRelatedFields(
     config: Config,
-    additionalfields: dict[str, str],
     field: str,
+    additionalfields: dict[str, str],
     synonym_fields: list[str],
 ) -> list[str]:
     related_fields = {}
     projectList = getProjectList(config=config)["displayName"].to_list()
+    projectList = [project for project in projectList if not project.startswith("Mapping") and not project in ("Business Processes","Master Data")]
     for project in projectList:
         fields = collectDataFieldsForProject(
             config=config,
@@ -160,7 +161,7 @@ def collectDataFieldsForProject(
         "displayName"
     ].to_list()
     
-    search_fields = [field] + synonym_fields if synonym_fields else None
+    search_fields = [field] + synonym_fields if synonym_fields and any(synonym_fields) else [field]
     for search_field in search_fields:
         result = next(
             (

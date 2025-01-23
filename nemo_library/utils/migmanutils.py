@@ -172,7 +172,7 @@ def collectDataFieldsForProject(
             None,
         )
         if result:
-            logging.info(f"Found field '{result}' in project '{project}'")
+            logging.info(f"Found related field '{result}' in project '{project}'")
 
             fieldList = {field: get_internal_name(result)}
 

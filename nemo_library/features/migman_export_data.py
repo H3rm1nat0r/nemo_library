@@ -1,44 +1,37 @@
-from contextvars import ContextVar
 import logging
 import os
 from nemo_library.features.config import Config
-from nemo_library.features.projects import LoadReport
+from nemo_library.features.projects import LoadReport, getProjectList
 from nemo_library.utils.migmanutils import (
+    get_local_project_directory,
+    get_multi_projects,
+    get_proALPHA_project_status_file,
+    get_projects,
     getNEMOStepsFrompAMigrationStatusFile,
     getProjectName,
     load_database,
 )
 from nemo_library.utils.utils import log_error
 
-config_var = ContextVar("config")
-local_project_directory_var = ContextVar("local_project_path")
-projects_var = ContextVar("projects")
-multi_projects_var = ContextVar("multi_projects")
-database_var = ContextVar("database")
-
 __all__ = ["MigManExportData"]
 
 
-def MigManExportData(
-    config: Config,
-    local_project_directory: str,
-    projects: list[str] = None,
-    proALPHA_project_status_file: str = None,
-    multi_projects: dict[str, str] = None,
-) -> None:
+def MigManExportData(config: Config) -> None:
+
+    # get configuration
+    local_project_directory = get_local_project_directory()
+    multi_projects = get_multi_projects()
 
     # if there is a status file given, we ignore the given projects and get the project list from the status file
+    proALPHA_project_status_file = get_proALPHA_project_status_file()
     if proALPHA_project_status_file:
         projects = getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
+    else:
+        projects = get_projects()
 
-    # store parameters als global objects to avoid passing them to each and every funtion
-    config_var.set(config)
-    local_project_directory_var.set(local_project_directory)
-    projects_var.set(projects)
-    multi_projects_var.set(multi_projects)
-
+    project_list_nemo = getProjectList(config)["displayName"].to_list()
+    
     dbdf = load_database()
-    database_var.set(dbdf)
     for project in projects:
 
         # check for project in database
@@ -58,13 +51,16 @@ def MigManExportData(
         if multi_projects_list:
             for addon in multi_projects_list:
                 for postfix in postfixes:
-                    _export_data(project, addon, postfix)
+                    _export_data(config,local_project_directory,project_list_nemo,project, addon, postfix)
         else:
             for postfix in postfixes:
-                _export_data(project, None, postfix)
+                _export_data(config,local_project_directory,project_list_nemo,project, None, postfix)
 
 
 def _export_data(
+    config: Config,
+    local_project_directory: str,
+    project_list_nemo : list[str],
     project: str,
     addon: str,
     postfix: str,
@@ -77,15 +73,19 @@ def _export_data(
     ]
     project_name = getProjectName(project, addon, postfix)
 
-    for folder,file_postfix,report_name in data:
+    if project_name not in project_list_nemo:
+        logging.info(f"Project '{project_name}' not available in NEMO. No data exported")
+        return
+
+    for folder, file_postfix, report_name in data:
 
         file_name = os.path.join(
-            local_project_directory_var.get(),
+            local_project_directory,
             folder,
             f"{project_name}{file_postfix}.csv",
         )
         df = LoadReport(
-            config=config_var.get(),
+            config=config,
             projectname=project_name,
             report_name=report_name,
         )
@@ -99,4 +99,3 @@ def _export_data(
         logging.info(
             f"File '{file_name}' for '{project}', addon '{addon}', postfix '{postfix}' exported '{report_name}'"
         )
-        

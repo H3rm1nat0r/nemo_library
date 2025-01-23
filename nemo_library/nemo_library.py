@@ -237,22 +237,6 @@ class NemoLibrary:
     def MigManLoadData(self) -> None:
         MigManLoadData(self.config)
 
-    def MigManExportData(
-        self,
-        local_project_directory: str,
-        projects: list[str] = None,
-        proALPHA_project_status_file: str = None,
-        multi_projects: dict[str, str] = None,
-    ) -> None:
-
-        MigManExportData(
-            self.config,
-            projects=projects,
-            proALPHA_project_status_file=proALPHA_project_status_file,
-            local_project_directory=local_project_directory,
-            multi_projects=multi_projects,
-        )
-
     def MigManLoadMapping(
         self,
         local_project_directory: str,
@@ -280,6 +264,9 @@ class NemoLibrary:
             additional_fields=additional_fields,
             synonym_fields=synonym_fields,
         )
+
+    def MigManExportData(self) -> None:
+        MigManExportData(self.config)
 
     def getImportedColumns(self, projectname: str) -> pd.DataFrame:
         """

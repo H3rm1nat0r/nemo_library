@@ -1,8 +1,5 @@
-from contextvars import ContextVar
-import csv
 import logging
 import os
-import re
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes
@@ -14,7 +11,14 @@ from nemo_library.features.projects import (
     getImportedColumns,
     getProjectList,
 )
-from nemo_library.utils.migmanutils import getMappingFilePath, getRelatedFields, initializeFolderStructure
+from nemo_library.utils.migmanutils import (
+    get_additional_fields,
+    get_local_project_directory,
+    get_mapping_fields,
+    get_synonym_fields,
+    getMappingFilePath,
+    getRelatedFields,
+)
 from nemo_library.utils.utils import (
     get_display_name,
     get_import_name,
@@ -24,26 +28,13 @@ from nemo_library.utils.utils import (
 __all__ = ["MigManLoadMapping"]
 
 
-config_var = ContextVar("config")
-local_project_directory_var = ContextVar("local_project_directory")
-additionalfields_var = ContextVar("additionalfields")
+def MigManLoadMapping(config: Config):
 
-
-def MigManLoadMapping(
-    config: Config,
-    mapping_fields: list[str],
-    local_project_directory: str,
-    additionalfields: dict[str, str] = None,
-    synonym_fields: dict[str, str] = None,
-):
-
-    # store parameters als global objects to avoid passing them to each and every funtion
-    config_var.set(config)
-    local_project_directory_var.set(local_project_directory)
-    additionalfields_var.set(additionalfields)
-
-    # if not already existing, create folder structure
-    initializeFolderStructure(local_project_directory)
+    # get configuration
+    local_project_directory = get_local_project_directory()
+    mapping_fields = get_mapping_fields()
+    additional_fields = get_additional_fields()
+    synonym_fields = get_synonym_fields()
 
     # get all projects
     projectList = getProjectList(config=config)["displayName"].to_list()
@@ -56,12 +47,14 @@ def MigManLoadMapping(
         newProject = False
         if not projectname in projectList:
             newProject = True
-            createMappingProject(field=field, projectname=projectname)
+            createMappingProject(config=config, field=field, projectname=projectname)
 
             # update list of fields
             createMappingImportedColumnns(
+                config=config,
                 projectname=projectname,
                 field=field,
+                additional_fields=additional_fields,
             )
         else:
             logging.info(f"project {projectname} found.")
@@ -70,7 +63,7 @@ def MigManLoadMapping(
         # if there is no data AND the project just have been created, we upload source data and create a template file
         relatedfields = getRelatedFields(
             config=config,
-            additionalfields=additionalfields,
+            additionalfields=additional_fields,
             field=field,
             synonym_fields=(
                 synonym_fields[field]
@@ -80,34 +73,39 @@ def MigManLoadMapping(
         )
 
         loadData(
+            config=config,
             projectname=projectname,
             field=field,
             newProject=newProject,
             relatedfields=relatedfields,
+            local_project_directory=local_project_directory,
         )
 
         # # couple attributes in focus
-        coupleAttributes(projectname=projectname)
+        coupleAttributes(config=config, projectname=projectname)
 
         # collect data
         collectData(
+            config=config,
             projectname=projectname,
             field=field,
             newProject=False,  # project is not new any longer, we can access it's data (maybe uploaded in former steps)
             relatedfields=relatedfields,
+            local_project_directory=local_project_directory,
         )
 
 
 def coupleAttributes(
+    config: Config,
     projectname: str,
 ) -> None:
 
     imported_columns = getImportedColumns(
-        config=config_var.get(),
+        config=config,
         projectname=projectname,
     )["displayName"].to_list()
     focusCoupleAttributes(
-        config=config_var.get(),
+        config=config,
         projectname=projectname,
         attributenames=imported_columns,
         previous_attribute=None,
@@ -115,6 +113,7 @@ def coupleAttributes(
 
 
 def createMappingProject(
+    config: Config,
     projectname: str,
     field: str,
 ) -> str:
@@ -135,30 +134,33 @@ def createMappingProject(
 
     logging.info(f"'{projectname}' not found, create it")
     createProject(
-        config=config_var.get(),
+        config=config,
         projectname=projectname,
         description=f"Mapping for field '{field}'",
     )
 
 
 def createMappingImportedColumnns(
+    config: Config,
     projectname: str,
     field: str,
+    additional_fields: dict[str, list[str]],
 ) -> dict[str, str]:
 
     fields = []
 
-    additionalfields = additionalfields_var.get()
-    additionalfields_filtered = additionalfields[field] if additionalfields and field in additionalfields else None
+    additionalfields_filtered = (
+        additional_fields[field]
+        if additional_fields and field in additional_fields
+        else None
+    )
     if additionalfields_filtered:
         for additionalField in additionalfields_filtered:
             fields.append(get_display_name(f"source {additionalField}"))
     fields.append(get_display_name(f"source {field}"))
     fields.append(get_display_name(f"target {field}"))
 
-    importedColumnsList = getImportedColumns(
-        config=config_var.get(), projectname=projectname
-    )
+    importedColumnsList = getImportedColumns(config=config, projectname=projectname)
     importedColumnsList = (
         importedColumnsList["displayName"].to_list()
         if not importedColumnsList.empty
@@ -180,28 +182,30 @@ def createMappingImportedColumnns(
             )
     if new_columns:
         createImportedColumns(
-            config=config_var.get(),
+            config=config,
             projectname=projectname,
             columns=new_columns,
         )
 
 
 def loadData(
+    config: Config,
     projectname: str,
     field: str,
     newProject: bool,
     relatedfields: dict[str, dict[str, str]],
+    local_project_directory: str,
 ) -> None:
 
     # project is new and table does not exist. We have to upload dummy-data to enforce creation of database table
 
     # "real" data given? let's take this instead of the dummy file
-    file_path = getMappingFilePath(projectname, local_project_directory_var.get())
+    file_path = getMappingFilePath(projectname, local_project_directory)
     logging.info(f"checking for data file {file_path}")
 
     if os.path.exists(file_path):
         ReUploadFile(
-            config=config_var.get(),
+            config=config,
             projectname=projectname,
             filename=file_path,
             update_project_settings=False,
@@ -222,14 +226,14 @@ def loadData(
             )
 
             createOrUpdateReport(
-                config=config_var.get(),
+                config=config,
                 projectname=projectname,
                 displayName="source mapping",
                 querySyntax=queryforreport,
                 description="load all source values and map them",
             )
             df = LoadReport(
-                config=config_var.get(),
+                config=config,
                 projectname=projectname,
                 report_name="source mapping",
             )
@@ -245,7 +249,7 @@ def loadData(
 
             # and upload it immediately
             ReUploadFile(
-                config=config_var.get(),
+                config=config,
                 projectname=projectname,
                 filename=file_path,
                 update_project_settings=False,
@@ -254,10 +258,12 @@ def loadData(
 
 
 def collectData(
+    config: Config,
     projectname: str,
     field: str,
     newProject: bool,
     relatedfields: list[str],
+    local_project_directory: str,
 ):
 
     queryforreport = sqlQueryInMappingTable(
@@ -266,7 +272,7 @@ def collectData(
         relatedfields=relatedfields,
     )
     createOrUpdateReport(
-        config=config_var.get(),
+        config=config,
         projectname=projectname,
         displayName="source mapping",
         querySyntax=queryforreport,
@@ -274,10 +280,10 @@ def collectData(
     )
 
     df = LoadReport(
-        config=config_var.get(), projectname=projectname, report_name="source mapping"
+        config=config, projectname=projectname, report_name="source mapping"
     )
 
-    file_path = getMappingFilePath(projectname, local_project_directory_var.get())
+    file_path = getMappingFilePath(projectname, local_project_directory)
 
     # export file as a template for mappings
     df.to_csv(
@@ -289,7 +295,7 @@ def collectData(
 
     # and upload it immediately
     ReUploadFile(
-        config=config_var.get(),
+        config=config,
         projectname=projectname,
         filename=file_path,
         update_project_settings=False,

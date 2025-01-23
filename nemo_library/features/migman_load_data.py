@@ -186,11 +186,12 @@ def _load_data(
         # now we have created all columns in NEMO. Upload data
         datadf_cleaned["timestamp_file"] = time_stamp_file
         upload_dataframe(config=config, project_name=project_name, df=datadf_cleaned)
-        _update_static_report(project_name=project_name)
+        _update_static_report(config=config, project_name=project_name)
 
         # if there are new columns, update all reports
         if new_columns:
             _update_deficiency_mining(
+                config=config,
                 project_name=project_name,
                 columns_in_file=datadf_cleaned.columns,
                 dbdf=dbdf,
@@ -198,6 +199,7 @@ def _load_data(
 
 
 def _update_static_report(
+    config: Config,
     project_name: str,
 ) -> None:
 
@@ -210,7 +212,7 @@ WHERE
     not timestamp_file = 'timestamp_file'
 """
     createOrUpdateReport(
-        config=config_var.get(),
+        config=config,
         projectname=project_name,
         displayName="static information",
         querySyntax=sql_query,
@@ -220,6 +222,7 @@ WHERE
 
 
 def _update_deficiency_mining(
+    config: Config,
     project_name: str,
     columns_in_file: list[str],
     dbdf: pd.DataFrame,
@@ -374,7 +377,7 @@ def _update_deficiency_mining(
                 report_internal_name = get_internal_name(report_display_name)
 
                 createOrUpdateReport(
-                    config=config_var.get(),
+                    config=config,
                     projectname=project_name,
                     displayName=report_display_name,
                     internalName=report_internal_name,
@@ -383,7 +386,7 @@ def _update_deficiency_mining(
                 )
 
                 createOrUpdateRule(
-                    config=config_var.get(),
+                    config=config,
                     projectname=project_name,
                     displayName=f"DM_{idx:03}: {display_name}",
                     ruleSourceInternalName=report_internal_name,
@@ -397,6 +400,7 @@ def _update_deficiency_mining(
 
     # now setup global dm report and rule
     case_statement_specific, status_conditions = _create_dm_rule_global(
+        config=config,
         project_name=project_name,
         columns_in_file=columns_in_file,
         dbdf=dbdf,
@@ -407,6 +411,7 @@ def _update_deficiency_mining(
 
     # create report for mig man
     _create_report_for_migman(
+        config=config,
         project_name=project_name,
         columns_in_file=columns_in_file,
         dbdf=dbdf,
@@ -416,6 +421,7 @@ def _update_deficiency_mining(
 
     # create report for the customer containing all errors
     _create_report_for_customer(
+        config=config,
         project_name=project_name,
         columns_in_file=columns_in_file,
         dbdf=dbdf,
@@ -428,13 +434,14 @@ def _update_deficiency_mining(
 
 
 def _create_dm_rule_global(
+    config: Config,
     project_name: str,
     columns_in_file: list[str],
     dbdf: pd.DataFrame,
     frags_checked: list[str],
     frags_msg: list[str],
     sorted_columns: list[str],
-) -> (str, str):
+) -> (str, str):  # type: ignore
 
     # case statements for messages and dm report
     case_statement_specific = " ||\n\t".join(
@@ -470,7 +477,7 @@ FROM
     report_internal_name = get_internal_name(report_display_name)
 
     createOrUpdateReport(
-        config=config_var.get(),
+        config=config,
         projectname=project_name,
         displayName=report_display_name,
         internalName=report_internal_name,
@@ -479,7 +486,7 @@ FROM
     )
 
     createOrUpdateRule(
-        config=config_var.get(),
+        config=config,
         projectname=project_name,
         displayName="Global",
         ruleSourceInternalName=report_internal_name,
@@ -491,6 +498,7 @@ FROM
 
 
 def _create_report_for_migman(
+    config: Config,
     project_name: str,
     columns_in_file: list[str],
     dbdf: pd.DataFrame,
@@ -521,7 +529,7 @@ WHERE
     report_internal_name = get_internal_name(report_display_name)
 
     createOrUpdateReport(
-        config=config_var.get(),
+        config=config,
         projectname=project_name,
         displayName=report_display_name,
         internalName=report_internal_name,
@@ -531,6 +539,7 @@ WHERE
 
 
 def _create_report_for_customer(
+    config: Config,
     project_name: str,
     columns_in_file: list[str],
     dbdf: pd.DataFrame,
@@ -562,7 +571,7 @@ WHERE
     report_internal_name = get_internal_name(report_display_name)
 
     createOrUpdateReport(
-        config=config_var.get(),
+        config=config,
         projectname=project_name,
         displayName=report_display_name,
         internalName=report_internal_name,

@@ -1,4 +1,3 @@
-from contextvars import ContextVar
 from datetime import datetime
 import json
 import logging
@@ -18,6 +17,10 @@ from nemo_library.features.projects import (
     getProjectList,
 )
 from nemo_library.utils.migmanutils import (
+    get_local_project_directory,
+    get_multi_projects,
+    get_proALPHA_project_status_file,
+    get_projects,
     getNEMOStepsFrompAMigrationStatusFile,
     getProjectName,
     load_database,
@@ -29,35 +32,23 @@ from nemo_library.utils.utils import (
     log_error,
 )
 
-config_var = ContextVar("config")
-local_project_directory_var = ContextVar("local_project_path")
-projects_var = ContextVar("projects")
-multi_projects_var = ContextVar("multi_projects")
-database_var = ContextVar("database")
-
 __all__ = ["MigManLoadData"]
 
 
-def MigManLoadData(
-    config: Config,
-    local_project_directory: str,
-    projects: list[str] = None,
-    proALPHA_project_status_file: str = None,
-    multi_projects: dict[str, str] = None,
-) -> None:
+def MigManLoadData(config: Config) -> None:
+
+    # get configuration
+    local_project_directory = get_local_project_directory()
+    multi_projects = get_multi_projects()
 
     # if there is a status file given, we ignore the given projects and get the project list from the status file
+    proALPHA_project_status_file = get_proALPHA_project_status_file()
     if proALPHA_project_status_file:
         projects = getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
-
-    # store parameters als global objects to avoid passing them to each and every funtion
-    config_var.set(config)
-    local_project_directory_var.set(local_project_directory)
-    projects_var.set(projects)
-    multi_projects_var.set(multi_projects)
+    else:
+        projects = get_projects()
 
     dbdf = load_database()
-    database_var.set(dbdf)
     for project in projects:
 
         # check for project in database
@@ -77,13 +68,20 @@ def MigManLoadData(
         if multi_projects_list:
             for addon in multi_projects_list:
                 for postfix in postfixes:
-                    _load_data(project, addon, postfix)
+                    _load_data(
+                        config, dbdf, local_project_directory, project, addon, postfix
+                    )
         else:
             for postfix in postfixes:
-                _load_data(project, None, postfix)
+                _load_data(
+                    config, dbdf, local_project_directory, project, None, postfix
+                )
 
 
 def _load_data(
+    config: Config,
+    dbdf: pd.DataFrame,
+    local_project_directory: str,
     project: str,
     addon: str,
     postfix: str,
@@ -92,7 +90,7 @@ def _load_data(
     # check for file first
     project_name = getProjectName(project, addon, postfix)
     file_name = os.path.join(
-        local_project_directory_var.get(),
+        local_project_directory,
         "srcdata",
         f"{project_name}.csv",
     )
@@ -104,14 +102,11 @@ def _load_data(
 
         # does project exist? if not, create it
         new_project = False
-        if (
-            not project_name
-            in getProjectList(config_var.get())["displayName"].to_list()
-        ):
+        if not project_name in getProjectList(config)["displayName"].to_list():
             new_project = True
             logging.info(f"Project not found in NEMO. Create it...")
             createProject(
-                config=config_var.get(),
+                config=config,
                 projectname=project_name,
                 description=f"Data Model for Mig Man table '{project}'",
             )
@@ -122,7 +117,7 @@ def _load_data(
         )
         if not new_project:
             df = LoadReport(
-                config=config_var.get(),
+                config=config,
                 projectname=project_name,
                 report_name="static information",
             )
@@ -130,7 +125,7 @@ def _load_data(
                 logging.info(
                     f"file and data in NEMO has the same time stamp ('{time_stamp_file}'). Ignore this file"
                 )
-                return 
+                return
 
         # read the file now and check the fields that are filled in that file
         datadf = pd.read_csv(
@@ -147,10 +142,9 @@ def _load_data(
                 f"totally empty columns removed. Here is the list {json.dumps(columns_to_drop.to_list(),indent=2)}"
             )
 
-        dbdf = database_var.get()
         dbdf = dbdf[(dbdf["project_name"] == project) & (dbdf["postfix"] == postfix)]
         columns_migman = dbdf["import_name"].to_list()
-        columns_nemo = getImportedColumns(config_var.get(), project_name)
+        columns_nemo = getImportedColumns(config, project_name)
         columns_nemo_import_names = (
             [] if columns_nemo.empty else columns_nemo["importName"].to_list()
         )
@@ -184,20 +178,18 @@ def _load_data(
                 )
         if new_columns:
             createImportedColumns(
-                config=config_var.get(),
+                config=config,
                 projectname=project_name,
                 columns=new_columns,
             )
 
         # now we have created all columns in NEMO. Upload data
         datadf_cleaned["timestamp_file"] = time_stamp_file
-        upload_dataframe(
-            config=config_var.get(), project_name=project_name, df=datadf_cleaned
-        )
-        _update_static_report(project_name=project_name)  
+        upload_dataframe(config=config, project_name=project_name, df=datadf_cleaned)
+        _update_static_report(project_name=project_name)
 
         # if there are new columns, update all reports
-        if new_columns: 
+        if new_columns:
             _update_deficiency_mining(
                 project_name=project_name,
                 columns_in_file=datadf_cleaned.columns,
@@ -397,7 +389,7 @@ def _update_deficiency_mining(
                     ruleSourceInternalName=report_internal_name,
                     ruleGroup="02 Columns",
                     description=f"Deficiency Mining Rule for column '{display_name}' in project '{project_name}'",
-                ) 
+                )
 
             logging.info(
                 f"project: {project_name}, column: {display_name}: {len(frag_check)} frags added"

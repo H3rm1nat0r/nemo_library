@@ -231,20 +231,8 @@ class NemoLibrary:
     def MigManInitDatabase(self) -> None:
         MigManInitDatabase()
 
-    def MigManCreateProjectTemplates(
-        self,
-        local_project_directory: str,
-        projects: list[str] = None,
-        proALPHA_project_status_file: str = None,
-        multi_projects: dict[str, str] = None,
-    ) -> None:
-        MigManCreateProjectTemplates(
-            self.config,
-            projects=projects,
-            proALPHA_project_status_file=proALPHA_project_status_file,
-            local_project_directory=local_project_directory,
-            multi_projects=multi_projects,
-        )
+    def MigManCreateProjectTemplates(self) -> None:
+        MigManCreateProjectTemplates(self.config)
 
     def MigManLoadData(
         self,
@@ -261,7 +249,7 @@ class NemoLibrary:
             local_project_directory=local_project_directory,
             multi_projects=multi_projects,
         )
-        
+
     def MigManExportData(
         self,
         local_project_directory: str,
@@ -499,10 +487,10 @@ class NemoLibrary:
 
     def createOrUpdateRulesByConfigFile(
         self,
-        filename: str,        
+        filename: str,
     ) -> None:
-        createOrUpdateRulesByConfigFile(self.config,filename)
-        
+        createOrUpdateRulesByConfigFile(self.config, filename)
+
     def synchronizeCsvColsAndImportedColumns(
         self,
         projectname: str,

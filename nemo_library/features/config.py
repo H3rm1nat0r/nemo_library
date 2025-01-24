@@ -246,7 +246,7 @@ class Config:
 
         # login and get token
         response_auth = requests.post(
-            self.connection_get_cognito_url(), headers=headers, data=json.dumps(data)
+            self.connection_get_cognito_url(), headers=headers, data=json.dumps(data,indent=2)
         )
         if response_auth.status_code != 200:
             raise Exception(

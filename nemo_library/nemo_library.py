@@ -12,6 +12,7 @@ from nemo_library.features.migman_create_project_templates import (
     MigManCreateProjectTemplates,
 )
 from nemo_library.features.migman_load_data import MigManLoadData
+from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.projects import (
     LoadReport,
@@ -237,21 +238,14 @@ class NemoLibrary:
     def MigManLoadData(self) -> None:
         MigManLoadData(self.config)
 
+    def MigManCreateMapping(self):
+        MigManCreateMapping(self.config)
+
     def MigManLoadMapping(self):
         MigManLoadMapping(self.config)
 
-    def MigManApplyMapping(
-        self,
-        mapping_fields: list[str],
-        additional_fields: dict[str, str] = None,
-        synonym_fields: dict[str, str] = None,
-    ):
-        MigManApplyMapping(
-            self.config,
-            mapping_fields=mapping_fields,
-            additional_fields=additional_fields,
-            synonym_fields=synonym_fields,
-        )
+    def MigManApplyMapping(self):
+        MigManApplyMapping(self.config)
 
     def MigManExportData(self) -> None:
         MigManExportData(self.config)

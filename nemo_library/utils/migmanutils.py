@@ -13,61 +13,76 @@ from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.projects import getImportedColumns, getProjectList
 from nemo_library.utils.utils import get_internal_name
 
+
 def get_local_project_directory() -> str:
     config = configparser.ConfigParser()
     config.read("migman.ini")
-    return config.get("MigMan","local_project_directory",fallback=None)
+    return config.get("MigMan", "local_project_directory", fallback=None)
+
 
 def get_proALPHA_project_status_file() -> str:
     config = configparser.ConfigParser()
     config.read("migman.ini")
-    return config.get("MigMan","proALPHA_project_status_file",fallback=None)
+    return config.get("MigMan", "proALPHA_project_status_file", fallback=None)
+
 
 def get_projects() -> list[str]:
     config = configparser.ConfigParser()
     config.read("migman.ini")
-    if config.has_option("MigMan","projects"):
-        return json.loads(config.get("MigMan","projects"))
+    if config.has_option("MigMan", "projects"):
+        return json.loads(config.get("MigMan", "projects"))
     else:
         return None
+
 
 def get_mapping_fields() -> list[str]:
     config = configparser.ConfigParser()
     config.read("migman.ini")
-    if config.has_option("MigMan","mapping_fields"):
-        return json.loads(config.get("MigMan","mapping_fields"))
+    if config.has_option("MigMan", "mapping_fields"):
+        return json.loads(config.get("MigMan", "mapping_fields"))
     else:
         return None
 
-def get_additional_fields() -> dict[str,list[str]]:
+
+def get_additional_fields() -> dict[str, list[str]]:
     config = configparser.ConfigParser()
     config.read("migman.ini")
-    if config.has_option("MigMan","additional_fields"):
-        return json.loads(config.get("MigMan","additional_fields"))
+    if config.has_option("MigMan", "additional_fields"):
+        return json.loads(config.get("MigMan", "additional_fields"))
     else:
         return None
 
-def get_synonym_fields() -> dict[str,list[str]]:
+
+def get_synonym_fields() -> dict[str, list[str]]:
     config = configparser.ConfigParser()
     config.read("migman.ini")
-    if config.has_option("MigMan","synonym_fields"):
-        return json.loads(config.get("MigMan","synonym_fields"))
+    if config.has_option("MigMan", "synonym_fields"):
+        return json.loads(config.get("MigMan", "synonym_fields"))
     else:
         return None
 
-def get_multi_projects() -> dict[str,list[str]]:
+
+def get_multi_projects() -> dict[str, list[str]]:
     config = configparser.ConfigParser()
     config.read("migman.ini")
-    if config.has_option("MigMan","multi_projects"):
-        return json.loads(config.get("MigMan","multi_projects"))
+    if config.has_option("MigMan", "multi_projects"):
+        return json.loads(config.get("MigMan", "multi_projects"))
     else:
         return None
+
 
 def initializeFolderStructure(
     project_path: str,
 ) -> None:
 
-    folders = ["templates", "mappings", "srcdata", "other", "to_proalpha", "to_customer"]
+    folders = [
+        "templates",
+        "mappings",
+        "srcdata",
+        "other",
+        "to_proalpha",
+        "to_customer",
+    ]
     for folder in folders:
         os.makedirs(os.path.join(project_path, folder), exist_ok=True)
 
@@ -126,7 +141,7 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
             "Standard Boms (Header Data)": "Standard BOMs (Header Data)",
             "Standard Boms (Line Data)": "Standard BOMs (Line Data)",
             "Routings (Standard Boms)": "Routings (Standard BOMs)",
-            "Bills Of Materials For Operations (Routings Production)": "Bills of Materials for Operations (Routings Production)"
+            "Bills Of Materials For Operations (Routings Production)": "Bills of Materials for Operations (Routings Production)",
         }
 
         nemosteps = [
@@ -166,86 +181,185 @@ def upload_dataframe(config: Config, project_name: str, df: pd.DataFrame):
         )
         logging.info(f"upload to project {project_name} completed")
 
-def getRelatedFields(
-    config: Config,
-    field: str,
-    additionalfields: dict[str, str],
-    synonym_fields: list[str],
-) -> list[str]:
-    related_fields = {}
+
+def getMappingRelations(config: Config) -> pd.DataFrame:
+
+    # get configuration
+    mapping_fields = get_mapping_fields()
+    additional_fields = get_additional_fields()
+    synonym_fields = get_synonym_fields()
+
+    # get data projects
     projectList = getProjectList(config=config)["displayName"].to_list()
-    projectList = [project for project in projectList if not project.startswith("Mapping") and not project in ("Business Processes","Master Data")]
+    projectList = [
+        project
+        for project in projectList
+        if not project.startswith("Mapping")
+        and not project in ("Business Processes", "Master Data")
+    ]
+
+    # scan projects for fields
+    data = []
     for project in projectList:
-        fields = collectDataFieldsForProject(
-            config=config,
-            additionalfields=additionalfields,
-            project=project,
-            field=field,
-            synonym_fields=synonym_fields,
-        )
-        if fields:
-            related_fields[project] = fields
 
-    return related_fields
+        logging.info(f"scan project '{project}' for mapping fields...")
 
-def collectDataFieldsForProject(
-    config: Config,
-    project: str,
-    field: str,
-    additionalfields: dict[str, str],
-    synonym_fields: list[str],
-) -> list[str]:
+        # get list of fields
+        imported_columns_df = getImportedColumns(config=config, projectname=project)
 
-    fieldList = None
-    if project in ["Business Processes", "Master Data"] or project.startswith(
-        "Mapping "
-    ):
-        return None
+        # remove (xxx)
+        def remove_brackets_if_present(name):
+            pattern = r"\(\d{3}\)$"
+            if re.search(pattern, name):
+                return re.sub(pattern, "", name).strip()
+            return name
 
-    additionalfields_filtered = (
-        additionalfields[field]
-        if additionalfields and field in additionalfields
-        else None
-    )
+        imported_columns_df["displayName_cleaned"] = imported_columns_df[
+            "displayName"
+        ].apply(remove_brackets_if_present)
+        imported_columns = imported_columns_df["displayName_cleaned"].to_list()
 
-    imported_columns = getImportedColumns(config=config, projectname=project)[
-        "displayName"
-    ].to_list()
-    
-    search_fields = [field] + synonym_fields if synonym_fields and any(synonym_fields) else [field]
-    for search_field in search_fields:
-        result = next(
-            (
-                entry
-                for entry in imported_columns
-                if re.match(rf"^{re.escape(search_field)} \(\d{{3}}\)$", entry)
-            ),
-            None,
-        )
-        if result:
-            logging.info(f"Found related field '{result}' in project '{project}'")
+        # let's search the fields now
+        for field in mapping_fields:
+            # Check if the mapping field or any of its synonyms exists in imported_columns
+            matching_field = None
+            if field in imported_columns:
+                matching_field = field
+            else:
+                for synonym in synonym_fields.get(field, []):
+                    if synonym in imported_columns:
+                        matching_field = synonym
+                        break
 
-            fieldList = {field: get_internal_name(result)}
+            # If the mapping field or one of its synonyms is found
+            if matching_field:
 
-            # check for additional fields now
-            if additionalfields_filtered:
-                for additionalField in additionalfields_filtered:
-                    result = next(
-                        (
-                            entry
-                            for entry in imported_columns
-                            if re.match(
-                                rf"^{re.escape(additionalField)} \(\d{{3}}\)$", entry
+                # Check if all additional fields are also present
+                additional_fields_present = all(
+                    additional_field in imported_columns
+                    for additional_field in additional_fields.get(field, [])
+                )
+                if additional_fields_present:
+
+                    # we have cut of the (...) for easier handling. Now we have add them back again and add useful information for further processing
+                    matching_field_display_name = imported_columns_df[
+                        imported_columns_df["displayName_cleaned"] == matching_field
+                    ]["displayName"].iloc[0]
+                    matching_field_internal_name = imported_columns_df[
+                        imported_columns_df["displayName_cleaned"] == matching_field
+                    ]["internalName"].iloc[0]
+
+                    additional_field_information = []
+                    for additional_field in additional_fields.get(field, []):
+                        additional_field_display_name = imported_columns_df[
+                            imported_columns_df["displayName_cleaned"]
+                            == additional_field
+                        ]["displayName"].iloc[0]
+                        additional_field_internal_name = imported_columns_df[
+                            imported_columns_df["displayName_cleaned"]
+                            == additional_field
+                        ]["internalName"].iloc[0]
+                        additional_field_information.append(
+                            (
+                                additional_field_display_name,
+                                additional_field_internal_name,
                             )
-                        ),
-                        None,
-                    )
-                    if not result:
-                        logging.info(
-                            f"Field '{additionalField}' not found in project '{project}'. Skip this project"
                         )
 
-                    fieldList[additionalField] = get_internal_name(result)
+                    # Save the data for this mapping field
+                    data.append(
+                        {
+                            "project": project,
+                            "mapping_field": field,
+                            "matching_field_display_name": matching_field_display_name,
+                            "matching_field_internal_name": matching_field_internal_name,
+                            "additional_fields": additional_field_information,
+                        }
+                    )
 
-    # we have found all relevant fields in project. Now we are going to collect data
-    return fieldList
+    logging.info(f"mapping related fields found: {json.dumps(data,indent=2)}")
+    return pd.DataFrame(data)
+
+
+def sqlQueryInMappingTable(
+    field: str,
+    newProject: bool,
+    mappingrelationsdf: pd.DataFrame,
+) -> str:
+
+    projects = mappingrelationsdf["project"].to_list()
+    display_names = mappingrelationsdf["matching_field_display_name"].to_list()
+    internal_names = mappingrelationsdf["matching_field_internal_name"].to_list()
+    additional_fields = mappingrelationsdf["additional_fields"].to_list()
+    additional_fields_defined = get_additional_fields()
+    additional_field_global_definition = additional_fields_defined.get(field, [])
+
+    # setup CTEs to load data from source projects
+    ctes = []
+    for project, display_name, internal_name, additional_fields in zip(
+        projects, display_names, internal_names, additional_fields
+    ):
+
+        subselect = [f'{internal_name} AS "source {field}"']
+        if any(additional_fields):
+            for (
+                additional_field_label,
+                additional_field_internal_name,
+            ), additional_field_definition in zip(
+                additional_fields, additional_field_global_definition
+            ):
+                subselect.extend(
+                    [
+                        f'{additional_field_internal_name} AS "source {additional_field_definition}"'
+                    ]
+                )
+
+        ctes.append(
+            f"""CTE_{get_internal_name(project)} AS (
+    SELECT DISTINCT
+        {"\n\t,".join(subselect)}
+    FROM 
+        $schema.PROJECT_{get_internal_name(project)}
+)"""
+        )
+
+    # global CTE to UNION ALL everything
+    source_fields = [f'"source {field}"']
+    for additional_field in additional_field_global_definition:
+        source_fields.append(f'"source {additional_field}"')
+
+    cteallfrags = [
+        f"""SELECT
+        {"\n\t, ".join(source_fields)} from CTE_{get_internal_name(project)} """
+        for project in projects
+    ]
+
+    joinfrags = [
+        f'mapping.{get_internal_name(field.strip('"'))} = cte.{field}'
+        for field in source_fields
+    ]
+
+    # build the final query
+    query = f""" WITH {"\n, ".join(ctes)}
+, CTEALL AS (
+    {"\nUNION ALL\n\t".join(cteallfrags)}
+)
+, CTEALLDISTINCT AS (
+    SELECT DISTINCT
+        {"\n\t, ".join(source_fields)}
+    FROM   
+        CTEALL  
+)
+SELECT
+    cte.{"\n\t, cte.".join(source_fields)}
+    , {"NULL" if newProject else f"mapping.TARGET_{get_internal_name(field)}"} AS "target {field}"
+FROM    
+    CTEALLDISTINCT cte
+"""
+    if not newProject:
+        query += f"""LEFT JOIN
+    $schema.$table mapping
+ON  
+    {"\n\tAND ".join(joinfrags)}"""
+
+    return query

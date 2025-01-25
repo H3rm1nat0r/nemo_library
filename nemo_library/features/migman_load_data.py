@@ -6,7 +6,6 @@ import re
 import pandas as pd
 
 from nemo_library.features.config import Config
-from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumns,
@@ -27,7 +26,6 @@ from nemo_library.utils.migmanutils import (
     upload_dataframe,
 )
 from nemo_library.utils.utils import (
-    get_display_name,
     get_internal_name,
     log_error,
 )

@@ -26,7 +26,7 @@ from nemo_library.utils.utils import (
     get_internal_name,
 )
 
-__all__ = ["MigManLoadMapping"]
+__all__ = ["MigManCreateMapping"]
 
 
 def MigManCreateMapping(config: Config):

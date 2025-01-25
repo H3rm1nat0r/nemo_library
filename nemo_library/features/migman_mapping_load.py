@@ -6,10 +6,8 @@ from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.projects import (
     LoadReport,
     createOrUpdateReport,
-    getProjectList,
 )
 from nemo_library.utils.migmanutils import (
-    get_additional_fields,
     get_local_project_directory,
     get_mapping_fields,
     getMappingFilePath,

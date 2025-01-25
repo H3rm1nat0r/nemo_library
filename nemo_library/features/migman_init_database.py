@@ -3,8 +3,7 @@ import logging
 import re
 from typing import Tuple
 import pandas as pd
-from nemo_library.features.config import Config
-from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name, log_error
+from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name
 
 __all__ = ["MigManInitDatabase"]
 

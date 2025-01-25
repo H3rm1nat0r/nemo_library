@@ -5,6 +5,7 @@ from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigF
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
+from nemo_library.features.migman_delete_projects import MigManDeleteProjects
 from nemo_library.features.migman_export_data import MigManExportData
 from nemo_library.features.migman_mapping_apply import MigManApplyMapping
 from nemo_library.features.migman_init_database import MigManInitDatabase
@@ -234,6 +235,9 @@ class NemoLibrary:
 
     def MigManCreateProjectTemplates(self) -> None:
         MigManCreateProjectTemplates(self.config)
+
+    def MigManDeleteProjects(self) -> None:
+        MigManDeleteProjects(self.config)
 
     def MigManLoadData(self) -> None:
         MigManLoadData(self.config)

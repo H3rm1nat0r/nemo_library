@@ -12,6 +12,7 @@ import pandas as pd
 from nemo_library.features.config import Config
 from nemo_library.features.projects import getProjectID
 from nemo_library.utils.utils import log_error
+from nemo_library.features.import_configuration import ImportConfigurations
 
 def GetFileSize(filepath:str):
     # filesize in byte
@@ -29,6 +30,7 @@ def ReUploadFile(
     global_fields_mapping: list[dict] = None,
     version: int = 2,
     trigger_only: bool = False,
+    import_configuration: ImportConfigurations = None, 
 ) -> None:
     """
     Re-uploads a file to a specified project in the NEMO system and triggers data ingestion.
@@ -135,9 +137,15 @@ def ReUploadFile(
             log_error(f"The file {filename} was not found.", NoCredentialsError)
 
         # Prepare data for ingestion
+
+        # Default ImportConfigurations
+        if import_configuration is None:
+            import_configuration = ImportConfigurations()
+
         data = {
             "project_id": project_id,
             "s3_filepath": f"s3://nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs/{s3filename}",
+            "configuration": import_configuration.to_dict()
         }
 
         if version == 3:

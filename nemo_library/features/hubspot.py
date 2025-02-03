@@ -1,24 +1,18 @@
-import csv
 import logging
-import os
 import pandas as pd
 import re
-import tempfile
 
 
 from hubspot import HubSpot
 from hubspot.crm.associations.models.batch_input_public_object_id import (
     BatchInputPublicObjectId,
 )
-from hubspot.crm.companies.models.batch_read_input_simple_public_object_id import (
-    BatchReadInputSimplePublicObjectId,
-)
 import requests
 
 from bs4 import BeautifulSoup
 
 from nemo_library.features.config import Config
-from nemo_library.features.fileingestion import ReUploadFile
+from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.utils.utils import log_error
 
 ACTIVITY_TYPES = [
@@ -912,51 +906,11 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
 
     """
 
-    # extract HTML plain text and remove HTML formatting, shorten text and replace "dangerous" characters
-
-    replacements = {
-        r"\r\n": " ",
-        r"\n": " ",
-        r"\r": " ",
-        r'"': "",  # Standard straight double quotes
-        r"“": "",  # Opening typographic double quotes
-        r"”": "",  # Closing typographic double quotes
-        r"„": "",  # German opening double quotes (low)
-        r"'": "",  # Standard straight single quotes
-        r"«": "",  # French double angle quotes (Guillemets, opening)
-        r"»": "",  # French double angle quotes (Guillemets, closing)
-        r"‹": "",  # Single angle quotes (Guillemets, opening)
-        r"›": "",  # Single angle quotes (Guillemets, closing)
-        r"‘": "",  # Opening typographic single quotes
-        r"’": "",  # Closing typographic single quotes
-    }
-
-    emoji_pattern = re.compile(
-        "["
-        "\U0001F600-\U0001F64F"  # emoticons
-        "\U0001F300-\U0001F5FF"  # symbols & pictographs
-        "\U0001F680-\U0001F6FF"  # transport & map symbols
-        "\U0001F1E0-\U0001F1FF"  # flags (iOS)
-        "]+",
-        flags=re.UNICODE,
-    )
-
-    # Function to replace strings using regular expressions
-    def replace_strings(text):
-        if isinstance(text, str):  # Check if the value is a string
-            for pattern, replacement in replacements.items():
-                text = re.sub(pattern, replacement, text)
-                text = emoji_pattern.sub(r"", text)
-        return text
-
     def extract_and_clean_text(html):
         if isinstance(html, str):
             # Extract text from HTML
             soup = BeautifulSoup(html, "html.parser")
             text = soup.get_text()[:400]
-
-            # Replace unwanted characters
-            text = replace_strings(text)
 
             return text
         else:
@@ -981,9 +935,7 @@ def beautify_deals_clean_text(deals: pd.DataFrame) -> pd.DataFrame:
     return deals
 
 
-def upload_deals_to_NEMO(
-    config: Config, projectname: str, deals: pd.DataFrame
-) -> None:
+def upload_deals_to_NEMO(config: Config, projectname: str, deals: pd.DataFrame) -> None:
     """
     Uploads a DataFrame of deals to the NEMO system after processing and temporarily saving it as a CSV file.
 
@@ -1015,27 +967,13 @@ def upload_deals_to_NEMO(
     deals = beautify_deals_data_type_conversions(deals)
     deals = beautify_deals_clean_text(deals)
 
-    # write file temporarily to disk
-
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_file_path = os.path.join(temp_dir, "tempfile.csv")
-
-        # temp_file_path = "./crm.csv"
-        deals.to_csv(
-            temp_file_path,
-            index=False,
-            sep=";",
-            na_rep="",
-        )
-        logging.info(f"file {temp_file_path} written. Number of records: {len(deals)}")
-
-        ReUploadFile(
-            config=config,
-            projectname=projectname,
-            filename=temp_file_path,
-            update_project_settings=True,
-        )
-        logging.info(f"upload to project {projectname} completed")
+    ReUploadDataFrame(
+        config=config,
+        projectname=projectname,
+        df=deals,
+        update_project_settings=True,
+        format_data=True,
+    )
 
 
 def add_user_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:

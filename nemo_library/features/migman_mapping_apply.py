@@ -1,10 +1,8 @@
 import json
 import logging
-import os
-import tempfile
 import pandas as pd
 from nemo_library.features.config import Config
-from nemo_library.features.fileingestion import ReUploadFile
+from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.focus import focusCoupleAttributes
 from nemo_library.features.projects import (
     LoadReport,
@@ -120,30 +118,15 @@ def _apply_mapping(
         report_name="(MAPPING) map data",
     )
 
-    # Write to a temporary file and upload
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_file_path = os.path.join(temp_dir, "tempfile.csv")
+    ReUploadDataFrame(
+        config=config,
+        projectname=project,
+        df=df,
+        update_project_settings=False,
+        version=3,
+        datasource_ids=[{"key": "datasource_id", "value": project}]
+    )
 
-        df.to_csv(
-            temp_file_path,
-            index=False,
-            sep=";",
-            na_rep="",
-            encoding="UTF-8",
-        )
-        logging.info(
-            f"dummy file {temp_file_path} written for project '{project}'. Uploading data to NEMO now..."
-        )
-
-        ReUploadFile(
-            config=config,
-            projectname=project,
-            filename=temp_file_path,
-            update_project_settings=False,
-            version=3,
-            datasource_ids=[{"key": "datasource_id", "value": project}],
-        )
-        logging.info(f"upload to project {project} completed")
 
 
 def _focus_couple_attributes(

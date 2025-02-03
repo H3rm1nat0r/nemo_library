@@ -2,9 +2,10 @@ import pandas as pd
 
 from nemo_library.features.config import Config
 from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
-from nemo_library.features.fileingestion import ReUploadFile
+from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore
 from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
+from nemo_library.features.import_configuration import ImportConfigurations
 from nemo_library.features.migman_delete_projects import MigManDeleteProjects
 from nemo_library.features.migman_export_data import MigManExportData
 from nemo_library.features.migman_mapping_apply import MigManApplyMapping
@@ -316,6 +317,31 @@ class NemoLibrary:
             description,
         )
 
+    def ReUploadDataFrame(
+        self,
+        projectname: str,
+        df: pd.DataFrame,
+        update_project_settings: bool = True,
+        datasource_ids: list[dict] = None,
+        global_fields_mapping: list[dict] = None,
+        version: int = 2,
+        trigger_only: bool = False,
+        import_configuration: ImportConfigurations = None,
+        format_data: bool = True,
+    ) -> None:
+        ReUploadDataFrame(
+            self.config,
+            projectname=projectname,
+            df=df,
+            update_project_settings=update_project_settings,
+            datasource_ids=datasource_ids,
+            global_fields_mapping=global_fields_mapping,
+            version=version,
+            trigger_only=trigger_only,
+            import_configuration=import_configuration,
+            format_data=format_data,
+        )
+
     def ReUploadFile(
         self,
         projectname: str,
@@ -325,6 +351,8 @@ class NemoLibrary:
         global_fields_mapping: list[dict] = None,
         version: int = 2,
         trigger_only: bool = False,
+        import_configuration: ImportConfigurations = None,
+        format_data: bool = True,
     ) -> None:
         """
         Re-uploads a file to a specified project in the NEMO system and triggers data ingestion.
@@ -353,13 +381,15 @@ class NemoLibrary:
         """
         ReUploadFile(
             self.config,
-            projectname,
-            filename,
-            update_project_settings,
-            datasource_ids,
-            global_fields_mapping,
-            version,
-            trigger_only,
+            projectname=projectname,
+            filename=filename,
+            update_project_settings=update_project_settings,
+            datasource_ids=datasource_ids,
+            global_fields_mapping=global_fields_mapping,
+            version=version,
+            trigger_only=trigger_only,
+            import_configuration=import_configuration,
+            format_data=format_data,
         )
 
     def createOrUpdateReport(

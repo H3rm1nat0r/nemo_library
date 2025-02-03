@@ -1,25 +1,75 @@
 import gzip
 import logging
+import re
 import shutil
 import os
+import tempfile
 import time
 import json
 import requests
 import boto3
 from botocore.exceptions import NoCredentialsError
 import pandas as pd
+import csv
 
 from nemo_library.features.config import Config
 from nemo_library.features.projects import getProjectID
 from nemo_library.utils.utils import log_error
 from nemo_library.features.import_configuration import ImportConfigurations
 
-def GetFileSize(filepath:str):
-    # filesize in byte
-    filesize_in_byte = os.path.getsize(filepath)
-    # byte to MB (1 MB = 1024 * 1024 Byte)
-    filesize_in_mb = filesize_in_byte / (1024 * 1024)
-    return filesize_in_mb
+__all__ = ["ReUploadDataFrame", "ReUploadFile"]
+
+
+def ReUploadDataFrame(
+    config: Config,
+    projectname: str,
+    df: pd.DataFrame,
+    update_project_settings: bool = True,
+    datasource_ids: list[dict] = None,
+    global_fields_mapping: list[dict] = None,
+    version: int = 2,
+    trigger_only: bool = False,
+    import_configuration: ImportConfigurations = None,
+    format_data: bool = True,
+) -> None:
+
+    if import_configuration is None:
+        import_configuration = ImportConfigurations()
+
+    if format_data:
+        df = _format_data(df, import_configuration)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_path = os.path.join(temp_dir, "tempfile.csv")
+
+        temp_file_path = "./test.csv"
+        df.to_csv(
+            temp_file_path,
+            index=False,
+            sep=import_configuration.field_delimiter,
+            na_rep="",
+            escapechar=import_configuration.escape_character,
+            lineterminator=import_configuration.record_delimiter,
+            quotechar=import_configuration.optionally_enclosed_by,
+            encoding="UTF-8",
+            doublequote=False,
+        )
+        logging.info(f"file {temp_file_path} written. Number of records: {len(df)}")
+
+        ReUploadFile(
+            config=config,
+            projectname=projectname,
+            filename=temp_file_path,
+            update_project_settings=update_project_settings,
+            datasource_ids=datasource_ids,
+            global_fields_mapping=global_fields_mapping,
+            version=version,
+            trigger_only=trigger_only,
+            import_configuration=import_configuration,
+            format_data=False,  # already formatted, if parameter was given
+        )
+        logging.info(f"upload to project {projectname} completed")
+
 
 def ReUploadFile(
     config: Config,
@@ -30,7 +80,8 @@ def ReUploadFile(
     global_fields_mapping: list[dict] = None,
     version: int = 2,
     trigger_only: bool = False,
-    import_configuration: ImportConfigurations = None, 
+    import_configuration: ImportConfigurations = None,
+    format_data: bool = True,
 ) -> None:
     """
     Re-uploads a file to a specified project in the NEMO system and triggers data ingestion.
@@ -65,18 +116,14 @@ def ReUploadFile(
     gzipped_filename = None
     compress_level = 3
     try:
-        filesize = GetFileSize(filename)
+        filesize = _get_file_size(filename)
 
-        logging.info(
-            f"Size of the file: {filesize} MB"
-        )
+        logging.info(f"Size of the file: {filesize} MB")
 
-        if filesize < 5 :
+        if filesize < 5:
             compress_level = 0
-            logging.info(
-                f"Compress Level: {compress_level}"
-            )
-            
+            logging.info(f"Compress Level: {compress_level}")
+
         project_id = getProjectID(config, projectname)
 
         headers = config.connection_get_headers()
@@ -88,7 +135,9 @@ def ReUploadFile(
         # Zip the file before uploading
         gzipped_filename = filename + ".gz"
         with open(filename, "rb") as f_in:
-            with gzip.open(gzipped_filename, "wb", compresslevel=compress_level) as f_out:
+            with gzip.open(
+                gzipped_filename, "wb", compresslevel=compress_level
+            ) as f_out:
                 shutil.copyfileobj(f_in, f_out)
         logging.info(f"File {filename} has been compressed to {gzipped_filename}")
 
@@ -145,7 +194,7 @@ def ReUploadFile(
         data = {
             "project_id": project_id,
             "s3_filepath": f"s3://nemoinfrastructurestack-nemouploadbucketa98fe899-1s2ocvunlg3vs/{s3filename}",
-            "configuration": import_configuration.to_dict()
+            "configuration": import_configuration.to_dict(),
         }
 
         if version == 3:
@@ -261,3 +310,51 @@ def ReUploadFile(
     finally:
         if gzipped_filename:
             os.remove(gzipped_filename)
+
+
+def _get_file_size(filepath: str):
+    # filesize in byte
+    filesize_in_byte = os.path.getsize(filepath)
+    # byte to MB (1 MB = 1024 * 1024 Byte)
+    filesize_in_mb = filesize_in_byte / (1024 * 1024)
+    return filesize_in_mb
+
+
+def _format_data(
+    df: pd.DataFrame,
+    import_configuration: ImportConfigurations,
+) -> pd.DataFrame:
+    # List of special characters that should be escaped
+    SPECIAL_CHARS = [
+        r'"',  # Standard straight double quotes
+        r"“",  # Opening typographic double quotes
+        r"”",  # Closing typographic double quotes
+        r"„",  # German opening double quotes (low)
+        r"'",  # Standard straight single quotes
+        r"«",  # French double angle quotes (Guillemets, opening)
+        r"»",  # French double angle quotes (Guillemets, closing)
+        r"‹",  # Single angle quotes (Guillemets, opening)
+        r"›",  # Single angle quotes (Guillemets, closing)
+        r"‘",  # Opening typographic single quotes
+        r"’",  # Closing typographic single quotes
+    ]
+    
+    # we don't escape the quoting character since this will be escaped by pandas to_csv later
+    if import_configuration.optionally_enclosed_by in SPECIAL_CHARS:
+        SPECIAL_CHARS.remove(import_configuration.optionally_enclosed_by)
+
+    # Ensure escape character is included
+    if import_configuration.escape_character not in SPECIAL_CHARS:
+        SPECIAL_CHARS.append(import_configuration.escape_character)
+
+    def escape_special_chars(value):
+        if isinstance(value, str):
+            for char in SPECIAL_CHARS:
+                value = re.sub(
+                    re.escape(char),
+                    f"{import_configuration.escape_character}{char}",
+                    value,
+                )
+        return value
+
+    return df.map(escape_special_chars)

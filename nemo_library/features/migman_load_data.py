@@ -6,6 +6,7 @@ import re
 import pandas as pd
 
 from nemo_library.features.config import Config
+from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumns,
@@ -23,7 +24,6 @@ from nemo_library.utils.migmanutils import (
     getNEMOStepsFrompAMigrationStatusFile,
     getProjectName,
     load_database,
-    upload_dataframe,
 )
 from nemo_library.utils.utils import (
     get_internal_name,
@@ -183,7 +183,14 @@ def _load_data(
 
         # now we have created all columns in NEMO. Upload data
         datadf_cleaned["timestamp_file"] = time_stamp_file
-        upload_dataframe(config=config, project_name=project_name, df=datadf_cleaned)
+        ReUploadDataFrame(
+            config=config,
+            projectname=project_name,
+            df=datadf_cleaned,
+            update_project_settings=False,
+            version=3,
+            datasource_ids=[{"key": "datasource_id", "value": project_name}],
+        )
         _update_static_report(config=config, project_name=project_name)
 
         # if there are new columns, update all reports

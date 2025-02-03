@@ -503,7 +503,7 @@ def _create_report_for_migman(
         $schema.$table
 )
 SELECT
-    {',\n\t'.join([f"{intname} as \"{paname}\"" for intname,dispname,paname in zip(dbdf["internal_name"],dbdf["display_name"],dbdf["migman_header_label"]) if dispname in columns_in_file])}
+    {',\n\t'.join([f"{intname} as \"{paname}\"" for intname,dispname,paname in zip(dbdf["internal_name"],dbdf["display_name"],dbdf["Column"]) if dispname in columns_in_file])}
 FROM 
     CTEDefMining
 WHERE

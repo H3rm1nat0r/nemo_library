@@ -201,7 +201,8 @@ def _load_data(
                 columns_in_file=datadf_cleaned.columns,
                 dbdf=dbdf,
             )
-
+    else:
+        logging.info(f"File {file_name} for project {project_name} not found")
 
 def _update_static_report(
     config: Config,

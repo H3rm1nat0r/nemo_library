@@ -64,7 +64,7 @@ def getProjectID(
     df = getProjectList(config)
     crmproject = df[df["displayName"] == projectname]
     if len(crmproject) != 1:
-        log_error(f"could not identify project name {projectname}")
+        return None
     project_id = crmproject["id"].to_list()[0]
     return project_id
 

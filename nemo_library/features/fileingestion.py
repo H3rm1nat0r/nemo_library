@@ -13,7 +13,7 @@ import pandas as pd
 import csv
 
 from nemo_library.features.config import Config
-from nemo_library.features.projects import getProjectID
+from nemo_library.features.projects import createProject, getProjectID
 from nemo_library.utils.utils import log_error
 from nemo_library.features.import_configuration import ImportConfigurations
 
@@ -109,6 +109,30 @@ def ReUploadFile(
         - Logs and raises exceptions for any errors encountered during the process.
     """
 
+    # Default ImportConfigurations
+    if import_configuration is None:
+        import_configuration = ImportConfigurations()
+
+    # format data? we need to import first and then use the upload dataframe api
+    if format_data:
+        df = pd.read_csv(
+            filename,
+            sep=import_configuration.field_delimiter,
+        )
+        ReUploadDataFrame(
+            config=config,
+            projectname=projectname,
+            df=df,
+            update_project_settings=update_project_settings,
+            datasource_ids=datasource_ids,
+            global_fields_mapping=global_fields_mapping,
+            version=version,
+            trigger_only=trigger_only,
+            import_configuration=import_configuration,
+            format_data=format_data,
+        )
+        return  # stop procesisng here
+
     project_id = None
     headers = None
     project_id = None
@@ -124,6 +148,12 @@ def ReUploadFile(
             logging.info(f"Compress Level: {compress_level}")
 
         project_id = getProjectID(config, projectname)
+        if not project_id:
+            logging.info(f"Project {projectname} not found - create it")
+            createProject(
+                config=config, projectname=projectname, description="AUTOCREATED"
+            )
+            project_id = getProjectID(config, projectname)
 
         headers = config.connection_get_headers()
 
@@ -185,10 +215,6 @@ def ReUploadFile(
             log_error(f"The file {filename} was not found.", NoCredentialsError)
 
         # Prepare data for ingestion
-
-        # Default ImportConfigurations
-        if import_configuration is None:
-            import_configuration = ImportConfigurations()
 
         data = {
             "project_id": project_id,

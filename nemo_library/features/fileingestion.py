@@ -337,7 +337,13 @@ def _format_data(
         r"‘",  # Opening typographic single quotes
         r"’",  # Closing typographic single quotes
     ]
-    
+
+    # Characters to remove completely (not escape)
+    REMOVE_CHARS = [
+        "\n",  # Line Feed
+        "\r",  # Carriage Return
+    ]
+
     # we don't escape the quoting character since this will be escaped by pandas to_csv later
     if import_configuration.optionally_enclosed_by in SPECIAL_CHARS:
         SPECIAL_CHARS.remove(import_configuration.optionally_enclosed_by)
@@ -348,12 +354,19 @@ def _format_data(
 
     def escape_special_chars(value):
         if isinstance(value, str):
+            # Escape special characters
             for char in SPECIAL_CHARS:
                 value = re.sub(
                     re.escape(char),
                     f"{import_configuration.escape_character}{char}",
                     value,
                 )
+            # Remove characters that cannot be escaped
+            for char in REMOVE_CHARS:
+                value = value.replace(char, "")
         return value
 
-    return df.map(escape_special_chars)
+    str_columns = df.select_dtypes(include=["object", "string"]).columns
+    df[str_columns] = df[str_columns].map(escape_special_chars)
+
+    return df

@@ -1,1 +1,1 @@
-pytest --cov=nemo_library -v
+pytest --cov=nemo_library -v 

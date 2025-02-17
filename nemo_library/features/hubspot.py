@@ -154,7 +154,7 @@ def getHubSpotAPIToken(config: Config) -> HubSpot:
     Returns:
         HubSpot: An instance of the HubSpot API client initialized with the API token.
     """
-    hs = HubSpot(access_token=config.config_get_hubspot_api_token())
+    hs = HubSpot(access_token=config.get_hubspot_api_token())
     return hs
 
 

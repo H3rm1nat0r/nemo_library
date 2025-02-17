@@ -11,7 +11,6 @@ from nemo_library.features.projects import (
     getImportedColumns,
 )
 from nemo_library.utils.migmanutils import (
-    get_additional_fields,
     getMappingRelations,
 )
 from nemo_library.utils.utils import (
@@ -100,6 +99,7 @@ def _apply_mapping(
     mappingrelationsdf: pd.DataFrame,
 ) -> None:
     select_statement = _select_statement(
+        config=config,
         importedcolumnsdf=importedcolumnsdf,
         mappingrelationsdf=mappingrelationsdf,
     )
@@ -124,9 +124,8 @@ def _apply_mapping(
         df=df,
         update_project_settings=False,
         version=3,
-        datasource_ids=[{"key": "datasource_id", "value": project}]
+        datasource_ids=[{"key": "datasource_id", "value": project}],
     )
-
 
 
 def _focus_couple_attributes(
@@ -148,6 +147,7 @@ def _focus_couple_attributes(
 
 
 def _select_statement(
+    config: Config,
     importedcolumnsdf: pd.DataFrame,
     mappingrelationsdf: pd.DataFrame,
 ) -> str:
@@ -180,7 +180,7 @@ ON
 
         additional_fields = row["additional_fields"]
         if any(additional_fields):
-            additional_fields_defined = get_additional_fields()
+            additional_fields_defined = config.get_migman_additional_fields()
             additional_field_global_definition = additional_fields_defined.get(
                 row["mapping_field"], []
             )

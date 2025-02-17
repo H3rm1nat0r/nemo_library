@@ -73,7 +73,7 @@ def focusMoveAttributeBefore(
     }
 
     response = requests.put(
-        config.config_get_nemo_url()
+        config.get_config_nemo_url()
         + "/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/move".format(
             projectId=project_id
         ),
@@ -128,7 +128,7 @@ def focusCoupleAttributes(
     }
 
     response = requests.post(
-        config.config_get_nemo_url()
+        config.get_config_nemo_url()
         + "/api/nemo-persistence/metadata/AttributeTree/projects/{projectId}/attributes/couple".format(
             projectId=project_id
         ),
@@ -151,7 +151,7 @@ def _get_attribute_tree(
 
     # load attribute tree
     response = requests.get(
-        config.config_get_nemo_url()
+        config.get_config_nemo_url()
         + "/api/nemo-persistence/focus/AttributeTree/projects/{projectId}/attributes".format(
             projectId=project_id
         ),

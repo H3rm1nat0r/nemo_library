@@ -17,10 +17,6 @@ from nemo_library.features.projects import (
     getProjectList,
 )
 from nemo_library.utils.migmanutils import (
-    get_local_project_directory,
-    get_multi_projects,
-    get_proALPHA_project_status_file,
-    get_projects,
     getNEMOStepsFrompAMigrationStatusFile,
     getProjectName,
     load_database,
@@ -36,15 +32,15 @@ __all__ = ["MigManLoadData"]
 def MigManLoadData(config: Config) -> None:
 
     # get configuration
-    local_project_directory = get_local_project_directory()
-    multi_projects = get_multi_projects()
+    local_project_directory = config.get_migman_local_project_directory()
+    multi_projects = config.get_migman_multi_projects()
 
     # if there is a status file given, we ignore the given projects and get the project list from the status file
-    proALPHA_project_status_file = get_proALPHA_project_status_file()
+    proALPHA_project_status_file = config.get_migman_proALPHA_project_status_file()
     if proALPHA_project_status_file:
         projects = getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
     else:
-        projects = get_projects()
+        projects = config.get_migman_projects()
 
     dbdf = load_database()
     for project in projects:

@@ -8,8 +8,6 @@ from nemo_library.features.projects import (
     createOrUpdateReport,
 )
 from nemo_library.utils.migmanutils import (
-    get_local_project_directory,
-    get_mapping_fields,
     getMappingFilePath,
     getMappingRelations,
     sqlQueryInMappingTable,
@@ -21,8 +19,8 @@ __all__ = ["MigManLoadMapping"]
 def MigManLoadMapping(config: Config):
 
     # get configuration
-    local_project_directory = get_local_project_directory()
-    mapping_fields = get_mapping_fields()
+    local_project_directory = config.get_migman_local_project_directory()
+    mapping_fields = config.get_migman_mapping_fields()
     mappingrelationsdf = getMappingRelations(config=config)
 
     # iterate every given field upload data
@@ -71,6 +69,7 @@ def collectData(
 ):
 
     queryforreport = sqlQueryInMappingTable(
+        config=config,
         field=field,
         newProject=False,
         mappingrelationsdf=mappingrelationsdf,

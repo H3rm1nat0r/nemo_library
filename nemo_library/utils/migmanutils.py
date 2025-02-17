@@ -3,72 +3,13 @@ import json
 import logging
 import os
 import re
-import tempfile
 import openpyxl
 import pandas as pd
 import configparser
 
 from nemo_library.features.config import Config
-from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.projects import getImportedColumns, getProjectList
 from nemo_library.utils.utils import get_internal_name
-
-
-def get_local_project_directory() -> str:
-    config = configparser.ConfigParser()
-    config.read("migman.ini")
-    return config.get("MigMan", "local_project_directory", fallback=None)
-
-
-def get_proALPHA_project_status_file() -> str:
-    config = configparser.ConfigParser()
-    config.read("migman.ini")
-    return config.get("MigMan", "proALPHA_project_status_file", fallback=None)
-
-
-def get_projects() -> list[str]:
-    config = configparser.ConfigParser()
-    config.read("migman.ini")
-    if config.has_option("MigMan", "projects"):
-        return json.loads(config.get("MigMan", "projects"))
-    else:
-        return None
-
-
-def get_mapping_fields() -> list[str]:
-    config = configparser.ConfigParser()
-    config.read("migman.ini")
-    if config.has_option("MigMan", "mapping_fields"):
-        return json.loads(config.get("MigMan", "mapping_fields"))
-    else:
-        return None
-
-
-def get_additional_fields() -> dict[str, list[str]]:
-    config = configparser.ConfigParser()
-    config.read("migman.ini")
-    if config.has_option("MigMan", "additional_fields"):
-        return json.loads(config.get("MigMan", "additional_fields"))
-    else:
-        return None
-
-
-def get_synonym_fields() -> dict[str, list[str]]:
-    config = configparser.ConfigParser()
-    config.read("migman.ini")
-    if config.has_option("MigMan", "synonym_fields"):
-        return json.loads(config.get("MigMan", "synonym_fields"))
-    else:
-        return None
-
-
-def get_multi_projects() -> dict[str, list[str]]:
-    config = configparser.ConfigParser()
-    config.read("migman.ini")
-    if config.has_option("MigMan", "multi_projects"):
-        return json.loads(config.get("MigMan", "multi_projects"))
-    else:
-        return None
 
 
 def initializeFolderStructure(
@@ -158,9 +99,9 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
 def getMappingRelations(config: Config) -> pd.DataFrame:
 
     # get configuration
-    mapping_fields = get_mapping_fields()
-    additional_fields = get_additional_fields()
-    synonym_fields = get_synonym_fields()
+    mapping_fields = config.get_migman_mapping_fields()
+    additional_fields = config.get_migman_additional_fields()
+    synonym_fields = config.get_migman_synonym_fields()
 
     # get data projects
     projectList = getProjectList(config=config)["displayName"].to_list()
@@ -255,6 +196,7 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
 
 
 def sqlQueryInMappingTable(
+    config: Config,
     field: str,
     newProject: bool,
     mappingrelationsdf: pd.DataFrame,
@@ -264,7 +206,7 @@ def sqlQueryInMappingTable(
     display_names = mappingrelationsdf["matching_field_display_name"].to_list()
     internal_names = mappingrelationsdf["matching_field_internal_name"].to_list()
     additional_fields = mappingrelationsdf["additional_fields"].to_list()
-    additional_fields_defined = get_additional_fields()
+    additional_fields_defined = config.get_migman_additional_fields()
     additional_field_global_definition = additional_fields_defined.get(field, [])
 
     # setup CTEs to load data from source projects

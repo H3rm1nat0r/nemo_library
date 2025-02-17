@@ -1,5 +1,4 @@
 import logging
-import os
 import pandas as pd
 from nemo_library.features.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
@@ -13,9 +12,6 @@ from nemo_library.features.projects import (
     getProjectList,
 )
 from nemo_library.utils.migmanutils import (
-    get_additional_fields,
-    get_local_project_directory,
-    get_mapping_fields,
     getMappingFilePath,
     getMappingRelations,
     sqlQueryInMappingTable,
@@ -32,9 +28,9 @@ __all__ = ["MigManCreateMapping"]
 def MigManCreateMapping(config: Config):
 
     # get configuration
-    local_project_directory = get_local_project_directory()
-    mapping_fields = get_mapping_fields()
-    additional_fields = get_additional_fields()
+    local_project_directory = config.get_migman_local_project_directory()
+    mapping_fields = config.get_migman_mapping_fields()
+    additional_fields = config.get_migman_additional_fields()
     mappingrelationsdf = getMappingRelations(config=config)
 
     # get all projects
@@ -165,6 +161,7 @@ def loadData(
 ) -> None:
 
     queryforreport = sqlQueryInMappingTable(
+        config=config,
         field=field,
         newProject=True,
         mappingrelationsdf=mappingrelationsdf,

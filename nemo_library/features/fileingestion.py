@@ -172,7 +172,7 @@ def ReUploadFile(
 
         # Retrieve temporary credentials from NEMO TVM
         response = requests.get(
-            config.config_get_nemo_url()
+            config.get_config_nemo_url()
             + "/api/nemo-tokenvendor/InternalTokenVendor/sts/s3_policy",
             headers=headers,
         )
@@ -199,7 +199,7 @@ def ReUploadFile(
         try:
             # Upload the file
             s3filename = (
-                config.config_get_tenant()
+                config.get_tenant()
                 + f"/ingestv{version}/"
                 + os.path.basename(gzipped_filename)
             )
@@ -235,7 +235,7 @@ def ReUploadFile(
         )
 
         response = requests.post(
-            config.config_get_nemo_url() + endpoint_url,
+            config.get_config_nemo_url() + endpoint_url,
             headers=headers,
             json=data,
         )
@@ -256,7 +256,7 @@ def ReUploadFile(
                     "page_size": 20,
                 }
                 response = requests.get(
-                    config.config_get_nemo_url() + "/api/nemo-queue/task_runs",
+                    config.get_config_nemo_url() + "/api/nemo-queue/task_runs",
                     headers=headers,
                     json=data,
                 )
@@ -286,7 +286,7 @@ def ReUploadFile(
                 "project_id": project_id,
             }
             response = requests.post(
-                config.config_get_nemo_url()
+                config.get_config_nemo_url()
                 + "/api/nemo-queue/analyze_table_kubernetes",
                 headers=headers,
                 json=data,
@@ -307,7 +307,7 @@ def ReUploadFile(
                     "page_size": 20,
                 }
                 response = requests.get(
-                    config.config_get_nemo_url() + "/api/nemo-queue/task_runs",
+                    config.get_config_nemo_url() + "/api/nemo-queue/task_runs",
                     headers=headers,
                     json=data,
                 )

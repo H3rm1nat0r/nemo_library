@@ -19,6 +19,7 @@ from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.projects import (
     LoadReport,
     createImportedColumn,
+    createImportedColumns,
     createOrUpdateReport,
     createOrUpdateRule,
     createProject,
@@ -36,21 +37,35 @@ class NemoLibrary:
 
     def __init__(
         self,
-        environment=None,
-        tenant=None,
-        userid=None,
-        password=None,
-        hubspot_api_token=None,
-        config_file="config.ini",
+        config_file: str = "config.ini",
+        environment: str = None,
+        tenant: str = None,
+        userid: str = None,
+        password: str = None,
+        hubspot_api_token: str = None,
+        migman_local_project_directory: str = None,
+        migman_proALPHA_project_status_file: str = None,
+        migman_projects: list[str] = None,
+        migman_mapping_fields: list[str] = None,
+        migman_additional_fields: dict[str, list[str]] = None,
+        migman_synonym_fields: dict[str, list[str]] = None,
+        migman_multi_projects: dict[str, list[str]] = None,
     ):
 
         self.config = Config(
+            config_file=config_file,
             environment=environment,
             tenant=tenant,
             userid=userid,
             password=password,
             hubspot_api_token=hubspot_api_token,
-            config_file=config_file,
+            migman_local_project_directory=migman_local_project_directory,
+            migman_proALPHA_project_status_file=migman_proALPHA_project_status_file,
+            migman_projects=migman_projects,
+            migman_mapping_fields=migman_mapping_fields,
+            migman_additional_fields=migman_additional_fields,
+            migman_synonym_fields=migman_synonym_fields,
+            migman_multi_projects=migman_multi_projects,
         )
 
         super().__init__()
@@ -275,6 +290,11 @@ class NemoLibrary:
             - Logs errors and raises exceptions for failed requests or invalid responses.
         """
         return getImportedColumns(self.config, projectname)
+
+    def createImportedColumns(self, projectname: str, columns: dict) -> None:
+        createImportedColumns(
+            config=self.config, projectname=projectname, columns=columns
+        )
 
     def createImportedColumn(
         self,

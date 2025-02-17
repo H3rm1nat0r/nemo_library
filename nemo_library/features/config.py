@@ -31,129 +31,146 @@ class Config:
 
     def __init__(
         self,
-        tenant=None,
-        userid=None,
-        password=None,
-        environment=None,
-        hubspot_api_token=None,
-        config_file="config.ini",
+        config_file: str = "config.ini",
+        environment: str = None,
+        tenant: str = None,
+        userid: str = None,
+        password: str = None,
+        hubspot_api_token: str = None,
+        migman_local_project_directory: str = None,
+        migman_proALPHA_project_status_file: str = None,
+        migman_projects: list[str] = None,
+        migman_mapping_fields: list[str] = None,
+        migman_additional_fields: dict[str, list[str]] = None,
+        migman_synonym_fields: dict[str, list[str]] = None,
+        migman_multi_projects: dict[str, list[str]] = None,
     ):
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
-        self.tenant = (
-            self.config["nemo_library"]["tenant"] if tenant == None else tenant
+
+        self.tenant = tenant or self.config.get("nemo_library", "tenant", fallback=None)
+        self.userid = userid or self.config.get("nemo_library", "userid", fallback=None)
+        self.password = password or self.config.get(
+            "nemo_library", "password", fallback=None
         )
-        self.userid = (
-            self.config["nemo_library"]["userid"] if userid == None else userid
-        )
-        try:
-            self.password = (
-                self.config["nemo_library"]["password"]
-                if password == None
-                else password
-            )
-        except KeyError as e:
+
+        if self.password is None:
             pm = PasswordManager(service_name="nemo_library", username=self.userid)
             self.password = pm.get_password()
 
-        self.environment = (
-            self.config["nemo_library"]["environment"]
-            if environment == None
-            else environment
+        self.environment = environment or self.config.get(
+            "nemo_library", "environment", fallback=None
         )
-        self.hubspot_api_token = (
-            self.config["nemo_library"]["hubspot_api_token"]
-            if hubspot_api_token == None
-            else hubspot_api_token
+        self.hubspot_api_token = hubspot_api_token or self.config.get(
+            "nemo_library", "hubspot_api_token", fallback=None
         )
 
-    def config_get_nemo_url(self):
-        """
-        Retrieve the Nemo URL from the configuration file.
+        self.migman_local_project_directory = (
+            migman_local_project_directory
+            or self.config.get(
+                "nemo_library", "migman_local_project_directory", fallback=None
+            )
+        )
 
-        This function reads the `config.ini` file and retrieves the Nemo URL
-        specified under the `nemo_library` section.
+        self.migman_proALPHA_project_status_file = (
+            migman_proALPHA_project_status_file
+            or self.config.get(
+                "nemo_library", "migman_proALPHA_project_status_file", fallback=None
+            )
+        )
 
-        Returns:
-            str: The Nemo URL.
-        """
-        env = self.config_get_environment()
+        self.migman_projects = migman_projects or (
+            json.loads(
+                self.config.get("nemo_library", "migman_projects", fallback="null")
+            )
+            if self.config.has_option("nemo_library", "migman_projects")
+            else None
+        )
+
+        self.migman_mapping_fields = migman_mapping_fields or (
+            json.loads(
+                self.config.get(
+                    "nemo_library", "migman_mapping_fields", fallback="null"
+                )
+            )
+            if self.config.has_option("nemo_library", "migman_mapping_fields")
+            else None
+        )
+
+        self.migman_additional_fields = migman_additional_fields or (
+            json.loads(
+                self.config.get(
+                    "nemo_library", "migman_additional_fields", fallback="null"
+                )
+            )
+            if self.config.has_option("nemo_library", "migman_additional_fields")
+            else None
+        )
+
+        self.migman_synonym_fields = migman_synonym_fields or (
+            json.loads(
+                self.config.get(
+                    "nemo_library", "migman_synonym_fields", fallback="null"
+                )
+            )
+            if self.config.has_option("nemo_library", "migman_synonym_fields")
+            else None
+        )
+
+        self.migman_multi_projects = migman_multi_projects or (
+            json.loads(
+                self.config.get(
+                    "nemo_library", "migman_multi_projects", fallback="null"
+                )
+            )
+            if self.config.has_option("nemo_library", "migman_multi_projects")
+            else None
+        )
+
+    def get_config_nemo_url(self):
+        env = self.get_environment()
         try:
             return NEMO_URLS[env]
         except KeyError:
             raise Exception(f"unknown environment '{env}' provided")
 
-    def config_get_tenant(self):
-        """
-        Retrieve the tenant information from the configuration file.
-
-        This function reads the `config.ini` file and retrieves the tenant
-        specified under the `nemo_library` section.
-
-        Returns:
-            str: The tenant information.
-        """
+    def get_tenant(self):
         return self.tenant
 
-    def config_get_userid(self):
-        """
-        Retrieve the user ID from the configuration file.
-
-        This function reads the `config.ini` file and retrieves the user ID
-        specified under the `nemo_library` section.
-
-        Returns:
-            str: The user ID.
-        """
+    def get_userid(self):
         return self.userid
 
-    def config_get_password(self):
-        """
-        Retrieve the password from the configuration file.
-
-        This function reads the `config.ini` file and retrieves the password
-        specified under the `nemo_library` section.
-
-        Returns:
-            str: The password.
-        """
+    def get_password(self):
         return self.password
 
-    def config_get_environment(self):
-        """
-        Retrieve the environment information from the configuration file.
-
-        This function reads the `config.ini` file and retrieves the environment
-        specified under the `nemo_library` section.
-
-        Returns:
-            str: The environment information.
-        """
+    def get_environment(self):
         return self.environment
 
-    def config_get_hubspot_api_token(self):
-        """
-        Retrieve the hubspot_api_token information from the configuration file.
-
-        This function reads the `config.ini` file and retrieves the hubspot_api_token
-        specified under the `nemo_library` section.
-
-        Returns:
-            str: The hubspot_api_token information.
-        """
+    def get_hubspot_api_token(self):
         return self.hubspot_api_token
 
+    def get_migman_local_project_directory(self):
+        return self.migman_local_project_directory
+
+    def get_migman_proALPHA_project_status_file(self):
+        return self.migman_proALPHA_project_status_file
+
+    def get_migman_projects(self):
+        return self.migman_projects
+
+    def get_migman_mapping_fields(self):
+        return self.migman_mapping_fields
+
+    def get_migman_additional_fields(self):
+        return self.migman_additional_fields
+
+    def get_migman_synonym_fields(self):
+        return self.migman_synonym_fields
+
+    def get_migman_multi_projects(self):
+        return self.migman_multi_projects
+
     def connection_get_headers(self):
-        """
-        Retrieve headers for authentication and API requests.
-
-        This function gets the authentication tokens using `connection_get_tokens`
-        and prepares the headers needed for API requests.
-
-        Returns:
-            dict: A dictionary containing headers with the authorization token,
-                content type, API version, and refresh token.
-        """
         tokens = self.connection_get_tokens()
         headers = {
             "accept": "application/json",
@@ -165,77 +182,31 @@ class Config:
         return headers
 
     def connection_get_cognito_authflow(self):
-        """
-        Retrieve the Cognito authentication flow type.
-
-        This function returns the type of Cognito authentication flow to be used.
-
-        Returns:
-            str: The Cognito authentication flow type.
-        """
         return "USER_PASSWORD_AUTH"
 
     def connection_get_cognito_url(self):
-        """
-        Retrieve the Cognito URL based on the current environment.
-
-        This function obtains the current environment using the `connection_get_environment`
-        function and returns the corresponding Cognito URL. If the environment is
-        not recognized, an exception is raised.
-
-        Returns:
-            str: The Cognito URL for the current environment.
-
-        Raises:
-            Exception: If the environment is unknown.
-        """
-        env = self.config_get_environment()
+        env = self.get_environment()
         try:
             return COGNITO_URLS[env]
         except KeyError:
             raise Exception(f"unknown environment '{env}' provided")
 
     def connection_get_cognito_appclientid(self):
-        """
-        Retrieve the Cognito App Client ID based on the current environment.
-
-        This function obtains the current environment using the `connection_get_environment`
-        function and returns the corresponding Cognito App Client ID. If the environment is
-        not recognized, an exception is raised.
-
-        Returns:
-            str: The Cognito App Client ID for the current environment.
-
-        Raises:
-            Exception: If the environment is unknown.
-        """
-        env = self.config_get_environment()
+        env = self.get_environment()
         try:
             return COGNITO_APPCLIENT_IDS[env]
         except KeyError:
             raise Exception(f"unknown environment '{env}' provided")
 
     def connection_get_tokens(self):
-        """
-        Retrieve authentication tokens from the Cognito service.
-
-        This function performs a login operation using Cognito and retrieves
-        the authentication tokens including IdToken, AccessToken, and RefreshToken.
-
-        Returns:
-            tuple: A tuple containing the IdToken, AccessToken, and optionally the RefreshToken.
-
-        Raises:
-            Exception: If the request to the Cognito service fails.
-        """
         headers = {
             "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth",
             "Content-Type": "application/x-amz-json-1.1",
         }
 
         authparams = {
-            "USERNAME": self.config_get_userid(),
-            "PASSWORD": self.config_get_password(),
+            "USERNAME": self.get_userid(),
+            "PASSWORD": self.get_password(),
         }
 
         data = {
@@ -246,7 +217,9 @@ class Config:
 
         # login and get token
         response_auth = requests.post(
-            self.connection_get_cognito_url(), headers=headers, data=json.dumps(data,indent=2)
+            self.connection_get_cognito_url(),
+            headers=headers,
+            data=json.dumps(data, indent=2),
         )
         if response_auth.status_code != 200:
             raise Exception(

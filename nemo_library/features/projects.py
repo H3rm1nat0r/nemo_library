@@ -29,7 +29,7 @@ def getProjectList(
     headers = config.connection_get_headers()
 
     response = requests.get(
-        config.config_get_nemo_url() + "/api/nemo-projects/projects", headers=headers
+        config.get_config_nemo_url() + "/api/nemo-projects/projects", headers=headers
     )
     if response.status_code != 200:
         log_error(
@@ -99,7 +99,7 @@ def getProjectProperty(
     headers = config.connection_get_headers()
 
     ENDPOINT_URL = (
-        config.config_get_nemo_url()
+        config.get_config_nemo_url()
         + "/api/nemo-persistence/ProjectProperty/project/{projectId}/{request}".format(
             projectId=project_id, request=propertyname
         )
@@ -152,7 +152,7 @@ def LoadReport(
     # if name was given, we have to resolve this into a guid
     if report_name:
         response = requests.get(
-            config.config_get_nemo_url()
+            config.get_config_nemo_url()
             + "/api/nemo-persistence/metadata/Reports/project/{projectId}/reports".format(
                 projectId=project_id
             ),
@@ -171,7 +171,7 @@ def LoadReport(
     report_params = {"id": report_guid, "project_id": project_id}
 
     response_report = requests.post(
-        config.config_get_nemo_url() + "/api/nemo-report/report_export",
+        config.get_config_nemo_url() + "/api/nemo-report/report_export",
         headers=headers,
         json=report_params,
     )
@@ -223,7 +223,7 @@ def createProject(
 
     headers = config.connection_get_headers()
     ENDPOINT_URL = (
-        config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Project"
+        config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Project"
     )
     table_name = re.sub(r"[^A-Z0-9_]", "_", projectname.upper()).strip()
     if not table_name.startswith("PROJECT_"):
@@ -240,7 +240,7 @@ def createProject(
         "id": "",
         "s3DataSourcePath": "",
         "showInitialConfiguration": False,
-        "tenant": config.config_get_tenant(),
+        "tenant": config.get_tenant(),
         "type": "0",
     }
 
@@ -293,7 +293,7 @@ def setProjectMetaData(
     if processid_column:
         data["processIdColumnName"] = processid_column
 
-    ENDPOINT_URL = config.config_get_nemo_url() + "/api/nemo-persistence/ProjectProperty/project/{projectId}/BusinessProcessMetadata".format(
+    ENDPOINT_URL = config.get_config_nemo_url() + "/api/nemo-persistence/ProjectProperty/project/{projectId}/BusinessProcessMetadata".format(
         projectId=projectID
     )
 
@@ -327,7 +327,7 @@ def deleteProject(config: Config, projectname: str) -> None:
     headers = config.connection_get_headers()
     projectID = getProjectID(config, projectname)
     ENDPOINT_URL = (
-        config.config_get_nemo_url()
+        config.get_config_nemo_url()
         + "/api/nemo-persistence/metadata/Project/{id}".format(id=projectID)
     )
     response = requests.delete(ENDPOINT_URL, headers=headers)
@@ -366,7 +366,7 @@ def getImportedColumns(
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)
     response = requests.get(
-        config.config_get_nemo_url()
+        config.get_config_nemo_url()
         + "/api/nemo-persistence/metadata/Columns/project/{projectId}/exported".format(
             projectId=project_id
         ),
@@ -388,7 +388,7 @@ def createImportedColumns(
 
     # add generic data
     project_id = getProjectID(config, projectname)
-    tenant = config.config_get_tenant()
+    tenant = config.get_tenant()
     for col in columns:
         col["tenant"] = tenant
         col["projectId"] = project_id 
@@ -398,7 +398,7 @@ def createImportedColumns(
     headers = config.connection_get_headers()
     
     response = requests.post(
-        config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Columns/project/{projectId}/Columns".format(projectId=project_id),
+        config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Columns/project/{projectId}/Columns".format(projectId=project_id),
         headers=headers,
         json=columns,
     )
@@ -462,12 +462,12 @@ def createImportedColumn(
         "internalName": internalName,
         "id": "",
         "unit": "",
-        "tenant": config.config_get_tenant(),
+        "tenant": config.get_tenant(),
         "projectId": project_id,
     }
 
     response = requests.post(
-        config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Columns",
+        config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Columns",
         headers=headers,
         json=data,
     )
@@ -517,7 +517,7 @@ def createOrUpdateReport(
 
     # load list of reports first
     response = requests.get(
-        config.config_get_nemo_url()
+        config.get_config_nemo_url()
         + "/api/nemo-persistence/metadata/Reports/project/{projectId}/reports".format(
             projectId=project_id
         ),
@@ -538,14 +538,14 @@ def createOrUpdateReport(
         "internalName": internalName,
         "querySyntax": querySyntax,
         "description": description if description else "",
-        "tenant": config.config_get_tenant(),
+        "tenant": config.get_tenant(),
     }
 
     if report_exist:
         df_filtered = df[df["internalName"] == internalName].iloc[0]
         data["id"] = df_filtered["id"]
         response = requests.put(
-            config.config_get_nemo_url()
+            config.get_config_nemo_url()
             + "/api/nemo-persistence/metadata/Reports/{id}".format(
                 id=df_filtered["id"]
             ),
@@ -560,7 +560,7 @@ def createOrUpdateReport(
 
     else:
         response = requests.post(
-            config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Reports",
+            config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Reports",
             headers=headers,
             json=data,
         )
@@ -613,7 +613,7 @@ def createOrUpdateRule(
 
     # load list of reports first
     response = requests.get(
-        config.config_get_nemo_url()
+        config.get_config_nemo_url()
         + "/api/nemo-persistence/metadata/Rule/project/{projectId}/rules".format(
             projectId=project_id
         ),
@@ -632,7 +632,7 @@ def createOrUpdateRule(
         "projectId": project_id,
         "displayName": displayName,
         "internalName": internalName,
-        "tenant": config.config_get_tenant(),
+        "tenant": config.get_tenant(),
         "description": description if description else "",
         "ruleGroup": ruleGroup,
         "ruleSourceInternalName": ruleSourceInternalName,
@@ -642,7 +642,7 @@ def createOrUpdateRule(
         df_filtered = df[df["internalName"] == internalName].iloc[0]
         data["id"] = df_filtered["id"]
         response = requests.put(
-            config.config_get_nemo_url()
+            config.get_config_nemo_url()
             + "/api/nemo-persistence/metadata/Rule/{id}".format(id=df_filtered["id"]),
             headers=headers,
             json=data,
@@ -653,7 +653,7 @@ def createOrUpdateRule(
             )
     else:
         response = requests.post(
-            config.config_get_nemo_url() + "/api/nemo-persistence/metadata/Rule",
+            config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Rule",
             headers=headers,
             json=data,
         )

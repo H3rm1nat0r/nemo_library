@@ -4,7 +4,7 @@ import pandas as pd
 import requests
 import json
 
-from nemo_library.features.config import Config
+from nemo_library.utils.config import Config
 from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name, log_error
 
 

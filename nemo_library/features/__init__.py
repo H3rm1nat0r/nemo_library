@@ -1,4 +1,3 @@
-from .config import *
 from .deficiency_mining import *
 from .fileingestion import *
 from .focus import *

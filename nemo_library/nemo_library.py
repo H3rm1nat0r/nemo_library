@@ -1,6 +1,6 @@
 import pandas as pd
 
-from nemo_library.features.config import Config
+from nemo_library.utils.config import Config
 from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
 from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore

@@ -4,7 +4,7 @@ import pandas as pd
 import requests
 import json
 
-from nemo_library.features.config import Config
+from nemo_library.utils.config import Config
 from nemo_library.features.projects import getImportedColumns, getProjectID
 from nemo_library.utils.utils import log_error
 

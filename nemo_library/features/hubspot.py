@@ -11,7 +11,7 @@ import requests
 
 from bs4 import BeautifulSoup
 
-from nemo_library.features.config import Config
+from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.utils.utils import log_error
 

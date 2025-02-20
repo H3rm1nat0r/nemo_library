@@ -5,7 +5,7 @@ import os
 import re
 import pandas as pd
 
-from nemo_library.features.config import Config
+from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.projects import (
     LoadReport,

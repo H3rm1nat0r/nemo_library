@@ -1,7 +1,7 @@
 import logging
 import os
 import pandas as pd
-from nemo_library.features.config import Config
+from nemo_library.utils.config import Config
 from nemo_library.features.focus import _get_attribute_tree
 from nemo_library.features.projects import (
     createOrUpdateReport,

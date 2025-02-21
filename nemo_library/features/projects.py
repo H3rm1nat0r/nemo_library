@@ -802,6 +802,7 @@ def createDefinedColumns(
 
     for column in data:
 
+        logging.info(f"Create/update defined column '{column.displayName}'")
         column.tenant = config.get_tenant()
         column.projectId = project_id
 
@@ -813,10 +814,10 @@ def createDefinedColumns(
             filter_type=FilterType.EQUAL,
         )
         if len(dc) == 1:
-            print(column.to_dict())
+            column.id = dc[0]["id"]
             response = requests.put(
                 config.get_config_nemo_url()
-                + "/api/nemo-persistence/metadata/Columns/{id}".format(id=dc[0]["id"]),
+                + "/api/nemo-persistence/metadata/Columns/{id}".format(id=column.id),
                 json=column.to_dict(),
                 headers=headers,
             )

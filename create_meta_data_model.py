@@ -1,8 +1,14 @@
 import json
+import logging
 
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.nemo_library import NemoLibrary
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 with open("./metadata/definedcolumns.json", "r", encoding="utf-8") as file:
     data = json.load(file)

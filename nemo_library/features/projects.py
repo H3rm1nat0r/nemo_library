@@ -1,3 +1,4 @@
+from enum import Enum
 import logging
 import re
 import pandas as pd
@@ -5,7 +6,12 @@ import requests
 import json
 
 from nemo_library.utils.config import Config
-from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name, log_error
+from nemo_library.utils.utils import (
+    get_display_name,
+    get_import_name,
+    get_internal_name,
+    log_error,
+)
 
 
 def getProjectList(
@@ -160,7 +166,7 @@ def LoadReport(
         )
         resultjs = json.loads(response.text)
         df = pd.json_normalize(resultjs)
-        df = df[df["displayName"]==report_name]
+        df = df[df["displayName"] == report_name]
         if df.empty:
             log_error(f"could not find report '{report_name}' in project {projectname}")
         report_guid = df.iloc[0]["id"]
@@ -380,25 +386,25 @@ def getImportedColumns(
     df = pd.json_normalize(resultjs)
     return df
 
-def createImportedColumns(
-    config: Config,
-    projectname: str,
-    columns : dict    
-) -> None:
+
+def createImportedColumns(config: Config, projectname: str, columns: dict) -> None:
 
     # add generic data
     project_id = getProjectID(config, projectname)
     tenant = config.get_tenant()
     for col in columns:
         col["tenant"] = tenant
-        col["projectId"] = project_id 
+        col["projectId"] = project_id
         col["unit"] = col["unit"] if "unit" in col.keys() else ""
-    
+
     # initialize reqeust
     headers = config.connection_get_headers()
-    
+
     response = requests.post(
-        config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Columns/project/{projectId}/Columns".format(projectId=project_id),
+        config.get_config_nemo_url()
+        + "/api/nemo-persistence/metadata/Columns/project/{projectId}/Columns".format(
+            projectId=project_id
+        ),
         headers=headers,
         json=columns,
     )
@@ -406,7 +412,7 @@ def createImportedColumns(
         raise Exception(
             f"request failed. Status: {response.status_code}, error: {response.text}"
         )
-    
+
 
 def createImportedColumn(
     config: Config,
@@ -660,6 +666,142 @@ def createOrUpdateRule(
         if response.status_code != 201:
             log_error(
                 f"Request failed. Status: {response.status_code}, error: {response.text}"
+            )
+
+
+class FilterType(Enum):
+    STARTSWITH = "startswith"
+    ENDSWITH = "endswith"
+    CONTAINS = "contains"
+    REGEX = "regex"
+
+
+def getMetrics(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+):
+    # initialize request
+    headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
+    response = requests.get(
+        config.get_config_nemo_url()
+        + "/api/nemo-persistence/metadata/Metrics/project/{projectId}".format(
+            projectId=project_id
+        ),
+        headers=headers,
+    )
+    if response.status_code != 200:
+        log_error(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
+        )
+    data = json.loads(response.text)
+
+    def match_filter(value, filter, filter_type):
+        if filter == "*":
+            return True
+        if filter_type == FilterType.STARTSWITH:
+            return value.startswith(filter)
+        elif filter_type == FilterType.ENDSWITH:
+            return value.endswith(filter)
+        elif filter_type == FilterType.CONTAINS:
+            return filter in value
+        elif filter_type == FilterType.REGEX:
+            return re.search(filter, value) is not None
+        return False
+
+    filtered_data = [
+        item
+        for item in data
+        if match_filter(item.get("displayName", ""), filter, filter_type)
+    ]
+    
+    for metric in filtered_data:
+        metric["id"] = ""
+    
+    return filtered_data
+
+def getDefinedColumns(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+):
+    # initialize request
+    headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
+    response = requests.get(
+        config.get_config_nemo_url()
+        + "/api/nemo-persistence/metadata/Columns/project/{projectId}/defined".format(
+            projectId=project_id
+        ),
+        headers=headers,
+    )
+    if response.status_code != 200:
+        log_error(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
+        )
+    data = json.loads(response.text)
+
+    def match_filter(value, filter, filter_type):
+        if filter == "*":
+            return True
+        if filter_type == FilterType.STARTSWITH:
+            return value.startswith(filter)
+        elif filter_type == FilterType.ENDSWITH:
+            return value.endswith(filter)
+        elif filter_type == FilterType.CONTAINS:
+            return filter in value
+        elif filter_type == FilterType.REGEX:
+            return re.search(filter, value) is not None
+        return False
+
+    filtered_data = [
+        item
+        for item in data
+        if match_filter(item.get("displayName", ""), filter, filter_type)
+    ]
+    
+    for definedcolumn in filtered_data:
+        definedcolumn["id"] = ""
+        
+    return filtered_data
+
+
+def createMetrics(
+    config: Config,
+    data,
+) -> None:
+    # initialize request
+    headers = config.connection_get_headers()
+    for metric in data:
+        response = requests.post(
+            config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Metrics",
+            json=metric,
+            headers=headers,
+        )
+        if response.status_code != 201:
+            log_error(
+                f"request failed. Status: {response.status_code}, error: {response.text}"
+            )
+
+
+def createDefinedColumns(
+    config: Config,
+    data,
+) -> None:
+    # initialize request
+    headers = config.connection_get_headers()
+    for column in data:
+        response = requests.post(
+            config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Columns",
+            json=column,
+            headers=headers,
+        )
+        if response.status_code != 201:
+            log_error(
+                f"request failed. Status: {response.status_code}, error: {response.text}"
             )
 
 

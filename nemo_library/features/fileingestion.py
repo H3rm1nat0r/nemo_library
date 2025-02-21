@@ -1,5 +1,6 @@
 import gzip
 import logging
+from pathlib import Path
 import re
 import shutil
 import os
@@ -113,6 +114,34 @@ def ReUploadFile(
     if import_configuration is None:
         import_configuration = ImportConfigurations()
 
+    # HANA supports csv-files only. If the file has a different suffix, we need to convert this into csv first
+    
+    ext = Path(filename).suffix.lower()  # Holt die Endung und macht sie klein
+    if ext != ".csv":
+        if ext in [".xls", ".xlsx"]:
+            df = pd.read_excel(filename)
+        elif ext == ".json":
+            df = pd.read_json(filename)
+        elif ext in [".parquet"]:
+            df = pd.read_parquet(filename)
+        elif ext in [".h5", ".hdf"]:
+            df = pd.read_hdf(filename)
+        else:
+            raise ValueError(f"Dateiformat {ext} wird nicht unterstützt.")
+        ReUploadDataFrame(
+            config=config,
+            projectname=projectname,
+            df=df,
+            update_project_settings=update_project_settings,
+            datasource_ids=datasource_ids,
+            global_fields_mapping=global_fields_mapping,
+            version=version,
+            trigger_only=trigger_only,
+            import_configuration=import_configuration,
+            format_data=format_data,
+        )
+        return  # stop procesisng here
+    
     # format data? we need to import first and then use the upload dataframe api
     if format_data:
         df = pd.read_csv(

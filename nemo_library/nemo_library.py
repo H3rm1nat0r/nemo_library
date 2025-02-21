@@ -1,3 +1,4 @@
+from enum import Enum
 import pandas as pd
 
 from nemo_library.utils.config import Config
@@ -18,13 +19,17 @@ from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.projects import (
     LoadReport,
+    createDefinedColumns,
     createImportedColumn,
     createImportedColumns,
+    createMetrics,
     createOrUpdateReport,
     createOrUpdateRule,
     createProject,
     deleteProject,
+    getDefinedColumns,
     getImportedColumns,
+    getMetrics,
     getProjectID,
     getProjectList,
     getProjectProperty,
@@ -500,6 +505,40 @@ class NemoLibrary:
         filename: str,
     ) -> None:
         createOrUpdateRulesByConfigFile(self.config, filename)
+
+    class FilterType(Enum):
+        STARTSWITH = "startswith"
+        ENDSWITH = "endswith"
+        CONTAINS = "contains"
+        REGEX = "regex"
+
+    def getMetrics(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+    ):
+        return getMetrics(self.config, projectname, filter, filter_type)
+
+    def getDefinedColumns(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+    ):
+        return getDefinedColumns(self.config, projectname, filter, filter_type)
+
+    def createMetrics(
+        self,
+        data,
+    ) -> None:
+        createMetrics(self.config, data)
+
+    def createDefinedColumns(
+        self,
+        data,
+    ) -> None:
+        createDefinedColumns(self.config, data)
 
     def synchronizeCsvColsAndImportedColumns(
         self,

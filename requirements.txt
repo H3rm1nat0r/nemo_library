@@ -52,3 +52,4 @@ tzdata
 tzlocal
 urllib3
 wheel
+XlsxWriter

@@ -5,6 +5,7 @@ import pandas as pd
 import requests
 import json
 
+from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import (
     get_display_name,
@@ -674,6 +675,7 @@ class FilterType(Enum):
     ENDSWITH = "endswith"
     CONTAINS = "contains"
     REGEX = "regex"
+    EQUAL = "equal"
 
 
 def getMetrics(
@@ -701,7 +703,9 @@ def getMetrics(
     def match_filter(value, filter, filter_type):
         if filter == "*":
             return True
-        if filter_type == FilterType.STARTSWITH:
+        elif filter_type == FilterType.EQUAL:
+            return value == filter
+        elif filter_type == FilterType.STARTSWITH:
             return value.startswith(filter)
         elif filter_type == FilterType.ENDSWITH:
             return value.endswith(filter)
@@ -716,11 +720,12 @@ def getMetrics(
         for item in data
         if match_filter(item.get("displayName", ""), filter, filter_type)
     ]
-    
+
     for metric in filtered_data:
         metric["id"] = ""
-    
+
     return filtered_data
+
 
 def getDefinedColumns(
     config: Config,
@@ -747,7 +752,9 @@ def getDefinedColumns(
     def match_filter(value, filter, filter_type):
         if filter == "*":
             return True
-        if filter_type == FilterType.STARTSWITH:
+        elif filter_type == FilterType.EQUAL:
+            return value == filter
+        elif filter_type == FilterType.STARTSWITH:
             return value.startswith(filter)
         elif filter_type == FilterType.ENDSWITH:
             return value.endswith(filter)
@@ -762,10 +769,7 @@ def getDefinedColumns(
         for item in data
         if match_filter(item.get("displayName", ""), filter, filter_type)
     ]
-    
-    for definedcolumn in filtered_data:
-        definedcolumn["id"] = ""
-        
+
     return filtered_data
 
 
@@ -789,20 +793,49 @@ def createMetrics(
 
 def createDefinedColumns(
     config: Config,
-    data,
+    projectname: str,
+    data: list[DefinedColumn],
 ) -> None:
     # initialize request
     headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
+
     for column in data:
-        response = requests.post(
-            config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Columns",
-            json=column,
-            headers=headers,
+
+        column.tenant = config.get_tenant()
+        column.projectId = project_id
+
+        # check whether the column already exist
+        dc = getDefinedColumns(
+            config=config,
+            projectname=projectname,
+            filter=column.displayName,
+            filter_type=FilterType.EQUAL,
         )
-        if response.status_code != 201:
-            log_error(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
+        if len(dc) == 1:
+            print(column.to_dict())
+            response = requests.put(
+                config.get_config_nemo_url()
+                + "/api/nemo-persistence/metadata/Columns/{id}".format(id=dc[0]["id"]),
+                json=column.to_dict(),
+                headers=headers,
             )
+            if response.status_code != 200:
+                log_error(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
+
+        else:
+
+            response = requests.post(
+                config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Columns",
+                json=column.to_dict(),
+                headers=headers,
+            )
+            if response.status_code != 201:
+                log_error(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
 
 
 def synchronizeCsvColsAndImportedColumns(

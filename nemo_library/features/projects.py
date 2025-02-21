@@ -732,7 +732,7 @@ def getDefinedColumns(
     projectname: str,
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
-):
+) -> list[DefinedColumn]:
     # initialize request
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)

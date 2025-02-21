@@ -19,16 +19,9 @@ class Metric:
     scopeName: Optional[str]
     unit: str
     defaultScopeRestrictions: List[Any]
-    conflictState: str
-    focusOrder: str
     internalName: str
     parentAttributeGroupInternalName: Optional[str]
-    changedBy: str
-    changedDate: str
-    createdBy: str
-    creationDate: str
     id: str
-    metadataTemplateId: Optional[str]
     projectId: str
     tenant: str
 

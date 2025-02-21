@@ -19,18 +19,11 @@
         "scopeName": null,
         "unit": "percent",
         "defaultScopeRestrictions": [],
-        "conflictState": "NoConflict",
-        "focusOrder": "5",
         "internalName": "conservative_purchasing_early_delivery_rate",
         "parentAttributeGroupInternalName": "early_payment",
-        "changedBy": "schug_g_mig",
-        "changedDate": "2025-02-21T10:12:19.76843Z",
-        "createdBy": "schug_g_mig",
-        "creationDate": "2025-02-21T10:06:17.364089Z",
         "id": "",
-        "metadataTemplateId": null,
-        "projectId": "00000000-0000-0000-0000-000000000001",
-        "tenant": "mig"
+        "projectId": "",
+        "tenant": ""
     },
     {
         "aggregateBy": "conservative_paid_early_boolean",
@@ -52,18 +45,11 @@
         "scopeName": null,
         "unit": "percent",
         "defaultScopeRestrictions": [],
-        "conflictState": "NoConflict",
-        "focusOrder": "5",
         "internalName": "conservative_early_payments_rate",
         "parentAttributeGroupInternalName": "early_payment",
-        "changedBy": "jung_m_mig",
-        "changedDate": "2025-02-21T08:26:01.900897Z",
-        "createdBy": "schug_g_mig",
-        "creationDate": "2025-02-21T03:37:14.823416Z",
         "id": "",
-        "metadataTemplateId": null,
-        "projectId": "00000000-0000-0000-0000-000000000001",
-        "tenant": "mig"
+        "projectId": "",
+        "tenant": ""
     },
     {
         "aggregateBy": "conservative_paid_late_boolean",
@@ -85,18 +71,11 @@
         "scopeName": null,
         "unit": "percent",
         "defaultScopeRestrictions": [],
-        "conflictState": "NoConflict",
-        "focusOrder": "6",
         "internalName": "conservative_late_payments_rate",
         "parentAttributeGroupInternalName": "early_payment",
-        "changedBy": "schug_g_mig",
-        "changedDate": "2025-02-21T08:18:31.787297Z",
-        "createdBy": "schug_g_mig",
-        "creationDate": "2025-02-21T03:37:13.96701Z",
         "id": "",
-        "metadataTemplateId": null,
-        "projectId": "00000000-0000-0000-0000-000000000001",
-        "tenant": "mig"
+        "projectId": "",
+        "tenant": ""
     },
     {
         "aggregateBy": "part_oid",
@@ -118,18 +97,11 @@
         "scopeName": null,
         "unit": "percent",
         "defaultScopeRestrictions": [],
-        "conflictState": "NoConflict",
-        "focusOrder": null,
         "internalName": "count_distinct_supplieroid__per_partoid",
         "parentAttributeGroupInternalName": "metrics",
-        "changedBy": "schug_g_mig",
-        "changedDate": "2025-02-21T13:08:43.105111Z",
-        "createdBy": "schug_g_mig",
-        "creationDate": "2025-02-21T13:06:17.62518Z",
         "id": "",
-        "metadataTemplateId": null,
-        "projectId": "00000000-0000-0000-0000-000000000001",
-        "tenant": "mig"
+        "projectId": "",
+        "tenant": ""
     },
     {
         "aggregateBy": "conservative_paid_on_time_boolean",
@@ -151,17 +123,10 @@
         "scopeName": null,
         "unit": "percent",
         "defaultScopeRestrictions": [],
-        "conflictState": "NoConflict",
-        "focusOrder": "6",
         "internalName": "conservative_on_time_payments_rate",
         "parentAttributeGroupInternalName": "early_payment",
-        "changedBy": "schug_g_mig",
-        "changedDate": "2025-02-21T09:07:39.971881Z",
-        "createdBy": "schug_g_mig",
-        "creationDate": "2025-02-21T09:06:59.931863Z",
         "id": "",
-        "metadataTemplateId": null,
-        "projectId": "00000000-0000-0000-0000-000000000001",
-        "tenant": "mig"
+        "projectId": "",
+        "tenant": ""
     }
 ]

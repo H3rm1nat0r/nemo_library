@@ -6,6 +6,7 @@ import requests
 import json
 
 from nemo_library.model.defined_column import DefinedColumn
+from nemo_library.model.metric import Metric
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import (
     get_display_name,
@@ -721,9 +722,6 @@ def getMetrics(
         if match_filter(item.get("displayName", ""), filter, filter_type)
     ]
 
-    for metric in filtered_data:
-        metric["id"] = ""
-
     return filtered_data
 
 
@@ -775,20 +773,50 @@ def getDefinedColumns(
 
 def createMetrics(
     config: Config,
-    data,
+    projectname: str,
+    data: list[Metric],
 ) -> None:
     # initialize request
     headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
+
     for metric in data:
-        response = requests.post(
-            config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Metrics",
-            json=metric,
-            headers=headers,
+
+        logging.info(f"Create/update metric '{metric.displayName}'")
+        metric.tenant = config.get_tenant()
+        metric.projectId = project_id
+
+        # check whether the column already exist
+        existing_metric = getMetrics(
+            config=config,
+            projectname=projectname,
+            filter=metric.displayName,
+            filter_type=FilterType.EQUAL,
         )
-        if response.status_code != 201:
-            log_error(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
+        if len(existing_metric) == 1:
+            metric.id = existing_metric[0]["id"]
+            response = requests.put(
+                config.get_config_nemo_url()
+                + "/api/nemo-persistence/metadata/Metrics/{id}".format(id=metric.id),
+                json=metric.to_dict(),
+                headers=headers,
             )
+            if response.status_code != 200:
+                log_error(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
+
+        else:
+
+            response = requests.post(
+                config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Metrics",
+                json=metric.to_dict(),
+                headers=headers,
+            )
+            if response.status_code != 201:
+                log_error(
+                    f"request failed. Status: {response.status_code}, error: {response.text}"
+                )
 
 
 def createDefinedColumns(
@@ -807,14 +835,14 @@ def createDefinedColumns(
         column.projectId = project_id
 
         # check whether the column already exist
-        dc = getDefinedColumns(
+        existing_defined_column = getDefinedColumns(
             config=config,
             projectname=projectname,
             filter=column.displayName,
             filter_type=FilterType.EQUAL,
         )
-        if len(dc) == 1:
-            column.id = dc[0]["id"]
+        if len(existing_defined_column) == 1:
+            column.id = existing_defined_column[0]["id"]
             response = requests.put(
                 config.get_config_nemo_url()
                 + "/api/nemo-persistence/metadata/Columns/{id}".format(id=column.id),

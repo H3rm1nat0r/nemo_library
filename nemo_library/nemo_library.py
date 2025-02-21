@@ -2,6 +2,7 @@ from enum import Enum
 import pandas as pd
 
 from nemo_library.model.defined_column import DefinedColumn
+from nemo_library.model.metric import Metric
 from nemo_library.utils.config import Config
 from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
 from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile
@@ -531,9 +532,10 @@ class NemoLibrary:
 
     def createMetrics(
         self,
-        data,
+        projectname: str,
+        data : list[Metric],
     ) -> None:
-        createMetrics(self.config, data)
+        createMetrics(self.config, projectname, data)
 
     def createDefinedColumns(
         self,

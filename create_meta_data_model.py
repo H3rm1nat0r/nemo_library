@@ -22,3 +22,4 @@ metrics = [Metric(**item) for item in data]
 
 nl = NemoLibrary()
 nl.createDefinedColumns(projectname="Business Processes",data=defined_columns)
+nl.createMetrics(projectname="Business Processes",data=metrics)

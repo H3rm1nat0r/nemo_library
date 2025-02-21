@@ -50,5 +50,29 @@ data = nl.getMetrics(
     filter_type=FilterType.STARTSWITH
 )
 
+for metric in data:
+    for column in [
+        "id",
+        "tenant",
+        "projectId",
+    ]:
+        metric[column] = ""
+
+    for column in [
+        "attributeGroupInternalName",
+        "focusOrder",
+        "changedBy",
+        "changedDate",
+        "createdBy",
+        "creationDate",
+        "metadataTemplateId",
+        "conflictState",
+        "focusAggregationFunction",
+        "focusAggregationGroupByTargetType",
+        "focusAggregationSourceColumnInternalName",
+        "focusGroupByTargetInternalName",
+    ]:
+        metric.pop(column, None)
+        
 with open("./metadata/metrics.json", "w", encoding="utf-8") as file:
     json.dump(data, file, indent=4, ensure_ascii=False)

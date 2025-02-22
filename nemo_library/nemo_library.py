@@ -3,6 +3,7 @@ import pandas as pd
 
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.metric import Metric
+from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
 from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
 from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile
@@ -21,6 +22,7 @@ from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.projects import (
     LoadReport,
+    createAttributGroups,
     createDefinedColumns,
     createImportedColumn,
     createImportedColumns,
@@ -28,13 +30,20 @@ from nemo_library.features.projects import (
     createOrUpdateReport,
     createOrUpdateRule,
     createProject,
+    createTiles,
+    deleteAttributeGroups,
+    deleteDefinedColumns,
+    deleteMetrics,
     deleteProject,
+    deleteTiles,
+    getAttributGroups,
     getDefinedColumns,
     getImportedColumns,
     getMetrics,
     getProjectID,
     getProjectList,
     getProjectProperty,
+    getTiles,
     setProjectMetaData,
     synchronizeCsvColsAndImportedColumns,
 )
@@ -522,6 +531,19 @@ class NemoLibrary:
     ):
         return getMetrics(self.config, projectname, filter, filter_type)
 
+    def createMetrics(
+        self,
+        projectname: str,
+        data : list[Metric],
+    ) -> None:
+        createMetrics(self.config, projectname, data)
+
+    def deleteMetrics(
+        self,
+        metrics : list[str]
+    ) -> None:
+        deleteMetrics(self.config,metrics)
+        
     def getDefinedColumns(
         self,
         projectname: str,
@@ -530,19 +552,60 @@ class NemoLibrary:
     ):
         return getDefinedColumns(self.config, projectname, filter, filter_type)
 
-    def createMetrics(
-        self,
-        projectname: str,
-        data : list[Metric],
-    ) -> None:
-        createMetrics(self.config, projectname, data)
-
     def createDefinedColumns(
         self,
         projectname: str,
         data : list[DefinedColumn],
     ) -> None:
         createDefinedColumns(self.config, projectname, data)
+
+    def deleteDefinedColumns(
+        self,
+        defined_columns : list[str]
+    ) -> None:
+        deleteDefinedColumns(self.config,defined_columns)
+
+    def getTiles(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+    ):
+        return getTiles(self.config, projectname, filter, filter_type)
+
+    def createTiles(
+        self,
+        projectname: str,
+        data : list[Tile],
+    ) -> None:
+        createTiles(self.config, projectname, data)
+
+    def deleteTiles(
+        self,
+        tiles : list[str]
+    ) -> None:
+        deleteTiles(self.config,tiles)
+
+    def getAttributGroups(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+    ):
+        return getAttributGroups(self.config, projectname, filter, filter_type)
+
+    def createAttributGroups(
+        self,
+        projectname: str,
+        data : list[AttributeGroup],
+    ) -> None:
+        createAttributGroups(self.config, projectname, data)
+
+    def deleteAttributeGroups(
+        self,
+        attribute_groups : list[str]
+    ) -> None:
+        deleteAttributeGroups(self.config,attribute_groups)
 
     def synchronizeCsvColsAndImportedColumns(
         self,

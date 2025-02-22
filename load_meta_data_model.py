@@ -11,68 +11,48 @@ pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
 
 nl = NemoLibrary()
+
+
+def clean_fields(data):
+    for element in data:
+        element.id = ""
+        element.tenant = ""
+        element.projectID = ""
+    return data
+
+
+def export_data(data, file_name):
+    data = clean_fields(data)
+    with open(file_name, "w", encoding="utf-8") as file:
+        json.dump(
+            [element.to_dict() for element in data], file, indent=4, ensure_ascii=True
+        )
+
+
 data = nl.getDefinedColumns(
     projectname="Business Processes",
     filter="(Conservative)",
-    filter_type=FilterType.STARTSWITH
+    filter_type=FilterType.STARTSWITH,
 )
-
-for definedcolumn in data:
-    for column in [
-        "id",
-        "tenant",
-        "projectId",
-    ]:
-        definedcolumn[column] = ""
-
-    for column in [
-        "attributeGroupInternalName",
-        "focusOrder",
-        "changedBy",
-        "changedDate",
-        "createdBy",
-        "creationDate",
-        "metadataTemplateId",
-        "conflictState",
-        "focusAggregationFunction",
-        "focusAggregationGroupByTargetType",
-        "focusAggregationSourceColumnInternalName",
-        "focusGroupByTargetInternalName",
-    ]:
-        definedcolumn.pop(column, None)
-        
-with open("./metadata/definedcolumns.json", "w", encoding="utf-8") as file:
-    json.dump(data, file, indent=4, ensure_ascii=False)
+export_data(data, "./metadata/definedcolumns.json")
 
 data = nl.getMetrics(
     projectname="Business Processes",
     filter="(Conservative)",
-    filter_type=FilterType.STARTSWITH
+    filter_type=FilterType.STARTSWITH,
 )
+export_data(data, "./metadata/metrics.json")
 
-for metric in data:
-    for column in [
-        "id",
-        "tenant",
-        "projectId",
-    ]:
-        metric[column] = ""
+data = nl.getTiles(
+    projectname="Business Processes",
+    filter="(Conservative)",
+    filter_type=FilterType.STARTSWITH,
+)
+export_data(data, "./metadata/tiles.json")
 
-    for column in [
-        "attributeGroupInternalName",
-        "focusOrder",
-        "changedBy",
-        "changedDate",
-        "createdBy",
-        "creationDate",
-        "metadataTemplateId",
-        "conflictState",
-        "focusAggregationFunction",
-        "focusAggregationGroupByTargetType",
-        "focusAggregationSourceColumnInternalName",
-        "focusGroupByTargetInternalName",
-    ]:
-        metric.pop(column, None)
-        
-with open("./metadata/metrics.json", "w", encoding="utf-8") as file:
-    json.dump(data, file, indent=4, ensure_ascii=False)
+data = nl.getAttributGroups(
+    projectname="Business Processes",
+    filter="(Conservative)",
+    filter_type=FilterType.STARTSWITH,
+)
+export_data(data, "./metadata/attribute_groups.json")

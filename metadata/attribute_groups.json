@@ -1,0 +1,14 @@
+[
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Payment",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "early_payment",
+        "id": "",
+        "projectId": "00000000-0000-0000-0000-000000000001",
+        "tenant": ""
+    }
+]

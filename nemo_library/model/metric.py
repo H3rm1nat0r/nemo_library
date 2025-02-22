@@ -20,7 +20,6 @@ class Metric:
     unit: str
     defaultScopeRestrictions: List[Any]
     internalName: str
-    parentAttributeGroupInternalName: Optional[str]
     id: str
     projectId: str
     tenant: str

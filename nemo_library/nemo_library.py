@@ -1,6 +1,7 @@
 from enum import Enum
 import pandas as pd
 
+from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.tile import Tile
@@ -8,7 +9,7 @@ from nemo_library.utils.config import Config
 from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
 from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore
-from nemo_library.features.hubspot import FetchDealFromHubSpotAndUploadToNEMO
+from nemo_library.features.hubspot_handler import FetchDealFromHubSpotAndUploadToNEMO
 from nemo_library.features.import_configuration import ImportConfigurations
 from nemo_library.features.migman_delete_projects import MigManDeleteProjects
 from nemo_library.features.migman_export_data import MigManExportData

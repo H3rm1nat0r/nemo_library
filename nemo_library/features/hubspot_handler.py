@@ -1,9 +1,8 @@
 import logging
 import pandas as pd
 import re
-
-
 from hubspot import HubSpot
+
 from hubspot.crm.associations.models.batch_input_public_object_id import (
     BatchInputPublicObjectId,
 )

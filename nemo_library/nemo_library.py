@@ -1,6 +1,7 @@
 from enum import Enum
 import pandas as pd
 
+from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.metric import Metric
@@ -37,7 +38,7 @@ from nemo_library.features.projects import (
     deleteMetrics,
     deleteProject,
     deleteTiles,
-    getAttributGroups,
+    getAttributeGroups,
     getDefinedColumns,
     getImportedColumns,
     getMetrics,
@@ -535,16 +536,13 @@ class NemoLibrary:
     def createMetrics(
         self,
         projectname: str,
-        data : list[Metric],
+        metrics: list[Metric],
     ) -> None:
-        createMetrics(self.config, projectname, data)
+        createMetrics(self.config, projectname, metrics)
 
-    def deleteMetrics(
-        self,
-        metrics : list[str]
-    ) -> None:
-        deleteMetrics(self.config,metrics)
-        
+    def deleteMetrics(self, metrics: list[str]) -> None:
+        deleteMetrics(self.config, metrics)
+
     def getDefinedColumns(
         self,
         projectname: str,
@@ -556,15 +554,12 @@ class NemoLibrary:
     def createDefinedColumns(
         self,
         projectname: str,
-        data : list[DefinedColumn],
+        defined_columns: list[DefinedColumn],
     ) -> None:
-        createDefinedColumns(self.config, projectname, data)
+        createDefinedColumns(self.config, projectname, defined_columns)
 
-    def deleteDefinedColumns(
-        self,
-        defined_columns : list[str]
-    ) -> None:
-        deleteDefinedColumns(self.config,defined_columns)
+    def deleteDefinedColumns(self, defined_columns: list[str]) -> None:
+        deleteDefinedColumns(self.config, defined_columns)
 
     def getTiles(
         self,
@@ -577,36 +572,30 @@ class NemoLibrary:
     def createTiles(
         self,
         projectname: str,
-        data : list[Tile],
+        tiles: list[Tile],
     ) -> None:
-        createTiles(self.config, projectname, data)
+        createTiles(self.config, projectname, tiles)
 
-    def deleteTiles(
-        self,
-        tiles : list[str]
-    ) -> None:
-        deleteTiles(self.config,tiles)
+    def deleteTiles(self, tiles: list[str]) -> None:
+        deleteTiles(self.config, tiles)
 
-    def getAttributGroups(
+    def getAttributeGroups(
         self,
         projectname: str,
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
     ):
-        return getAttributGroups(self.config, projectname, filter, filter_type)
+        return getAttributeGroups(self.config, projectname, filter, filter_type)
 
     def createAttributGroups(
         self,
         projectname: str,
-        data : list[AttributeGroup],
+        attribute_groups: list[AttributeGroup],
     ) -> None:
-        createAttributGroups(self.config, projectname, data)
+        createAttributGroups(self.config, projectname, attribute_groups)
 
-    def deleteAttributeGroups(
-        self,
-        attribute_groups : list[str]
-    ) -> None:
-        deleteAttributeGroups(self.config,attribute_groups)
+    def deleteAttributeGroups(self, attribute_groups: list[str]) -> None:
+        deleteAttributeGroups(self.config, attribute_groups)
 
     def synchronizeCsvColsAndImportedColumns(
         self,
@@ -709,3 +698,15 @@ class NemoLibrary:
             - Includes optional debugging capability for saving/loading intermediate data as a pickle file.
         """
         FetchDealFromHubSpotAndUploadToNEMO(self.config, projectname)
+
+    def MetaDataLoad(
+        self,
+        projectname: str,
+    ):
+        MetaDataLoad(self.config, projectname)
+
+    def MetaDataCreate(
+        self,
+        projectname: str,
+    ):
+        MetaDataCreate(self.config, projectname)

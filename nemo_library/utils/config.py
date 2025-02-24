@@ -44,6 +44,7 @@ class Config:
         migman_additional_fields: dict[str, list[str]] = None,
         migman_synonym_fields: dict[str, list[str]] = None,
         migman_multi_projects: dict[str, list[str]] = None,
+        metadata : str = None
     ):
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
@@ -126,6 +127,11 @@ class Config:
             if self.config.has_option("nemo_library", "migman_multi_projects")
             else None
         )
+        
+        self.metadata = metadata or self.config.get(
+            "nemo_library", "metadata", fallback=None
+        )
+        
 
     def get_config_nemo_url(self):
         env = self.get_environment()
@@ -233,3 +239,6 @@ class Config:
         )  # Some flows might not return a RefreshToken
 
         return id_token, access_token, refresh_token
+
+    def get_metadata(self):
+        return self.metadata

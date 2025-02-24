@@ -1,0 +1,50 @@
+[
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Global",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_global",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing Payment Behavior",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_payment_behavior",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing Delivery Behavior",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_delivery_behavior",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    }
+]

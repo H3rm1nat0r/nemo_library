@@ -732,13 +732,13 @@ def getMetrics(
 def createMetrics(
     config: Config,
     projectname: str,
-    data: list[Metric],
+    metrics: list[Metric],
 ) -> None:
     # initialize request
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)
 
-    for metric in data:
+    for metric in metrics:
 
         logging.info(f"Create/update metric '{metric.displayName}'")
         metric.tenant = config.get_tenant()
@@ -752,7 +752,7 @@ def createMetrics(
             filter_type=FilterType.EQUAL,
         )
         if len(existing_metric) == 1:
-            metric.id = existing_metric[0]["id"]
+            metric.id = existing_metric[0].id
             response = requests.put(
                 config.get_config_nemo_url()
                 + "/api/nemo-persistence/metadata/Metrics/{id}".format(id=metric.id),
@@ -845,13 +845,13 @@ def getDefinedColumns(
 def createDefinedColumns(
     config: Config,
     projectname: str,
-    data: list[DefinedColumn],
+    defined_columns: list[DefinedColumn],
 ) -> None:
     # initialize request
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)
 
-    for column in data:
+    for column in defined_columns:
 
         logging.info(f"Create/update defined column '{column.displayName}'")
         column.tenant = config.get_tenant()
@@ -865,7 +865,7 @@ def createDefinedColumns(
             filter_type=FilterType.EQUAL,
         )
         if len(existing_defined_column) == 1:
-            column.id = existing_defined_column[0]["id"]
+            column.id = existing_defined_column[0].id
             response = requests.put(
                 config.get_config_nemo_url()
                 + "/api/nemo-persistence/metadata/Columns/{id}".format(id=column.id),
@@ -959,13 +959,13 @@ def getTiles(
 def createTiles(
     config: Config,
     projectname: str,
-    data: list[Tile],
+    tiles: list[Tile],
 ) -> None:
     # initialize request
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)
 
-    for tile in data:
+    for tile in tiles:
 
         logging.info(f"Create/update tile '{tile.displayName}'")
         tile.tenant = config.get_tenant()
@@ -979,7 +979,7 @@ def createTiles(
             filter_type=FilterType.EQUAL,
         )
         if len(existing_defined_column) == 1:
-            tile.id = existing_defined_column[0]["id"]
+            tile.id = existing_defined_column[0].id
             response = requests.put(
                 config.get_config_nemo_url()
                 + "/api/nemo-persistence/metadata/Tiles/{id}".format(id=tile.id),
@@ -1021,7 +1021,7 @@ def deleteTiles(config: Config, tiles: list[str]) -> None:
                 f"request failed. Status: {response.status_code}, error: {response.text}"
             )
 
-def getAttributGroups(
+def getAttributeGroups(
     config: Config,
     projectname: str,
     filter: str = "*",
@@ -1071,27 +1071,27 @@ def getAttributGroups(
 def createAttributGroups(
     config: Config,
     projectname: str,
-    data: list[AttributeGroup],
+    attribute_groups: list[AttributeGroup],
 ) -> None:
     # initialize request
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)
 
-    for attribute_group in data:
+    for attribute_group in attribute_groups:
 
         logging.info(f"Create/update attribute group '{attribute_group.displayName}'")
         attribute_group.tenant = config.get_tenant()
         attribute_group.projectId = project_id
 
         # check whether the column already exist
-        existing_attribute_group = getAttributGroups(
+        existing_attribute_group = getAttributeGroups(
             config=config,
             projectname=projectname,
             filter=attribute_group.displayName,
             filter_type=FilterType.EQUAL,
         )
         if len(existing_attribute_group) == 1:
-            attribute_group.id = existing_attribute_group[0]["id"]
+            attribute_group.id = existing_attribute_group[0].id
             response = requests.put(
                 config.get_config_nemo_url()
                 + "/api/nemo-persistence/metadata/AttributeGroup/{id}".format(id=attribute_group.id),

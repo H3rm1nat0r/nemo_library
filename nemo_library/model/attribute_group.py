@@ -11,6 +11,7 @@ class AttributeGroup:
     displayNameTranslations: Dict[str, str]
     isCoupled: bool
     internalName: str
+    parentAttributeGroupInternalName : str
     id: str
     projectId: str
     tenant: str

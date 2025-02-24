@@ -232,11 +232,11 @@ def _move_objects_in_focus(
 ) -> None:
     
     # move global object to top
-    # focusMoveAttributeBefore(
-    #     config=config,
-    #     projectname=projectname,
-    #     sourceDisplayName="(Conservative) Global",
-    # )
+    focusMoveAttributeBefore(
+        config=config,
+        projectname=projectname,
+        sourceDisplayName="(Conservative) Global",
+    )
 
     # move fields that belong to metrics and defined columns into according groups
         

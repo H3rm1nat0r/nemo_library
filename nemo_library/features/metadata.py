@@ -102,25 +102,25 @@ def MetaDataCreate(
         for metric in metrics
     ]
 
-    # # delete objects that have changed or are removed
-    # _delete_objects_that_not_longer_exist(config, projectname, "tiles", tiles)
-    # _delete_objects_that_not_longer_exist(
-    #     config, projectname, "attributegroups", attributegroups
-    # )
-    # _delete_objects_that_not_longer_exist(config, projectname, "metrics", metrics)
-    # _delete_objects_that_not_longer_exist(
-    #     config, projectname, "definedcolumns", definedcolumns
-    # )
+    # delete objects that have changed or are removed
+    _delete_objects_that_not_longer_exist(config, projectname, "tiles", tiles)
+    _delete_objects_that_not_longer_exist(
+        config, projectname, "attributegroups", attributegroups
+    )
+    _delete_objects_that_not_longer_exist(config, projectname, "metrics", metrics)
+    _delete_objects_that_not_longer_exist(
+        config, projectname, "definedcolumns", definedcolumns
+    )
 
-    # # create/update meta data into NEMO
-    # createDefinedColumns(
-    #     config=config, projectname=projectname, defined_columns=definedcolumns
-    # )
-    # createMetrics(config=config, projectname=projectname, metrics=metrics)
-    # createTiles(config=config, projectname=projectname, tiles=tiles)
-    # createAttributGroups(
-    #     config=config, projectname=projectname, attribute_groups=attributegroups
-    # )
+    # create/update meta data into NEMO
+    createDefinedColumns(
+        config=config, projectname=projectname, defined_columns=definedcolumns
+    )
+    createMetrics(config=config, projectname=projectname, metrics=metrics)
+    createTiles(config=config, projectname=projectname, tiles=tiles)
+    createAttributGroups(
+        config=config, projectname=projectname, attribute_groups=attributegroups
+    )
 
     # move attributes and groups
     _move_objects_in_focus(

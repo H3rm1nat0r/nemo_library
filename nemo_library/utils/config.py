@@ -129,7 +129,7 @@ class Config:
         )
         
         self.metadata = metadata or self.config.get(
-            "nemo_library", "metadata", fallback=None
+            "nemo_library", "metadata", fallback="./metadata"
         )
         
 

@@ -113,14 +113,14 @@ def MetaDataCreate(
     )
 
     # create/update meta data into NEMO
+    createAttributGroups(
+        config=config, projectname=projectname, attribute_groups=attributegroups
+    )
     createDefinedColumns(
         config=config, projectname=projectname, defined_columns=definedcolumns
     )
     createMetrics(config=config, projectname=projectname, metrics=metrics)
     createTiles(config=config, projectname=projectname, tiles=tiles)
-    createAttributGroups(
-        config=config, projectname=projectname, attribute_groups=attributegroups
-    )
 
     # move attributes and groups
     _move_objects_in_focus(

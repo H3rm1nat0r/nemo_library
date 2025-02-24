@@ -7,8 +7,9 @@
         "displayNameTranslations": {},
         "isCoupled": false,
         "internalName": "conservative_global",
+        "parentAttributeGroupInternalName": null,
         "id": "",
-        "projectId": "",
+        "projectId": "00000000-0000-0000-0000-000000000001",
         "tenant": ""
     },
     {
@@ -19,20 +20,9 @@
         "displayNameTranslations": {},
         "isCoupled": false,
         "internalName": "conservative_purchasing",
+        "parentAttributeGroupInternalName": "conservative_global",
         "id": "",
-        "projectId": "",
-        "tenant": ""
-    },
-    {
-        "attributeGroupType": "Standard",
-        "defaultMetricGroup": false,
-        "defaultDefinedColumnGroup": false,
-        "displayName": "(Conservative) Purchasing Payment Behavior",
-        "displayNameTranslations": {},
-        "isCoupled": false,
-        "internalName": "conservative_purchasing_payment_behavior",
-        "id": "",
-        "projectId": "",
+        "projectId": "00000000-0000-0000-0000-000000000001",
         "tenant": ""
     },
     {
@@ -43,8 +33,22 @@
         "displayNameTranslations": {},
         "isCoupled": false,
         "internalName": "conservative_purchasing_delivery_behavior",
+        "parentAttributeGroupInternalName": "conservative_purchasing",
         "id": "",
-        "projectId": "",
+        "projectId": "00000000-0000-0000-0000-000000000001",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing Payment Behavior",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_payment_behavior",
+        "parentAttributeGroupInternalName": "conservative_purchasing",
+        "id": "",
+        "projectId": "00000000-0000-0000-0000-000000000001",
         "tenant": ""
     }
 ]

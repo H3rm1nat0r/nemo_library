@@ -14,8 +14,10 @@ __all__ = ["focusMoveAttributeBefore", "focusCoupleAttributes"]
 def focusMoveAttributeBefore(
     config: Config,
     projectname: str,
-    sourceDisplayName: str,
+    sourceDisplayName: str = None,
+    sourceInternalName: str = None,
     targetDisplayName: str = None,
+    targetInternalName: str = None,
     groupInternalName: str = None,
 ) -> None:
     """
@@ -48,7 +50,10 @@ def focusMoveAttributeBefore(
     df = _get_attribute_tree(config=config, projectname=projectname)
 
     # locate source and target object
-    filtereddf = df[df["label"] == sourceDisplayName]
+    if sourceInternalName:
+        filtereddf = df[df["internalColumnName"] == sourceInternalName]
+    else:
+        filtereddf = df[df["label"] == sourceDisplayName]
     if filtereddf.empty:
         log_error(
             f"could not find source column '{sourceDisplayName}' to move in focus"
@@ -56,7 +61,10 @@ def focusMoveAttributeBefore(
     sourceid = filtereddf.iloc[0]["id"]
 
     if targetDisplayName:
-        filtereddf = df[df["label"] == targetDisplayName]
+        if targetInternalName:
+            filtereddf = df[df["internalColumnName"] == targetInternalName]
+        else:
+            filtereddf = df[df["label"] == targetDisplayName]
         if filtereddf.empty:
             log_error(
                 f"could not find target column '{targetDisplayName}' to move in focus"

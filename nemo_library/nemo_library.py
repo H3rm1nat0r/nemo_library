@@ -627,8 +627,10 @@ class NemoLibrary:
     def focusMoveAttributeBefore(
         self,
         projectname: str,
-        sourceDisplayName: str,
+        sourceDisplayName: str = None,
+        sourceInternalName: str = None,
         targetDisplayName: str = None,
+        targetInternalName: str = None,
         groupInternalName: str = None,
     ) -> None:
         """
@@ -655,11 +657,13 @@ class NemoLibrary:
         """
 
         focusMoveAttributeBefore(
-            self.config,
-            projectname,
-            sourceDisplayName,
-            targetDisplayName,
-            groupInternalName,
+            config=self.config,
+            projectname=projectname,
+            sourceDisplayName=sourceDisplayName,
+            sourceInternalName=sourceInternalName,
+            targetDisplayName=targetDisplayName,
+            targetInternalName=targetInternalName,
+            groupInternalName=groupInternalName,
         )
 
     def focusCoupleAttributes(

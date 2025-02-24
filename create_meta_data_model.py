@@ -1,9 +1,12 @@
 import logging
+import pandas as pd
 
 from nemo_library.nemo_library import NemoLibrary
 
 PROJECT_NAME = "Business Processes"
 
+pd.set_option("display.max_rows", None)
+pd.set_option("display.max_columns", None)
 
 # Configure logging
 logging.basicConfig(

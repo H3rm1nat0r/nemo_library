@@ -16,6 +16,7 @@ class DefinedColumn:
     stringSize: int
     unit: str
     internalName: str
+    parentAttributeGroupInternalName : str
     id: str
     projectId: str
     tenant: str

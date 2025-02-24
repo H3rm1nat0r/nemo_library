@@ -52,7 +52,6 @@ def clean_meta_data(data):
             "focusAggregationGroupByTargetType",
             "focusAggregationSourceColumnInternalName",
             "focusGroupByTargetInternalName",
-            "parentAttributeGroupInternalName",
         ]:
             element.pop(column, None)
 

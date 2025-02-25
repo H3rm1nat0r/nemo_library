@@ -148,5 +148,30 @@
         "id": "",
         "projectId": "",
         "tenant": ""
-    }
+    },
+    {
+        "aggregateBy": "conservative_purchasing_goods_receipt_processing_time_on_time_boolean",
+        "aggregateFunction": "mean(conservative_purchasing_goods_receipt_processing_time_on_time_boolean)",
+        "dateColumn": "pur_stock_rec_doc_date",
+        "description": "Reflects the percentage of Goods Receipt that were processed on time",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing On Time Goods Receipt Processing Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_goods_receipt_processing_time_on_time_boolean": "mean"
+        },
+        "groupByColumn": "pur_stock_rec_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_goods_receipt_processing_time_on_time_rate",
+        "parentAttributeGroupInternalName": "conservative_goods_receipt_processing_time",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    }        
 ]

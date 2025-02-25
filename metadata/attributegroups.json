@@ -9,7 +9,7 @@
         "internalName": "conservative_global",
         "parentAttributeGroupInternalName": null,
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     },
     {
@@ -22,7 +22,7 @@
         "internalName": "conservative_purchasing",
         "parentAttributeGroupInternalName": "conservative_global",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     },
     {
@@ -35,7 +35,7 @@
         "internalName": "conservative_purchasing_delivery_behavior",
         "parentAttributeGroupInternalName": "conservative_purchasing",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     },
     {
@@ -48,7 +48,20 @@
         "internalName": "conservative_purchasing_payment_behavior",
         "parentAttributeGroupInternalName": "conservative_purchasing",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Goods Receipt Processing Time",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_goods_receipt_processing_time",
+        "parentAttributeGroupInternalName": "conservative_purchasing",
+        "id": "",
+        "projectId": "",
         "tenant": ""
     }
 ]

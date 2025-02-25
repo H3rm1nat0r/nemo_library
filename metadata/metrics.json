@@ -21,7 +21,7 @@
         "internalName": "conservative_purchasing_payment_deviation_late_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_payment_behavior",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     },
     {
@@ -46,7 +46,7 @@
         "internalName": "conservative_purchasing_payment_deviation_early_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_payment_behavior",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     },
     {
@@ -71,7 +71,7 @@
         "internalName": "conservative_purchasing_delivery_deviation_early_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_delivery_behavior",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     },
     {
@@ -96,7 +96,7 @@
         "internalName": "conservative_purchasing_delivery_deviation_on_time_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_delivery_behavior",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     },
     {
@@ -121,7 +121,7 @@
         "internalName": "conservative_purchasing_payment_deviation_on_time_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_payment_behavior",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     },
     {
@@ -146,7 +146,7 @@
         "internalName": "conservative_purchasing_delivery_deviation_late_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_delivery_behavior",
         "id": "",
-        "projectId": "00000000-0000-0000-0000-000000000001",
+        "projectId": "",
         "tenant": ""
     }
 ]

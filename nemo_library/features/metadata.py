@@ -1,9 +1,10 @@
 from collections import defaultdict
+from dataclasses import asdict, fields, is_dataclass
 import json
 import logging
 from pathlib import Path
 import re
-from typing import Type, TypeVar, List
+from typing import Tuple, Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
     FilterType,
@@ -73,12 +74,47 @@ def MetaDataCreate(
     projectname: str,
 ) -> None:
 
-    # setup meta data (to be view)
-    definedcolumns = _load_data_from_json(config, "definedcolumns", DefinedColumn)
-    metrics = _load_data_from_json(config, "metrics", Metric)
-    attributegroups = _load_data_from_json(config, "attributegroups", AttributeGroup)
+    # load data from model and nemo
+    definedcolumns_model, metrics_model, attributegroups_model, tiles_model = (
+        _load_model_from_json(config=config)
+    )
+    definedcolumns_nemo, metrics_nemo, tiles_nemo, attributegroups_nemo = (
+        _load_model_from_nemo(config=config, projectname=projectname)
+    )
 
-    tiles = [
+    # reconcile data
+    new_objects_found = _reconcile_model_and_nemo(
+        config=config,
+        projectname=projectname,
+        definedcolumns_model=definedcolumns_model,
+        metrics_model=metrics_model,
+        attributegroups_model=attributegroups_model,
+        tiles_model=tiles_model,
+        definedcolumns_nemo=definedcolumns_nemo,
+        metrics_nemo=metrics_nemo,
+        tiles_nemo=tiles_nemo,
+        attributegroups_nemo=attributegroups_nemo,
+    )
+
+    # move attributes and groups
+    if new_objects_found:
+        _move_objects_in_focus(
+            config=config,
+            projectname=projectname,
+            defined_columns=definedcolumns_model,
+            metrics=metrics_model,
+            attribute_groups=attributegroups_model,
+        )
+
+
+def _load_model_from_json(config: Config) -> (List[T], List[T], List[T], List[T]):  # type: ignore
+    definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
+    metrics_model = _load_data_from_json(config, "metrics", Metric)
+    attributegroups_model = _load_data_from_json(
+        config, "attributegroups", AttributeGroup
+    )
+
+    tiles_model = [
         Tile(
             aggregation="Mean",
             description=f"Tile for metric {metric.displayName}",
@@ -99,37 +135,38 @@ def MetaDataCreate(
             projectId="",
             tenant="",
         )
-        for metric in metrics
+        for metric in metrics_model
     ]
 
-    # delete objects that have changed or are removed
-    _delete_objects_that_not_longer_exist(config, projectname, "tiles", tiles)
-    _delete_objects_that_not_longer_exist(
-        config, projectname, "attributegroups", attributegroups
-    )
-    _delete_objects_that_not_longer_exist(config, projectname, "metrics", metrics)
-    _delete_objects_that_not_longer_exist(
-        config, projectname, "definedcolumns", definedcolumns
-    )
+    return definedcolumns_model, metrics_model, attributegroups_model, tiles_model
 
-    # create/update meta data into NEMO
-    createAttributGroups(
-        config=config, projectname=projectname, attribute_groups=attributegroups
-    )
-    createDefinedColumns(
-        config=config, projectname=projectname, defined_columns=definedcolumns
-    )
-    createMetrics(config=config, projectname=projectname, metrics=metrics)
-    createTiles(config=config, projectname=projectname, tiles=tiles)
 
-    # move attributes and groups
-    _move_objects_in_focus(
+def _load_model_from_nemo(config: Config, projectname: str) -> (List[T], List[T], List[T], List[T]):  # type: ignore
+    definedcolumns_nemo = getDefinedColumns(
         config=config,
         projectname=projectname,
-        defined_columns=definedcolumns,
-        metrics=metrics,
-        attribute_groups=attributegroups,
+        filter="(Conservative)",
+        filter_type=FilterType.STARTSWITH,
     )
+    metrics_nemo = getMetrics(
+        config=config,
+        projectname=projectname,
+        filter="(Conservative)",
+        filter_type=FilterType.STARTSWITH,
+    )
+    tiles_nemo = getTiles(
+        config=config,
+        projectname=projectname,
+        filter="(Conservative)",
+        filter_type=FilterType.STARTSWITH,
+    )
+    attributegroups_nemo = getAttributeGroups(
+        config=config,
+        projectname=projectname,
+        filter="(Conservative)",
+        filter_type=FilterType.STARTSWITH,
+    )
+    return definedcolumns_nemo, metrics_nemo, tiles_nemo, attributegroups_nemo
 
 
 def _load_data_from_json(config: Config, file: str, cls: Type[T]) -> List[T]:
@@ -139,6 +176,117 @@ def _load_data_from_json(config: Config, file: str, cls: Type[T]) -> List[T]:
 
     return [cls(**item) for item in data]
 
+
+def _reconcile_model_and_nemo(
+    config: Config,
+    projectname: str,
+    definedcolumns_model,
+    metrics_model,
+    attributegroups_model,
+    tiles_model,
+    definedcolumns_nemo,
+    metrics_nemo,
+    tiles_nemo,
+    attributegroups_nemo,
+) -> bool:
+
+    def find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:
+        model_keys = {
+            getattr(obj, "internalName", getattr(obj, "id", None)) for obj in model_list
+        }
+        return [
+            obj
+            for obj in nemo_list
+            if getattr(obj, "internalName", getattr(obj, "id", None)) not in model_keys
+        ]
+
+    def find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
+        updates = []
+        nemo_dict = {
+            getattr(obj, "internalName", getattr(obj, "id", None)): obj
+            for obj in nemo_list
+        }
+        for model_obj in model_list:
+            key = getattr(model_obj, "internalName", getattr(model_obj, "id", None))
+            if key in nemo_dict:
+                nemo_obj = nemo_dict[key]
+                if is_dataclass(model_obj) and is_dataclass(nemo_obj):
+                    if any(
+                        getattr(model_obj, attr.name) != getattr(nemo_obj, attr.name)
+                        for attr in fields(model_obj)
+                    ):
+                        updates.append(model_obj)
+        return updates
+
+    def find_new_objects(model_list: List[T], nemo_list: List[T]) -> List[T]:
+        nemo_keys = {
+            getattr(obj, "internalName", getattr(obj, "id", None)) for obj in nemo_list
+        }
+        return [
+            obj
+            for obj in model_list
+            if getattr(obj, "internalName", getattr(obj, "id", None)) not in nemo_keys
+        ]
+
+    definedcolumns_nemo = _clean_fields(definedcolumns_nemo)
+    metrics_nemo = _clean_fields(metrics_nemo)
+    tiles_nemo = _clean_fields(tiles_nemo)
+    attributegroups_nemo = _clean_fields(attributegroups_nemo)
+
+    deletions = {}
+    updates = {}
+    creates = {}
+
+    for key, model_list, nemo_list in [
+        ("definedcolumns", definedcolumns_model, definedcolumns_nemo),
+        ("metrics", metrics_model, metrics_nemo),
+        ("tiles", tiles_model, tiles_nemo),
+        ("attributegroups", attributegroups_model, attributegroups_nemo),
+    ]:
+        deletions[key] = find_deletions(model_list, nemo_list)
+        updates[key] = find_updates(model_list, nemo_list)
+        creates[key] = find_new_objects(model_list, nemo_list)
+
+    # start with deletions
+    for key in ["tiles", "metrics", "definedcolumns", "attributegroups"]:
+        if deletions[key]:
+            objects_to_delete = []
+            for data_nemo in deletions[key]:
+                objects_to_delete.append(data_nemo.id)
+
+            if key == "definedcolumns":
+                deleteDefinedColumns(config=config, defined_columns=objects_to_delete)
+            elif key == "metrics":
+                deleteMetrics(config=config, metrics=objects_to_delete)
+            elif key == "tiles":
+                deleteTiles(config=config, tiles=objects_to_delete)
+            elif key == "attributegroups":
+                deleteAttributeGroups(config=config, attribute_groups=objects_to_delete)
+
+    # now do the updates and creates (we need a dedicated order)
+    for key in ["attributegroups", "definedcolumns", "metrics", "tiles"]:
+        if updates[key] or creates[key]:
+            allchanges = updates[key] + creates[key]
+            if key == "definedcolumns":
+                createDefinedColumns(
+                    config=config, projectname=projectname, defined_columns=allchanges
+                )
+            elif key == "metrics":
+                createMetrics(
+                    config=config, projectname=projectname, metrics=allchanges
+                )
+            elif key == "tiles":
+                createTiles(config=config, projectname=projectname, tiles=allchanges)
+            elif key == "attributegroups":
+                createAttributGroups(
+                    config=config, projectname=projectname, attribute_groups=allchanges
+                )
+
+    for key in ["attributegroups", "definedcolumns", "metrics", "tiles"]:
+        if creates[key]:
+            return True
+
+    return False
 
 def _export_data_to_json(config: Config, file: str, data):
     data = _clean_fields(data)
@@ -153,73 +301,22 @@ def _clean_fields(data):
     for element in data:
         element.id = ""
         element.tenant = ""
-        element.projectID = ""
+        element.projectId = ""
+        element.tileSourceID = ""
     return data
 
 
-def _delete_objects_that_not_longer_exist(
-    config: Config,
-    projectname: str,
-    type: str,
-    data: List[T],
-) -> None:
-
-    internal_names = [data_item.internalName for data_item in data]
-    if type == "definedcolumns":
-        data_nemo_list = getDefinedColumns(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    elif type == "metrics":
-        data_nemo_list = getMetrics(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    elif type == "tiles":
-        data_nemo_list = getTiles(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    elif type == "attributegroups":
-        data_nemo_list = getAttributeGroups(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-
-    objects_to_delete = []
-    for data_nemo in data_nemo_list:
-        if data_nemo.internalName not in internal_names:
-            objects_to_delete.append(data_nemo.id)
-
-    if type == "definedcolumns":
-        deleteDefinedColumns(config=config, defined_columns=objects_to_delete)
-    elif type == "metrics":
-        deleteMetrics(config=config, metrics=objects_to_delete)
-    elif type == "tiles":
-        deleteTiles(config=config, tiles=objects_to_delete)
-    elif type == "attributegroups":
-        deleteAttributeGroups(config=config, attribute_groups=objects_to_delete)
-
-
 def extract_fields(formulas_dict):
-    field_pattern = re.compile(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b')
-    
+    field_pattern = re.compile(r"\b[a-zA-Z_][a-zA-Z0-9_]*\b")
+
     extracted_fields = {}
-    
+
     for key, formulas in formulas_dict.items():
         extracted_fields[key] = set()
         for formula in formulas:
             fields = field_pattern.findall(formula)
             extracted_fields[key].update(fields)
-    
+
     return {k: sorted(v) for k, v in extracted_fields.items()}
 
 
@@ -230,7 +327,7 @@ def _move_objects_in_focus(
     metrics: List[Metric],
     attribute_groups: List[AttributeGroup],
 ) -> None:
-    
+
     # move global object to top
     focusMoveAttributeBefore(
         config=config,
@@ -239,7 +336,7 @@ def _move_objects_in_focus(
     )
 
     # move fields that belong to metrics and defined columns into according groups
-        
+
     fields = {}
     for defined_column in defined_columns:
         key = defined_column.parentAttributeGroupInternalName
@@ -247,7 +344,7 @@ def _move_objects_in_focus(
             fields[key] = []
         fields[key].append(defined_column.formula)
 
-    fields_dict = extract_fields(fields)    
+    fields_dict = extract_fields(fields)
     for key, fields in fields_dict.items():
         logging.info(f"group {key}")
         for field in fields:
@@ -256,5 +353,5 @@ def _move_objects_in_focus(
                 config=config,
                 projectname=projectname,
                 sourceInternalName=field,
-                groupInternalName=key
+                groupInternalName=key,
             )

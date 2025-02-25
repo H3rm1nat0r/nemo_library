@@ -11,6 +11,8 @@ from nemo_library.model.metric import Metric
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import (
+    FilterType,
+    FilterValue,
     clean_meta_data,
     get_display_name,
     get_import_name,
@@ -674,19 +676,12 @@ def createOrUpdateRule(
             )
 
 
-class FilterType(Enum):
-    STARTSWITH = "startswith"
-    ENDSWITH = "endswith"
-    CONTAINS = "contains"
-    REGEX = "regex"
-    EQUAL = "equal"
-
-
 def getMetrics(
     config: Config,
     projectname: str,
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> list[Metric]:
     # initialize request
     headers = config.connection_get_headers()
@@ -722,7 +717,7 @@ def getMetrics(
     filtered_data = [
         item
         for item in data
-        if match_filter(item.get("displayName", ""), filter, filter_type)
+        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
     ]
 
     cleaned_data = clean_meta_data(filtered_data)
@@ -748,8 +743,9 @@ def createMetrics(
         existing_metric = getMetrics(
             config=config,
             projectname=projectname,
-            filter=metric.displayName,
+            filter=metric.internalName,
             filter_type=FilterType.EQUAL,
+            filter_value=FilterValue.INTERNALNAME,
         )
         if len(existing_metric) == 1:
             metric.id = existing_metric[0].id
@@ -800,6 +796,7 @@ def getDefinedColumns(
     projectname: str,
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> list[DefinedColumn]:
     # initialize request
     headers = config.connection_get_headers()
@@ -835,7 +832,7 @@ def getDefinedColumns(
     filtered_data = [
         item
         for item in data
-        if match_filter(item.get("displayName", ""), filter, filter_type)
+        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
     ]
 
     cleaned_data = clean_meta_data(filtered_data)
@@ -861,8 +858,9 @@ def createDefinedColumns(
         existing_defined_column = getDefinedColumns(
             config=config,
             projectname=projectname,
-            filter=column.displayName,
+            filter=column.internalName,
             filter_type=FilterType.EQUAL,
+            filter_value=FilterValue.INTERNALNAME,
         )
         if len(existing_defined_column) == 1:
             column.id = existing_defined_column[0].id
@@ -913,6 +911,7 @@ def getTiles(
     projectname: str,
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> list[Tile]:
     # initialize request
     headers = config.connection_get_headers()
@@ -948,9 +947,8 @@ def getTiles(
     filtered_data = [
         item
         for item in data
-        if match_filter(item.get("displayName", ""), filter, filter_type)
+        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
     ]
-
 
     cleaned_data = clean_meta_data(filtered_data)
     return [Tile(**item) for item in cleaned_data]
@@ -975,8 +973,9 @@ def createTiles(
         existing_defined_column = getTiles(
             config=config,
             projectname=projectname,
-            filter=tile.displayName,
+            filter=tile.internalName,
             filter_type=FilterType.EQUAL,
+            filter_value=FilterValue.INTERNALNAME,
         )
         if len(existing_defined_column) == 1:
             tile.id = existing_defined_column[0].id
@@ -1021,11 +1020,13 @@ def deleteTiles(config: Config, tiles: list[str]) -> None:
                 f"request failed. Status: {response.status_code}, error: {response.text}"
             )
 
+
 def getAttributeGroups(
     config: Config,
     projectname: str,
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> list[AttributeGroup]:
     # initialize request
     headers = config.connection_get_headers()
@@ -1061,12 +1062,12 @@ def getAttributeGroups(
     filtered_data = [
         item
         for item in data
-        if match_filter(item.get("displayName", ""), filter, filter_type)
+        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
     ]
-
 
     cleaned_data = clean_meta_data(filtered_data)
     return [AttributeGroup(**item) for item in cleaned_data]
+
 
 def createAttributGroups(
     config: Config,
@@ -1087,14 +1088,17 @@ def createAttributGroups(
         existing_attribute_group = getAttributeGroups(
             config=config,
             projectname=projectname,
-            filter=attribute_group.displayName,
+            filter=attribute_group.internalName,
             filter_type=FilterType.EQUAL,
+            filter_value=FilterValue.INTERNALNAME,
         )
         if len(existing_attribute_group) == 1:
             attribute_group.id = existing_attribute_group[0].id
             response = requests.put(
                 config.get_config_nemo_url()
-                + "/api/nemo-persistence/metadata/AttributeGroup/{id}".format(id=attribute_group.id),
+                + "/api/nemo-persistence/metadata/AttributeGroup/{id}".format(
+                    id=attribute_group.id
+                ),
                 json=attribute_group.to_dict(),
                 headers=headers,
             )
@@ -1106,7 +1110,8 @@ def createAttributGroups(
         else:
 
             response = requests.post(
-                config.get_config_nemo_url() + "/api/nemo-persistence/metadata/AttributeGroup",
+                config.get_config_nemo_url()
+                + "/api/nemo-persistence/metadata/AttributeGroup",
                 json=attribute_group.to_dict(),
                 headers=headers,
             )
@@ -1114,7 +1119,8 @@ def createAttributGroups(
                 log_error(
                     f"request failed. Status: {response.status_code}, error: {response.text}"
                 )
-                    
+
+
 def deleteAttributeGroups(config: Config, attribute_groups: list[str]) -> None:
 
     # initialize request
@@ -1124,14 +1130,17 @@ def deleteAttributeGroups(config: Config, attribute_groups: list[str]) -> None:
         logging.info(f"Delete attribute group id {attribute_group}")
         response = requests.delete(
             config.get_config_nemo_url()
-            + "/api/nemo-persistence/metadata/AttributeGroup/{id}".format(id=attribute_group),
+            + "/api/nemo-persistence/metadata/AttributeGroup/{id}".format(
+                id=attribute_group
+            ),
             headers=headers,
         )
         if response.status_code != 204:
             log_error(
                 f"request failed. Status: {response.status_code}, error: {response.text}"
             )
-                                
+
+
 def synchronizeCsvColsAndImportedColumns(
     config: Config,
     projectname: str,

@@ -1,7 +1,19 @@
+from enum import Enum
 import logging
 import re
 from typing import Type
 
+class FilterType(Enum):
+    STARTSWITH = "startswith"
+    ENDSWITH = "endswith"
+    CONTAINS = "contains"
+    REGEX = "regex"
+    EQUAL = "equal"
+
+class FilterValue(Enum):
+    DISPLAYNAME = "displayName"
+    INTERNALNAME = "internalName"
+    ID = "id"
 
 def get_display_name(column: str, idx: int = None) -> str:
     if idx:

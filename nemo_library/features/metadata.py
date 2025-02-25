@@ -180,62 +180,55 @@ def _load_data_from_json(config: Config, file: str, cls: Type[T]) -> List[T]:
 def _reconcile_model_and_nemo(
     config: Config,
     projectname: str,
-    definedcolumns_model,
-    metrics_model,
-    attributegroups_model,
-    tiles_model,
-    definedcolumns_nemo,
-    metrics_nemo,
-    tiles_nemo,
-    attributegroups_nemo,
+    definedcolumns_model: List[T],
+    metrics_model: List[T],
+    attributegroups_model: List[T],
+    tiles_model: List[T],
+    definedcolumns_nemo: List[T],
+    metrics_nemo: List[T],
+    tiles_nemo: List[T],
+    attributegroups_nemo: List[T],
 ) -> bool:
-
     def find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:
-        model_keys = {
-            getattr(obj, "internalName", getattr(obj, "id", None)) for obj in model_list
-        }
+        model_keys = {getattr(obj, "internalName") for obj in model_list}
         return [
-            obj
-            for obj in nemo_list
-            if getattr(obj, "internalName", getattr(obj, "id", None)) not in model_keys
+            obj for obj in nemo_list if getattr(obj, "internalName") not in model_keys
         ]
 
     def find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
         updates = []
-        nemo_dict = {
-            getattr(obj, "internalName", getattr(obj, "id", None)): obj
-            for obj in nemo_list
-        }
+        nemo_dict = {getattr(obj, "internalName"): obj for obj in nemo_list}
         for model_obj in model_list:
-            key = getattr(model_obj, "internalName", getattr(model_obj, "id", None))
+            key = getattr(model_obj, "internalName")
             if key in nemo_dict:
                 nemo_obj = nemo_dict[key]
                 if is_dataclass(model_obj) and is_dataclass(nemo_obj):
-                    if any(
-                        getattr(model_obj, attr.name) != getattr(nemo_obj, attr.name)
+                    differences = {
+                        attr.name: (
+                            getattr(model_obj, attr.name),
+                            getattr(nemo_obj, attr.name),
+                        )
                         for attr in fields(model_obj)
-                    ):
+                        if attr.name
+                        not in ["id", "tenant", "projectId", "tileSourceID"]
+                        and getattr(model_obj, attr.name)
+                        != getattr(nemo_obj, attr.name)
+                    }
+                    if differences:
+                        logging.info(f"difference found {key}: {differences}")
                         updates.append(model_obj)
         return updates
 
     def find_new_objects(model_list: List[T], nemo_list: List[T]) -> List[T]:
-        nemo_keys = {
-            getattr(obj, "internalName", getattr(obj, "id", None)) for obj in nemo_list
-        }
+        nemo_keys = {getattr(obj, "internalName") for obj in nemo_list}
+        print(nemo_keys)
         return [
-            obj
-            for obj in model_list
-            if getattr(obj, "internalName", getattr(obj, "id", None)) not in nemo_keys
+            obj for obj in model_list if getattr(obj, "internalName") not in nemo_keys
         ]
 
-    definedcolumns_nemo = _clean_fields(definedcolumns_nemo)
-    metrics_nemo = _clean_fields(metrics_nemo)
-    tiles_nemo = _clean_fields(tiles_nemo)
-    attributegroups_nemo = _clean_fields(attributegroups_nemo)
-
-    deletions = {}
-    updates = {}
-    creates = {}
+    deletions: Dict[str, List[T]] = {}
+    updates: Dict[str, List[T]] = {}
+    creates: Dict[str, List[T]] = {}
 
     for key, model_list, nemo_list in [
         ("definedcolumns", definedcolumns_model, definedcolumns_nemo),
@@ -247,13 +240,10 @@ def _reconcile_model_and_nemo(
         updates[key] = find_updates(model_list, nemo_list)
         creates[key] = find_new_objects(model_list, nemo_list)
 
-    # start with deletions
+    # Start with deletions
     for key in ["tiles", "metrics", "definedcolumns", "attributegroups"]:
         if deletions[key]:
-            objects_to_delete = []
-            for data_nemo in deletions[key]:
-                objects_to_delete.append(data_nemo.id)
-
+            objects_to_delete = [data_nemo.id for data_nemo in deletions[key]]
             if key == "definedcolumns":
                 deleteDefinedColumns(config=config, defined_columns=objects_to_delete)
             elif key == "metrics":
@@ -263,7 +253,7 @@ def _reconcile_model_and_nemo(
             elif key == "attributegroups":
                 deleteAttributeGroups(config=config, attribute_groups=objects_to_delete)
 
-    # now do the updates and creates (we need a dedicated order)
+    # Now do updates and creates in a dedicated order
     for key in ["attributegroups", "definedcolumns", "metrics", "tiles"]:
         if updates[key] or creates[key]:
             allchanges = updates[key] + creates[key]
@@ -285,8 +275,8 @@ def _reconcile_model_and_nemo(
     for key in ["attributegroups", "definedcolumns", "metrics", "tiles"]:
         if creates[key]:
             return True
-
     return False
+
 
 def _export_data_to_json(config: Config, file: str, data):
     data = _clean_fields(data)
@@ -306,7 +296,7 @@ def _clean_fields(data):
     return data
 
 
-def extract_fields(formulas_dict):
+def _extract_fields(formulas_dict):
     field_pattern = re.compile(r"\b[a-zA-Z_][a-zA-Z0-9_]*\b")
 
     extracted_fields = {}
@@ -344,7 +334,7 @@ def _move_objects_in_focus(
             fields[key] = []
         fields[key].append(defined_column.formula)
 
-    fields_dict = extract_fields(fields)
+    fields_dict = _extract_fields(fields)
     for key, fields in fields_dict.items():
         logging.info(f"group {key}")
         for field in fields:

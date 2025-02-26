@@ -16,9 +16,11 @@ from nemo_library.features.projects import (
     deleteDefinedColumns,
     deleteMetrics,
     deleteTiles,
+    getApplications,
     getAttributeGroups,
     getDefinedColumns,
     getMetrics,
+    getPages,
     getTiles,
 )
 from nemo_library.model.attribute_group import AttributeGroup
@@ -36,37 +38,24 @@ def MetaDataLoad(
     config: Config,
     projectname: str,
 ) -> None:
-    data = getDefinedColumns(
-        config=config,
-        projectname=projectname,
-        filter="(Conservative)",
-        filter_type=FilterType.STARTSWITH,
-    )
-    _export_data_to_json(config, "definedcolumns", data)
+        
+    functions = {
+        "definedcolumns": getDefinedColumns,
+        "metrics": getMetrics,
+        "tiles": getTiles,
+        "attributegroups": getAttributeGroups,
+        "pages": getPages,
+        "applications": getApplications,
+    }
 
-    data = getMetrics(
-        config=config,
-        projectname=projectname,
-        filter="(Conservative)",
-        filter_type=FilterType.STARTSWITH,
-    )
-    _export_data_to_json(config, "metrics", data)
-
-    data = getTiles(
-        config=config,
-        projectname=projectname,
-        filter="(Conservative)",
-        filter_type=FilterType.STARTSWITH,
-    )
-    _export_data_to_json(config, "tiles", data)
-
-    data = getAttributeGroups(
-        config=config,
-        projectname=projectname,
-        filter="(Conservative)",
-        filter_type=FilterType.STARTSWITH,
-    )
-    _export_data_to_json(config, "attributegroups", data)
+    for name, func in functions.items():
+        data = func(
+            config=config,
+            projectname=projectname,
+            filter="(Conservative)",
+            filter_type=FilterType.STARTSWITH,
+        )
+        _export_data_to_json(config, name, data)    
 
 
 def MetaDataCreate(

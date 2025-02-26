@@ -1,0 +1,33 @@
+[
+    {
+        "active": true,
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Advisor",
+        "displayNameTranslations": {},
+        "download": "",
+        "forecasts": [],
+        "formatCompact": false,
+        "internalName": "conservative_purchasing_advisor",
+        "links": [],
+        "models": [],
+        "pages": [
+            {
+                "order": 0,
+                "page": "conservative_purchasing_advisor_overview"
+            },
+            {
+                "order": 1,
+                "page": "conservative_purchasing_advisor_dpo"
+            },
+            {
+                "order": 2,
+                "page": "conservative_purchasing_advisor_otif"
+            }
+        ],
+        "scopeName": "",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    }
+]

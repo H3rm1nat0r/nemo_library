@@ -113,6 +113,16 @@
                 "type": "Tile"
             },
             {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_invoice_processing_time_on_time_rate",
+                "contentTranslations": {},
+                "id": "3d1275b4-58a8-4f15-9cde-f8d0a416cff5",
+                "row": 3,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_goods_receipt_processing_time_on_time_rate",

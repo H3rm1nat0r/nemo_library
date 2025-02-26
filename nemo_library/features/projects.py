@@ -4,6 +4,7 @@ import re
 import pandas as pd
 import requests
 import json
+from typing import Type, TypeVar, List
 
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
@@ -21,6 +22,9 @@ from nemo_library.utils.utils import (
     get_internal_name,
     log_error,
 )
+
+
+T = TypeVar("T")
 
 
 def getProjectList(
@@ -353,6 +357,165 @@ def deleteProject(config: Config, projectname: str) -> None:
         )
 
 
+def _get_generic_metadata(
+    config: Config,
+    projectname: str,
+    endpoint: str,
+    endpoint_postfix: str,
+    return_type: Type[T],
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[T]:
+    """
+    Generic method to fetch and filter metadata for different objects.
+
+    :param config: Configuration containing connection details
+    :param projectname: Name of the project
+    :param endpoint: API endpoint (e.g., "Tiles" or "Pages")
+    :param return_type: The class of the returned object (Tile or Page)
+    :param filter: Filter value for searching
+    :param filter_type: Type of filter (EQUAL, STARTSWITH, etc.)
+    :param filter_value: The attribute to filter on (e.g., DISPLAYNAME)
+    :return: A list of objects of the specified return_type
+    """
+
+    # Initialize request
+    headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
+
+    response = requests.get(
+        f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/project/{project_id}{endpoint_postfix}",
+        headers=headers,
+    )
+
+    if response.status_code != 200:
+        log_error(
+            f"Request failed.\nURL:{f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/project/{project_id}{endpoint_postfix}"}\nStatus: {response.status_code}, error: {response.text}"
+        )
+        return []
+
+    data = json.loads(response.text)
+
+    def match_filter(value: str, filter: str, filter_type: FilterType) -> bool:
+        """Applies the given filter to the value."""
+        if filter == "*":
+            return True
+        elif filter_type == FilterType.EQUAL:
+            return value == filter
+        elif filter_type == FilterType.STARTSWITH:
+            return value.startswith(filter)
+        elif filter_type == FilterType.ENDSWITH:
+            return value.endswith(filter)
+        elif filter_type == FilterType.CONTAINS:
+            return filter in value
+        elif filter_type == FilterType.REGEX:
+            return re.search(filter, value) is not None
+        return False
+
+    # Apply filter to the data
+    filtered_data = [
+        item
+        for item in data
+        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
+    ]
+
+    # Clean metadata and return the list of objects
+    cleaned_data = clean_meta_data(filtered_data)
+    return [return_type(**item) for item in cleaned_data]
+
+
+def getAttributeGroups(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[AttributeGroup]:
+    """Fetches AttributeGroups metadata with the given filters."""
+    return _get_generic_metadata(
+        config,
+        projectname,
+        "AttributeGroup",
+        "/attributegroups",
+        AttributeGroup,
+        filter,
+        filter_type,
+        filter_value,
+    )
+
+
+def getMetrics(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Metric]:
+    """Fetches Metrics metadata with the given filters."""
+    return _get_generic_metadata(
+        config, projectname, "Metrics", "", Metric, filter, filter_type, filter_value
+    )
+
+
+def getTiles(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Tile]:
+    """Fetches Tiles metadata with the given filters."""
+    return _get_generic_metadata(
+        config, projectname, "Tiles", "", Tile, filter, filter_type, filter_value
+    )
+
+
+def getPages(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Page]:
+    """Fetches Pages metadata with the given filters."""
+    return _get_generic_metadata(
+        config, projectname, "Pages", "", Page, filter, filter_type, filter_value
+    )
+
+def getApplications(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Application]:
+    """Fetches Applications metadata with the given filters."""
+    return _get_generic_metadata(
+        config, projectname, "Applications", "", Application, filter, filter_type, filter_value
+    )
+
+
+def getDefinedColumns(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[DefinedColumn]:
+    """Fetches DefinedColumns metadata with the given filters."""
+    return _get_generic_metadata(
+        config,
+        projectname,
+        "Columns",
+        "/defined",
+        DefinedColumn,
+        filter,
+        filter_type,
+        filter_value,
+    )
+
+
 def getImportedColumns(
     config: Config,
     projectname: str,
@@ -678,54 +841,6 @@ def createOrUpdateRule(
             )
 
 
-def getMetrics(
-    config: Config,
-    projectname: str,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> list[Metric]:
-    # initialize request
-    headers = config.connection_get_headers()
-    project_id = getProjectID(config, projectname)
-    response = requests.get(
-        config.get_config_nemo_url()
-        + "/api/nemo-persistence/metadata/Metrics/project/{projectId}".format(
-            projectId=project_id
-        ),
-        headers=headers,
-    )
-    if response.status_code != 200:
-        log_error(
-            f"request failed. Status: {response.status_code}, error: {response.text}"
-        )
-    data = json.loads(response.text)
-
-    def match_filter(value, filter, filter_type):
-        if filter == "*":
-            return True
-        elif filter_type == FilterType.EQUAL:
-            return value == filter
-        elif filter_type == FilterType.STARTSWITH:
-            return value.startswith(filter)
-        elif filter_type == FilterType.ENDSWITH:
-            return value.endswith(filter)
-        elif filter_type == FilterType.CONTAINS:
-            return filter in value
-        elif filter_type == FilterType.REGEX:
-            return re.search(filter, value) is not None
-        return False
-
-    filtered_data = [
-        item
-        for item in data
-        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
-    ]
-
-    cleaned_data = clean_meta_data(filtered_data)
-    return [Metric(**item) for item in cleaned_data]
-
-
 def createMetrics(
     config: Config,
     projectname: str,
@@ -791,54 +906,6 @@ def deleteMetrics(config: Config, metrics: list[str]) -> None:
             log_error(
                 f"request failed. Status: {response.status_code}, error: {response.text}"
             )
-
-
-def getDefinedColumns(
-    config: Config,
-    projectname: str,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> list[DefinedColumn]:
-    # initialize request
-    headers = config.connection_get_headers()
-    project_id = getProjectID(config, projectname)
-    response = requests.get(
-        config.get_config_nemo_url()
-        + "/api/nemo-persistence/metadata/Columns/project/{projectId}/defined".format(
-            projectId=project_id
-        ),
-        headers=headers,
-    )
-    if response.status_code != 200:
-        log_error(
-            f"request failed. Status: {response.status_code}, error: {response.text}"
-        )
-    data = json.loads(response.text)
-
-    def match_filter(value, filter, filter_type):
-        if filter == "*":
-            return True
-        elif filter_type == FilterType.EQUAL:
-            return value == filter
-        elif filter_type == FilterType.STARTSWITH:
-            return value.startswith(filter)
-        elif filter_type == FilterType.ENDSWITH:
-            return value.endswith(filter)
-        elif filter_type == FilterType.CONTAINS:
-            return filter in value
-        elif filter_type == FilterType.REGEX:
-            return re.search(filter, value) is not None
-        return False
-
-    filtered_data = [
-        item
-        for item in data
-        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
-    ]
-
-    cleaned_data = clean_meta_data(filtered_data)
-    return [DefinedColumn(**item) for item in cleaned_data]
 
 
 def createDefinedColumns(
@@ -908,54 +975,6 @@ def deleteDefinedColumns(config: Config, defined_columns: list[str]) -> None:
             )
 
 
-def getTiles(
-    config: Config,
-    projectname: str,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> list[Tile]:
-    # initialize request
-    headers = config.connection_get_headers()
-    project_id = getProjectID(config, projectname)
-    response = requests.get(
-        config.get_config_nemo_url()
-        + "/api/nemo-persistence/metadata/Tiles/project/{projectId}".format(
-            projectId=project_id
-        ),
-        headers=headers,
-    )
-    if response.status_code != 200:
-        log_error(
-            f"request failed. Status: {response.status_code}, error: {response.text}"
-        )
-    data = json.loads(response.text)
-
-    def match_filter(value, filter, filter_type):
-        if filter == "*":
-            return True
-        elif filter_type == FilterType.EQUAL:
-            return value == filter
-        elif filter_type == FilterType.STARTSWITH:
-            return value.startswith(filter)
-        elif filter_type == FilterType.ENDSWITH:
-            return value.endswith(filter)
-        elif filter_type == FilterType.CONTAINS:
-            return filter in value
-        elif filter_type == FilterType.REGEX:
-            return re.search(filter, value) is not None
-        return False
-
-    filtered_data = [
-        item
-        for item in data
-        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
-    ]
-
-    cleaned_data = clean_meta_data(filtered_data)
-    return [Tile(**item) for item in cleaned_data]
-
-
 def createTiles(
     config: Config,
     projectname: str,
@@ -1021,6 +1040,7 @@ def deleteTiles(config: Config, tiles: list[str]) -> None:
             log_error(
                 f"request failed. Status: {response.status_code}, error: {response.text}"
             )
+
 
 def getPages(
     config: Config,
@@ -1135,53 +1155,9 @@ def deletePages(config: Config, pages: list[str]) -> None:
             log_error(
                 f"request failed. Status: {response.status_code}, error: {response.text}"
             )
-            
-def getApplications(
-    config: Config,
-    projectname: str,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> list[Application]:
-    # initialize request
-    headers = config.connection_get_headers()
-    project_id = getProjectID(config, projectname)
-    response = requests.get(
-        config.get_config_nemo_url()
-        + "/api/nemo-persistence/metadata/Applications/project/{projectId}".format(
-            projectId=project_id
-        ),
-        headers=headers,
-    )
-    if response.status_code != 200:
-        log_error(
-            f"request failed. Status: {response.status_code}, error: {response.text}"
-        )
-    data = json.loads(response.text)
 
-    def match_filter(value, filter, filter_type):
-        if filter == "*":
-            return True
-        elif filter_type == FilterType.EQUAL:
-            return value == filter
-        elif filter_type == FilterType.STARTSWITH:
-            return value.startswith(filter)
-        elif filter_type == FilterType.ENDSWITH:
-            return value.endswith(filter)
-        elif filter_type == FilterType.CONTAINS:
-            return filter in value
-        elif filter_type == FilterType.REGEX:
-            return re.search(filter, value) is not None
-        return False
 
-    filtered_data = [
-        item
-        for item in data
-        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
-    ]
 
-    cleaned_data = clean_meta_data(filtered_data)
-    return [Application(**item) for item in cleaned_data]
 
 
 def createApplications(
@@ -1211,7 +1187,9 @@ def createApplications(
             application.id = existing_defined_column[0].id
             response = requests.put(
                 config.get_config_nemo_url()
-                + "/api/nemo-persistence/metadata/Applications/{id}".format(id=application.id),
+                + "/api/nemo-persistence/metadata/Applications/{id}".format(
+                    id=application.id
+                ),
                 json=application.to_dict(),
                 headers=headers,
             )
@@ -1223,7 +1201,8 @@ def createApplications(
         else:
 
             response = requests.post(
-                config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Applications",
+                config.get_config_nemo_url()
+                + "/api/nemo-persistence/metadata/Applications",
                 json=application.to_dict(),
                 headers=headers,
             )
@@ -1249,53 +1228,6 @@ def deleteApplications(config: Config, applications: list[str]) -> None:
             log_error(
                 f"request failed. Status: {response.status_code}, error: {response.text}"
             )
-                        
-def getAttributeGroups(
-    config: Config,
-    projectname: str,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> list[AttributeGroup]:
-    # initialize request
-    headers = config.connection_get_headers()
-    project_id = getProjectID(config, projectname)
-    response = requests.get(
-        config.get_config_nemo_url()
-        + "/api/nemo-persistence/metadata/AttributeGroup/project/{projectId}/attributegroups".format(
-            projectId=project_id
-        ),
-        headers=headers,
-    )
-    if response.status_code != 200:
-        log_error(
-            f"request failed. Status: {response.status_code}, error: {response.text}"
-        )
-    data = json.loads(response.text)
-
-    def match_filter(value, filter, filter_type):
-        if filter == "*":
-            return True
-        elif filter_type == FilterType.EQUAL:
-            return value == filter
-        elif filter_type == FilterType.STARTSWITH:
-            return value.startswith(filter)
-        elif filter_type == FilterType.ENDSWITH:
-            return value.endswith(filter)
-        elif filter_type == FilterType.CONTAINS:
-            return filter in value
-        elif filter_type == FilterType.REGEX:
-            return re.search(filter, value) is not None
-        return False
-
-    filtered_data = [
-        item
-        for item in data
-        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
-    ]
-
-    cleaned_data = clean_meta_data(filtered_data)
-    return [AttributeGroup(**item) for item in cleaned_data]
 
 
 def createAttributGroups(

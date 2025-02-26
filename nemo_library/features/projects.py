@@ -357,7 +357,7 @@ def deleteProject(config: Config, projectname: str) -> None:
         )
 
 
-def _get_generic_metadata(
+def _generic_metadata_get(
     config: Config,
     projectname: str,
     endpoint: str,
@@ -424,6 +424,28 @@ def _get_generic_metadata(
     cleaned_data = clean_meta_data(filtered_data)
     return [return_type(**item) for item in cleaned_data]
 
+def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> None:
+    """
+    Generic function to delete metadata entries.
+
+    :param config: Configuration containing connection details
+    :param ids: List of IDs to be deleted
+    :param endpoint: API endpoint (e.g., "Metrics" or "Columns")
+    """
+    
+    # Initialize request
+    headers = config.connection_get_headers()
+
+    for obj_id in ids:
+        logging.info(f"Deleting {endpoint[:-1]} with ID {obj_id}")
+        
+        response = requests.delete(
+            f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}",
+            headers=headers,
+        )
+
+        if response.status_code != 204:
+            log_error(f"Request failed. Status: {response.status_code}, error: {response.text}")
 
 def getAttributeGroups(
     config: Config,
@@ -433,7 +455,7 @@ def getAttributeGroups(
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> List[AttributeGroup]:
     """Fetches AttributeGroups metadata with the given filters."""
-    return _get_generic_metadata(
+    return _generic_metadata_get(
         config,
         projectname,
         "AttributeGroup",
@@ -453,7 +475,7 @@ def getMetrics(
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> List[Metric]:
     """Fetches Metrics metadata with the given filters."""
-    return _get_generic_metadata(
+    return _generic_metadata_get(
         config, projectname, "Metrics", "", Metric, filter, filter_type, filter_value
     )
 
@@ -466,7 +488,7 @@ def getTiles(
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> List[Tile]:
     """Fetches Tiles metadata with the given filters."""
-    return _get_generic_metadata(
+    return _generic_metadata_get(
         config, projectname, "Tiles", "", Tile, filter, filter_type, filter_value
     )
 
@@ -479,7 +501,7 @@ def getPages(
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> List[Page]:
     """Fetches Pages metadata with the given filters."""
-    return _get_generic_metadata(
+    return _generic_metadata_get(
         config, projectname, "Pages", "", Page, filter, filter_type, filter_value
     )
 
@@ -491,7 +513,7 @@ def getApplications(
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> List[Application]:
     """Fetches Applications metadata with the given filters."""
-    return _get_generic_metadata(
+    return _generic_metadata_get(
         config, projectname, "Applications", "", Application, filter, filter_type, filter_value
     )
 
@@ -504,7 +526,7 @@ def getDefinedColumns(
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> List[DefinedColumn]:
     """Fetches DefinedColumns metadata with the given filters."""
-    return _get_generic_metadata(
+    return _generic_metadata_get(
         config,
         projectname,
         "Columns",
@@ -515,6 +537,29 @@ def getDefinedColumns(
         filter_value,
     )
 
+def deleteDefinedColumns(config: Config, defined_columns: List[str]) -> None:
+    """Deletes a list of Defined Columns by their IDs."""
+    _generic_metadata_delete(config, defined_columns, "Columns")
+
+def deleteMetrics(config: Config, metrics: List[str]) -> None:
+    """Deletes a list of Metrics by their IDs."""
+    _generic_metadata_delete(config, metrics, "Metrics")
+
+def deleteTiles(config: Config, metrics: List[str]) -> None:
+    """Deletes a list of Tiles by their IDs."""
+    _generic_metadata_delete(config, metrics, "Tiles")
+    
+def deleteAttributeGroups(config: Config, metrics: List[str]) -> None:
+    """Deletes a list of AttributeGroups by their IDs."""
+    _generic_metadata_delete(config, metrics, "AttributeGroups")
+
+def deletePages(config: Config, metrics: List[str]) -> None:
+    """Deletes a list of Pages by their IDs."""
+    _generic_metadata_delete(config, metrics, "Pages")
+
+def deleteApplications(config: Config, metrics: List[str]) -> None:
+    """Deletes a list of Pages by their IDs."""
+    _generic_metadata_delete(config, metrics, "Pages")
 
 def getImportedColumns(
     config: Config,
@@ -890,24 +935,6 @@ def createMetrics(
                 )
 
 
-def deleteMetrics(config: Config, metrics: list[str]) -> None:
-
-    # initialize request
-    headers = config.connection_get_headers()
-
-    for metric in metrics:
-        logging.info(f"Delete metric id {metric}")
-        response = requests.delete(
-            config.get_config_nemo_url()
-            + "/api/nemo-persistence/metadata/Metrics/{id}".format(id=metric),
-            headers=headers,
-        )
-        if response.status_code != 204:
-            log_error(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
-
-
 def createDefinedColumns(
     config: Config,
     projectname: str,
@@ -957,23 +984,6 @@ def createDefinedColumns(
                 )
 
 
-def deleteDefinedColumns(config: Config, defined_columns: list[str]) -> None:
-
-    # initialize request
-    headers = config.connection_get_headers()
-
-    for defined_column in defined_columns:
-        logging.info(f"Delete defined column id {defined_column}")
-        response = requests.delete(
-            config.get_config_nemo_url()
-            + "/api/nemo-persistence/metadata/Columns/{id}".format(id=defined_column),
-            headers=headers,
-        )
-        if response.status_code != 204:
-            log_error(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
-
 
 def createTiles(
     config: Config,
@@ -1022,24 +1032,6 @@ def createTiles(
                 log_error(
                     f"request failed. Status: {response.status_code}, error: {response.text}"
                 )
-
-
-def deleteTiles(config: Config, tiles: list[str]) -> None:
-
-    # initialize request
-    headers = config.connection_get_headers()
-
-    for tile in tiles:
-        logging.info(f"Delete tile id {tile}")
-        response = requests.delete(
-            config.get_config_nemo_url()
-            + "/api/nemo-persistence/metadata/Tiles/{id}".format(id=tile),
-            headers=headers,
-        )
-        if response.status_code != 204:
-            log_error(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
 
 
 def getPages(
@@ -1139,26 +1131,6 @@ def createPages(
                 )
 
 
-def deletePages(config: Config, pages: list[str]) -> None:
-
-    # initialize request
-    headers = config.connection_get_headers()
-
-    for page in pages:
-        logging.info(f"Delete page id {page}")
-        response = requests.delete(
-            config.get_config_nemo_url()
-            + "/api/nemo-persistence/metadata/Pages/{id}".format(id=page),
-            headers=headers,
-        )
-        if response.status_code != 204:
-            log_error(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
-
-
-
-
 
 def createApplications(
     config: Config,
@@ -1212,23 +1184,6 @@ def createApplications(
                 )
 
 
-def deleteApplications(config: Config, applications: list[str]) -> None:
-
-    # initialize request
-    headers = config.connection_get_headers()
-
-    for application in applications:
-        logging.info(f"Delete application id {application}")
-        response = requests.delete(
-            config.get_config_nemo_url()
-            + "/api/nemo-persistence/metadata/Applications/{id}".format(id=application),
-            headers=headers,
-        )
-        if response.status_code != 204:
-            log_error(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
-
 
 def createAttributGroups(
     config: Config,
@@ -1280,26 +1235,6 @@ def createAttributGroups(
                 log_error(
                     f"request failed. Status: {response.status_code}, error: {response.text}"
                 )
-
-
-def deleteAttributeGroups(config: Config, attribute_groups: list[str]) -> None:
-
-    # initialize request
-    headers = config.connection_get_headers()
-
-    for attribute_group in attribute_groups:
-        logging.info(f"Delete attribute group id {attribute_group}")
-        response = requests.delete(
-            config.get_config_nemo_url()
-            + "/api/nemo-persistence/metadata/AttributeGroup/{id}".format(
-                id=attribute_group
-            ),
-            headers=headers,
-        )
-        if response.status_code != 204:
-            log_error(
-                f"request failed. Status: {response.status_code}, error: {response.text}"
-            )
 
 
 def synchronizeCsvColsAndImportedColumns(

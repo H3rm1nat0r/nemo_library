@@ -115,16 +115,6 @@
             {
                 "column": 1,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_goods_receipt_processing_time_days",
-                "contentTranslations": {},
-                "id": "618f0c5b-4096-4222-921b-2e122f267399",
-                "row": 3,
-                "rowSpan": 1,
-                "type": "Tile"
-            },
-            {
-                "column": 2,
-                "columnSpan": 1,
                 "content": "conservative_purchasing_goods_receipt_processing_time_on_time_rate",
                 "contentTranslations": {},
                 "id": "6aa99838-7609-41b6-8616-7e0cf632e12a",

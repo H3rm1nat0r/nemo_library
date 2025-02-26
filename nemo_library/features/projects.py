@@ -473,7 +473,7 @@ def _generic_metadata_create_or_update(
     project_id = getProjectID(config, projectname)
 
     for obj in objects:
-        logging.info(f"Create/update {endpoint[:-1]} '{obj.displayName}'")
+        logging.info(f"Create/update {endpoint} '{obj.displayName}'")
 
         obj.tenant = config.get_tenant()
         obj.projectId = project_id
@@ -497,7 +497,7 @@ def _generic_metadata_create_or_update(
             )
             if response.status_code != 200:
                 log_error(
-                    f"Request failed. Status: {response.status_code}, error: {response.text}"
+                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
         else:
@@ -509,7 +509,7 @@ def _generic_metadata_create_or_update(
             )
             if response.status_code != 201:
                 log_error(
-                    f"Request failed. Status: {response.status_code}, error: {response.text}"
+                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
 
@@ -612,9 +612,9 @@ def getDefinedColumns(
     )
 
 
-def deleteDefinedColumns(config: Config, defined_columns: List[str]) -> None:
+def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
     """Deletes a list of Defined Columns by their IDs."""
-    _generic_metadata_delete(config, defined_columns, "Columns")
+    _generic_metadata_delete(config, definedcolumns, "Columns")
 
 
 def deleteMetrics(config: Config, metrics: List[str]) -> None:
@@ -622,39 +622,39 @@ def deleteMetrics(config: Config, metrics: List[str]) -> None:
     _generic_metadata_delete(config, metrics, "Metrics")
 
 
-def deleteTiles(config: Config, metrics: List[str]) -> None:
+def deleteTiles(config: Config, tiles: List[str]) -> None:
     """Deletes a list of Tiles by their IDs."""
-    _generic_metadata_delete(config, metrics, "Tiles")
+    _generic_metadata_delete(config, tiles, "Tiles")
 
 
-def deleteAttributeGroups(config: Config, metrics: List[str]) -> None:
+def deleteAttributeGroups(config: Config, attributegroups: List[str]) -> None:
     """Deletes a list of AttributeGroups by their IDs."""
-    _generic_metadata_delete(config, metrics, "AttributeGroups")
+    _generic_metadata_delete(config, attributegroups, "AttributeGroups")
 
 
-def deletePages(config: Config, metrics: List[str]) -> None:
+def deletePages(config: Config, pages: List[str]) -> None:
     """Deletes a list of Pages by their IDs."""
-    _generic_metadata_delete(config, metrics, "Pages")
+    _generic_metadata_delete(config, pages, "Pages")
 
 
-def deleteApplications(config: Config, metrics: List[str]) -> None:
+def deleteApplications(config: Config, application: List[str]) -> None:
     """Deletes a list of Pages by their IDs."""
-    _generic_metadata_delete(config, metrics, "Pages")
+    _generic_metadata_delete(config, application, "Pages")
 
 
 def createDefinedColumns(
-    config: Config, projectname: str, tiles: List[DefinedColumn]
+    config: Config, projectname: str, definedcolumns: List[DefinedColumn]
 ) -> None:
     """Creates or updates a list of DefinedColumns."""
     _generic_metadata_create_or_update(
-        config, projectname, tiles, "DefinedColumns", getDefinedColumns
+        config, projectname, definedcolumns, "Columns", getDefinedColumns
     )
 
 
-def createMetrics(config: Config, projectname: str, tiles: List[Metric]) -> None:
+def createMetrics(config: Config, projectname: str, metrics: List[Metric]) -> None:
     """Creates or updates a list of Metrics."""
     _generic_metadata_create_or_update(
-        config, projectname, tiles, "Metrics", getMetrics
+        config, projectname, metrics, "Metrics", getMetrics
     )
 
 
@@ -664,25 +664,25 @@ def createTiles(config: Config, projectname: str, tiles: List[Tile]) -> None:
 
 
 def createAttributeGroups(
-    config: Config, projectname: str, tiles: List[AttributeGroup]
+    config: Config, projectname: str, attributegroups: List[AttributeGroup]
 ) -> None:
     """Creates or updates a list of AttributeGroups."""
     _generic_metadata_create_or_update(
-        config, projectname, tiles, "AttributeGroups", getAttributeGroups
+        config, projectname, attributegroups, "AttributeGroup", getAttributeGroups
     )
 
 
-def createPages(config: Config, projectname: str, tiles: List[Page]) -> None:
+def createPages(config: Config, projectname: str, pages: List[Page]) -> None:
     """Creates or updates a list of Pages."""
-    _generic_metadata_create_or_update(config, projectname, tiles, "Pages", getPages)
+    _generic_metadata_create_or_update(config, projectname, pages, "Pages", getPages)
 
 
 def createApplications(
-    config: Config, projectname: str, tiles: List[Application]
+    config: Config, projectname: str, applications: List[Application]
 ) -> None:
     """Creates or updates a list of Applications."""
     _generic_metadata_create_or_update(
-        config, projectname, tiles, "Applications", getApplications
+        config, projectname, applications, "Applications", getApplications
     )
 
 

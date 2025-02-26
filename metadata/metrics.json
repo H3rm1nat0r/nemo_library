@@ -100,6 +100,31 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "conservative_purchasing_invoice_processing_time_on_time_boolean",
+        "aggregateFunction": "mean(conservative_purchasing_invoice_processing_time_on_time_boolean)",
+        "dateColumn": "pur_inv_ext_doc_date",
+        "description": "Reflects the percentage of Invoices that were processed on time",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing On Time Invoice Processing Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_invoice_processing_time_on_time_boolean": "mean"
+        },
+        "groupByColumn": "pur_inv_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_invoice_processing_time_on_time_rate",
+        "parentAttributeGroupInternalName": "conservative_purchasing_invoice_processing_time",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_delivery_deviation_on_time",
         "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_on_time)",
         "dateColumn": "pur_order_doc_date",
@@ -170,31 +195,6 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_delivery_deviation_late_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_delivery_behavior",
-        "id": "",
-        "projectId": "",
-        "tenant": ""
-    },
-    {
-        "aggregateBy": "conservative_purchasing_goods_receipt_processing_time_days",
-        "aggregateFunction": "mean(conservative_purchasing_goods_receipt_processing_time_days)",
-        "dateColumn": "pur_stock_rec_doc_date",
-        "description": "",
-        "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Goods Receipt Processing Time (days)",
-        "displayNameTranslations": {},
-        "groupByAggregations": {
-            "conservative_purchasing_goods_receipt_processing_time_days": "mean"
-        },
-        "groupByColumn": "pur_stock_rec_i_d",
-        "isCrawlable": true,
-        "optimizationOrientation": "Min",
-        "optimizationTarget": false,
-        "scopeId": null,
-        "scopeName": null,
-        "unit": "days",
-        "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_goods_receipt_processing_time_days",
-        "parentAttributeGroupInternalName": "conservative_purchasing_goods_receipt_processing_time",
         "id": "",
         "projectId": "",
         "tenant": ""

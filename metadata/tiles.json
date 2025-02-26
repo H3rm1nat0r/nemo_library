@@ -138,25 +138,5 @@
         "id": "",
         "projectId": "",
         "tenant": ""
-    },
-    {
-        "aggregation": "Mean",
-        "description": "Tile for metric (Conservative) Purchasing Goods Receipt Processing Time (days)",
-        "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Goods Receipt Processing Time (days)",
-        "displayNameTranslations": {},
-        "frequency": "Month",
-        "graphic": "",
-        "internalName": "conservative_purchasing_goods_receipt_processing_time_days",
-        "status": "Mandatory",
-        "tileGroup": "(Conservative)",
-        "tileGroupTranslations": {},
-        "tileSourceID": "",
-        "tileSourceInternalName": "conservative_purchasing_goods_receipt_processing_time_days",
-        "type": "Metric",
-        "unit": "",
-        "id": "",
-        "projectId": "",
-        "tenant": ""
     }
 ]

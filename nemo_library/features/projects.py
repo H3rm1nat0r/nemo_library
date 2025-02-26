@@ -447,7 +447,7 @@ def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> N
 
         if response.status_code != 204:
             log_error(
-                f"Request failed. Status: {response.status_code}, error: {response.text}"
+                f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}"}\nStatus: {response.status_code}, error: {response.text}"
             )
 
 
@@ -629,7 +629,7 @@ def deleteTiles(config: Config, tiles: List[str]) -> None:
 
 def deleteAttributeGroups(config: Config, attributegroups: List[str]) -> None:
     """Deletes a list of AttributeGroups by their IDs."""
-    _generic_metadata_delete(config, attributegroups, "AttributeGroups")
+    _generic_metadata_delete(config, attributegroups, "AttributeGroup")
 
 
 def deletePages(config: Config, pages: List[str]) -> None:

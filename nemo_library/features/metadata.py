@@ -304,11 +304,13 @@ def _reconcile_model_and_nemo(
 
     new_objects = False
     for key, create_function in create_functions.items():
+        # create new objects first
         if creates[key]:
+            create_function(config=config, projectname=projectname, **{key: creates[key]})
             new_objects = True
-        if updates[key] or creates[key]:
-            allchanges = updates[key] + creates[key]
-            create_function(config=config, projectname=projectname, **{key: allchanges})
+        # now the changes
+        if updates[key]:
+            create_function(config=config, projectname=projectname, **{key: updates[key]})
 
     return new_objects
 

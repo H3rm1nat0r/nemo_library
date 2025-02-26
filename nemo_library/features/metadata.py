@@ -8,13 +8,17 @@ from typing import Tuple, Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
     FilterType,
-    createAttributGroups,
+    createApplications,
+    createAttributeGroups,
     createDefinedColumns,
     createMetrics,
+    createPages,
     createTiles,
+    deleteApplications,
     deleteAttributeGroups,
     deleteDefinedColumns,
     deleteMetrics,
+    deletePages,
     deleteTiles,
     getApplications,
     getAttributeGroups,
@@ -23,9 +27,11 @@ from nemo_library.features.projects import (
     getPages,
     getTiles,
 )
+from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.metric import Metric
+from nemo_library.model.pages import Page
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
 
@@ -38,7 +44,7 @@ def MetaDataLoad(
     config: Config,
     projectname: str,
 ) -> None:
-        
+
     functions = {
         "definedcolumns": getDefinedColumns,
         "metrics": getMetrics,
@@ -55,7 +61,7 @@ def MetaDataLoad(
             filter="(Conservative)",
             filter_type=FilterType.STARTSWITH,
         )
-        _export_data_to_json(config, name, data)    
+        _export_data_to_json(config, name, data)
 
 
 def MetaDataCreate(
@@ -64,12 +70,23 @@ def MetaDataCreate(
 ) -> None:
 
     # load data from model and nemo
-    definedcolumns_model, metrics_model, attributegroups_model, tiles_model = (
-        _load_model_from_json(config=config)
-    )
-    definedcolumns_nemo, metrics_nemo, tiles_nemo, attributegroups_nemo = (
-        _load_model_from_nemo(config=config, projectname=projectname)
-    )
+    (
+        definedcolumns_model,
+        metrics_model,
+        attributegroups_model,
+        tiles_model,
+        pages_model,
+        applications_model,
+    ) = _load_model_from_json(config=config)
+
+    (
+        definedcolumns_nemo,
+        metrics_nemo,
+        tiles_nemo,
+        attributegroups_nemo,
+        pages_nemo,
+        applications_nemo,
+    ) = _load_model_from_nemo(config=config, projectname=projectname)
 
     # reconcile data
     new_objects_found = _reconcile_model_and_nemo(
@@ -79,10 +96,14 @@ def MetaDataCreate(
         metrics_model=metrics_model,
         attributegroups_model=attributegroups_model,
         tiles_model=tiles_model,
+        pages_model=pages_model,
+        applications_model=applications_model,
         definedcolumns_nemo=definedcolumns_nemo,
         metrics_nemo=metrics_nemo,
         tiles_nemo=tiles_nemo,
         attributegroups_nemo=attributegroups_nemo,
+        pages_nemo=pages_nemo,
+        applications_nemo=applications_nemo,
     )
 
     # move attributes and groups
@@ -96,12 +117,14 @@ def MetaDataCreate(
         )
 
 
-def _load_model_from_json(config: Config) -> (List[T], List[T], List[T], List[T]):  # type: ignore
+def _load_model_from_json(config: Config) -> (List[T], List[T], List[T], List[T], List[T], List[T]):  # type: ignore
     definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
     metrics_model = _load_data_from_json(config, "metrics", Metric)
     attributegroups_model = _load_data_from_json(
         config, "attributegroups", AttributeGroup
     )
+    pages_model = _load_data_from_json(config, "pages", Page)
+    applications_model = _load_data_from_json(config, "applications", Application)
 
     tiles_model = [
         Tile(
@@ -127,35 +150,55 @@ def _load_model_from_json(config: Config) -> (List[T], List[T], List[T], List[T]
         for metric in metrics_model
     ]
 
-    return definedcolumns_model, metrics_model, attributegroups_model, tiles_model
+    return (
+        definedcolumns_model,
+        metrics_model,
+        attributegroups_model,
+        tiles_model,
+        pages_model,
+        applications_model,
+    )
+
+
+def _fetch_data(func, **kwargs):
+    return func(**kwargs)
 
 
 def _load_model_from_nemo(config: Config, projectname: str) -> (List[T], List[T], List[T], List[T]):  # type: ignore
-    definedcolumns_nemo = getDefinedColumns(
-        config=config,
-        projectname=projectname,
-        filter="(Conservative)",
-        filter_type=FilterType.STARTSWITH,
+    functions = [
+        getDefinedColumns,
+        getMetrics,
+        getTiles,
+        getAttributeGroups,
+        getPages,
+        getApplications,
+    ]
+    data_nemo = {
+        func.__name__: _fetch_data(
+            func,
+            config=config,
+            projectname=projectname,
+            filter="(Conservative)",
+            filter_type=FilterType.STARTSWITH,
+        )
+        for func in functions
+    }
+
+    definedcolumns_nemo = data_nemo["getDefinedColumns"]
+    metrics_nemo = data_nemo["getMetrics"]
+    tiles_nemo = data_nemo["getTiles"]
+    attributegroups_nemo = data_nemo["getAttributeGroups"]
+    pages_nemo = data_nemo["getPages"]
+    applications_nemo = data_nemo["getApplications"]
+
+    return (
+        definedcolumns_nemo,
+        metrics_nemo,
+        tiles_nemo,
+        attributegroups_nemo,
+        pages_nemo,
+        applications_nemo,
     )
-    metrics_nemo = getMetrics(
-        config=config,
-        projectname=projectname,
-        filter="(Conservative)",
-        filter_type=FilterType.STARTSWITH,
-    )
-    tiles_nemo = getTiles(
-        config=config,
-        projectname=projectname,
-        filter="(Conservative)",
-        filter_type=FilterType.STARTSWITH,
-    )
-    attributegroups_nemo = getAttributeGroups(
-        config=config,
-        projectname=projectname,
-        filter="(Conservative)",
-        filter_type=FilterType.STARTSWITH,
-    )
-    return definedcolumns_nemo, metrics_nemo, tiles_nemo, attributegroups_nemo
 
 
 def _load_data_from_json(config: Config, file: str, cls: Type[T]) -> List[T]:
@@ -173,10 +216,14 @@ def _reconcile_model_and_nemo(
     metrics_model: List[T],
     attributegroups_model: List[T],
     tiles_model: List[T],
+    pages_model: List[T],
+    applications_model: List[T],
     definedcolumns_nemo: List[T],
     metrics_nemo: List[T],
     tiles_nemo: List[T],
     attributegroups_nemo: List[T],
+    pages_nemo: List[T],
+    applications_nemo: List[T],
 ) -> bool:
     def find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:
         model_keys = {getattr(obj, "internalName") for obj in model_list}
@@ -210,7 +257,6 @@ def _reconcile_model_and_nemo(
 
     def find_new_objects(model_list: List[T], nemo_list: List[T]) -> List[T]:
         nemo_keys = {getattr(obj, "internalName") for obj in nemo_list}
-        print(nemo_keys)
         return [
             obj for obj in model_list if getattr(obj, "internalName") not in nemo_keys
         ]
@@ -224,47 +270,47 @@ def _reconcile_model_and_nemo(
         ("metrics", metrics_model, metrics_nemo),
         ("tiles", tiles_model, tiles_nemo),
         ("attributegroups", attributegroups_model, attributegroups_nemo),
+        ("applications", applications_model, applications_nemo),
+        ("pages", pages_model, pages_nemo),
     ]:
         deletions[key] = find_deletions(model_list, nemo_list)
         updates[key] = find_updates(model_list, nemo_list)
         creates[key] = find_new_objects(model_list, nemo_list)
 
     # Start with deletions
-    for key in ["tiles", "metrics", "definedcolumns", "attributegroups"]:
+    delete_functions = {
+        "applications": deleteApplications,
+        "pages": deletePages,
+        "tiles": deleteTiles,
+        "metrics": deleteMetrics,
+        "definedcolumns": deleteDefinedColumns,
+        "attributegroups": deleteAttributeGroups,
+    }
+
+    for key, delete_function in delete_functions.items():
         if deletions[key]:
             objects_to_delete = [data_nemo.id for data_nemo in deletions[key]]
-            if key == "definedcolumns":
-                deleteDefinedColumns(config=config, defined_columns=objects_to_delete)
-            elif key == "metrics":
-                deleteMetrics(config=config, metrics=objects_to_delete)
-            elif key == "tiles":
-                deleteTiles(config=config, tiles=objects_to_delete)
-            elif key == "attributegroups":
-                deleteAttributeGroups(config=config, attribute_groups=objects_to_delete)
+            delete_function(config=config, **{key: objects_to_delete})
 
     # Now do updates and creates in a dedicated order
-    for key in ["attributegroups", "definedcolumns", "metrics", "tiles"]:
+    create_functions = {
+        "attributegroups": createAttributeGroups,
+        "definedcolumns": createDefinedColumns,
+        "metrics": createMetrics,
+        "tiles": createTiles,
+        "pages": createPages,
+        "applications": createApplications,
+    }
+
+    new_objects = False
+    for key, create_function in create_functions.items():
+        if creates[key]:
+            new_objects = True
         if updates[key] or creates[key]:
             allchanges = updates[key] + creates[key]
-            if key == "definedcolumns":
-                createDefinedColumns(
-                    config=config, projectname=projectname, defined_columns=allchanges
-                )
-            elif key == "metrics":
-                createMetrics(
-                    config=config, projectname=projectname, metrics=allchanges
-                )
-            elif key == "tiles":
-                createTiles(config=config, projectname=projectname, tiles=allchanges)
-            elif key == "attributegroups":
-                createAttributGroups(
-                    config=config, projectname=projectname, attribute_groups=allchanges
-                )
+            create_function(config=config, projectname=projectname, **{key: allchanges})
 
-    for key in ["attributegroups", "definedcolumns", "metrics", "tiles"]:
-        if creates[key]:
-            return True
-    return False
+    return new_objects
 
 
 def _export_data_to_json(config: Config, file: str, data):

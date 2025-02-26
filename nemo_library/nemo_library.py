@@ -24,7 +24,7 @@ from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.projects import (
     LoadReport,
-    createAttributGroups,
+    createAttributeGroups,
     createDefinedColumns,
     createImportedColumn,
     createImportedColumns,
@@ -592,7 +592,7 @@ class NemoLibrary:
         projectname: str,
         attribute_groups: list[AttributeGroup],
     ) -> None:
-        createAttributGroups(self.config, projectname, attribute_groups)
+        createAttributeGroups(self.config, projectname, attribute_groups)
 
     def deleteAttributeGroups(self, attribute_groups: list[str]) -> None:
         deleteAttributeGroups(self.config, attribute_groups)

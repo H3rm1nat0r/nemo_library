@@ -87,6 +87,16 @@
         "showIfColumns": [],
         "visuals": [
             {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_otif_rate",
+                "contentTranslations": {},
+                "id": "17fc8a37-373d-4b6c-8a3d-ca464e084172",
+                "row": 4,
+                "rowSpan": 2,
+                "type": "Tile"
+            },
+            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "dpo",
@@ -97,11 +107,31 @@
                 "type": "Tile"
             },
             {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_otif_rate",
+                "contentTranslations": {},
+                "id": "948ebc0d-e9fb-47de-84da-a577aa523339",
+                "row": 2,
+                "rowSpan": 2,
+                "type": "Prediction"
+            },
+            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "d_p_o",
                 "contentTranslations": {},
                 "id": "a4c50757-87b9-4e00-91b5-b2364b05a31c",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Metric"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_otif_rate",
+                "contentTranslations": {},
+                "id": "be02b95c-5d0a-4d0e-a81d-7f06c0100ee1",
                 "row": 1,
                 "rowSpan": 1,
                 "type": "Metric"

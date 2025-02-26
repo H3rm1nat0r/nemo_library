@@ -23,6 +23,7 @@ from nemo_library.features.projects import (
     getApplications,
     getAttributeGroups,
     getDefinedColumns,
+    getImportedColumns,
     getMetrics,
     getPages,
     getTiles,
@@ -372,13 +373,16 @@ def _move_objects_in_focus(
         fields[key].append(defined_column.formula)
 
     fields_dict = _extract_fields(fields)
+    fields_nemo = getImportedColumns(config=config,projectname=projectname)
+    fields_nemo_internal_names = fields_nemo["internalName"].to_list()
     for key, fields in fields_dict.items():
         logging.info(f"group {key}")
         for field in fields:
-            logging.info(f"move object {field}")
-            focusMoveAttributeBefore(
-                config=config,
-                projectname=projectname,
-                sourceInternalName=field,
-                groupInternalName=key,
-            )
+            if field in fields_nemo_internal_names:
+                logging.info(f"move object {field}")
+                focusMoveAttributeBefore(
+                    config=config,
+                    projectname=projectname,
+                    sourceInternalName=field,
+                    groupInternalName=key,
+                )

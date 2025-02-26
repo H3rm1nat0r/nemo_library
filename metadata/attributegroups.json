@@ -55,19 +55,6 @@
         "attributeGroupType": "Standard",
         "defaultMetricGroup": false,
         "defaultDefinedColumnGroup": false,
-        "displayName": "(Conservative) Purchasing On Time Payment",
-        "displayNameTranslations": {},
-        "isCoupled": false,
-        "internalName": "conservative_purchasing_on_time_payment",
-        "parentAttributeGroupInternalName": "conservative_purchasing_payment",
-        "id": "",
-        "projectId": "",
-        "tenant": ""
-    }
-    {
-        "attributeGroupType": "Standard",
-        "defaultMetricGroup": false,
-        "defaultDefinedColumnGroup": false,
         "displayName": "(Conservative) Purchasing On Time Delivery",
         "displayNameTranslations": {},
         "isCoupled": false,
@@ -112,6 +99,32 @@
         "isCoupled": false,
         "internalName": "conservative_purchasing_in_full_delivery",
         "parentAttributeGroupInternalName": "conservative_purchasing_delivery",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing OTIF",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_otif",
+        "parentAttributeGroupInternalName": "conservative_purchasing_delivery",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing On Time Payment",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_on_time_payment",
+        "parentAttributeGroupInternalName": "conservative_purchasing_payment",
         "id": "",
         "projectId": "",
         "tenant": ""

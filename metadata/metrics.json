@@ -75,6 +75,31 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "conservative_purchasing_delivery_deviation_overdelivery",
+        "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_overdelivery)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "Reflects the percentage of purchase invoices that were over delivered",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Over Delivery Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_delivery_deviation_overdelivery": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_delivery_deviation_overdelivery_rate",
+        "parentAttributeGroupInternalName": "conservative_purchasing_in_full_delivery",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_goods_receipt_processing_time_on_time_boolean",
         "aggregateFunction": "mean(conservative_purchasing_goods_receipt_processing_time_on_time_boolean)",
         "dateColumn": "pur_stock_rec_doc_date",
@@ -145,6 +170,56 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_payment_deviation_on_time_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_delivery_deviation_in_full",
+        "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_in_full)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "Reflects the percentage of purchase invoices that were delivered in full",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing In Full Delivery Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_delivery_deviation_in_full": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_delivery_deviation_in_full_rate",
+        "parentAttributeGroupInternalName": "conservative_purchasing_in_full_delivery",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_delivery_deviation_underdelivery",
+        "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_underdelivery)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "Reflects the percentage of purchase invoices that were under delivered",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Under Delivery Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_delivery_deviation_underdelivery": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_delivery_deviation_underdelivery_rate",
+        "parentAttributeGroupInternalName": "conservative_purchasing_in_full_delivery",
         "id": "",
         "projectId": "",
         "tenant": ""

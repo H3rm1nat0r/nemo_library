@@ -31,6 +31,16 @@
                 "type": "Tile"
             },
             {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_order_confirmation_rate",
+                "contentTranslations": {},
+                "id": "3cc8d0ce-7bd0-4d1b-aa54-c45c82b38ce5",
+                "row": 3,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
                 "column": 2,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_delivery_deviation_overdelivery_rate",

@@ -250,6 +250,31 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "conservative_purchasing_order_confirmed_bool",
+        "aggregateFunction": "mean(conservative_purchasing_order_confirmed_bool)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Order Confirmation Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_order_confirmed_bool": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "days",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_order_confirmation_rate",
+        "parentAttributeGroupInternalName": "conservative_purchasing_confirmation",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_payment_deviation_on_time",
         "aggregateFunction": "mean(conservative_purchasing_payment_deviation_on_time)",
         "dateColumn": "pur_inv_doc_date",

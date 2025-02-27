@@ -42,7 +42,7 @@
         "dataType": "integer",
         "description": "Deviation in days between expected replenishment time (defined in proalpha) and the real time the supplier needed to ship",
         "displayName": "(Conservative) Purchasing Replenishment Deviation (days)",
-        "formula": "part_replenishment_time - (pur_order_line_creation_date - pur_stock_rec_line_creation_date)",
+        "formula": "part_replenishment_time - (pur_stock_rec_line_creation_date - pur_order_line_creation_date)",
         "groupByColumnInternalName": null,
         "importName": "",
         "stringSize": null,

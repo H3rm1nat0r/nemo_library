@@ -6,7 +6,7 @@
         "displayNameTranslations": {},
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_otif",
-        "numberOfColumns": 3,
+        "numberOfColumns": 4,
         "numberOfRows": 3,
         "showIfColumns": [],
         "visuals": [
@@ -17,6 +17,16 @@
                 "contentTranslations": {},
                 "id": "044f4dfa-3a28-4703-af12-a7301bc3206a",
                 "row": 2,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_delivery_deviation_days",
+                "contentTranslations": {},
+                "id": "0e99d2e4-97ff-4fa7-a91b-ce363a0ea572",
+                "row": 1,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -47,6 +57,16 @@
                 "contentTranslations": {},
                 "id": "839a22f2-41a1-4200-85d0-981183589eea",
                 "row": 1,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_delivery_deviation_amount",
+                "contentTranslations": {},
+                "id": "b45c7683-9aae-4a2a-ae9d-b94be5fa856b",
+                "row": 2,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -158,7 +178,7 @@
         "displayNameTranslations": {},
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_dpo",
-        "numberOfColumns": 3,
+        "numberOfColumns": 4,
         "numberOfRows": 3,
         "showIfColumns": [],
         "visuals": [
@@ -173,7 +193,7 @@
                 "type": "Tile"
             },
             {
-                "column": 2,
+                "column": 3,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_invoice_processing_time_on_time_rate",
                 "contentTranslations": {},
@@ -188,6 +208,26 @@
                 "content": "conservative_purchasing_goods_receipt_processing_time_on_time_rate",
                 "contentTranslations": {},
                 "id": "6aa99838-7609-41b6-8616-7e0cf632e12a",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_invoice_processing_time",
+                "contentTranslations": {},
+                "id": "6f82d251-4d31-41a2-a8ef-be8c89a0c427",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_goods_receipt_processing_time",
+                "contentTranslations": {},
+                "id": "774b9397-eb76-48a2-bf46-aebd7b8dc9bd",
                 "row": 2,
                 "rowSpan": 1,
                 "type": "Tile"
@@ -208,6 +248,16 @@
                 "content": "conservative_purchasing_payment_deviation_late_rate",
                 "contentTranslations": {},
                 "id": "9d313888-dad8-4652-bfff-7a451c7586c2",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_payment_deviation_days",
+                "contentTranslations": {},
+                "id": "cbd5d030-1431-486f-b105-07de0dc18300",
                 "row": 1,
                 "rowSpan": 1,
                 "type": "Tile"

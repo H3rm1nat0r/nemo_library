@@ -25,6 +25,56 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "conservative_purchasing_invoice_processing_time_days",
+        "aggregateFunction": "mean(conservative_purchasing_invoice_processing_time_days)",
+        "dateColumn": "pur_inv_ext_doc_date",
+        "description": "Time (days) needed for invoice processing in purchasing",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Invoice Processing Time",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_invoice_processing_time_days": "mean"
+        },
+        "groupByColumn": "pur_inv_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "days",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_invoice_processing_time",
+        "parentAttributeGroupInternalName": "conservative_purchasing_invoice_processing_time",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_delivery_deviation_amount",
+        "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_amount)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Delivery Deviation (amount)",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_delivery_deviation_amount": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_delivery_deviation_amount",
+        "parentAttributeGroupInternalName": "conservative_purchasing_in_full_delivery",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_payment_deviation_early",
         "aggregateFunction": "mean(conservative_purchasing_payment_deviation_early)",
         "dateColumn": "pur_inv_doc_date",
@@ -75,6 +125,31 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "conservative_purchasing_goods_receipt_processing_time_days",
+        "aggregateFunction": "mean(conservative_purchasing_goods_receipt_processing_time_days)",
+        "dateColumn": "pur_stock_rec_doc_date",
+        "description": "Average days taken for goods receipt processing in purchasing",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Goods Receipt Processing Time",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_goods_receipt_processing_time_days": "mean"
+        },
+        "groupByColumn": "pur_stock_rec_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "days",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_goods_receipt_processing_time",
+        "parentAttributeGroupInternalName": "conservative_purchasing_goods_receipt_processing_time",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_delivery_deviation_overdelivery",
         "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_overdelivery)",
         "dateColumn": "pur_order_doc_date",
@@ -120,6 +195,31 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_goods_receipt_processing_time_on_time_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_goods_receipt_processing_time",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_delivery_deviation_days",
+        "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_days)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Delivery Deviation (days)",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_delivery_deviation_days": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "days",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_delivery_deviation_days",
+        "parentAttributeGroupInternalName": "conservative_purchasing_on_time_delivery",
         "id": "",
         "projectId": "",
         "tenant": ""
@@ -295,6 +395,31 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_invoice_processing_time_on_time_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_invoice_processing_time",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_payment_deviation_days",
+        "aggregateFunction": "mean(conservative_purchasing_payment_deviation_days)",
+        "dateColumn": "pur_inv_doc_date",
+        "description": "Average days purchasing payments are too EARLY",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Payment Deviation",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_payment_deviation_days": "mean"
+        },
+        "groupByColumn": "pur_inv_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "days",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_payment_deviation_days",
+        "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
         "id": "",
         "projectId": "",
         "tenant": ""

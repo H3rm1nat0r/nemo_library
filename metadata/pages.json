@@ -7,7 +7,7 @@
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_otif",
         "numberOfColumns": 4,
-        "numberOfRows": 3,
+        "numberOfRows": 4,
         "showIfColumns": [],
         "visuals": [
             {
@@ -61,12 +61,32 @@
                 "type": "Tile"
             },
             {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_replenishment_deviation_days",
+                "contentTranslations": {},
+                "id": "59fa4183-f0f6-46ee-afcf-4cc7d45facde",
+                "row": 4,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_delivery_deviation_early_rate",
                 "contentTranslations": {},
                 "id": "839a22f2-41a1-4200-85d0-981183589eea",
                 "row": 1,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_replenishment_deviation_too_high",
+                "contentTranslations": {},
+                "id": "970656ff-1263-462c-9634-48a1f30b32dd",
+                "row": 4,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -97,6 +117,26 @@
                 "contentTranslations": {},
                 "id": "e375da11-eece-4f87-8f89-cf2691d707c7",
                 "row": 2,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 3,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_replenishment_deviation_perfect",
+                "contentTranslations": {},
+                "id": "e867ca64-7c4d-4611-be4a-3a8be4f2332b",
+                "row": 4,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_replenishment_deviation_too_low",
+                "contentTranslations": {},
+                "id": "f3b21429-9ca7-4940-afe1-c9399d9a0197",
+                "row": 4,
                 "rowSpan": 1,
                 "type": "Tile"
             }
@@ -189,7 +229,7 @@
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_dpo",
         "numberOfColumns": 4,
-        "numberOfRows": 3,
+        "numberOfRows": 4,
         "showIfColumns": [],
         "visuals": [
             {

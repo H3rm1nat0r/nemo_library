@@ -71,6 +71,16 @@
                 "type": "Tile"
             },
             {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_order_preparation_time_days",
+                "contentTranslations": {},
+                "id": "80cde787-1802-48b8-9617-b2bb0fdd54c6",
+                "row": 3,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_delivery_deviation_early_rate",

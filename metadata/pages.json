@@ -91,6 +91,16 @@
                 "type": "Tile"
             },
             {
+                "column": 3,
+                "columnSpan": 1,
+                "content": "conservative_supplier_return_rate_count",
+                "contentTranslations": {},
+                "id": "86bf6427-80c5-4e8d-8133-567b22c72dcc",
+                "row": 3,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
                 "column": 2,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_replenishment_deviation_too_high",

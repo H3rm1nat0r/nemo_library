@@ -167,5 +167,18 @@
         "id": "",
         "projectId": "",
         "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Supplier Return",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_supplier_return",
+        "parentAttributeGroupInternalName": "conservative_purchasing_delivery",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
     }
 ]

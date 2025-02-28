@@ -33,7 +33,7 @@
             {
                 "column": 3,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_order_preparation_time_with_reptime_days",
+                "content": "conservative_purchasing_order_preparation_time_days",
                 "contentTranslations": {},
                 "id": "2e31b38f-998f-4a7b-858c-97a5a15a8fb0",
                 "row": 3,

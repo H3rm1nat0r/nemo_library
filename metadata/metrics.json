@@ -200,15 +200,15 @@
         "tenant": ""
     },
     {
-        "aggregateBy": "conservative_purchasing_order_preparation_time_with_reptime_days",
-        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_with_reptime_days)",
+        "aggregateBy": "conservative_purchasing_order_preparation_time_days",
+        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_days)",
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time (with part replenishment time)",
+        "displayName": "(Conservative) Purchasing Order Preparation Time",
         "displayNameTranslations": {},
         "groupByAggregations": {
-            "conservative_purchasing_order_preparation_time_with_reptime_days": "mean"
+            "conservative_purchasing_order_preparation_time_days": "mean"
         },
         "groupByColumn": "pur_order_doc_i_d",
         "isCrawlable": true,
@@ -218,7 +218,7 @@
         "scopeName": null,
         "unit": "days",
         "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_order_preparation_time_with_reptime_days",
+        "internalName": "conservative_purchasing_order_preparation_time_days",
         "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
         "id": "",
         "projectId": "",

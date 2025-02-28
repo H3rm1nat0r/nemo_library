@@ -93,7 +93,7 @@
             {
                 "column": 3,
                 "columnSpan": 1,
-                "content": "conservative_supplier_return_rate_count",
+                "content": "conservative_purchasing_supplier_return_rate_count",
                 "contentTranslations": {},
                 "id": "86bf6427-80c5-4e8d-8133-567b22c72dcc",
                 "row": 3,

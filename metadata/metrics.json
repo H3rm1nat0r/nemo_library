@@ -55,7 +55,7 @@
         "dateColumn": "pur_ret_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Supplier Return Rate (count)",
+        "displayName": "(Conservative) Purchasing Supplier Return Rate (count)",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "pur_ret_doc_line_i_d": "count",
@@ -70,8 +70,8 @@
         "scopeName": null,
         "unit": "",
         "defaultScopeRestrictions": [],
-        "internalName": "conservative_supplier_return_rate_count",
-        "parentAttributeGroupInternalName": "metrics",
+        "internalName": "conservative_purchasing_supplier_return_rate_count",
+        "parentAttributeGroupInternalName": "conservative_purchasing_supplier_return",
         "id": "",
         "projectId": "",
         "tenant": ""

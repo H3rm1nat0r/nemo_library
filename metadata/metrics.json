@@ -50,33 +50,6 @@
         "tenant": ""
     },
     {
-        "aggregateBy": "supplier_i_d",
-        "aggregateFunction": "count(pur_ret_doc_line_i_d) / count(pur_stock_rec_line_i_d)",
-        "dateColumn": "pur_ret_doc_date",
-        "description": "",
-        "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Supplier Return Rate (count)",
-        "displayNameTranslations": {},
-        "groupByAggregations": {
-            "pur_ret_doc_line_i_d": "count",
-            "pur_stock_rec_line_i_d": "count",
-            "supplier_i_d": "max"
-        },
-        "groupByColumn": "",
-        "isCrawlable": true,
-        "optimizationOrientation": "Min",
-        "optimizationTarget": false,
-        "scopeId": null,
-        "scopeName": null,
-        "unit": "",
-        "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_supplier_return_rate_count",
-        "parentAttributeGroupInternalName": "conservative_purchasing_supplier_return",
-        "id": "",
-        "projectId": "",
-        "tenant": ""
-    },
-    {
         "aggregateBy": "conservative_purchasing_delivery_deviation_amount",
         "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_amount)",
         "dateColumn": "pur_order_doc_date",
@@ -597,6 +570,33 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_payment_deviation_days",
         "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "supplier_i_d",
+        "aggregateFunction": "count(pur_ret_doc_line_i_d) / count(pur_stock_rec_line_i_d)",
+        "dateColumn": "pur_ret_doc_date",
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Supplier Return Rate (count)",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "pur_ret_doc_line_i_d": "count",
+            "pur_stock_rec_line_i_d": "count",
+            "supplier_i_d": "max"
+        },
+        "groupByColumn": "",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_supplier_return_rate_count",
+        "parentAttributeGroupInternalName": "conservative_purchasing_supplier_return",
         "id": "",
         "projectId": "",
         "tenant": ""

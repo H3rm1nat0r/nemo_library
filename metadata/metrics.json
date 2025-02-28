@@ -25,6 +25,31 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "conservative_purchasing_order_preparation_time_days",
+        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_days)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Order Preparation Time (days)",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_order_preparation_time_days": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "days",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_order_preparation_time_days",
+        "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_invoice_processing_time_days",
         "aggregateFunction": "mean(conservative_purchasing_invoice_processing_time_days)",
         "dateColumn": "pur_inv_ext_doc_date",
@@ -95,6 +120,31 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_payment_deviation_early_rate",
         "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_order_preparation_time_perfect",
+        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_perfect)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Order Preparation Time Perfect",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_order_preparation_time_perfect": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_order_preparation_time_perfect",
+        "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
         "id": "",
         "projectId": "",
         "tenant": ""
@@ -200,31 +250,6 @@
         "tenant": ""
     },
     {
-        "aggregateBy": "conservative_purchasing_order_preparation_time_days",
-        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_days)",
-        "dateColumn": "pur_order_doc_date",
-        "description": "",
-        "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time",
-        "displayNameTranslations": {},
-        "groupByAggregations": {
-            "conservative_purchasing_order_preparation_time_days": "mean"
-        },
-        "groupByColumn": "pur_order_doc_i_d",
-        "isCrawlable": true,
-        "optimizationOrientation": "Min",
-        "optimizationTarget": false,
-        "scopeId": null,
-        "scopeName": null,
-        "unit": "days",
-        "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_order_preparation_time_days",
-        "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
-        "id": "",
-        "projectId": "",
-        "tenant": ""
-    },
-    {
         "aggregateBy": "conservative_purchasing_goods_receipt_processing_time_on_time_boolean",
         "aggregateFunction": "mean(conservative_purchasing_goods_receipt_processing_time_on_time_boolean)",
         "dateColumn": "pur_stock_rec_doc_date",
@@ -320,6 +345,31 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_replenishment_deviation_too_high",
         "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_order_preparation_time_too_low",
+        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_too_low)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Order Preparation Time Too Low Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_order_preparation_time_too_low": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_order_preparation_time_too_low",
+        "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
         "id": "",
         "projectId": "",
         "tenant": ""
@@ -570,6 +620,31 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_payment_deviation_days",
         "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_order_preparation_time_too_high",
+        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_too_high)",
+        "dateColumn": "pur_order_doc_date",
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Order Preparation Time too high",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_order_preparation_time_too_high": "mean"
+        },
+        "groupByColumn": "pur_order_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_order_preparation_time_too_high",
+        "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
         "id": "",
         "projectId": "",
         "tenant": ""

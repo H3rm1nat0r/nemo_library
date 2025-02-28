@@ -7,7 +7,7 @@
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_otif",
         "numberOfColumns": 4,
-        "numberOfRows": 4,
+        "numberOfRows": 5,
         "showIfColumns": [],
         "visuals": [
             {
@@ -31,12 +31,12 @@
                 "type": "Tile"
             },
             {
-                "column": 3,
+                "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_order_preparation_time_days",
+                "content": "conservative_purchasing_order_preparation_time_too_high",
                 "contentTranslations": {},
-                "id": "2e31b38f-998f-4a7b-858c-97a5a15a8fb0",
-                "row": 3,
+                "id": "1c47fbac-0b04-4aa9-9e33-f56034470911",
+                "row": 5,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -47,6 +47,16 @@
                 "contentTranslations": {},
                 "id": "3cc8d0ce-7bd0-4d1b-aa54-c45c82b38ce5",
                 "row": 3,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_order_preparation_time_days",
+                "contentTranslations": {},
+                "id": "41410691-d437-49bf-9a83-03a5bed48273",
+                "row": 5,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -81,6 +91,16 @@
                 "type": "Tile"
             },
             {
+                "column": 3,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_order_preparation_time_perfect",
+                "contentTranslations": {},
+                "id": "5fc2ab6e-cbc5-4a98-b3d6-d28f2970943d",
+                "row": 5,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_delivery_deviation_early_rate",
@@ -91,7 +111,7 @@
                 "type": "Tile"
             },
             {
-                "column": 4,
+                "column": 2,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_supplier_return_rate_count",
                 "contentTranslations": {},
@@ -107,6 +127,16 @@
                 "contentTranslations": {},
                 "id": "970656ff-1263-462c-9634-48a1f30b32dd",
                 "row": 4,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_order_preparation_time_too_low",
+                "contentTranslations": {},
+                "id": "ab8bc0b8-1b13-441e-9b48-5be179058154",
+                "row": 5,
                 "rowSpan": 1,
                 "type": "Tile"
             },

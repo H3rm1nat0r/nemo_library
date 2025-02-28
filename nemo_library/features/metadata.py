@@ -54,6 +54,7 @@ def MetaDataLoad(
         "applications": getApplications,
     }
 
+
     for name, func in functions.items():
         data = func(
             config=config,
@@ -61,7 +62,33 @@ def MetaDataLoad(
             filter="(Conservative)",
             filter_type=FilterType.STARTSWITH,
         )
+
+        if name == "attributegroups":
+            hierarchy, _ = _attribute_groups_build_hierarchy(data)
+            data = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
+                    
         _export_data_to_json(config, name, data)
+
+def _attribute_groups_build_hierarchy(attribute_groups):
+    hierarchy = defaultdict(list)
+    group_dict = {group.internalName: group for group in attribute_groups}
+    
+    for group in attribute_groups:
+        parent_name = group.parentAttributeGroupInternalName
+        hierarchy[parent_name].append(group)
+    
+    return hierarchy, group_dict
+
+def attribute_groups_sort_hierarchy(hierarchy, root_key=None):
+    sorted_list = []
+    
+    def add_children(parent):
+        for child in sorted(hierarchy.get(parent, []), key=lambda x: x.displayName):
+            sorted_list.append(child)
+            add_children(child.internalName)
+    
+    add_children(root_key)
+    return sorted_list
 
 
 def MetaDataCreate(

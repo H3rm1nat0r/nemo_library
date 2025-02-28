@@ -650,7 +650,7 @@
         "tenant": ""
     },
     {
-        "aggregateBy": "supplier_i_d",
+        "aggregateBy": "pur_order_doc_i_d",
         "aggregateFunction": "count(pur_ret_doc_line_i_d) / count(pur_stock_rec_line_i_d)",
         "dateColumn": "pur_ret_doc_date",
         "description": "",
@@ -660,7 +660,7 @@
         "groupByAggregations": {
             "pur_ret_doc_line_i_d": "count",
             "pur_stock_rec_line_i_d": "count",
-            "supplier_i_d": "max"
+            "pur_order_doc_i_d": "max"
         },
         "groupByColumn": "",
         "isCrawlable": true,
@@ -668,7 +668,7 @@
         "optimizationTarget": false,
         "scopeId": null,
         "scopeName": null,
-        "unit": "",
+        "unit": "percent",
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_supplier_return_rate_count",
         "parentAttributeGroupInternalName": "conservative_purchasing_supplier_return",

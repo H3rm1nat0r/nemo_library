@@ -500,31 +500,6 @@
         "tenant": ""
     },
     {
-        "aggregateBy": "conservative_purchasing_order_preparation_time_without_reptime_days",
-        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_without_reptime_days)",
-        "dateColumn": "pur_order_doc_date",
-        "description": "",
-        "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time (without part replenishment time)",
-        "displayNameTranslations": {},
-        "groupByAggregations": {
-            "conservative_purchasing_order_preparation_time_without_reptime_days": "mean"
-        },
-        "groupByColumn": "pur_order_doc_i_d",
-        "isCrawlable": true,
-        "optimizationOrientation": "Min",
-        "optimizationTarget": false,
-        "scopeId": null,
-        "scopeName": null,
-        "unit": "days",
-        "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_order_preparation_time_without_reptime_days",
-        "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
-        "id": "",
-        "projectId": "",
-        "tenant": ""
-    },
-    {
         "aggregateBy": "conservative_purchasing_invoice_processing_time_on_time_boolean",
         "aggregateFunction": "mean(conservative_purchasing_invoice_processing_time_on_time_boolean)",
         "dateColumn": "pur_inv_ext_doc_date",

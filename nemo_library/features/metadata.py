@@ -49,7 +49,6 @@ def MetaDataLoad(
     functions = {
         "definedcolumns": getDefinedColumns,
         "metrics": getMetrics,
-        "tiles": getTiles,
         "attributegroups": getAttributeGroups,
         "pages": getPages,
         "applications": getApplications,

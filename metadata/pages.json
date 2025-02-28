@@ -31,6 +31,16 @@
                 "type": "Tile"
             },
             {
+                "column": 3,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_order_preparation_time_with_reptime_days",
+                "contentTranslations": {},
+                "id": "2e31b38f-998f-4a7b-858c-97a5a15a8fb0",
+                "row": 3,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_order_confirmation_rate",
@@ -73,7 +83,7 @@
             {
                 "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_order_preparation_time_days",
+                "content": "conservative_purchasing_order_preparation_time_without_reptime_days",
                 "contentTranslations": {},
                 "id": "80cde787-1802-48b8-9617-b2bb0fdd54c6",
                 "row": 3,
@@ -91,7 +101,7 @@
                 "type": "Tile"
             },
             {
-                "column": 3,
+                "column": 4,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_supplier_return_rate_count",
                 "contentTranslations": {},

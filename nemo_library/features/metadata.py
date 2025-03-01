@@ -368,8 +368,9 @@ def _extract_fields(formulas_dict):
     for key, formulas in formulas_dict.items():
         extracted_fields[key] = set()
         for formula in formulas:
-            fields = field_pattern.findall(formula)
-            extracted_fields[key].update(fields)
+            if isinstance(formula, str) and formula.strip():
+                fields = field_pattern.findall(formula)
+                extracted_fields[key].update(fields)
 
     return {k: sorted(v) for k, v in extracted_fields.items()}
 
@@ -382,15 +383,7 @@ def _move_objects_in_focus(
     attribute_groups: List[AttributeGroup],
 ) -> None:
 
-    # move global object to top
-    focusMoveAttributeBefore(
-        config=config,
-        projectname=projectname,
-        sourceDisplayName="(Conservative) Global",
-    )
-
     # move fields that belong to metrics and defined columns into according groups
-
     fields = {}
     for defined_column in defined_columns:
         key = defined_column.parentAttributeGroupInternalName
@@ -398,7 +391,24 @@ def _move_objects_in_focus(
             fields[key] = []
         fields[key].append(defined_column.formula)
 
+    for metric in metrics:
+        key = metric.parentAttributeGroupInternalName
+        if key not in fields:
+            fields[key] = []
+        fields[key].append(metric.aggregateBy)            
+        fields[key].append(metric.dateColumn)            
+        fields[key].append(metric.groupByColumn)     
+        for agg in metric.groupByAggregations:      
+            fields[key].append(agg)      
+
+    # extract fields from formulae
     fields_dict = _extract_fields(fields)
+
+    # remove doublicates
+    for key in fields:
+        fields_dict[key] = list(set(fields_dict[key]))  
+        
+    # move attributes now
     fields_nemo = getImportedColumns(config=config,projectname=projectname)
     fields_nemo_internal_names = fields_nemo["internalName"].to_list()
     for key, fields in fields_dict.items():

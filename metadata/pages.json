@@ -279,7 +279,7 @@
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_dpo",
         "numberOfColumns": 4,
-        "numberOfRows": 4,
+        "numberOfRows": 3,
         "showIfColumns": [],
         "visuals": [
             {
@@ -359,6 +359,16 @@
                 "contentTranslations": {},
                 "id": "cbd5d030-1431-486f-b105-07de0dc18300",
                 "row": 1,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_number_of_suppliers_per_part",
+                "contentTranslations": {},
+                "id": "e5f05ab5-4e43-4621-989f-b32aaefa30b1",
+                "row": 3,
                 "rowSpan": 1,
                 "type": "Tile"
             }

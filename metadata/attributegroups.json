@@ -180,5 +180,18 @@
         "id": "",
         "projectId": "",
         "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing Single-Sourcing",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_single_sourcing",
+        "parentAttributeGroupInternalName": "conservative_purchasing_payment",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
     }
 ]

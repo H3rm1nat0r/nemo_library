@@ -275,6 +275,32 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "part_i_d",
+        "aggregateFunction": "max(supplier_i_d)",
+        "dateColumn": null,
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Number of Suppliers per Part",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "supplier_i_d": "count_distinct",
+            "part_i_d": "max"
+        },
+        "groupByColumn": "part_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_number_of_suppliers_per_part",
+        "parentAttributeGroupInternalName": "conservative_purchasing_single_sourcing",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_delivery_deviation_days",
         "aggregateFunction": "mean(conservative_purchasing_delivery_deviation_days)",
         "dateColumn": "pur_order_doc_date",

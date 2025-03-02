@@ -9,8 +9,10 @@ from typing import Type, TypeVar, List
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
+from nemo_library.model.diagram import Diagram
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
+from nemo_library.model.report import Report
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import (
@@ -591,6 +593,24 @@ def getApplications(
         filter_value,
     )
 
+def getDiagrams(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Diagram]:
+    """Fetches Diagrams metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "Diagrams",
+        "",
+        Diagram,
+        filter,
+        filter_type,
+        filter_value,
+    )
 
 def getDefinedColumns(
     config: Config,
@@ -610,7 +630,25 @@ def getDefinedColumns(
         filter_type,
         filter_value,
     )
-
+    
+def getReports(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Report]:
+    """Fetches Reports metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "Reports",
+        "/reports",
+        Report,
+        filter,
+        filter_type,
+        filter_value,
+    )
 
 def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
     """Deletes a list of Defined Columns by their IDs."""
@@ -640,6 +678,14 @@ def deletePages(config: Config, pages: List[str]) -> None:
 def deleteApplications(config: Config, application: List[str]) -> None:
     """Deletes a list of Pages by their IDs."""
     _generic_metadata_delete(config, application, "Pages")
+
+def deleteDiagrams(config: Config, diagrams: List[str]) -> None:
+    """Deletes a list of Diagrams by their IDs."""
+    _generic_metadata_delete(config, diagrams, "Diagrams")
+
+def deleteReports(config: Config, reports: List[str]) -> None:
+    """Deletes a list of Reports by their IDs."""
+    _generic_metadata_delete(config, reports, "Reports")
 
 
 def createDefinedColumns(
@@ -683,6 +729,22 @@ def createApplications(
     """Creates or updates a list of Applications."""
     _generic_metadata_create_or_update(
         config, projectname, applications, "Applications", getApplications
+    )
+
+def createDiagrams(
+    config: Config, projectname: str, diagrams: List[Diagram]
+) -> None:
+    """Creates or updates a list of Diagrams."""
+    _generic_metadata_create_or_update(
+        config, projectname, diagrams, "Diagrams", getDiagrams
+    )
+
+def createReports(
+    config: Config, projectname: str, diagrams: List[Report]
+) -> None:
+    """Creates or updates a list of Reports."""
+    _generic_metadata_create_or_update(
+        config, projectname, diagrams, "Reports", getReports
     )
 
 

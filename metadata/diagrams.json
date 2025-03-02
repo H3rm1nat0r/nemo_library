@@ -1,0 +1,50 @@
+[
+    {
+        "alternateVisualization": false,
+        "argument": {
+            "aggregation": "month",
+            "column": "PUR_INV_DOC_DATE",
+            "dataType": "datetime"
+        },
+        "argumentAxisTitle": "",
+        "argumentAxisTitleTranslations": {},
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Payment Behavior",
+        "displayNameTranslations": {},
+        "internalName": "conservative_purchasing_payment_behavior",
+        "report": "conservative_purchasing_payment_behavior",
+        "summary": null,
+        "valueAxisTitle": "",
+        "valueAxisTitleTranslations": {},
+        "values": [
+            {
+                "aggregation": "avg",
+                "chartType": "stackedbar",
+                "column": "CONSERVATIVE_LATE_PAYMENTS_RATE",
+                "id": "",
+                "legend": "late",
+                "legendTranslations": {}
+            },
+            {
+                "aggregation": "avg",
+                "chartType": "stackedbar",
+                "column": "CONSERVATIVE_ON_TIME_PAYMENTS_RATE",
+                "id": "",
+                "legend": "on time",
+                "legendTranslations": {}
+            },
+            {
+                "aggregation": "avg",
+                "chartType": "stackedbar",
+                "column": "CONSERVATIVE_EARLY_PAYMENTS_RATE",
+                "id": "",
+                "legend": "early",
+                "legendTranslations": {}
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    }
+]

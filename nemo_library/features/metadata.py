@@ -1,13 +1,14 @@
 from collections import defaultdict
-from dataclasses import asdict, fields, is_dataclass, replace
+from dataclasses import fields, is_dataclass
 import json
 import logging
 from pathlib import Path
 import re
-from typing import Any, Tuple, Type, TypeVar, List, Dict
+from typing import Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
     FilterType,
+    deserializeMetaDataObject,
     createApplications,
     createAttributeGroups,
     createDefinedColumns,
@@ -37,9 +38,9 @@ from nemo_library.features.projects import (
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
-from nemo_library.model.diagram import Diagram, Value
+from nemo_library.model.diagram import Diagram
 from nemo_library.model.metric import Metric
-from nemo_library.model.pages import Page, Visual
+from nemo_library.model.pages import Page
 from nemo_library.model.report import Report
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
@@ -262,12 +263,16 @@ def _load_model_from_nemo(config: Config, projectname: str) -> (
     )
 
 
-def _load_data_from_json(config: Config, file: str, cls: Type[T]) -> List[T]:
+def _load_data_from_json(config, file: str, cls: Type[T]) -> List[T]:
+    """
+    Loads JSON data from a file and converts it into a list of DataClass instances,
+    handling nested structures recursively.
+    """
     path = Path(config.get_metadata()) / f"{file}.json"
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    return [cls(**item) for item in data]
+    return [deserializeMetaDataObject(item, cls) for item in data]
 
 
 def _reconcile_model_and_nemo(
@@ -310,13 +315,13 @@ def _reconcile_model_and_nemo(
                             getattr(nemo_obj, attr.name),
                         )
                         for attr in fields(model_obj)
-                        if attr.name
-                        not in ["id", "tenant", "projectId", "tileSourceID"]
-                        and getattr(model_obj, attr.name)
-                        != getattr(nemo_obj, attr.name)
+                        if getattr(model_obj, attr.name) != getattr(nemo_obj, attr.name)
                     }
                     if differences:
-                        logging.info(f"difference found {key}: {differences}")
+                        print("-" * 80)
+                        for attrname, (old_value, new_value) in differences.items():
+                            print(f"{attrname}: {old_value} --> {new_value}")
+                        # logging.info(f"difference found {key}: {differences}")
                         updates.append(model_obj)
         return updates
 
@@ -341,7 +346,7 @@ def _reconcile_model_and_nemo(
         ("reports", reports_model, reports_nemo),
     ]:
         deletions[key] = find_deletions(model_list, nemo_list)
-        updates[key] = find_updates(model_list, nemo_list)
+        updates[key] = find_updates(model_list, _clean_fields(nemo_list))
         creates[key] = find_new_objects(model_list, nemo_list)
 
     # Start with deletions
@@ -407,18 +412,10 @@ def _clean_fields(data):
         element.tileSourceID = ""
 
         if isinstance(element, Diagram):
-            if isinstance(element.values, list) and all(
-                isinstance(v, dict) for v in element.values
-            ):
-                element.values = [Value(**v) for v in element.values]
             for value in element.values:
                 value.id = ""
 
         elif isinstance(element, Page):
-            if isinstance(element.visuals, list) and all(
-                isinstance(v, dict) for v in element.visuals
-            ):
-                element.visuals = [Visual(**v) for v in element.visuals]
             for visual in element.visuals:
                 visual.id = ""
 

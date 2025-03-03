@@ -1,10 +1,9 @@
-from enum import Enum
 import logging
 import re
 import pandas as pd
 import requests
 import json
-from typing import Type, TypeVar, List
+from typing import Any, Type, TypeVar, List, get_type_hints
 
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
@@ -359,6 +358,25 @@ def deleteProject(config: Config, projectname: str) -> None:
         )
 
 
+def deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
+    """
+    Recursively deserializes JSON data into a nested DataClass structure.
+    """
+    if isinstance(value, list):
+        # Check if we expect a list of DataClasses
+        if hasattr(target_type, "__origin__") and target_type.__origin__ is list:
+            element_type = target_type.__args__[0]
+            return [deserializeMetaDataObject(v, element_type) for v in value]
+        return value  # Regular list without DataClasses
+    elif isinstance(value, dict):
+        # Check if the target type is a DataClass
+        if hasattr(target_type, "__annotations__"):
+            field_types = get_type_hints(target_type)
+            return target_type(**{key: deserializeMetaDataObject(value[key], field_types[key]) 
+                                  for key in value if key in field_types})
+        return value  # Regular dictionary
+    return value  # Primitive values
+
 def _generic_metadata_get(
     config: Config,
     projectname: str,
@@ -424,7 +442,7 @@ def _generic_metadata_get(
 
     # Clean metadata and return the list of objects
     cleaned_data = clean_meta_data(filtered_data)
-    return [return_type(**item) for item in cleaned_data]
+    return [deserializeMetaDataObject(item, return_type) for item in cleaned_data]    
 
 
 def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> None:

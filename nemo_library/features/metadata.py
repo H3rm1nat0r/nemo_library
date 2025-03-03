@@ -233,77 +233,22 @@ def _load_model_from_nemo(config: Config, projectname: str) -> (
     List[Diagram],
 ):  # type: ignore
 
-    definedcolumns_nemo = _clean_fields(
-        getDefinedColumns(
+    def fetchData(config: Config, projectname: str, func):
+        return func(
             config=config,
             projectname=projectname,
             filter="(Conservative)",
             filter_type=FilterType.STARTSWITH,
         )
-    )
 
-    metrics_nemo = _clean_fields(
-        getMetrics(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    )
-
-    tiles_nemo = _clean_fields(
-        getTiles(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    )
-
-    attributegroups_nemo = _clean_fields(
-        getAttributeGroups(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    )
-
-    pages_nemo = _clean_fields(
-        getPages(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    )
-
-    applications_nemo = _clean_fields(
-        getApplications(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    )
-
-    diagrams_nemo = _clean_fields(
-        getDiagrams(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    )
-
-    reports_nemo = _clean_fields(
-        getReports(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-    )
+    definedcolumns_nemo = fetchData(config, projectname, getDefinedColumns)
+    metrics_nemo = fetchData(config, projectname, getMetrics)
+    tiles_nemo = fetchData(config, projectname, getTiles)
+    attributegroups_nemo = fetchData(config, projectname, getAttributeGroups)
+    pages_nemo = fetchData(config, projectname, getPages)
+    applications_nemo = fetchData(config, projectname, getApplications)
+    diagrams_nemo = fetchData(config, projectname, getDiagrams)
+    reports_nemo = fetchData(config, projectname, getReports)
 
     return (
         definedcolumns_nemo,
@@ -365,7 +310,10 @@ def _reconcile_model_and_nemo(
                             getattr(nemo_obj, attr.name),
                         )
                         for attr in fields(model_obj)
-                        if getattr(model_obj, attr.name) != getattr(nemo_obj, attr.name)
+                        if attr.name
+                        not in ["id", "tenant", "projectId", "tileSourceID"]
+                        and getattr(model_obj, attr.name)
+                        != getattr(nemo_obj, attr.name)
                     }
                     if differences:
                         logging.info(f"difference found {key}: {differences}")
@@ -422,7 +370,7 @@ def _reconcile_model_and_nemo(
         "pages": createPages,
         "applications": createApplications,
         "diagrams": createDiagrams,
-        "reports": createReports
+        "reports": createReports,
     }
 
     new_objects = False

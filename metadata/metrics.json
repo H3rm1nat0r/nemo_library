@@ -1,30 +1,5 @@
 [
     {
-        "aggregateBy": "conservative_purchasing_payment_deviation_late",
-        "aggregateFunction": "mean(conservative_purchasing_payment_deviation_late)",
-        "dateColumn": "pur_inv_doc_date",
-        "description": "Reflects the percentage of purchase invoices that were paid too late.",
-        "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Late Payments Rate",
-        "displayNameTranslations": {},
-        "groupByAggregations": {
-            "conservative_purchasing_payment_deviation_late": "mean"
-        },
-        "groupByColumn": "pur_inv_doc_i_d",
-        "isCrawlable": true,
-        "optimizationOrientation": "Min",
-        "optimizationTarget": false,
-        "scopeId": null,
-        "scopeName": null,
-        "unit": "percent",
-        "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_payment_deviation_late_rate",
-        "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
-        "id": "",
-        "projectId": "",
-        "tenant": ""
-    },
-    {
         "aggregateBy": "conservative_purchasing_order_preparation_time_days",
         "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_days)",
         "dateColumn": "pur_order_doc_date",
@@ -95,31 +70,6 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_delivery_deviation_amount",
         "parentAttributeGroupInternalName": "conservative_purchasing_in_full_delivery",
-        "id": "",
-        "projectId": "",
-        "tenant": ""
-    },
-    {
-        "aggregateBy": "conservative_purchasing_payment_deviation_early",
-        "aggregateFunction": "mean(conservative_purchasing_payment_deviation_early)",
-        "dateColumn": "pur_inv_doc_date",
-        "description": "Reflects the percentage of purchase invoices that were paid too early.",
-        "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Early Payments Rate",
-        "displayNameTranslations": {},
-        "groupByAggregations": {
-            "conservative_purchasing_payment_deviation_early": "mean"
-        },
-        "groupByColumn": "pur_inv_doc_i_d",
-        "isCrawlable": true,
-        "optimizationOrientation": "Min",
-        "optimizationTarget": false,
-        "scopeId": null,
-        "scopeName": null,
-        "unit": "percent",
-        "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_payment_deviation_early_rate",
-        "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
         "id": "",
         "projectId": "",
         "tenant": ""
@@ -250,6 +200,31 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "conservative_purchasing_payment_deviation_too_late",
+        "aggregateFunction": "mean(conservative_purchasing_payment_deviation_too_late)",
+        "dateColumn": "pur_inv_doc_date",
+        "description": "Reflects the percentage of purchase invoices that were paid too late.",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Late Payments Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_payment_deviation_too_late": "mean"
+        },
+        "groupByColumn": "pur_inv_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_payment_deviation_too_late_rate",
+        "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_goods_receipt_processing_time_on_time_boolean",
         "aggregateFunction": "mean(conservative_purchasing_goods_receipt_processing_time_on_time_boolean)",
         "dateColumn": "pur_stock_rec_doc_date",
@@ -346,6 +321,31 @@
         "defaultScopeRestrictions": [],
         "internalName": "conservative_purchasing_replenishment_deviation_too_low",
         "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "aggregateBy": "conservative_purchasing_payment_deviation_too_early",
+        "aggregateFunction": "mean(conservative_purchasing_payment_deviation_too_early)",
+        "dateColumn": "pur_inv_doc_date",
+        "description": "Reflects the percentage of purchase invoices that were paid too early.",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Early Payments Rate",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_purchasing_payment_deviation_too_early": "mean"
+        },
+        "groupByColumn": "pur_inv_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "percent",
+        "defaultScopeRestrictions": [],
+        "internalName": "conservative_purchasing_payment_deviation_too_early_rate",
+        "parentAttributeGroupInternalName": "conservative_purchasing_on_time_payment",
         "id": "",
         "projectId": "",
         "tenant": ""

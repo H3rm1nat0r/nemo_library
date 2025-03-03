@@ -11,22 +11,12 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 2,
+                "column": 4,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_order_preparation_time_too_high",
+                "content": "conservative_purchasing_delivery_deviation_amount",
                 "contentTranslations": {},
                 "id": "",
-                "row": 5,
-                "rowSpan": 1,
-                "type": "Tile"
-            },
-            {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "conservative_purchasing_delivery_deviation_late_rate",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
+                "row": 2,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -41,22 +31,32 @@
                 "type": "Tile"
             },
             {
-                "column": 1,
+                "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_order_preparation_time_too_low",
+                "content": "conservative_purchasing_delivery_deviation_overdelivery_rate",
                 "contentTranslations": {},
                 "id": "",
-                "row": 5,
+                "row": 2,
                 "rowSpan": 1,
                 "type": "Tile"
             },
             {
                 "column": 1,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_too_low",
+                "content": "conservative_purchasing_delivery_deviation_early_rate",
                 "contentTranslations": {},
                 "id": "",
-                "row": 4,
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_delivery_deviation_late_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -71,22 +71,22 @@
                 "type": "Tile"
             },
             {
-                "column": 4,
+                "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_delivery_deviation_days",
+                "content": "conservative_purchasing_replenishment_deviation_too_high",
                 "contentTranslations": {},
                 "id": "",
-                "row": 1,
+                "row": 4,
                 "rowSpan": 1,
                 "type": "Tile"
             },
             {
-                "column": 4,
+                "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_days",
+                "content": "conservative_purchasing_order_preparation_time_too_high",
                 "contentTranslations": {},
                 "id": "",
-                "row": 4,
+                "row": 5,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -101,9 +101,19 @@
                 "type": "Tile"
             },
             {
-                "column": 1,
+                "column": 3,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_delivery_deviation_early_rate",
+                "content": "conservative_purchasing_replenishment_deviation_perfect",
+                "contentTranslations": {},
+                "id": "",
+                "row": 4,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_delivery_deviation_days",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
@@ -131,9 +141,19 @@
                 "type": "Tile"
             },
             {
-                "column": 2,
+                "column": 1,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_too_high",
+                "content": "conservative_purchasing_order_preparation_time_too_low",
+                "contentTranslations": {},
+                "id": "",
+                "row": 5,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_replenishment_deviation_days",
                 "contentTranslations": {},
                 "id": "",
                 "row": 4,
@@ -151,12 +171,12 @@
                 "type": "Tile"
             },
             {
-                "column": 4,
+                "column": 1,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_delivery_deviation_amount",
+                "content": "conservative_purchasing_replenishment_deviation_too_low",
                 "contentTranslations": {},
                 "id": "",
-                "row": 2,
+                "row": 4,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -167,26 +187,6 @@
                 "contentTranslations": {},
                 "id": "",
                 "row": 5,
-                "rowSpan": 1,
-                "type": "Tile"
-            },
-            {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "conservative_purchasing_delivery_deviation_overdelivery_rate",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 1,
-                "type": "Tile"
-            },
-            {
-                "column": 3,
-                "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_perfect",
-                "contentTranslations": {},
-                "id": "",
-                "row": 4,
                 "rowSpan": 1,
                 "type": "Tile"
             }
@@ -207,26 +207,6 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 3,
-                "columnSpan": 1,
-                "content": "purchased_goods_pcf",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Metric"
-            },
-            {
-                "column": 1,
-                "columnSpan": 1,
-                "content": "d_p_o",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 2,
-                "type": "Prediction"
-            },
-            {
                 "column": 2,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_otif_rate",
@@ -237,39 +217,19 @@
                 "type": "Prediction"
             },
             {
-                "column": 3,
-                "columnSpan": 1,
-                "content": "purchased_goods_pcf",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 2,
-                "type": "Prediction"
-            },
-            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "d_p_o",
                 "contentTranslations": {},
                 "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Metric"
+                "row": 2,
+                "rowSpan": 2,
+                "type": "Prediction"
             },
             {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "dpo",
-                "contentTranslations": {},
-                "id": "",
-                "row": 4,
-                "rowSpan": 2,
-                "type": "Tile"
-            },
-            {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "conservative_purchasing_otif_rate",
                 "contentTranslations": {},
                 "id": "",
                 "row": 4,
@@ -287,9 +247,49 @@
                 "type": "Tile"
             },
             {
+                "column": 3,
+                "columnSpan": 1,
+                "content": "purchased_goods_pcf",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 2,
+                "type": "Prediction"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "d_p_o",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Metric"
+            },
+            {
                 "column": 2,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_otif_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 4,
+                "rowSpan": 2,
+                "type": "Tile"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_otif_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Metric"
+            },
+            {
+                "column": 3,
+                "columnSpan": 1,
+                "content": "purchased_goods_pcf",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
@@ -323,26 +323,6 @@
                 "type": "Tile"
             },
             {
-                "column": 4,
-                "columnSpan": 1,
-                "content": "conservative_purchasing_payment_deviation_days",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Tile"
-            },
-            {
-                "column": 4,
-                "columnSpan": 1,
-                "content": "conservative_purchasing_invoice_processing_time",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 1,
-                "type": "Tile"
-            },
-            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_goods_receipt_processing_time_on_time_rate",
@@ -353,9 +333,9 @@
                 "type": "Tile"
             },
             {
-                "column": 2,
+                "column": 3,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_goods_receipt_processing_time",
+                "content": "conservative_purchasing_invoice_processing_time_on_time_rate",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,
@@ -373,9 +353,29 @@
                 "type": "Diagram"
             },
             {
-                "column": 3,
+                "column": 4,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_invoice_processing_time_on_time_rate",
+                "content": "conservative_purchasing_invoice_processing_time",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_payment_deviation_days",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Tile"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_goods_receipt_processing_time",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,

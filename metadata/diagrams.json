@@ -6,7 +6,7 @@
             "column": "PUR_INV_DOC_DATE",
             "dataType": "datetime"
         },
-        "argumentAxisTitle": "",
+        "argumentAxisTitle": "Month",
         "argumentAxisTitleTranslations": {},
         "description": "",
         "descriptionTranslations": {},
@@ -15,15 +15,15 @@
         "internalName": "conservative_purchasing_payment_behavior",
         "report": "conservative_purchasing_payment_behavior",
         "summary": null,
-        "valueAxisTitle": "",
+        "valueAxisTitle": "Rate",
         "valueAxisTitleTranslations": {},
         "values": [
             {
                 "aggregation": "avg",
                 "chartType": "stackedbar",
-                "column": "CONSERVATIVE_LATE_PAYMENTS_RATE",
+                "column": "CONSERVATIVE_EARLY_PAYMENTS_RATE",
                 "id": "",
-                "legend": "late",
+                "legend": "too early",
                 "legendTranslations": {}
             },
             {
@@ -37,9 +37,9 @@
             {
                 "aggregation": "avg",
                 "chartType": "stackedbar",
-                "column": "CONSERVATIVE_EARLY_PAYMENTS_RATE",
+                "column": "CONSERVATIVE_LATE_PAYMENTS_RATE",
                 "id": "",
-                "legend": "early",
+                "legend": "too late",
                 "legendTranslations": {}
             }
         ],

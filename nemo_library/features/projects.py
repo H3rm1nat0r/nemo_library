@@ -740,11 +740,11 @@ def createDiagrams(
     )
 
 def createReports(
-    config: Config, projectname: str, diagrams: List[Report]
+    config: Config, projectname: str, reports: List[Report]
 ) -> None:
     """Creates or updates a list of Reports."""
     _generic_metadata_create_or_update(
-        config, projectname, diagrams, "Reports", getReports
+        config, projectname, reports, "Reports", getReports
     )
 
 

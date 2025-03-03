@@ -503,7 +503,7 @@
     {
         "aggregateBy": "conservative_purchasing_otif",
         "aggregateFunction": "mean(conservative_purchasing_otif)",
-        "dateColumn": "pur_inv_doc_date",
+        "dateColumn": "pur_order_line_delivery_date",
         "description": "Reflects the percentage of Deliveries that were on time and in full",
         "descriptionTranslations": {},
         "displayName": "(Conservative) Purchasing OTIF Rate",
@@ -511,7 +511,7 @@
         "groupByAggregations": {
             "conservative_purchasing_otif": "mean"
         },
-        "groupByColumn": "pur_inv_doc_i_d",
+        "groupByColumn": "pur_order_line_i_d",
         "isCrawlable": true,
         "optimizationOrientation": "Min",
         "optimizationTarget": false,

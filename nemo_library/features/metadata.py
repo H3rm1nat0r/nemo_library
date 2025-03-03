@@ -1,4 +1,5 @@
 from collections import defaultdict
+import copy
 from dataclasses import fields, is_dataclass
 import json
 import logging
@@ -296,9 +297,9 @@ def _reconcile_model_and_nemo(
     reports_nemo: List[Report],
 ) -> bool:
     def find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:
-        model_keys = {getattr(obj, "internalName") for obj in model_list}
+        model_keys = {obj.internalName for obj in model_list}
         return [
-            obj for obj in nemo_list if getattr(obj, "internalName") not in model_keys
+            obj for obj in nemo_list if obj.internalName not in model_keys
         ]
 
     def find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
@@ -317,12 +318,12 @@ def _reconcile_model_and_nemo(
                         for attr in fields(model_obj)
                         if getattr(model_obj, attr.name) != getattr(nemo_obj, attr.name)
                     }
-                    if differences:
-                        print("-" * 80)
-                        for attrname, (old_value, new_value) in differences.items():
-                            print(f"{attrname}: {old_value} --> {new_value}")
-                        # logging.info(f"difference found {key}: {differences}")
-                        updates.append(model_obj)
+
+                if differences:
+                    for attrname, (old_value, new_value) in differences.items():
+                        logging.info(f"{attrname}: {old_value} --> {new_value}")
+                    updates.append(model_obj)
+
         return updates
 
     def find_new_objects(model_list: List[T], nemo_list: List[T]) -> List[T]:
@@ -345,8 +346,11 @@ def _reconcile_model_and_nemo(
         ("diagrams", diagrams_model, diagrams_nemo),
         ("reports", reports_model, reports_nemo),
     ]:
+        nemo_list_cleaned = copy.deepcopy(nemo_list)
+        nemo_list_cleaned = _clean_fields(nemo_list_cleaned)
+        
         deletions[key] = find_deletions(model_list, nemo_list)
-        updates[key] = find_updates(model_list, _clean_fields(nemo_list))
+        updates[key] = find_updates(model_list, nemo_list_cleaned)
         creates[key] = find_new_objects(model_list, nemo_list)
 
     # Start with deletions

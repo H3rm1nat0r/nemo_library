@@ -29,17 +29,17 @@
             {
                 "aggregation": "avg",
                 "chartType": "stackedbar",
-                "column": "CONSERVATIVE_LATE_PAYMENTS_RATE",
+                "column": "CONSERVATIVE_EARLY_PAYMENTS_RATE",
                 "id": "",
-                "legend": "too late",
+                "legend": "too early",
                 "legendTranslations": {}
             },
             {
                 "aggregation": "avg",
                 "chartType": "stackedbar",
-                "column": "CONSERVATIVE_EARLY_PAYMENTS_RATE",
+                "column": "CONSERVATIVE_LATE_PAYMENTS_RATE",
                 "id": "",
-                "legend": "too early",
+                "legend": "too late",
                 "legendTranslations": {}
             }
         ],

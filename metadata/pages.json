@@ -386,5 +386,20 @@
         "id": "",
         "projectId": "",
         "tenant": ""
+    },
+    {
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Advisor PCF",
+        "displayNameTranslations": {},
+        "hideIfColumns": [],
+        "internalName": "conservative_purchasing_advisor_pcf",
+        "numberOfColumns": 10,
+        "numberOfRows": 10,
+        "showIfColumns": [],
+        "visuals": [],
+        "id": "",
+        "projectId": "",
+        "tenant": ""
     }
 ]

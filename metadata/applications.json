@@ -23,6 +23,10 @@
             {
                 "order": 2,
                 "page": "conservative_purchasing_advisor_otif"
+            },
+            {
+                "order": 3,
+                "page": "conservative_purchasing_advisor_pcf"
             }
         ],
         "scopeName": "",

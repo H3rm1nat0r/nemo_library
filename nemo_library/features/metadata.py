@@ -185,7 +185,6 @@ def _load_model_from_json(config: Config) -> (
     diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
     tiles_model = _generate_tiles(metrics_model)
     reports_model = _load_data_from_json(config, "reports", Report)
-    # reports_model = reports_model + _generate_reports(metrics_model)
 
     return (
         definedcolumns_model,
@@ -280,102 +279,6 @@ def _generate_tiles(metrics: List[Metric]) -> List[Tile]:
     ]
 
     return tiles
-
-
-def _generate_reports(metrics: List[Metric]) -> List[Report]:
-
-    def find_metric_by_internal_name(
-        metrics: List[Metric], internal_name: str
-    ) -> Optional[Metric]:
-        for metric in metrics:
-            if metric.internalName == internal_name:
-                return metric
-        return None
-
-    selects = {}
-    for too_low_metric in metrics:
-        if "too_low" in too_low_metric.internalName:
-            too_high_metric = find_metric_by_internal_name(
-                metrics, too_low_metric.internalName.replace("too_low", "too_high")
-            )
-            on_time_metric = find_metric_by_internal_name(
-                metrics, too_low_metric.internalName.replace("too_low", "on_time")
-            )
-
-            if all([too_low_metric, too_high_metric, on_time_metric]):
-                selects[
-                    too_low_metric.internalName.replace("_too_low", "")
-                ] = f"""WITH first_agg AS (
-    SELECT 
-        {too_low_metric.dateColumn},
-        AVG(
-            CASE 
-                WHEN CAST(DAYS_BETWEEN(payment_last_pay_date, payment_netto_due_date) AS INT) > 0 THEN 1 
-                WHEN CAST(DAYS_BETWEEN(payment_last_pay_date, payment_netto_due_date) AS INT) <= 0 THEN 0 
-                ELSE NULL 
-            END
-        ) AS conservative_paid_early_boolean,
-        AVG(
-            CASE 
-                WHEN CAST(DAYS_BETWEEN(payment_last_pay_date, payment_netto_due_date) AS INT) < 0 THEN 1 
-                WHEN CAST(DAYS_BETWEEN(payment_last_pay_date, payment_netto_due_date) AS INT) >= 0 THEN 0 
-                ELSE NULL 
-            END
-        ) AS conservative_paid_late_boolean,
-        AVG(
-            CASE 
-                WHEN CAST(DAYS_BETWEEN(payment_last_pay_date, payment_netto_due_date) AS INT) = 0 THEN 1 
-                WHEN CAST(DAYS_BETWEEN(payment_last_pay_date, payment_netto_due_date) AS INT) <> 0 THEN 0 
-                ELSE NULL 
-            END
-        ) AS conservative_paid_on_time_boolean,
-        COUNT(*) AS _weight
-    FROM $schema.$table
-    GROUP BY {too_low_metric.dateColumn}
-)
-SELECT 
-    {too_low_metric.dateColumn},
-    (CASE 
-        WHEN SUM(_weight) != 0 
-        THEN SUM(conservative_paid_early_boolean * _weight) / NULLIF(SUM(_weight), 0) 
-        ELSE AVG(conservative_paid_early_boolean) 
-    END) AS conservative_early_payments_rate,
-    (CASE 
-        WHEN SUM(_weight) != 0 
-        THEN SUM(conservative_paid_late_boolean * _weight) / NULLIF(SUM(_weight), 0) 
-        ELSE AVG(conservative_paid_late_boolean) 
-    END) AS conservative_late_payments_rate,
-    (CASE 
-        WHEN SUM(_weight) != 0 
-        THEN SUM(conservative_paid_on_time_boolean * _weight) / NULLIF(SUM(_weight), 0) 
-        ELSE AVG(conservative_paid_on_time_boolean) 
-    END) AS conservative_on_time_payments_rate,
-    SUM(_weight) AS _weight
-FROM first_agg
-WHERE conservative_paid_early_boolean IS NOT NULL 
-AND conservative_paid_late_boolean IS NOT NULL
-AND conservative_paid_on_time_boolean IS NOT NULL
-AND _weight IS NOT NULL
-GROUP BY {too_low_metric.dateColumn}"""
-
-    reports = [
-        Report(
-            columns=[],
-            description="test",
-            descriptionTranslations={},
-            displayName="(Conservative) TEST",
-            displayNameTranslations={},
-            internalName="(Conservative) TEST " + select,
-            querySyntax=selects[select],
-            reportCategories=None,
-            id="",
-            projectId="",
-            tenant=""
-        )
-        for select in selects
-    ]
-
-    return reports
 
 
 def _reconcile_model_and_nemo(

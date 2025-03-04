@@ -75,15 +75,15 @@
         "tenant": ""
     },
     {
-        "aggregateBy": "conservative_purchasing_order_preparation_time_perfect",
-        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_perfect)",
+        "aggregateBy": "conservative_purchasing_replenishment_deviation_on_time",
+        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_on_time)",
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time Perfect",
+        "displayName": "(Conservative) Purchasing Replenishment Deviation On Time Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
-            "conservative_purchasing_order_preparation_time_perfect": "mean"
+            "conservative_purchasing_replenishment_deviation_on_time": "mean"
         },
         "groupByColumn": "pur_order_doc_i_d",
         "isCrawlable": true,
@@ -93,22 +93,22 @@
         "scopeName": null,
         "unit": "percent",
         "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_order_preparation_time_perfect",
-        "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
+        "internalName": "conservative_purchasing_replenishment_deviation_on_time",
+        "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
         "id": "",
         "projectId": "",
         "tenant": ""
     },
     {
-        "aggregateBy": "conservative_purchasing_replenishment_deviation_perfect",
-        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_perfect)",
+        "aggregateBy": "conservative_purchasing_order_preparation_time_on_time",
+        "aggregateFunction": "mean(conservative_purchasing_order_preparation_time_on_time)",
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation Perfect Rate",
+        "displayName": "(Conservative) Purchasing Order Preparation Time On Time Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
-            "conservative_purchasing_replenishment_deviation_perfect": "mean"
+            "conservative_purchasing_order_preparation_time_on_time": "mean"
         },
         "groupByColumn": "pur_order_doc_i_d",
         "isCrawlable": true,
@@ -118,8 +118,8 @@
         "scopeName": null,
         "unit": "percent",
         "defaultScopeRestrictions": [],
-        "internalName": "conservative_purchasing_replenishment_deviation_perfect",
-        "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
+        "internalName": "conservative_purchasing_order_preparation_time_on_time",
+        "parentAttributeGroupInternalName": "conservative_purchasing_order_preparation_time",
         "id": "",
         "projectId": "",
         "tenant": ""
@@ -656,7 +656,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time too high",
+        "displayName": "(Conservative) Purchasing Order Preparation Time Too High Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_order_preparation_time_too_high": "mean"

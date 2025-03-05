@@ -359,25 +359,37 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
     """
 
     # Step 1: Retrieve associations between deals and companies
-    associations = hs.crm.associations.batch_api.read(
-        from_object_type="deals",
-        to_object_type="company",
-        batch_input_public_object_id=BatchInputPublicObjectId(
-            inputs=deals["deal_id"].unique().tolist()
-        ),
-    )
-
     company_association_rows = []
-    for result in associations.results:
-        deal_id = result._from.id
-        to_dict = result.to
-        for to in to_dict:
-            company_association_rows.append(
-                {
-                    "deal_id": deal_id,
-                    "company_id": to.id,
-                }
+    deal_ids = deals["deal_id"].unique().tolist()
+    batch_size = 1000  # HubSpot API Limit
+
+    for i in range(0, len(deal_ids), batch_size):
+        batch_ids = deal_ids[i:i + batch_size]
+        batch_input = BatchInputPublicObjectId(inputs=batch_ids)
+        
+        try:
+            associations = hs.crm.associations.batch_api.read(
+                from_object_type="deals",
+                to_object_type="company",
+                batch_input_public_object_id=batch_input,
             )
+            
+            for result in associations.results:
+                deal_id = result._from.id
+                to_dict = result.to
+                for to in to_dict:
+                    company_association_rows.append(
+                        {
+                            "deal_id": deal_id,
+                            "company_id": to.id,
+                        }
+                    )
+            logging.info(f"Company batch {i // batch_size + 1} loaded...")
+        except Exception as e:
+            logging.error(f"Error during loading Companies Batch {i // batch_size + 1}: {e}")
+    
+    company_association_df = pd.DataFrame(company_association_rows)
+
 
     # Create a DataFrame from the expanded rows
     company_association_df = pd.DataFrame(company_association_rows)
@@ -466,46 +478,40 @@ def load_activities(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
                       - 'deal_id': The ID of the deal.
                       - 'activity_id': The ID of the associated activity.
                       - 'update_type': The type of activity (e.g., email, task, meeting).
-
-    Notes:
-        - The function iterates over a predefined list of activity types (ACTIVITY_TYPES) to load associations
-          for each deal.
-        - The function outputs a message to indicate when each activity type has been loaded.
-
-    Example:
-        hs = HubSpot(api_key="your_api_key")
-        deals = pd.DataFrame({"deal_id": [123, 456, 789]})
-        activity_associations = load_activities(hs, deals)
     """
-
     activity_association_rows = []
     deal_ids = deals["deal_id"].unique().tolist()
+    batch_size = 1000  
 
-    # Load associations for each deal and each activity type
     for activity_type in ACTIVITY_TYPES:
-        associations = hs.crm.associations.batch_api.read(
-            from_object_type="deals",
-            to_object_type=activity_type,
-            batch_input_public_object_id=BatchInputPublicObjectId(inputs=deal_ids),
-        )
-        for result in associations.results:
-            deal_id = result._from.id
-            to_dict = result.to
-            for to in to_dict:
-                activity_association_rows.append(
-                    {
-                        "deal_id": deal_id,
-                        "activity_id": to.id,
-                        "update_type": activity_type,
-                    }
+        for i in range(0, len(deal_ids), batch_size):
+            batch_ids = deal_ids[i:i + batch_size]  
+            batch_input = BatchInputPublicObjectId(inputs=batch_ids)
+
+            try:
+                associations = hs.crm.associations.batch_api.read(
+                    from_object_type="deals",
+                    to_object_type=activity_type,
+                    batch_input_public_object_id=batch_input,
                 )
-
-        # Format the output string so that the colon is aligned
-        logging.info(f"{activity_type} loaded...")
-
-    # Create a DataFrame from the expanded rows
+                
+                for result in associations.results:
+                    deal_id = result._from.id
+                    to_dict = result.to
+                    for to in to_dict:
+                        activity_association_rows.append(
+                            {
+                                "deal_id": deal_id,
+                                "activity_id": to.id,
+                                "update_type": activity_type,
+                            }
+                        )
+                
+                logging.info(f"{activity_type} batch {i // batch_size + 1} loaded...")
+            except Exception as e:
+                logging.error(f"Fehler beim Laden von {activity_type} Batch {i // batch_size + 1}: {e}")
+    
     activity_association_df = pd.DataFrame(activity_association_rows)
-
     return activity_association_df
 
 

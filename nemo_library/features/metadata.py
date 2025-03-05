@@ -45,6 +45,7 @@ from nemo_library.model.pages import Page
 from nemo_library.model.report import Report
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
+from nemo_library.utils.utils import FilterValue
 
 __all__ = ["MetaDataLoad", "MetaDataCreate"]
 
@@ -72,6 +73,7 @@ def MetaDataLoad(
             projectname=projectname,
             filter="(Conservative)",
             filter_type=FilterType.STARTSWITH,
+            filter_value=FilterValue.DISPLAYNAME,
         )
 
         if name == "attributegroups":

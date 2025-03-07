@@ -1,10 +1,14 @@
-from enum import Enum
+from typing import List
 import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
+from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
+from nemo_library.model.diagram import Diagram
 from nemo_library.model.metric import Metric
+from nemo_library.model.pages import Page
+from nemo_library.model.report import Report
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
 from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
@@ -24,31 +28,44 @@ from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.projects import (
     LoadReport,
+    createApplications,
     createAttributeGroups,
     createDefinedColumns,
+    createDiagrams,
     createImportedColumn,
     createImportedColumns,
     createMetrics,
     createOrUpdateReport,
     createOrUpdateRule,
+    createPages,
     createProject,
+    createReports,
     createTiles,
+    deleteApplications,
     deleteAttributeGroups,
     deleteDefinedColumns,
+    deleteDiagrams,
     deleteMetrics,
+    deletePages,
     deleteProject,
+    deleteReports,
     deleteTiles,
+    getApplications,
     getAttributeGroups,
     getDefinedColumns,
+    getDiagrams,
     getImportedColumns,
     getMetrics,
+    getPages,
     getProjectID,
     getProjectList,
     getProjectProperty,
+    getReports,
     getTiles,
     setProjectMetaData,
     synchronizeCsvColsAndImportedColumns,
 )
+from nemo_library.utils.utils import FilterType, FilterValue
 
 
 class NemoLibrary:
@@ -519,84 +536,6 @@ class NemoLibrary:
     ) -> None:
         createOrUpdateRulesByConfigFile(self.config, filename)
 
-    class FilterType(Enum):
-        STARTSWITH = "startswith"
-        ENDSWITH = "endswith"
-        CONTAINS = "contains"
-        REGEX = "regex"
-
-    def getMetrics(
-        self,
-        projectname: str,
-        filter: str = "*",
-        filter_type: FilterType = FilterType.STARTSWITH,
-    ):
-        return getMetrics(self.config, projectname, filter, filter_type)
-
-    def createMetrics(
-        self,
-        projectname: str,
-        metrics: list[Metric],
-    ) -> None:
-        createMetrics(self.config, projectname, metrics)
-
-    def deleteMetrics(self, metrics: list[str]) -> None:
-        deleteMetrics(self.config, metrics)
-
-    def getDefinedColumns(
-        self,
-        projectname: str,
-        filter: str = "*",
-        filter_type: FilterType = FilterType.STARTSWITH,
-    ):
-        return getDefinedColumns(self.config, projectname, filter, filter_type)
-
-    def createDefinedColumns(
-        self,
-        projectname: str,
-        defined_columns: list[DefinedColumn],
-    ) -> None:
-        createDefinedColumns(self.config, projectname, defined_columns)
-
-    def deleteDefinedColumns(self, defined_columns: list[str]) -> None:
-        deleteDefinedColumns(self.config, defined_columns)
-
-    def getTiles(
-        self,
-        projectname: str,
-        filter: str = "*",
-        filter_type: FilterType = FilterType.STARTSWITH,
-    ):
-        return getTiles(self.config, projectname, filter, filter_type)
-
-    def createTiles(
-        self,
-        projectname: str,
-        tiles: list[Tile],
-    ) -> None:
-        createTiles(self.config, projectname, tiles)
-
-    def deleteTiles(self, tiles: list[str]) -> None:
-        deleteTiles(self.config, tiles)
-
-    def getAttributeGroups(
-        self,
-        projectname: str,
-        filter: str = "*",
-        filter_type: FilterType = FilterType.STARTSWITH,
-    ):
-        return getAttributeGroups(self.config, projectname, filter, filter_type)
-
-    def createAttributGroups(
-        self,
-        projectname: str,
-        attribute_groups: list[AttributeGroup],
-    ) -> None:
-        createAttributeGroups(self.config, projectname, attribute_groups)
-
-    def deleteAttributeGroups(self, attribute_groups: list[str]) -> None:
-        deleteAttributeGroups(self.config, attribute_groups)
-
     def synchronizeCsvColsAndImportedColumns(
         self,
         projectname: str,
@@ -714,3 +653,204 @@ class NemoLibrary:
         projectname: str,
     ):
         MetaDataCreate(self.config, projectname)
+
+    def getAttributeGroups(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[AttributeGroup]:
+        """Fetches AttributeGroups metadata with the given filters."""
+        return getAttributeGroups(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def getMetrics(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[Metric]:
+        """Fetches Metrics metadata with the given filters."""
+        return getMetrics(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+
+    def getTiles(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[Tile]:
+        """Fetches Tiles metadata with the given filters."""
+        return getTiles(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def getPages(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[Page]:
+        """Fetches Pages metadata with the given filters."""
+        return getPages(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def getApplications(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[Application]:
+        """Fetches Applications metadata with the given filters."""
+        return getApplications(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def getDiagrams(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[Diagram]:
+        """Fetches Diagrams metadata with the given filters."""
+        return getDiagrams(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def getDefinedColumns(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[DefinedColumn]:
+        """Fetches DefinedColumns metadata with the given filters."""
+        return getDefinedColumns(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def getReports(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[Report]:
+        """Fetches Reports metadata with the given filters."""
+        return getReports(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def deleteDefinedColumns(self, definedcolumns: List[str]) -> None:
+        """Deletes a list of Defined Columns by their IDs."""
+        deleteDefinedColumns(config=self.config,definedcolumns=definedcolumns)
+
+    def deleteMetrics(self, metrics: List[str]) -> None:
+        """Deletes a list of Metrics by their IDs."""
+        deleteMetrics(config=self.config,metrics=metrics)
+
+    def deleteTiles(self, tiles: List[str]) -> None:
+        """Deletes a list of Tiles by their IDs."""
+        deleteTiles(config=self.config,tiles=tiles)
+
+    def deleteAttributeGroups(self, attributegroups: List[str]) -> None:
+        """Deletes a list of AttributeGroups by their IDs."""
+        deleteAttributeGroups(config=self.config,attributegroups=attributegroups)
+
+    def deletePages(self, pages: List[str]) -> None:
+        """Deletes a list of Pages by their IDs."""
+        deletePages(config=self.config,pages=pages)
+
+    def deleteApplications(self, applications: List[str]) -> None:
+        """Deletes a list of Pages by their IDs."""
+        deleteApplications(config=self.config,applications=applications)
+
+    def deleteDiagrams(self, diagrams: List[str]) -> None:
+        """Deletes a list of Diagrams by their IDs."""
+        deleteDiagrams(config=self.config,diagrams=diagrams)
+
+    def deleteReports(self, reports: List[str]) -> None:
+        """Deletes a list of Reports by their IDs."""
+        deleteReports(config=self.config,reports=reports)
+
+    def createDefinedColumns(
+        self, projectname: str, definedcolumns: List[DefinedColumn]
+    ) -> None:
+        """Creates or updates a list of DefinedColumns."""
+        createDefinedColumns(config=self.config,projectname=projectname,definedcolumns=definedcolumns)
+
+    def createMetrics(self, projectname: str, metrics: List[Metric]) -> None:
+        """Creates or updates a list of Metrics."""
+        createMetrics(config=self.config,projectname=projectname,metrics=metrics)
+
+    def createTiles(self, projectname: str, tiles: List[Tile]) -> None:
+        """Creates or updates a list of Tiles."""
+        createTiles(config=self.config,projectname=projectname,tiles=tiles)
+
+    def createAttributeGroups(
+        self, projectname: str, attributegroups: List[AttributeGroup]
+    ) -> None:
+        """Creates or updates a list of AttributeGroups."""
+        createAttributeGroups(config=self.config,projectname=projectname,attributegroups=attributegroups)
+
+    def createPages(self, projectname: str, pages: List[Page]) -> None:
+        """Creates or updates a list of Pages."""
+        createPages(config=self.config,projectname=projectname,pages=pages)
+
+    def createApplications(
+        self, projectname: str, applications: List[Application]
+    ) -> None:
+        """Creates or updates a list of Applications."""
+        createApplications(config=self.config,projectname=projectname,applications=applications)
+
+    def createDiagrams(
+        self, projectname: str, diagrams: List[Diagram]
+    ) -> None:
+        """Creates or updates a list of Diagrams."""
+        createDiagrams(config=self.config,projectname=projectname,diagrams=diagrams)
+
+    def createReports(self, projectname: str, reports: List[Report]) -> None:
+        """Creates or updates a list of Reports."""
+        createReports(config=self.config,projectname=projectname,reports=reports)

@@ -1,0 +1,21 @@
+[
+    {
+        "columnInternalNames": [
+            "pur_inv_doc_date",
+            "payment_netto_due_date",
+            "payment_last_pay_date"
+        ],
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing On Time Payment",
+        "displayNameTranslations": {},
+        "groupByAggregations": {},
+        "groupByColumn": "",
+        "internalName": "conservative_purchasing_on_time_payment",
+        "isAggregation": false,
+        "timeUnit": "days",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    }
+]

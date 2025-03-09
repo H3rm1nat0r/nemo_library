@@ -9,6 +9,8 @@ from typing import Optional, Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
     FilterType,
+    createSubProcesses,
+    deleteSubprocesses,
     deserializeMetaDataObject,
     createApplications,
     createAttributeGroups,
@@ -34,6 +36,7 @@ from nemo_library.features.projects import (
     getMetrics,
     getPages,
     getReports,
+    getSubProcesses,
     getTiles,
 )
 from nemo_library.model.application import Application
@@ -44,6 +47,7 @@ from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.report import Report
 from nemo_library.model.tile import Tile
+from nemo_library.model.subprocess import SubProcess
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import FilterValue
 
@@ -65,6 +69,7 @@ def MetaDataLoad(
         "applications": getApplications,
         "diagrams": getDiagrams,
         "reports": getReports,
+        "subprocesses": getSubProcesses,
     }
 
     for name, func in functions.items():
@@ -121,6 +126,7 @@ def MetaDataCreate(
         applications_model,
         diagrams_model,
         reports_model,
+        subprocess_model,
     ) = _load_model_from_json(config=config)
 
     (
@@ -132,6 +138,7 @@ def MetaDataCreate(
         applications_nemo,
         diagrams_nemo,
         reports_nemo,
+        subprocesses_nemo,
     ) = _load_model_from_nemo(config=config, projectname=projectname)
 
     # reconcile data
@@ -146,6 +153,7 @@ def MetaDataCreate(
         applications_model=applications_model,
         diagrams_model=diagrams_model,
         reports_model=reports_model,
+        subprocess_model=subprocess_model,
         definedcolumns_nemo=definedcolumns_nemo,
         metrics_nemo=metrics_nemo,
         tiles_nemo=tiles_nemo,
@@ -154,6 +162,7 @@ def MetaDataCreate(
         applications_nemo=applications_nemo,
         diagrams_nemo=diagrams_nemo,
         reports_nemo=reports_nemo,
+        subprocesses_nemo=subprocesses_nemo,
     )
 
     # move attributes and groups
@@ -176,6 +185,7 @@ def _load_model_from_json(config: Config) -> (
     List[Application],
     List[Diagram],
     List[Report],
+    List[SubProcess],
 ):  # type: ignore
     definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
     metrics_model = _load_data_from_json(config, "metrics", Metric)
@@ -187,6 +197,7 @@ def _load_model_from_json(config: Config) -> (
     diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
     tiles_model = _generate_tiles(metrics_model)
     reports_model = _load_data_from_json(config, "reports", Report)
+    subprocess_model = _load_data_from_json(config, "subprocesses", SubProcess)
 
     return (
         definedcolumns_model,
@@ -197,6 +208,7 @@ def _load_model_from_json(config: Config) -> (
         applications_model,
         diagrams_model,
         reports_model,
+        subprocess_model,
     )
 
 
@@ -212,6 +224,7 @@ def _load_model_from_nemo(config: Config, projectname: str) -> (
     List[Page],
     List[Application],
     List[Diagram],
+    List[SubProcess],
 ):  # type: ignore
 
     def fetchData(config: Config, projectname: str, func):
@@ -230,6 +243,7 @@ def _load_model_from_nemo(config: Config, projectname: str) -> (
     applications_nemo = fetchData(config, projectname, getApplications)
     diagrams_nemo = fetchData(config, projectname, getDiagrams)
     reports_nemo = fetchData(config, projectname, getReports)
+    subprocesses_nemo = fetchData(config, projectname, getSubProcesses)
 
     return (
         definedcolumns_nemo,
@@ -240,6 +254,7 @@ def _load_model_from_nemo(config: Config, projectname: str) -> (
         applications_nemo,
         diagrams_nemo,
         reports_nemo,
+        subprocesses_nemo,
     )
 
 
@@ -294,6 +309,7 @@ def _reconcile_model_and_nemo(
     applications_model: List[Application],
     diagrams_model: List[Diagram],
     reports_model: List[Report],
+    subprocess_model: List[SubProcess],
     definedcolumns_nemo: List[DefinedColumn],
     metrics_nemo: List[Metric],
     tiles_nemo: List[Tile],
@@ -302,6 +318,7 @@ def _reconcile_model_and_nemo(
     applications_nemo: List[Application],
     diagrams_nemo: List[Diagram],
     reports_nemo: List[Report],
+    subprocesses_nemo: List[SubProcess],
 ) -> bool:
     def find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:
         model_keys = {obj.internalName for obj in model_list}
@@ -350,6 +367,7 @@ def _reconcile_model_and_nemo(
         ("pages", pages_model, pages_nemo),
         ("diagrams", diagrams_model, diagrams_nemo),
         ("reports", reports_model, reports_nemo),
+        ("subprocess", subprocess_model, subprocesses_nemo),
     ]:
         nemo_list_cleaned = copy.deepcopy(nemo_list)
         nemo_list_cleaned = _clean_fields(nemo_list_cleaned)
@@ -368,6 +386,7 @@ def _reconcile_model_and_nemo(
         "attributegroups": deleteAttributeGroups,
         "diagrams": deleteDiagrams,
         "reports": deleteReports,
+        "subprocess": deleteSubprocesses,
     }
 
     for key, delete_function in delete_functions.items():
@@ -385,6 +404,7 @@ def _reconcile_model_and_nemo(
         "applications": createApplications,
         "diagrams": createDiagrams,
         "reports": createReports,
+        "subprocess": createSubProcesses,
     }
 
     new_objects = False

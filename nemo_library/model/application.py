@@ -1,6 +1,5 @@
-from dataclasses import dataclass, field, asdict
-from typing import Dict, List, Optional
-from datetime import datetime
+from dataclasses import dataclass, asdict
+from typing import Dict, List
 
 @dataclass
 class Forecast:

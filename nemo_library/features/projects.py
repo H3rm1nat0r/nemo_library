@@ -12,6 +12,7 @@ from nemo_library.model.diagram import Diagram
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.report import Report
+from nemo_library.model.subprocess import SubProcess
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import (
@@ -668,6 +669,25 @@ def getReports(
         filter_value,
     )
 
+def getSubProcesses(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[SubProcess]:
+    """Fetches SubProcesss metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "SubProcess",
+        "/subprocesses",
+        SubProcess,
+        filter,
+        filter_type,
+        filter_value,
+    )
+    
 def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
     """Deletes a list of Defined Columns by their IDs."""
     _generic_metadata_delete(config, definedcolumns, "Columns")
@@ -704,6 +724,10 @@ def deleteDiagrams(config: Config, diagrams: List[str]) -> None:
 def deleteReports(config: Config, reports: List[str]) -> None:
     """Deletes a list of Reports by their IDs."""
     _generic_metadata_delete(config, reports, "Reports")
+
+def deleteSubprocesses(config: Config, subprocesses: List[str]) -> None:
+    """Deletes a list of SubProcesses by their IDs."""
+    _generic_metadata_delete(config, subprocesses, "SubProcess")
 
 
 def createDefinedColumns(
@@ -765,6 +789,13 @@ def createReports(
         config, projectname, reports, "Reports", getReports
     )
 
+def createSubProcesses(
+    config: Config, projectname: str, subprocesses: List[SubProcess]
+) -> None:
+    """Creates or updates a list of SubProcesses."""
+    _generic_metadata_create_or_update(
+        config, projectname, subprocesses, "SubProcess", getSubProcesses
+    )
 
 def getImportedColumns(
     config: Config,

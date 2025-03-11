@@ -15,7 +15,6 @@ from nemo_library.utils.utils import (
 )
 
 
-T = TypeVar("T")
 
 
 def getProjectList(

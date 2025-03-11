@@ -8,35 +8,11 @@ import re
 import pandas as pd
 from typing import Optional, Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
+from nemo_library.features.persistence import _deserializeMetaDataObject, createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createSubProcesses, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteSubprocesses, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getSubProcesses, getTiles
 from nemo_library.features.projects import (
     FilterType,
-    createSubProcesses,
-    deleteSubprocesses,
-    deserializeMetaDataObject,
-    createApplications,
-    createAttributeGroups,
-    createDefinedColumns,
-    createDiagrams,
-    createMetrics,
-    createPages,
-    createTiles,
-    deleteApplications,
-    deleteAttributeGroups,
-    deleteDefinedColumns,
-    deleteDiagrams,
-    deleteMetrics,
-    deletePages,
-    deleteTiles,
-    getApplications,
-    getAttributeGroups,
-    getDefinedColumns,
     getDependencyTree,
-    getDiagrams,
     getImportedColumns,
-    getMetrics,
-    getPages,
-    getSubProcesses,
-    getTiles,
 )
 from nemo_library.features.report import createReports, deleteReports, getReports
 from nemo_library.model.application import Application
@@ -355,7 +331,7 @@ def _load_data_from_json(config, file: str, cls: Type[T]) -> List[T]:
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    return [deserializeMetaDataObject(item, cls) for item in data]
+    return [_deserializeMetaDataObject(item, cls) for item in data]
 
 
 def _generate_tiles(metrics: List[Metric]) -> List[Tile]:

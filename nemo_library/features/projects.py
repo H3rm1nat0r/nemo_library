@@ -8,6 +8,7 @@ from typing import Any, Type, TypeVar, List, get_type_hints
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
+from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.model.diagram import Diagram
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
@@ -373,10 +374,16 @@ def deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
         # Check if the target type is a DataClass
         if hasattr(target_type, "__annotations__"):
             field_types = get_type_hints(target_type)
-            return target_type(**{key: deserializeMetaDataObject(value[key], field_types[key]) 
-                                  for key in value if key in field_types})
+            return target_type(
+                **{
+                    key: deserializeMetaDataObject(value[key], field_types[key])
+                    for key in value
+                    if key in field_types
+                }
+            )
         return value  # Regular dictionary
     return value  # Primitive values
+
 
 def _generic_metadata_get(
     config: Config,
@@ -443,7 +450,7 @@ def _generic_metadata_get(
 
     # Clean metadata and return the list of objects
     cleaned_data = clean_meta_data(filtered_data)
-    return [deserializeMetaDataObject(item, return_type) for item in cleaned_data]    
+    return [deserializeMetaDataObject(item, return_type) for item in cleaned_data]
 
 
 def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> None:
@@ -529,6 +536,7 @@ def _generic_metadata_create_or_update(
                 headers=headers,
             )
             if response.status_code != 201:
+                print(obj.to_dict())
                 log_error(
                     f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
                 )
@@ -612,6 +620,7 @@ def getApplications(
         filter_value,
     )
 
+
 def getDiagrams(
     config: Config,
     projectname: str,
@@ -631,6 +640,7 @@ def getDiagrams(
         filter_value,
     )
 
+
 def getDefinedColumns(
     config: Config,
     projectname: str,
@@ -649,7 +659,8 @@ def getDefinedColumns(
         filter_type,
         filter_value,
     )
-    
+
+
 def getReports(
     config: Config,
     projectname: str,
@@ -669,6 +680,7 @@ def getReports(
         filter_value,
     )
 
+
 def getSubProcesses(
     config: Config,
     projectname: str,
@@ -687,7 +699,8 @@ def getSubProcesses(
         filter_type,
         filter_value,
     )
-    
+
+
 def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
     """Deletes a list of Defined Columns by their IDs."""
     _generic_metadata_delete(config, definedcolumns, "Columns")
@@ -717,13 +730,16 @@ def deleteApplications(config: Config, applications: List[str]) -> None:
     """Deletes a list of Pages by their IDs."""
     _generic_metadata_delete(config, applications, "Pages")
 
+
 def deleteDiagrams(config: Config, diagrams: List[str]) -> None:
     """Deletes a list of Diagrams by their IDs."""
     _generic_metadata_delete(config, diagrams, "Diagrams")
 
+
 def deleteReports(config: Config, reports: List[str]) -> None:
     """Deletes a list of Reports by their IDs."""
     _generic_metadata_delete(config, reports, "Reports")
+
 
 def deleteSubprocesses(config: Config, subprocesses: List[str]) -> None:
     """Deletes a list of SubProcesses by their IDs."""
@@ -773,21 +789,20 @@ def createApplications(
         config, projectname, applications, "Applications", getApplications
     )
 
-def createDiagrams(
-    config: Config, projectname: str, diagrams: List[Diagram]
-) -> None:
+
+def createDiagrams(config: Config, projectname: str, diagrams: List[Diagram]) -> None:
     """Creates or updates a list of Diagrams."""
     _generic_metadata_create_or_update(
         config, projectname, diagrams, "Diagrams", getDiagrams
     )
 
-def createReports(
-    config: Config, projectname: str, reports: List[Report]
-) -> None:
+
+def createReports(config: Config, projectname: str, reports: List[Report]) -> None:
     """Creates or updates a list of Reports."""
     _generic_metadata_create_or_update(
         config, projectname, reports, "Reports", getReports
     )
+
 
 def createSubProcesses(
     config: Config, projectname: str, subprocesses: List[SubProcess]
@@ -796,6 +811,28 @@ def createSubProcesses(
     _generic_metadata_create_or_update(
         config, projectname, subprocesses, "SubProcess", getSubProcesses
     )
+
+
+def getDependencyTree(config: Config, id: str) -> DependencyTree:
+    # Initialize request
+    headers = config.connection_get_headers()
+    data = {"id": id}
+
+    response = requests.get(
+        f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Metrics/DependencyTree",
+        headers=headers,
+        params=data,
+    )
+
+    if response.status_code != 200:
+        log_error(
+            f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Metrics/DependencyTree",
+        )
+        return None
+
+    data = json.loads(response.text)
+    return DependencyTree.from_dict(data) 
+
 
 def getImportedColumns(
     config: Config,

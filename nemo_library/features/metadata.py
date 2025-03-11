@@ -5,6 +5,7 @@ import json
 import logging
 from pathlib import Path
 import re
+import pandas as pd
 from typing import Optional, Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.projects import (
@@ -31,6 +32,7 @@ from nemo_library.features.projects import (
     getApplications,
     getAttributeGroups,
     getDefinedColumns,
+    getDependencyTree,
     getDiagrams,
     getImportedColumns,
     getMetrics,
@@ -42,6 +44,7 @@ from nemo_library.features.projects import (
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
+from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.model.diagram import Diagram
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
@@ -62,14 +65,13 @@ def MetaDataLoad(
 ) -> None:
 
     functions = {
-        "definedcolumns": getDefinedColumns,
-        "metrics": getMetrics,
-        "attributegroups": getAttributeGroups,
-        "pages": getPages,
         "applications": getApplications,
+        "attributegroups": getAttributeGroups,
+        "definedcolumns": getDefinedColumns,
         "diagrams": getDiagrams,
+        "metrics": getMetrics,
+        "pages": getPages,
         "reports": getReports,
-        "subprocesses": getSubProcesses,
     }
 
     for name, func in functions.items():
@@ -81,11 +83,237 @@ def MetaDataLoad(
             filter_value=FilterValue.DISPLAYNAME,
         )
 
-        if name == "attributegroups":
-            hierarchy, _ = _attribute_groups_build_hierarchy(data)
-            data = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
-
         _export_data_to_json(config, name, data)
+
+
+def MetaDataCreate(
+    config: Config,
+    projectname: str,
+) -> None:
+
+    # load data from model (JSON)
+    applications_model = _load_data_from_json(config, "applications", Application)
+    attributegroups_model = _load_data_from_json(
+        config, "attributegroups", AttributeGroup
+    )
+    definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
+    diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
+    metrics_model = _load_data_from_json(config, "metrics", Metric)
+    pages_model = _load_data_from_json(config, "pages", Page)
+    reports_model = _load_data_from_json(config, "reports", Report)
+
+    # generate objects based on modell
+    tiles_model = _generate_tiles(metrics_model)
+
+    # sort attribute groups
+    hierarchy, _ = _attribute_groups_build_hierarchy(attributegroups_model)
+    attributegroups_model = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
+
+    # load data from NEMO
+    applications_nemo = _fetch_data_from_nemo(config, projectname, getApplications)
+    attributegroups_nemo = _fetch_data_from_nemo(config, projectname, getAttributeGroups)
+    definedcolumns_nemo = _fetch_data_from_nemo(config, projectname, getDefinedColumns)
+    diagrams_nemo = _fetch_data_from_nemo(config, projectname, getDiagrams)
+    metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics)
+    pages_nemo = _fetch_data_from_nemo(config, projectname, getPages)
+    reports_nemo = _fetch_data_from_nemo(config, projectname, getReports)
+    tiles_nemo = _fetch_data_from_nemo(config, projectname, getTiles)
+
+    # reconcile data
+    deletions: Dict[str, List[T]] = {}
+    updates: Dict[str, List[T]] = {}
+    creates: Dict[str, List[T]] = {}
+
+    for key, model_list, nemo_list in [
+        ("applications", applications_model, applications_nemo),
+        ("attributegroups", attributegroups_model, attributegroups_nemo),
+        ("definedcolumns", definedcolumns_model, definedcolumns_nemo),
+        ("diagrams", diagrams_model, diagrams_nemo),
+        ("metrics", metrics_model, metrics_nemo),
+        ("pages", pages_model, pages_nemo),
+        ("reports", reports_model, reports_nemo),
+        ("tiles", tiles_model, tiles_nemo),
+    ]:
+        nemo_list_cleaned = copy.deepcopy(nemo_list)
+        nemo_list_cleaned = _clean_fields(nemo_list_cleaned)
+
+        deletions[key] = _find_deletions(model_list, nemo_list)
+        updates[key] = _find_updates(model_list, nemo_list_cleaned)
+        creates[key] = _find_new_objects(model_list, nemo_list)
+
+    # Start with deletions
+    delete_functions = {
+        "applications": deleteApplications,
+        "pages": deletePages,
+        "tiles": deleteTiles,
+        "metrics": deleteMetrics,
+        "definedcolumns": deleteDefinedColumns,
+        "attributegroups": deleteAttributeGroups,
+        "diagrams": deleteDiagrams,
+        "reports": deleteReports,
+    }
+
+    for key, delete_function in delete_functions.items():
+        if deletions[key]:
+            objects_to_delete = [data_nemo.id for data_nemo in deletions[key]]
+            delete_function(config=config, **{key: objects_to_delete})
+
+    # Now do updates and creates in a reverse  order
+    create_functions = {
+        "reports": createReports,
+        "diagrams": createDiagrams,
+        "attributegroups": createAttributeGroups,
+        "definedcolumns": createDefinedColumns,
+        "metrics": createMetrics,
+        "tiles": createTiles,
+        "pages": createPages,
+        "applications": createApplications,
+    }
+
+    for key, create_function in create_functions.items():
+        # create new objects first
+        if creates[key]:
+            create_function(
+                config=config, projectname=projectname, **{key: creates[key]}
+            )
+        # now the changes
+        if updates[key]:
+            create_function(
+                config=config, projectname=projectname, **{key: updates[key]}
+            )
+
+    # sub processes and focus order depends on dependency tree for objects
+    # refresh data from server
+    metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics)
+    attributegroups_nemo = _fetch_data_from_nemo(
+        config, projectname, getAttributeGroups
+    )
+    imported_columns_df = getImportedColumns(config, projectname)
+
+    metric_lookup = {metric.internalName: metric for metric in metrics_nemo}
+    dependency_tree = {
+        metric.internalName: list(
+            set(_collect_node_internal_names(d)))  
+        for metric in metrics_nemo
+        if (d := getDependencyTree(config=config, id=metric.id)) is not None  
+    }    
+
+    # reconcile focus order now
+    for metric_internal_name, values in dependency_tree.items():
+        imported_columns_filtered_df = imported_columns_df[
+            imported_columns_df["internalName"].isin(values)
+        ]
+        for idx, row in imported_columns_filtered_df.iterrows():
+            if (
+                row["parentAttributeGroupInternalName"]
+                != metric_lookup[metric_internal_name].parentAttributeGroupInternalName
+            ):
+
+                # special case: we have the restriction, that we cannot have linked attributes and
+                # thus some fields might be in different groups. We don't want to move them now
+                # we
+                if row["parentAttributeGroupInternalName"] not in [
+                    ag.internalName for ag in attributegroups_nemo
+                ]:
+                    logging.info(
+                        f"move: {row["internalName"]} from group {row["parentAttributeGroupInternalName"]} to {metric_lookup[metric_internal_name].parentAttributeGroupInternalName}"
+                    )
+                    focusMoveAttributeBefore(
+                        config=config,
+                        projectname=projectname,
+                        sourceInternalName=row["internalName"],
+                        groupInternalName=metric_lookup[
+                            metric_internal_name
+                        ].parentAttributeGroupInternalName,
+                    )
+
+    # generate sub processes
+    subprocesses_nemo = _fetch_data_from_nemo(config, projectname, getSubProcesses)
+    subprocesses_model = [
+        SubProcess(
+            columnInternalNames=_date_columns(values,imported_columns_df),
+            description=metric_lookup[metric_internal_name].description,
+            descriptionTranslations=metric_lookup[
+                metric_internal_name
+            ].descriptionTranslations ,
+            displayName=metric_lookup[metric_internal_name].displayName,
+            displayNameTranslations=metric_lookup[
+                metric_internal_name
+            ].displayNameTranslations,
+            groupByAggregations={},
+            groupByColumn="",
+            internalName=metric_lookup[metric_internal_name].internalName,
+            isAggregation=False,
+            timeUnit="days",
+            id="",
+            projectId="",
+            tenant="",
+        )
+        for (
+            metric_internal_name,
+            values,
+        ) in dependency_tree.items()
+        if len(_date_columns(values,imported_columns_df)) > 1
+    ]
+
+    # reconcile data
+    deletions: Dict[str, List[T]] = {}
+    updates: Dict[str, List[T]] = {}
+    creates: Dict[str, List[T]] = {}
+
+    for key, model_list, nemo_list in [
+        ("subprocesses", subprocesses_model, subprocesses_nemo),
+    ]:
+        nemo_list_cleaned = copy.deepcopy(nemo_list)
+        nemo_list_cleaned = _clean_fields(nemo_list_cleaned)
+
+        deletions[key] = _find_deletions(model_list, nemo_list)
+        updates[key] = _find_updates(model_list, nemo_list_cleaned)
+        creates[key] = _find_new_objects(model_list, nemo_list)
+
+    # Start with deletions
+    delete_functions = {
+        "subprocesses": deleteSubprocesses,
+    }
+
+    for key, delete_function in delete_functions.items():
+        if deletions[key]:
+            objects_to_delete = [data_nemo.id for data_nemo in deletions[key]]
+            delete_function(config=config, **{key: objects_to_delete})
+
+    # Now do updates and creates in a reverse  order
+    create_functions = {
+        "subprocesses": createSubProcesses,
+    }
+
+    for key, create_function in create_functions.items():
+        # create new objects first
+        if creates[key]:
+            create_function(
+                config=config, projectname=projectname, **{key: creates[key]}
+            )
+        # now the changes
+        if updates[key]:
+            create_function(
+                config=config, projectname=projectname, **{key: updates[key]}
+            )
+
+def _date_columns(columns: List[str],imported_columns_df: pd.DataFrame) -> List[str]:
+    date_cols = []
+    for col in columns:
+        col_df = imported_columns_df[imported_columns_df["internalName"]==col]
+        if len(col_df) == 1 and col_df["dataType"].iloc[0] == "date":
+            date_cols.append(col)
+            
+    return date_cols            
+    
+def _collect_node_internal_names(tree: DependencyTree) -> List[str]:
+    names = [tree.nodeInternalName]  
+    for dep in tree.dependencies:
+        names.extend(
+            _collect_node_internal_names(dep)
+        ) 
+    return names
 
 
 def _attribute_groups_build_hierarchy(attribute_groups):
@@ -111,150 +339,12 @@ def attribute_groups_sort_hierarchy(hierarchy, root_key=None):
     return sorted_list
 
 
-def MetaDataCreate(
-    config: Config,
-    projectname: str,
-) -> None:
-
-    # load data from model and nemo
-    (
-        definedcolumns_model,
-        metrics_model,
-        attributegroups_model,
-        tiles_model,
-        pages_model,
-        applications_model,
-        diagrams_model,
-        reports_model,
-        subprocess_model,
-    ) = _load_model_from_json(config=config)
-
-    (
-        definedcolumns_nemo,
-        metrics_nemo,
-        attributegroups_nemo,
-        tiles_nemo,
-        pages_nemo,
-        applications_nemo,
-        diagrams_nemo,
-        reports_nemo,
-        subprocesses_nemo,
-    ) = _load_model_from_nemo(config=config, projectname=projectname)
-
-    # reconcile data
-    new_objects_found = _reconcile_model_and_nemo(
+def _fetch_data_from_nemo(config: Config, projectname: str, func):
+    return func(
         config=config,
         projectname=projectname,
-        definedcolumns_model=definedcolumns_model,
-        metrics_model=metrics_model,
-        attributegroups_model=attributegroups_model,
-        tiles_model=tiles_model,
-        pages_model=pages_model,
-        applications_model=applications_model,
-        diagrams_model=diagrams_model,
-        reports_model=reports_model,
-        subprocess_model=subprocess_model,
-        definedcolumns_nemo=definedcolumns_nemo,
-        metrics_nemo=metrics_nemo,
-        tiles_nemo=tiles_nemo,
-        attributegroups_nemo=attributegroups_nemo,
-        pages_nemo=pages_nemo,
-        applications_nemo=applications_nemo,
-        diagrams_nemo=diagrams_nemo,
-        reports_nemo=reports_nemo,
-        subprocesses_nemo=subprocesses_nemo,
-    )
-
-    # move attributes and groups
-    if new_objects_found:
-        _move_objects_in_focus(
-            config=config,
-            projectname=projectname,
-            defined_columns=definedcolumns_model,
-            metrics=metrics_model,
-            attribute_groups=attributegroups_model,
-        )
-
-
-def _load_model_from_json(config: Config) -> (
-    List[DefinedColumn],
-    List[Metric],
-    List[AttributeGroup],
-    List[Tile],
-    List[Page],
-    List[Application],
-    List[Diagram],
-    List[Report],
-    List[SubProcess],
-):  # type: ignore
-    definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
-    metrics_model = _load_data_from_json(config, "metrics", Metric)
-    attributegroups_model = _load_data_from_json(
-        config, "attributegroups", AttributeGroup
-    )
-    pages_model = _load_data_from_json(config, "pages", Page)
-    applications_model = _load_data_from_json(config, "applications", Application)
-    diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
-    tiles_model = _generate_tiles(metrics_model)
-    reports_model = _load_data_from_json(config, "reports", Report)
-    subprocess_model = _load_data_from_json(config, "subprocesses", SubProcess)
-
-    return (
-        definedcolumns_model,
-        metrics_model,
-        attributegroups_model,
-        tiles_model,
-        pages_model,
-        applications_model,
-        diagrams_model,
-        reports_model,
-        subprocess_model,
-    )
-
-
-def _fetch_data(func, **kwargs):
-    return func(**kwargs)
-
-
-def _load_model_from_nemo(config: Config, projectname: str) -> (
-    List[DefinedColumn],
-    List[Metric],
-    List[AttributeGroup],
-    List[Tile],
-    List[Page],
-    List[Application],
-    List[Diagram],
-    List[SubProcess],
-):  # type: ignore
-
-    def fetchData(config: Config, projectname: str, func):
-        return func(
-            config=config,
-            projectname=projectname,
-            filter="(Conservative)",
-            filter_type=FilterType.STARTSWITH,
-        )
-
-    definedcolumns_nemo = fetchData(config, projectname, getDefinedColumns)
-    metrics_nemo = fetchData(config, projectname, getMetrics)
-    tiles_nemo = fetchData(config, projectname, getTiles)
-    attributegroups_nemo = fetchData(config, projectname, getAttributeGroups)
-    pages_nemo = fetchData(config, projectname, getPages)
-    applications_nemo = fetchData(config, projectname, getApplications)
-    diagrams_nemo = fetchData(config, projectname, getDiagrams)
-    reports_nemo = fetchData(config, projectname, getReports)
-    subprocesses_nemo = fetchData(config, projectname, getSubProcesses)
-
-    return (
-        definedcolumns_nemo,
-        metrics_nemo,
-        attributegroups_nemo,
-        tiles_nemo,
-        pages_nemo,
-        applications_nemo,
-        diagrams_nemo,
-        reports_nemo,
-        subprocesses_nemo,
+        filter="(Conservative)",
+        filter_type=FilterType.STARTSWITH,
     )
 
 
@@ -298,130 +388,39 @@ def _generate_tiles(metrics: List[Metric]) -> List[Tile]:
     return tiles
 
 
-def _reconcile_model_and_nemo(
-    config: Config,
-    projectname: str,
-    definedcolumns_model: List[DefinedColumn],
-    metrics_model: List[Metric],
-    attributegroups_model: List[AttributeGroup],
-    tiles_model: List[Tile],
-    pages_model: List[Page],
-    applications_model: List[Application],
-    diagrams_model: List[Diagram],
-    reports_model: List[Report],
-    subprocess_model: List[SubProcess],
-    definedcolumns_nemo: List[DefinedColumn],
-    metrics_nemo: List[Metric],
-    tiles_nemo: List[Tile],
-    attributegroups_nemo: List[AttributeGroup],
-    pages_nemo: List[Page],
-    applications_nemo: List[Application],
-    diagrams_nemo: List[Diagram],
-    reports_nemo: List[Report],
-    subprocesses_nemo: List[SubProcess],
-) -> bool:
-    def find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:
-        model_keys = {obj.internalName for obj in model_list}
-        return [obj for obj in nemo_list if obj.internalName not in model_keys]
+def _find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:
+    model_keys = {obj.internalName for obj in model_list}
+    return [obj for obj in nemo_list if obj.internalName not in model_keys]
 
-    def find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
-        updates = []
-        nemo_dict = {getattr(obj, "internalName"): obj for obj in nemo_list}
-        for model_obj in model_list:
-            key = getattr(model_obj, "internalName")
-            if key in nemo_dict:
-                nemo_obj = nemo_dict[key]
-                if is_dataclass(model_obj) and is_dataclass(nemo_obj):
-                    differences = {
-                        attr.name: (
-                            getattr(model_obj, attr.name),
-                            getattr(nemo_obj, attr.name),
-                        )
-                        for attr in fields(model_obj)
-                        if getattr(model_obj, attr.name) != getattr(nemo_obj, attr.name)
-                    }
 
-                if differences:
-                    for attrname, (old_value, new_value) in differences.items():
-                        logging.info(f"{attrname}: {old_value} --> {new_value}")
-                    updates.append(model_obj)
+def _find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
+    updates = []
+    nemo_dict = {getattr(obj, "internalName"): obj for obj in nemo_list}
+    for model_obj in model_list:
+        key = getattr(model_obj, "internalName")
+        if key in nemo_dict:
+            nemo_obj = nemo_dict[key]
+            if is_dataclass(model_obj) and is_dataclass(nemo_obj):
+                differences = {
+                    attr.name: (
+                        getattr(model_obj, attr.name),
+                        getattr(nemo_obj, attr.name),
+                    )
+                    for attr in fields(model_obj)
+                    if getattr(model_obj, attr.name) != getattr(nemo_obj, attr.name)
+                }
 
-        return updates
+            if differences:
+                for attrname, (old_value, new_value) in differences.items():
+                    logging.info(f"{attrname}: {old_value} --> {new_value}")
+                updates.append(model_obj)
 
-    def find_new_objects(model_list: List[T], nemo_list: List[T]) -> List[T]:
-        nemo_keys = {getattr(obj, "internalName") for obj in nemo_list}
-        return [
-            obj for obj in model_list if getattr(obj, "internalName") not in nemo_keys
-        ]
+    return updates
 
-    deletions: Dict[str, List[T]] = {}
-    updates: Dict[str, List[T]] = {}
-    creates: Dict[str, List[T]] = {}
 
-    for key, model_list, nemo_list in [
-        ("definedcolumns", definedcolumns_model, definedcolumns_nemo),
-        ("metrics", metrics_model, metrics_nemo),
-        ("tiles", tiles_model, tiles_nemo),
-        ("attributegroups", attributegroups_model, attributegroups_nemo),
-        ("applications", applications_model, applications_nemo),
-        ("pages", pages_model, pages_nemo),
-        ("diagrams", diagrams_model, diagrams_nemo),
-        ("reports", reports_model, reports_nemo),
-        ("subprocess", subprocess_model, subprocesses_nemo),
-    ]:
-        nemo_list_cleaned = copy.deepcopy(nemo_list)
-        nemo_list_cleaned = _clean_fields(nemo_list_cleaned)
-
-        deletions[key] = find_deletions(model_list, nemo_list)
-        updates[key] = find_updates(model_list, nemo_list_cleaned)
-        creates[key] = find_new_objects(model_list, nemo_list)
-
-    # Start with deletions
-    delete_functions = {
-        "applications": deleteApplications,
-        "pages": deletePages,
-        "tiles": deleteTiles,
-        "metrics": deleteMetrics,
-        "definedcolumns": deleteDefinedColumns,
-        "attributegroups": deleteAttributeGroups,
-        "diagrams": deleteDiagrams,
-        "reports": deleteReports,
-        "subprocess": deleteSubprocesses,
-    }
-
-    for key, delete_function in delete_functions.items():
-        if deletions[key]:
-            objects_to_delete = [data_nemo.id for data_nemo in deletions[key]]
-            delete_function(config=config, **{key: objects_to_delete})
-
-    # Now do updates and creates in a dedicated order
-    create_functions = {
-        "attributegroups": createAttributeGroups,
-        "definedcolumns": createDefinedColumns,
-        "metrics": createMetrics,
-        "tiles": createTiles,
-        "pages": createPages,
-        "applications": createApplications,
-        "diagrams": createDiagrams,
-        "reports": createReports,
-        "subprocess": createSubProcesses,
-    }
-
-    new_objects = False
-    for key, create_function in create_functions.items():
-        # create new objects first
-        if creates[key]:
-            create_function(
-                config=config, projectname=projectname, **{key: creates[key]}
-            )
-            new_objects = True
-        # now the changes
-        if updates[key]:
-            create_function(
-                config=config, projectname=projectname, **{key: updates[key]}
-            )
-
-    return new_objects
+def _find_new_objects(model_list: List[T], nemo_list: List[T]) -> List[T]:
+    nemo_keys = {getattr(obj, "internalName") for obj in nemo_list}
+    return [obj for obj in model_list if getattr(obj, "internalName") not in nemo_keys]
 
 
 def _export_data_to_json(config: Config, file: str, data):
@@ -464,52 +463,3 @@ def _extract_fields(formulas_dict):
                 extracted_fields[key].update(fields)
 
     return {k: sorted(v) for k, v in extracted_fields.items()}
-
-
-def _move_objects_in_focus(
-    config: Config,
-    projectname: str,
-    defined_columns: List[DefinedColumn],
-    metrics: List[Metric],
-    attribute_groups: List[AttributeGroup],
-) -> None:
-
-    # move fields that belong to metrics and defined columns into according groups
-    fields = {}
-    for defined_column in defined_columns:
-        key = defined_column.parentAttributeGroupInternalName
-        if key not in fields:
-            fields[key] = []
-        fields[key].append(defined_column.formula)
-
-    for metric in metrics:
-        key = metric.parentAttributeGroupInternalName
-        if key not in fields:
-            fields[key] = []
-        fields[key].append(metric.aggregateBy)
-        fields[key].append(metric.dateColumn)
-        fields[key].append(metric.groupByColumn)
-        for agg in metric.groupByAggregations:
-            fields[key].append(agg)
-
-    # extract fields from formulae
-    fields_dict = _extract_fields(fields)
-
-    # remove doublicates
-    for key in fields:
-        fields_dict[key] = list(set(fields_dict[key]))
-
-    # move attributes now
-    fields_nemo = getImportedColumns(config=config, projectname=projectname)
-    fields_nemo_internal_names = fields_nemo["internalName"].to_list()
-    for key, fields in fields_dict.items():
-        logging.info(f"group {key}")
-        for field in fields:
-            if field in fields_nemo_internal_names:
-                logging.info(f"move object {field}")
-                focusMoveAttributeBefore(
-                    config=config,
-                    projectname=projectname,
-                    sourceInternalName=field,
-                    groupInternalName=key,
-                )

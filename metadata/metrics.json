@@ -684,12 +684,12 @@
         "displayName": "(Conservative) Purchasing Supplier Return Rate (count)",
         "displayNameTranslations": {},
         "groupByAggregations": {
+            "pur_order_doc_i_d": "max",
             "pur_ret_doc_line_i_d": "count",
-            "pur_stock_rec_line_i_d": "count",
-            "pur_order_doc_i_d": "max"
+            "pur_stock_rec_line_i_d": "count"
         },
         "groupByColumn": "",
-        "isCrawlable": true,
+        "isCrawlable": false,
         "optimizationOrientation": "Min",
         "optimizationTarget": false,
         "scopeId": null,

@@ -14,8 +14,8 @@ import pandas as pd
 import csv
 
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import createProject, getProjectID
-from nemo_library.utils.utils import log_error
+from nemo_library.features.nemo_projects_api import createImportedColumn, createProject, getImportedColumns, getProjectID
+from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name, log_error
 from nemo_library.features.import_configuration import ImportConfigurations
 
 __all__ = ["ReUploadDataFrame", "ReUploadFile"]
@@ -425,3 +425,66 @@ def _format_data(
     df[str_columns] = df[str_columns].map(escape_special_chars)
 
     return df
+
+
+def synchronizeCsvColsAndImportedColumns(
+    config: Config,
+    projectname: str,
+    filename: str,
+) -> None:
+    """
+    Synchronizes the columns from a CSV file with the imported columns in a specified project.
+
+    Args:
+        config (Config): Configuration object containing connection details and headers.
+        projectname (str): The name of the project where the synchronization will occur.
+        filename (str): The path to the CSV file to synchronize.
+
+    Returns:
+        None
+
+    Raises:
+        RuntimeError: If there are issues retrieving imported columns or reading the CSV file.
+
+    Notes:
+        - Retrieves the existing imported columns in the project using `getImportedColumns`.
+        - Reads the first line of the CSV file to get column names.
+        - Compares the column names from the CSV file with the imported columns.
+        - Creates new imported columns in the project for any CSV column names not already present.
+        - Uses utility functions `display_name`, `internal_name`, and `import_name` to format column names.
+    """
+    df = getImportedColumns(config, projectname)
+    importedColumns = df["internalName"].to_list() if not df.empty else []
+
+    importedColumns = getImportedColumns(config, projectname)["internalName"].to_list()
+
+    # Read the first line of the CSV file to get column names
+    with open(filename, "r") as file:
+        first_line = file.readline().strip()
+
+    # Split the first line into a list of column names
+    csv_display_names = first_line.split(";")
+    csv_display_names = [x.strip('"') for x in csv_display_names]
+
+    # Check if a record exists in the DataFrame for each column
+    for column_name in csv_display_names:
+        displayName = get_display_name(column_name)
+        internalName = get_internal_name(column_name)
+        importName = get_import_name(column_name)
+
+        # Check if the record with internal_name equal to the column name exists
+        if internalName in importedColumns:
+            logging.info(f"Record found for column '{column_name}' in the DataFrame.")
+        else:
+            logging.info(
+                f"******************************No record found for column '{column_name}' in the DataFrame."
+            )
+            createImportedColumn(
+                config=config,
+                projectname=projectname,
+                displayName=displayName,
+                dataType="string",
+                importName=importName,
+                internalName=internalName,
+                description="",
+            )

@@ -14,7 +14,7 @@ from nemo_library.model.report import Report
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
 from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
-from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile
+from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile, synchronizeCsvColsAndImportedColumns
 from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore
 from nemo_library.features.hubspot_handler import FetchDealFromHubSpotAndUploadToNEMO
 from nemo_library.features.import_configuration import ImportConfigurations
@@ -39,7 +39,6 @@ from nemo_library.features.nemo_projects_api import (
     getProjectList,
     getProjectProperty,
     setProjectMetaData,
-    synchronizeCsvColsAndImportedColumns,
 )
 from nemo_library.utils.utils import FilterType, FilterValue
 

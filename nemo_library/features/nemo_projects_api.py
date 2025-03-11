@@ -15,7 +15,7 @@ from nemo_library.utils.utils import (
 
 def getProjectList(
     config: Config,
-):
+) -> pd.DataFrame:
     """
     Fetches the list of projects from the NEMO API and returns it as a pandas DataFrame.
     Logs an error message if the API request fails.

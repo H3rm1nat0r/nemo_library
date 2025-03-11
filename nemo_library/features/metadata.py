@@ -8,7 +8,7 @@ import re
 import pandas as pd
 from typing import Optional, Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
-from nemo_library.features.persistence import _deserializeMetaDataObject, createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createSubProcesses, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteSubprocesses, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getSubProcesses, getTiles
+from nemo_library.features.nemo_persistence_api import _deserializeMetaDataObject, createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createSubProcesses, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteSubprocesses, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getSubProcesses, getTiles
 from nemo_library.features.projects import (
     FilterType,
     getDependencyTree,

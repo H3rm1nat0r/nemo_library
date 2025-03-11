@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
-from nemo_library.features.persistence import createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getTiles
+from nemo_library.features.nemo_persistence_api import createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getTiles
 from nemo_library.features.report import LoadReport, createOrUpdateReport, createReports, deleteReports, getReports
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup

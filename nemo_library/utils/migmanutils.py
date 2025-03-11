@@ -8,7 +8,7 @@ import pandas as pd
 import configparser
 
 from nemo_library.utils.config import Config
-from nemo_library.features.projects import getImportedColumns, getProjectList
+from nemo_library.features.nemo_projects_api import getImportedColumns, getProjectList
 from nemo_library.utils.utils import get_internal_name
 
 

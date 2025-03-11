@@ -5,7 +5,7 @@ import requests
 import json
 
 from nemo_library.utils.config import Config
-from nemo_library.features.projects import getImportedColumns, getProjectID
+from nemo_library.features.nemo_projects_api import getImportedColumns, getProjectID
 from nemo_library.utils.utils import log_error
 
 __all__ = ["focusMoveAttributeBefore", "focusCoupleAttributes"]

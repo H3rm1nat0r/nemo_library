@@ -5,7 +5,7 @@ from typing import Any, List, Type, TypeVar, get_type_hints
 
 import requests
 
-from nemo_library.features.projects import getProjectID
+from nemo_library.features.nemo_projects_api import getProjectID
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn

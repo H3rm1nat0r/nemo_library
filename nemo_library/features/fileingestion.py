@@ -14,7 +14,7 @@ import pandas as pd
 import csv
 
 from nemo_library.utils.config import Config
-from nemo_library.features.projects import createProject, getProjectID
+from nemo_library.features.nemo_projects_api import createProject, getProjectID
 from nemo_library.utils.utils import log_error
 from nemo_library.features.import_configuration import ImportConfigurations
 

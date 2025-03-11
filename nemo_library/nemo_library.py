@@ -3,7 +3,7 @@ import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
 from nemo_library.features.nemo_persistence_api import createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getTiles
-from nemo_library.features.report import LoadReport, createOrUpdateReport, createReports, deleteReports, getReports
+from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport, createReports, deleteReports, getReports
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
@@ -28,7 +28,7 @@ from nemo_library.features.migman_create_project_templates import (
 from nemo_library.features.migman_load_data import MigManLoadData
 from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
-from nemo_library.features.projects import (
+from nemo_library.features.nemo_projects_api import (
     createImportedColumn,
     createImportedColumns,
     createOrUpdateRule,

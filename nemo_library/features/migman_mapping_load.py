@@ -1,10 +1,10 @@
 import logging
 import os
 import pandas as pd
-from nemo_library.features.report import LoadReport
+from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
-from nemo_library.features.report import (
+from nemo_library.features.nemo_report_api import (
     createOrUpdateReport,
 )
 from nemo_library.utils.migmanutils import (

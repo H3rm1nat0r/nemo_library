@@ -9,12 +9,12 @@ import pandas as pd
 from typing import Optional, Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.nemo_persistence_api import _deserializeMetaDataObject, createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createSubProcesses, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteSubprocesses, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getSubProcesses, getTiles
-from nemo_library.features.projects import (
+from nemo_library.features.nemo_projects_api import (
     FilterType,
     getDependencyTree,
     getImportedColumns,
 )
-from nemo_library.features.report import createReports, deleteReports, getReports
+from nemo_library.features.nemo_report_api import createReports, deleteReports, getReports
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn

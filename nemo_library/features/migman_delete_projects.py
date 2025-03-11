@@ -1,6 +1,6 @@
 import logging
 from nemo_library.utils.config import Config
-from nemo_library.features.projects import deleteProject, getProjectList
+from nemo_library.features.nemo_projects_api import deleteProject, getProjectList
 
 __all__ = ["MigManDeleteProjects"]
 

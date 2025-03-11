@@ -1,7 +1,8 @@
 import logging
 import os
+from nemo_library.features.report import LoadReport
 from nemo_library.utils.config import Config
-from nemo_library.features.projects import LoadReport, getProjectList
+from nemo_library.features.projects import getProjectList
 from nemo_library.utils.migmanutils import (
     getNEMOStepsFrompAMigrationStatusFile,
     getProjectName,

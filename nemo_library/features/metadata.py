@@ -19,7 +19,6 @@ from nemo_library.features.projects import (
     createDiagrams,
     createMetrics,
     createPages,
-    createReports,
     createTiles,
     deleteApplications,
     deleteAttributeGroups,
@@ -27,7 +26,6 @@ from nemo_library.features.projects import (
     deleteDiagrams,
     deleteMetrics,
     deletePages,
-    deleteReports,
     deleteTiles,
     getApplications,
     getAttributeGroups,
@@ -37,10 +35,10 @@ from nemo_library.features.projects import (
     getImportedColumns,
     getMetrics,
     getPages,
-    getReports,
     getSubProcesses,
     getTiles,
 )
+from nemo_library.features.report import createReports, deleteReports, getReports
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn

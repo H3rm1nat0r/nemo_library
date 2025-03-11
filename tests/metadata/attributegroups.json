@@ -1,0 +1,54 @@
+[
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing",
+        "parentAttributeGroupInternalName": "conservative_global",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing Replenishment",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_replenishment",
+        "parentAttributeGroupInternalName": "conservative_purchasing_delivery",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Global",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_global",
+        "parentAttributeGroupInternalName": null,
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "(Conservative) Purchasing Delivery",
+        "displayNameTranslations": {},
+        "isCoupled": false,
+        "internalName": "conservative_purchasing_delivery",
+        "parentAttributeGroupInternalName": "conservative_purchasing",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    }
+]

@@ -1,0 +1,25 @@
+[
+    {
+        "active": true,
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(Conservative) Purchasing Advisor",
+        "displayNameTranslations": {},
+        "download": "",
+        "forecasts": [],
+        "formatCompact": false,
+        "internalName": "conservative_purchasing_advisor",
+        "links": [],
+        "models": [],
+        "pages": [
+            {
+                "order": 0,
+                "page": "conservative_purchasing_advisor_overview"
+            }
+        ],
+        "scopeName": "",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    }
+]

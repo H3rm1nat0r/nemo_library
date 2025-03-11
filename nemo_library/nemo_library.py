@@ -2,6 +2,7 @@ from typing import List
 import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
+from nemo_library.features.report import LoadReport, createOrUpdateReport, createReports, deleteReports, getReports
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
@@ -27,7 +28,6 @@ from nemo_library.features.migman_load_data import MigManLoadData
 from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.projects import (
-    LoadReport,
     createApplications,
     createAttributeGroups,
     createDefinedColumns,
@@ -35,11 +35,9 @@ from nemo_library.features.projects import (
     createImportedColumn,
     createImportedColumns,
     createMetrics,
-    createOrUpdateReport,
     createOrUpdateRule,
     createPages,
     createProject,
-    createReports,
     createTiles,
     deleteApplications,
     deleteAttributeGroups,
@@ -48,7 +46,6 @@ from nemo_library.features.projects import (
     deleteMetrics,
     deletePages,
     deleteProject,
-    deleteReports,
     deleteTiles,
     getApplications,
     getAttributeGroups,
@@ -60,7 +57,6 @@ from nemo_library.features.projects import (
     getProjectID,
     getProjectList,
     getProjectProperty,
-    getReports,
     getTiles,
     setProjectMetaData,
     synchronizeCsvColsAndImportedColumns,

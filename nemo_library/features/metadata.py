@@ -312,10 +312,7 @@ def _date_columns(
             if ic_search.internalName == col:
                 ic = ic_search
 
-        if not ic:
-            log_error(f"column {col} not found")
-
-        if ic.dataType == "date":
+        if ic and ic.dataType == "date":
             date_cols.append(col)
 
     return date_cols
@@ -450,6 +447,7 @@ def _clean_fields(data):
         element.tenant = ""
         element.projectId = ""
         element.tileSourceID = ""
+        element.focusOrder = ""
 
         if isinstance(element, Diagram):
             for value in element.values:

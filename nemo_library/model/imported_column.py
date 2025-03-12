@@ -1,6 +1,8 @@
 from dataclasses import dataclass, asdict, field
 from typing import Optional
 
+from nemo_library.utils.utils import get_import_name, get_internal_name
+
 
 @dataclass
 class ImportedColumn:
@@ -15,6 +17,7 @@ class ImportedColumn:
     importName: str = None
     stringSize: int = 0
     unit: str = ""
+    focusOrder: str = ""
     internalName: str = None
     parentAttributeGroupInternalName: str = None
     id: str = ""
@@ -25,8 +28,8 @@ class ImportedColumn:
         return asdict(self)
 
     def __post_init__(self):
-        if self.importName is None:  
-            self.importName = self.displayName.lower()
+        if self.importName is None:
+            self.importName = get_import_name(self.displayName)
 
-        if self.internalName is None:  
-            self.internalName = self.importName          
+        if self.internalName is None:
+            self.internalName = get_internal_name(self.displayName)

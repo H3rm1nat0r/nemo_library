@@ -3,8 +3,10 @@ import pytest
 import pandas as pd
 
 from nemo_library import NemoLibrary
+from nemo_library.model.imported_column import ImportedColumn
 
 IC_PROJECT_NAME = "gs_unit_test_Intercompany"
+
 
 def getNL():
     return NemoLibrary(
@@ -60,17 +62,13 @@ def test_createProject():
     )
     projects = nl.getProjectList()["displayName"].to_list()
     assert IC_PROJECT_NAME in projects
-    
-    
 
 
 def test_createImportedColumn():
     nl = getNL()
-    nl.createImportedColumn(
+    nl.createImportedColumns(
         projectname=IC_PROJECT_NAME,
-        displayName="Rechnungsdatum",
-        dataType="date",
-        description="Rechnungsdatum",
+        importedcolumns=[ImportedColumn(displayName="Rechnungsdatum", dataType="date")],
     )
     importedColumns = nl.getImportedColumns(IC_PROJECT_NAME)
     assert "Rechnungsdatum" in [ic.displayName for ic in importedColumns]
@@ -105,12 +103,16 @@ def test_setProjectMetaData():
     )
     assert True
 
+
 def test_ReUploadDataFrame():
     nl = getNL()
-    df = pd.read_csv("./tests/intercompany_NEMO.csv",sep=";")
-    nl.ReUploadDataFrame(projectname=IC_PROJECT_NAME,df=df,update_project_settings=False)
+    df = pd.read_csv("./tests/intercompany_NEMO.csv", sep=";")
+    nl.ReUploadDataFrame(
+        projectname=IC_PROJECT_NAME, df=df, update_project_settings=False
+    )
     assert True
-    
+
+
 def test_ReUploadFile():
     nl = getNL()
 
@@ -122,10 +124,12 @@ def test_ReUploadFile():
 
     assert True
 
+
 def test_focusMoveAttributeBefore():
     nl = getNL()
-    nl.focusMoveAttributeBefore(IC_PROJECT_NAME,"Mandant",None)
+    nl.focusMoveAttributeBefore(IC_PROJECT_NAME, "Mandant", None)
     assert True
+
 
 def test_createOrUpdateReport():
     nl = getNL()
@@ -198,7 +202,14 @@ FROM
 ORDER BY 
 	ACV DESC 
 """
-    nl.createOrUpdateReport(projectname=IC_PROJECT_NAME,displayName="(BI DATA) 21 NNN Reporting SaaS IC",querySyntax=select,internalName="bi_data_21_nnn_reporting_saas_ic",description="unit test")
+    nl.createOrUpdateReport(
+        projectname=IC_PROJECT_NAME,
+        displayName="(BI DATA) 21 NNN Reporting SaaS IC",
+        querySyntax=select,
+        internalName="bi_data_21_nnn_reporting_saas_ic",
+        description="unit test",
+    )
+
 
 def test_createOrUpdateRule():
     nl = getNL()
@@ -220,6 +231,3 @@ def test_deleteProject():
     nl.deleteProject(IC_PROJECT_NAME)
     projects = nl.getProjectList()["displayName"].to_list()
     assert not IC_PROJECT_NAME in projects
-
-
-    

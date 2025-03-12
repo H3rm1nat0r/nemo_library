@@ -53,7 +53,6 @@ def clean_meta_data(data):
     for element in data:
         for column in [
             "attributeGroupInternalName",
-            "focusOrder",
             "changedBy",
             "changedDate",
             "createdBy",

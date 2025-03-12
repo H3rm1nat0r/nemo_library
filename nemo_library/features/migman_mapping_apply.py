@@ -8,7 +8,7 @@ from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.focus import focusCoupleAttributes
-from nemo_library.features.nemo_projects_api import (
+from nemo_library.features.nemo_persistence_api import (
     createImportedColumns,
 )
 from nemo_library.utils.migmanutils import (
@@ -57,24 +57,22 @@ def _process_project(
     for mapping_column in mapping_columns:
         mapcol = f"Mapped_{mapping_column}"
         if not mapcol in ics_display_names:
-            new_columns.append(
-                {
-                    "displayName": get_display_name(mapcol),
-                    "importName": get_import_name(mapcol),
-                    "internalName": get_internal_name(mapcol),
-                    "description": f"Original value of {mapping_column}",
-                    "dataType": "string",
-                }
-            )
+            new_columns.append(ImportedColumn(
+                displayName=get_display_name(mapcol),
+                importName=get_import_name(mapcol),
+                internalName=get_internal_name(mapcol),
+                description= f"Original value of {mapping_column}",
+                dataType="string"
+            ))
 
     if new_columns:
         createImportedColumns(
             config=config,
             projectname=project,
-            columns=new_columns,
+            importedcolumns=new_columns,
         )
         logging.info(
-            f"project '{project}': columns created\n{json.dumps(new_columns,indent=2)}"
+            f"project '{project}': columns created\n{[json.dumps(col.to_dict(),indent=2) for col in new_columns]}"
         )
 
     # now lets fill these values

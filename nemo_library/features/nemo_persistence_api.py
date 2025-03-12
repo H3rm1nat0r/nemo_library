@@ -21,6 +21,7 @@ from nemo_library.utils.utils import FilterType, FilterValue, clean_meta_data, l
 
 T = TypeVar("T")
 
+
 def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
     """
     Recursively deserializes JSON data into a nested DataClass structure.
@@ -321,6 +322,7 @@ def getDefinedColumns(
         filter_value,
     )
 
+
 def getImportedColumns(
     config: Config,
     projectname: str,
@@ -366,6 +368,11 @@ def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
     _generic_metadata_delete(config, definedcolumns, "Columns")
 
 
+def deleteImportedColumns(config: Config, importedcolumns: List[str]) -> None:
+    """Deletes a list of Imported Columns by their IDs."""
+    _generic_metadata_delete(config, importedcolumns, "Columns")
+
+
 def deleteMetrics(config: Config, metrics: List[str]) -> None:
     """Deletes a list of Metrics by their IDs."""
     _generic_metadata_delete(config, metrics, "Metrics")
@@ -409,6 +416,13 @@ def createDefinedColumns(
         config, projectname, definedcolumns, "Columns", getDefinedColumns
     )
 
+def createImportedColumns(
+    config: Config, projectname: str, importedcolumns: List[ImportedColumn]
+) -> None:
+    """Creates or updates a list of ImportedColumns."""
+    _generic_metadata_create_or_update(
+        config, projectname, importedcolumns, "Columns", getImportedColumns
+    )
 
 def createMetrics(config: Config, projectname: str, metrics: List[Metric]) -> None:
     """Creates or updates a list of Metrics."""
@@ -459,4 +473,5 @@ def createSubProcesses(
     _generic_metadata_create_or_update(
         config, projectname, subprocesses, "SubProcess", getSubProcesses
     )
+
 

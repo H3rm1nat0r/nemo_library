@@ -3,6 +3,8 @@ import pytest
 from nemo_library import NemoLibrary
 from datetime import datetime
 
+from nemo_library.model.imported_column import ImportedColumn
+
 HS_PROJECT_NAME = "gs_unit_test_HubSpot"
 
 
@@ -22,27 +24,13 @@ def test_FetchDealFromHubSpotAndUploadToNEMO():
 
     nl.createProject(HS_PROJECT_NAME, "project for unit tests")
     new_columns = []
+    new_columns.append(ImportedColumn(displayName="deal_id", dataType="float"))
     new_columns.append(
-        {
-            "displayName": "deal_id",
-            "importName": "deal_id",
-            "internalName": "deal_id",
-            "description": "",
-            "dataType": "float",
-        }
-    )
-    new_columns.append(
-        {
-            "displayName": "update_closedate_new_value",
-            "importName": "update_closedate_new_value",
-            "internalName": "update_closedate_new_value",
-            "description": "",
-            "dataType": "date",
-        }
+        ImportedColumn(displayName="update_closedate_new_value", dataType="date")
     )
     nl.createImportedColumns(
         projectname=HS_PROJECT_NAME,
-        columns=new_columns,
+        importedcolumns=new_columns,
     )
     nl.setProjectMetaData(
         projectname=HS_PROJECT_NAME,

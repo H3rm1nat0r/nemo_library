@@ -1,12 +1,12 @@
 import logging
 import pandas as pd
-from nemo_library.features.nemo_persistence_api import getImportedColumns
+from nemo_library.features.nemo_persistence_api import createImportedColumns, getImportedColumns
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
+from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes
 from nemo_library.features.nemo_projects_api import (
-    createImportedColumns,
     createProject,
     getProjectList,
 )
@@ -129,21 +129,17 @@ def createMappingImportedColumnns(
     new_columns = []
     for idx, fld in enumerate(fields):
         if not fld in ics_display_name:
-            new_columns.append(
-                {
-                    "displayName": fld,
-                    "importName": get_import_name(fld),
-                    "internalName": get_internal_name(fld),
-                    "description": "",
-                    "dataType": "string",
-                    "focusOrder": f"{idx:03}",
-                }
-            )
+            new_columns.append(ImportedColumn(
+                displayName=fld,
+                dataType="string",
+                focusOrder=f"{idx:03}",
+            ))
+
     if new_columns:
         createImportedColumns(
             config=config,
             projectname=projectname,
-            columns=new_columns,
+            importedcolumns=new_columns,
         )
 
 

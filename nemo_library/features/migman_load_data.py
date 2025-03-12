@@ -5,12 +5,12 @@ import os
 import re
 import pandas as pd
 
-from nemo_library.features.nemo_persistence_api import getImportedColumns
+from nemo_library.features.nemo_persistence_api import createImportedColumns, getImportedColumns
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
+from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.nemo_projects_api import (
-    createImportedColumns,
     createOrUpdateRule,
     createProject,
     getProjectList,
@@ -157,21 +157,19 @@ def _load_data(
                 description = "\n".join(
                     [f"{key}: {value}" for key, value in coldb.items()]
                 )
-                new_columns.append(
-                    {
-                        "displayName": coldb["display_name"],
-                        "importName": coldb["import_name"],
-                        "internalName": coldb["internal_name"],
-                        "description": description,
-                        "dataType": "string",
-                        "focusOrder": f"{columns_migman.index(col):03}",
-                    }
-                )
+                new_columns.append(ImportedColumn(
+                    displayName=coldb["display_name"],
+                    importName=coldb["import_name"],
+                    internalName= coldb["internal_name"],
+                    description=description,
+                    dataType= "string",
+                    focusOrder= f"{columns_migman.index(col):03}",                    
+                ))
         if new_columns:
             createImportedColumns(
                 config=config,
                 projectname=project_name,
-                columns=new_columns,
+                importedcolumns=new_columns,
             )
 
         # now we have created all columns in NEMO. Upload data

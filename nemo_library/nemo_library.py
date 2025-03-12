@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
-from nemo_library.features.nemo_persistence_api import createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getImportedColumns, getMetrics, getPages, getTiles
+from nemo_library.features.nemo_persistence_api import createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createImportedColumns, createMetrics, createPages, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteImportedColumns, deleteMetrics, deletePages, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getImportedColumns, getMetrics, getPages, getTiles
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport, createReports, deleteReports, getReports
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
@@ -30,8 +30,6 @@ from nemo_library.features.migman_load_data import MigManLoadData
 from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.nemo_projects_api import (
-    createImportedColumn,
-    createImportedColumns,
     createOrUpdateRule,
     createProject,
     deleteProject,
@@ -280,52 +278,6 @@ class NemoLibrary:
     def MigManExportData(self) -> None:
         MigManExportData(self.config)
 
-
-    def createImportedColumns(self, projectname: str, columns: dict) -> None:
-        createImportedColumns(
-            config=self.config, projectname=projectname, columns=columns
-        )
-
-    def createImportedColumn(
-        self,
-        projectname: str,
-        displayName: str,
-        dataType: str,
-        importName: str = None,
-        internalName: str = None,
-        description: str = None,
-    ) -> None:
-        """
-        Creates a new imported column for a specified project in the NEMO system.
-
-        Args:
-            projectname (str): The name of the project to which the column will be added.
-            displayName (str): The display name of the column.
-            dataType (str): The data type of the column (e.g., "String", "Integer").
-            importName (str, optional): The name used for importing data into the column. Defaults to a sanitized version of `displayName`.
-            internalName (str, optional): The internal system name of the column. Defaults to a sanitized version of `displayName`.
-            description (str, optional): A description of the column. Defaults to an empty string.
-
-        Returns:
-            None
-
-        Raises:
-            RuntimeError: If the HTTP POST request to create the column fails (non-201 status code).
-
-        Notes:
-            - Generates `importName` and `internalName` from `displayName` if not explicitly provided.
-            - Sends an HTTP POST request to the appropriate endpoint with metadata for the new column.
-            - Logs and raises an exception if the request fails.
-        """
-        createImportedColumn(
-            self.config,
-            projectname,
-            displayName,
-            dataType,
-            importName,
-            internalName,
-            description,
-        )
 
     def ReUploadDataFrame(
         self,
@@ -758,6 +710,10 @@ class NemoLibrary:
         """Deletes a list of Defined Columns by their IDs."""
         deleteDefinedColumns(config=self.config,definedcolumns=definedcolumns)
 
+    def deleteImportedColumns(self, importedcolumns: List[str]) -> None:
+        """Deletes a list of Imported Columns by their IDs."""
+        deleteImportedColumns(config=self.config,importedcolumns=importedcolumns)
+
     def deleteMetrics(self, metrics: List[str]) -> None:
         """Deletes a list of Metrics by their IDs."""
         deleteMetrics(config=self.config,metrics=metrics)
@@ -791,6 +747,12 @@ class NemoLibrary:
     ) -> None:
         """Creates or updates a list of DefinedColumns."""
         createDefinedColumns(config=self.config,projectname=projectname,definedcolumns=definedcolumns)
+
+    def createImportedColumns(
+        self, projectname: str, importedcolumns: List[ImportedColumn]
+    ) -> None:
+        """Creates or updates a list of ImportedColumns."""
+        createImportedColumns(config=self.config,projectname=projectname,importedcolumns=importedcolumns)
 
     def createMetrics(self, projectname: str, metrics: List[Metric]) -> None:
         """Creates or updates a list of Metrics."""

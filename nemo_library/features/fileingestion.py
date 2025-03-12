@@ -16,10 +16,11 @@ import csv
 from nemo_library.features.nemo_persistence_api import (
     createImportedColumns,
     getImportedColumns,
+    getProjectID,
 )
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import createProject, getProjectID
+from nemo_library.features.nemo_projects_api import createProject
 from nemo_library.utils.utils import (
     get_internal_name,
     log_error,

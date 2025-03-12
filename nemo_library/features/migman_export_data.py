@@ -1,8 +1,8 @@
 import logging
 import os
+from nemo_library.features.nemo_persistence_api import getProjects
 from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import getProjectList
 from nemo_library.utils.migmanutils import (
     getNEMOStepsFrompAMigrationStatusFile,
     getProjectName,
@@ -26,7 +26,7 @@ def MigManExportData(config: Config) -> None:
     else:
         projects = config.get_migman_projects()
 
-    project_list_nemo = getProjectList(config)["displayName"].to_list()
+    project_list_nemo = [project.displayName for project in getProjects(config)]
     
     dbdf = load_database()
     for project in projects:

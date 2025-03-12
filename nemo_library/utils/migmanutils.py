@@ -5,11 +5,9 @@ import os
 import re
 import openpyxl
 import pandas as pd
-import configparser
 
-from nemo_library.features.nemo_persistence_api import getImportedColumns
+from nemo_library.features.nemo_persistence_api import getImportedColumns, getProjects
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import getProjectList
 from nemo_library.utils.utils import get_internal_name
 
 
@@ -106,16 +104,11 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
     migman_projects = config.get_migman_projects()
 
     # get data projects
-    projectList = getProjectList(config=config)["displayName"].to_list()
-    projectList = [
-        project
-        for project in projectList
-        if project in migman_projects
-    ]
+    projects_display_name_migman = [project.displayName for project in getProjects(config) if project.displayName in migman_projects]
 
     # scan projects for fields
     data = []
-    for project in projectList:
+    for project in projects_display_name_migman:
 
         logging.info(f"scan project '{project}' for mapping fields...")
 

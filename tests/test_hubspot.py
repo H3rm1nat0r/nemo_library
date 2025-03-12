@@ -18,9 +18,9 @@ def test_FetchDealFromHubSpotAndUploadToNEMO():
     nl = getNL()
 
     # check if project exists (should not)
-    projects = nl.getProjectList()["displayName"].to_list()
-    if HS_PROJECT_NAME in projects:
-        nl.deleteProject(HS_PROJECT_NAME)
+    project_id = nl.getProjectID(HS_PROJECT_NAME)
+    if project_id:
+        nl.deleteProjects([project_id])
 
     nl.createProject(HS_PROJECT_NAME, "project for unit tests")
     new_columns = []
@@ -39,5 +39,5 @@ def test_FetchDealFromHubSpotAndUploadToNEMO():
         corpcurr_value="EUR",
     )
     nl.FetchDealFromHubSpotAndUploadToNEMO(HS_PROJECT_NAME)
-    nl.deleteProject(HS_PROJECT_NAME)
+    nl.deleteProjects([nl.getProjectID(HS_PROJECT_NAME)])
     assert True

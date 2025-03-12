@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from nemo_library.features.nemo_persistence_api import createImportedColumns, getImportedColumns
+from nemo_library.features.nemo_persistence_api import createImportedColumns, getImportedColumns, getProjects
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.utils.config import Config
@@ -8,7 +8,6 @@ from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes
 from nemo_library.features.nemo_projects_api import (
     createProject,
-    getProjectList,
 )
 from nemo_library.utils.migmanutils import (
     getMappingFilePath,
@@ -17,8 +16,6 @@ from nemo_library.utils.migmanutils import (
 )
 from nemo_library.utils.utils import (
     get_display_name,
-    get_import_name,
-    get_internal_name,
 )
 
 __all__ = ["MigManCreateMapping"]
@@ -33,7 +30,7 @@ def MigManCreateMapping(config: Config):
     mappingrelationsdf = getMappingRelations(config=config)
 
     # get all projects
-    projectList = getProjectList(config=config)["displayName"].to_list()
+    projects_display_names = [project.displayName for project in getProjects()]
 
     # iterate every given field and check whether to create the appropriate project and upload data
     for field in mapping_fields:
@@ -46,7 +43,7 @@ def MigManCreateMapping(config: Config):
 
         # if project does not exist, create it
         projectname = f"Mapping {field}"
-        if not projectname in projectList:
+        if not projectname in projects_display_names:
 
             # create project
             createMappingProject(config=config, field=field, projectname=projectname)

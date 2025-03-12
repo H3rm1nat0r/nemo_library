@@ -5,7 +5,7 @@ import os
 import re
 import pandas as pd
 
-from nemo_library.features.nemo_persistence_api import createImportedColumns, getImportedColumns
+from nemo_library.features.nemo_persistence_api import createImportedColumns, getImportedColumns, getProjectID
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.utils.config import Config
@@ -13,7 +13,6 @@ from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.nemo_projects_api import (
     createOrUpdateRule,
     createProject,
-    getProjectList,
 )
 from nemo_library.utils.migmanutils import (
     getNEMOStepsFrompAMigrationStatusFile,
@@ -95,7 +94,8 @@ def _load_data(
 
         # does project exist? if not, create it
         new_project = False
-        if not project_name in getProjectList(config)["displayName"].to_list():
+        projectid = getProjectID(config,project_name)
+        if not projectid:
             new_project = True
             logging.info(f"Project not found in NEMO. Create it...")
             createProject(

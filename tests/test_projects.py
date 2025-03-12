@@ -14,12 +14,12 @@ def getNL():
     )
 
 
-def test_getProjectList():
+def test_getProjecs():
     nl = getNL()
-    df = nl.getProjectList()
-    assert len(df) > 0
-    first_row = df.iloc[0]
-    assert first_row["id"] == "00000000-0000-0000-0000-000000000001"
+    projects = nl.getProjects()
+    assert len(projects) > 0
+    first_project = projects[0]
+    assert first_project.id == "00000000-0000-0000-0000-000000000001"
 
 
 def test_getProjectID():
@@ -51,17 +51,17 @@ def test_createProject():
     nl = getNL()
 
     # check if project exists (should not)
-    projects = nl.getProjectList()["displayName"].to_list()
-    if IC_PROJECT_NAME in projects:
-        nl.deleteProject(IC_PROJECT_NAME)
+    projectid = nl.getProjectID(IC_PROJECT_NAME)
+    if projectid:
+        nl.deleteProjects([projectid])
 
     # now we can create the project
     nl.createProject(
         IC_PROJECT_NAME,
         "used for unit tests of nemo_library",
     )
-    projects = nl.getProjectList()["displayName"].to_list()
-    assert IC_PROJECT_NAME in projects
+    projectid = nl.getProjectID(IC_PROJECT_NAME)
+    assert projectid is not None
 
 
 def test_createImportedColumn():
@@ -228,6 +228,6 @@ def test_LoadReport():
 
 def test_deleteProject():
     nl = getNL()
-    nl.deleteProject(IC_PROJECT_NAME)
-    projects = nl.getProjectList()["displayName"].to_list()
-    assert not IC_PROJECT_NAME in projects
+    nl.deleteProjects([nl.getProjectID(IC_PROJECT_NAME)])
+    id = nl.getProjectID(IC_PROJECT_NAME)
+    assert id == None

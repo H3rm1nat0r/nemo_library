@@ -6,7 +6,6 @@ from typing import Any, List, Type, TypeVar, get_type_hints
 import pandas as pd
 import requests
 
-from nemo_library.features.nemo_projects_api import getProjectID
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
@@ -14,6 +13,7 @@ from nemo_library.model.diagram import Diagram
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
+from nemo_library.model.project import Project
 from nemo_library.model.subprocess import SubProcess
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
@@ -26,6 +26,7 @@ def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
     """
     Recursively deserializes JSON data into a nested DataClass structure.
     """
+    print(json.dumps(value,indent=4))
     if isinstance(value, list):
         # Check if we expect a list of DataClasses
         if hasattr(target_type, "__origin__") and target_type.__origin__ is list:
@@ -45,6 +46,39 @@ def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
             )
         return value  # Regular dictionary
     return value  # Primitive values
+
+
+def getProjectID(
+    config: Config,
+    projectname: str,
+) -> str:
+    """
+    Retrieves the unique project ID for a given project name.
+
+    Args:
+        config (Config): Configuration object containing connection details.
+        projectname (str): The name of the project for which to retrieve the ID.
+
+    Returns:
+        str: The unique identifier (ID) of the specified project.
+
+    Raises:
+        ValueError: If the project name cannot be uniquely identified in the project list.
+
+    Notes:
+        - This function relies on the `getProjectList` function to fetch the full project list.
+        - If multiple or no entries match the given project name, an error is logged, and the first matching ID is returned.
+    """
+    project = getProjects(
+        config,
+        filter=projectname,
+        filter_type=FilterType.EQUAL,
+        filter_value=FilterValue.DISPLAYNAME,
+    )
+    if len(project) != 1:
+        return None
+
+    return project[0].id
 
 
 def _generic_metadata_get(
@@ -362,6 +396,54 @@ def getSubProcesses(
         filter_value,
     )
 
+def getProjects(
+    config: Config,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Project]:
+    """Fetches Projects metadata with the given filters."""
+    
+    # cannot use the generic meta data getter, since this is "above" the other object
+    
+    headers = config.connection_get_headers()
+
+    response = requests.get(
+        config.get_config_nemo_url() + "/api/nemo-projects/projects", headers=headers
+    )
+    if response.status_code != 200:
+        log_error(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
+        )
+    data = json.loads(response.text)
+    
+    def match_filter(value: str, filter: str, filter_type: FilterType) -> bool:
+        """Applies the given filter to the value."""
+        if filter == "*":
+            return True
+        elif filter_type == FilterType.EQUAL:
+            return value == filter
+        elif filter_type == FilterType.STARTSWITH:
+            return value.startswith(filter)
+        elif filter_type == FilterType.ENDSWITH:
+            return value.endswith(filter)
+        elif filter_type == FilterType.CONTAINS:
+            return filter in value
+        elif filter_type == FilterType.REGEX:
+            return re.search(filter, value) is not None
+        return False
+
+    # Apply filter to the data
+    filtered_data = [
+        item
+        for item in data
+        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
+    ]
+
+    # Clean metadata and return the list of objects
+    cleaned_data = clean_meta_data(filtered_data)
+    return [_deserializeMetaDataObject(item, Project) for item in cleaned_data]    
+
 
 def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
     """Deletes a list of Defined Columns by their IDs."""
@@ -406,6 +488,10 @@ def deleteDiagrams(config: Config, diagrams: List[str]) -> None:
 def deleteSubprocesses(config: Config, subprocesses: List[str]) -> None:
     """Deletes a list of SubProcesses by their IDs."""
     _generic_metadata_delete(config, subprocesses, "SubProcess")
+
+def deleteProjects(config: Config, projects: List[str]) -> None:
+    """Deletes a list of projects by their IDs."""
+    _generic_metadata_delete(config, projects, "Project")
 
 
 def createDefinedColumns(

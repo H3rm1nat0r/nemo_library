@@ -2,8 +2,43 @@ from typing import List
 import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
-from nemo_library.features.nemo_persistence_api import createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createImportedColumns, createMetrics, createPages, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteImportedColumns, deleteMetrics, deletePages, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getImportedColumns, getMetrics, getPages, getTiles
-from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport, createReports, deleteReports, getReports
+from nemo_library.features.nemo_persistence_api import (
+    createApplications,
+    createAttributeGroups,
+    createDefinedColumns,
+    createDiagrams,
+    createImportedColumns,
+    createMetrics,
+    createPages,
+    createTiles,
+    deleteApplications,
+    deleteAttributeGroups,
+    deleteDefinedColumns,
+    deleteDiagrams,
+    deleteImportedColumns,
+    deleteMetrics,
+    deletePages,
+    deleteProjects,
+    deleteTiles,
+    getApplications,
+    getAttributeGroups,
+    getDefinedColumns,
+    getDiagrams,
+    getImportedColumns,
+    getMetrics,
+    getPages,
+    getProjectID,
+    getProjects,
+    getSubProcesses,
+    getTiles,
+)
+from nemo_library.features.nemo_report_api import (
+    LoadReport,
+    createOrUpdateReport,
+    createReports,
+    deleteReports,
+    getReports,
+)
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
@@ -11,11 +46,17 @@ from nemo_library.model.diagram import Diagram
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
+from nemo_library.model.project import Project
 from nemo_library.model.report import Report
+from nemo_library.model.subprocess import SubProcess
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
 from nemo_library.features.deficiency_mining import createOrUpdateRulesByConfigFile
-from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile, synchronizeCsvColsAndImportedColumns
+from nemo_library.features.fileingestion import (
+    ReUploadDataFrame,
+    ReUploadFile,
+    synchronizeCsvColsAndImportedColumns,
+)
 from nemo_library.features.focus import focusCoupleAttributes, focusMoveAttributeBefore
 from nemo_library.features.hubspot_handler import FetchDealFromHubSpotAndUploadToNEMO
 from nemo_library.features.import_configuration import ImportConfigurations
@@ -32,9 +73,6 @@ from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.nemo_projects_api import (
     createOrUpdateRule,
     createProject,
-    deleteProject,
-    getProjectID,
-    getProjectList,
     getProjectProperty,
     setProjectMetaData,
 )
@@ -78,23 +116,6 @@ class NemoLibrary:
 
         super().__init__()
 
-    def getProjectList(
-        self,
-    ) -> pd.DataFrame:
-        """
-        Fetches the list of projects from the NEMO API and returns it as a pandas DataFrame.
-        Logs an error message if the API request fails.
-
-        Args:
-            <None>
-        Returns:
-            pandas.DataFrame: A DataFrame containing the normalized project data.
-
-        Logs:
-            Error: If the API request fails (e.g., non-200 status code).
-        """
-
-        return getProjectList(self.config)
 
     def getProjectID(self, projectname: str) -> str:
         """
@@ -234,25 +255,6 @@ class NemoLibrary:
             corpcurr_value,
         )
 
-    def deleteProject(self, projectname: str) -> None:
-        """
-        Deletes a specified project from the NEMO system.
-
-        Args:
-            projectname (str): The name of the project to delete.
-
-        Returns:
-            None
-
-        Raises:
-            RuntimeError: If the HTTP DELETE request to delete the project fails (non-204 status code).
-
-        Notes:
-            - Fetches the project ID using `getProjectID`.
-            - Sends an HTTP DELETE request to the endpoint associated with the project's metadata.
-            - Logs an error if the request fails and raises an exception.
-        """
-        deleteProject(self.config, projectname)
 
     def MigManInitDatabase(self) -> None:
         MigManInitDatabase()
@@ -277,7 +279,6 @@ class NemoLibrary:
 
     def MigManExportData(self) -> None:
         MigManExportData(self.config)
-
 
     def ReUploadDataFrame(
         self,
@@ -593,7 +594,6 @@ class NemoLibrary:
             filter_value=filter_value,
         )
 
-
     def getTiles(
         self,
         projectname: str,
@@ -689,7 +689,7 @@ class NemoLibrary:
             filter_type=filter_type,
             filter_value=filter_value,
         )
-        
+
     def getReports(
         self,
         projectname: str,
@@ -706,84 +706,124 @@ class NemoLibrary:
             filter_value=filter_value,
         )
 
+    def getSubProcesses(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[SubProcess]:
+        """Fetches Reports metadata with the given filters."""
+        return getSubProcesses(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def getProjects(
+        self,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[Project]:
+        """Fetches Reports metadata with the given filters."""
+        return getProjects(
+            config=self.config,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
     def deleteDefinedColumns(self, definedcolumns: List[str]) -> None:
         """Deletes a list of Defined Columns by their IDs."""
-        deleteDefinedColumns(config=self.config,definedcolumns=definedcolumns)
+        deleteDefinedColumns(config=self.config, definedcolumns=definedcolumns)
 
     def deleteImportedColumns(self, importedcolumns: List[str]) -> None:
         """Deletes a list of Imported Columns by their IDs."""
-        deleteImportedColumns(config=self.config,importedcolumns=importedcolumns)
+        deleteImportedColumns(config=self.config, importedcolumns=importedcolumns)
 
     def deleteMetrics(self, metrics: List[str]) -> None:
         """Deletes a list of Metrics by their IDs."""
-        deleteMetrics(config=self.config,metrics=metrics)
+        deleteMetrics(config=self.config, metrics=metrics)
 
     def deleteTiles(self, tiles: List[str]) -> None:
         """Deletes a list of Tiles by their IDs."""
-        deleteTiles(config=self.config,tiles=tiles)
+        deleteTiles(config=self.config, tiles=tiles)
 
     def deleteAttributeGroups(self, attributegroups: List[str]) -> None:
         """Deletes a list of AttributeGroups by their IDs."""
-        deleteAttributeGroups(config=self.config,attributegroups=attributegroups)
+        deleteAttributeGroups(config=self.config, attributegroups=attributegroups)
 
     def deletePages(self, pages: List[str]) -> None:
         """Deletes a list of Pages by their IDs."""
-        deletePages(config=self.config,pages=pages)
+        deletePages(config=self.config, pages=pages)
 
     def deleteApplications(self, applications: List[str]) -> None:
         """Deletes a list of Pages by their IDs."""
-        deleteApplications(config=self.config,applications=applications)
+        deleteApplications(config=self.config, applications=applications)
 
     def deleteDiagrams(self, diagrams: List[str]) -> None:
         """Deletes a list of Diagrams by their IDs."""
-        deleteDiagrams(config=self.config,diagrams=diagrams)
+        deleteDiagrams(config=self.config, diagrams=diagrams)
 
     def deleteReports(self, reports: List[str]) -> None:
         """Deletes a list of Reports by their IDs."""
-        deleteReports(config=self.config,reports=reports)
+        deleteReports(config=self.config, reports=reports)
+
+    def deleteProjects(self, projects: List[str]) -> None:
+        """Deletes a list of Projects by their IDs."""
+        deleteProjects(config=self.config, projects=projects)
 
     def createDefinedColumns(
         self, projectname: str, definedcolumns: List[DefinedColumn]
     ) -> None:
         """Creates or updates a list of DefinedColumns."""
-        createDefinedColumns(config=self.config,projectname=projectname,definedcolumns=definedcolumns)
+        createDefinedColumns(
+            config=self.config, projectname=projectname, definedcolumns=definedcolumns
+        )
 
     def createImportedColumns(
         self, projectname: str, importedcolumns: List[ImportedColumn]
     ) -> None:
         """Creates or updates a list of ImportedColumns."""
-        createImportedColumns(config=self.config,projectname=projectname,importedcolumns=importedcolumns)
+        createImportedColumns(
+            config=self.config, projectname=projectname, importedcolumns=importedcolumns
+        )
 
     def createMetrics(self, projectname: str, metrics: List[Metric]) -> None:
         """Creates or updates a list of Metrics."""
-        createMetrics(config=self.config,projectname=projectname,metrics=metrics)
+        createMetrics(config=self.config, projectname=projectname, metrics=metrics)
 
     def createTiles(self, projectname: str, tiles: List[Tile]) -> None:
         """Creates or updates a list of Tiles."""
-        createTiles(config=self.config,projectname=projectname,tiles=tiles)
+        createTiles(config=self.config, projectname=projectname, tiles=tiles)
 
     def createAttributeGroups(
         self, projectname: str, attributegroups: List[AttributeGroup]
     ) -> None:
         """Creates or updates a list of AttributeGroups."""
-        createAttributeGroups(config=self.config,projectname=projectname,attributegroups=attributegroups)
+        createAttributeGroups(
+            config=self.config, projectname=projectname, attributegroups=attributegroups
+        )
 
     def createPages(self, projectname: str, pages: List[Page]) -> None:
         """Creates or updates a list of Pages."""
-        createPages(config=self.config,projectname=projectname,pages=pages)
+        createPages(config=self.config, projectname=projectname, pages=pages)
 
     def createApplications(
         self, projectname: str, applications: List[Application]
     ) -> None:
         """Creates or updates a list of Applications."""
-        createApplications(config=self.config,projectname=projectname,applications=applications)
+        createApplications(
+            config=self.config, projectname=projectname, applications=applications
+        )
 
-    def createDiagrams(
-        self, projectname: str, diagrams: List[Diagram]
-    ) -> None:
+    def createDiagrams(self, projectname: str, diagrams: List[Diagram]) -> None:
         """Creates or updates a list of Diagrams."""
-        createDiagrams(config=self.config,projectname=projectname,diagrams=diagrams)
+        createDiagrams(config=self.config, projectname=projectname, diagrams=diagrams)
 
     def createReports(self, projectname: str, reports: List[Report]) -> None:
         """Creates or updates a list of Reports."""
-        createReports(config=self.config,projectname=projectname,reports=reports)
+        createReports(config=self.config, projectname=projectname, reports=reports)

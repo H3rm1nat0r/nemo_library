@@ -4,72 +4,12 @@ import requests
 import json
 from typing import TypeVar
 
+from nemo_library.features.nemo_persistence_api import getProjectID
 from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import (
     log_error,
 )
-
-
-def getProjectList(
-    config: Config,
-) -> pd.DataFrame:
-    """
-    Fetches the list of projects from the NEMO API and returns it as a pandas DataFrame.
-    Logs an error message if the API request fails.
-
-    Args:
-        config (Config): Configuration object containing methods for generating headers
-                         and the NEMO API URL.
-
-    Returns:
-        pandas.DataFrame: A DataFrame containing the normalized project data.
-
-    Logs:
-        Error: If the API request fails (e.g., non-200 status code).
-    """
-
-    headers = config.connection_get_headers()
-
-    response = requests.get(
-        config.get_config_nemo_url() + "/api/nemo-projects/projects", headers=headers
-    )
-    if response.status_code != 200:
-        log_error(
-            f"request failed. Status: {response.status_code}, error: {response.text}"
-        )
-    resultjs = json.loads(response.text)
-    df = pd.json_normalize(resultjs)
-    return df
-
-
-def getProjectID(
-    config: Config,
-    projectname: str,
-) -> str:
-    """
-    Retrieves the unique project ID for a given project name.
-
-    Args:
-        config (Config): Configuration object containing connection details.
-        projectname (str): The name of the project for which to retrieve the ID.
-
-    Returns:
-        str: The unique identifier (ID) of the specified project.
-
-    Raises:
-        ValueError: If the project name cannot be uniquely identified in the project list.
-
-    Notes:
-        - This function relies on the `getProjectList` function to fetch the full project list.
-        - If multiple or no entries match the given project name, an error is logged, and the first matching ID is returned.
-    """
-    df = getProjectList(config)
-    crmproject = df[df["displayName"] == projectname]
-    if len(crmproject) != 1:
-        return None
-    project_id = crmproject["id"].to_list()[0]
-    return project_id
 
 
 def getProjectProperty(
@@ -225,43 +165,6 @@ def setProjectMetaData(
         log_error(
             f"Request failed. Status: {response.status_code}, error: {response.text}"
         )
-
-
-def deleteProject(config: Config, projectname: str) -> None:
-    """
-    Deletes a specified project from the NEMO system.
-
-    Args:
-        config (Config): Configuration object containing connection details and headers.
-        projectname (str): The name of the project to delete.
-
-    Returns:
-        None
-
-    Raises:
-        RuntimeError: If the HTTP DELETE request to delete the project fails (non-204 status code).
-
-    Notes:
-        - Fetches the project ID using `getProjectID`.
-        - Sends an HTTP DELETE request to the endpoint associated with the project's metadata.
-        - Logs an error if the request fails and raises an exception.
-    """
-
-    headers = config.connection_get_headers()
-    projectID = getProjectID(config, projectname)
-    if projectID:
-        response = requests.delete(
-            (
-                config.get_config_nemo_url()
-                + "/api/nemo-persistence/metadata/Project/{id}".format(id=projectID)
-            ),
-            headers=headers,
-        )
-
-        if response.status_code != 204:
-            log_error(
-                f"Request failed. Status: {response.status_code}, error: {response.text}"
-            )
 
 
 def getDependencyTree(config: Config, id: str) -> DependencyTree:

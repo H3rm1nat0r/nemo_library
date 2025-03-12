@@ -1,15 +1,12 @@
-import logging
+from nemo_library.features.nemo_persistence_api import deleteProjects, getProjects
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import deleteProject, getProjectList
 
 __all__ = ["MigManDeleteProjects"]
 
 
 def MigManDeleteProjects(config: Config) -> None:
-    projects = getProjectList(config)["displayName"].to_list()
-    for project in projects:
-        if not project in ["Business Processes","Master Data"]:
-            logging.info(f"Delete project {project}...")
-            deleteProject(config=config,projectname=project)
+    projects = getProjects(config)
+    to_delete = [project.id for project in projects if not project.displayName in ["Business Processes","Master Data"]]
+    deleteProjects(config,to_delete)
 
     

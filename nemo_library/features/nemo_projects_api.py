@@ -11,8 +11,6 @@ from nemo_library.utils.utils import (
 )
 
 
-
-
 def getProjectList(
     config: Config,
 ) -> pd.DataFrame:
@@ -251,16 +249,19 @@ def deleteProject(config: Config, projectname: str) -> None:
 
     headers = config.connection_get_headers()
     projectID = getProjectID(config, projectname)
-    ENDPOINT_URL = (
-        config.get_config_nemo_url()
-        + "/api/nemo-persistence/metadata/Project/{id}".format(id=projectID)
-    )
-    response = requests.delete(ENDPOINT_URL, headers=headers)
-
-    if response.status_code != 204:
-        log_error(
-            f"Request failed. Status: {response.status_code}, error: {response.text}"
+    if projectID:
+        response = requests.delete(
+            (
+                config.get_config_nemo_url()
+                + "/api/nemo-persistence/metadata/Project/{id}".format(id=projectID)
+            ),
+            headers=headers,
         )
+
+        if response.status_code != 204:
+            log_error(
+                f"Request failed. Status: {response.status_code}, error: {response.text}"
+            )
 
 
 def getDependencyTree(config: Config, id: str) -> DependencyTree:
@@ -281,50 +282,7 @@ def getDependencyTree(config: Config, id: str) -> DependencyTree:
         return None
 
     data = json.loads(response.text)
-    return DependencyTree.from_dict(data) 
-
-
-def getImportedColumns(
-    config: Config,
-    projectname: str,
-) -> pd.DataFrame:
-    """
-    Retrieves the imported columns for a specified project and returns them as a Pandas DataFrame.
-
-    Args:
-        config (Config): Configuration object containing connection details and headers.
-        projectname (str): The name of the project for which to retrieve imported columns.
-
-    Returns:
-        pd.DataFrame: A DataFrame containing metadata about the imported columns.
-
-    Raises:
-        RuntimeError: If the HTTP GET request to fetch the columns fails (non-200 status code).
-
-    Notes:
-        - Fetches the project ID using `getProjectID`.
-        - Sends an HTTP GET request to retrieve column metadata for the specified project.
-        - Parses the JSON response and converts it into a normalized Pandas DataFrame.
-        - Logs errors and raises exceptions for failed requests or invalid responses.
-    """
-
-    # initialize reqeust
-    headers = config.connection_get_headers()
-    project_id = getProjectID(config, projectname)
-    response = requests.get(
-        config.get_config_nemo_url()
-        + "/api/nemo-persistence/metadata/Columns/project/{projectId}/exported".format(
-            projectId=project_id
-        ),
-        headers=headers,
-    )
-    if response.status_code != 200:
-        log_error(
-            f"request failed. Status: {response.status_code}, error: {response.text}"
-        )
-    resultjs = json.loads(response.text)
-    df = pd.json_normalize(resultjs)
-    return df
+    return DependencyTree.from_dict(data)
 
 
 def createImportedColumns(config: Config, projectname: str, columns: dict) -> None:
@@ -513,5 +471,3 @@ def createOrUpdateRule(
             log_error(
                 f"Request failed. Status: {response.status_code}, error: {response.text}"
             )
-
-

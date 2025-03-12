@@ -4,8 +4,9 @@ import pandas as pd
 import requests
 import json
 
+from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import getImportedColumns, getProjectID
+from nemo_library.features.nemo_projects_api import getProjectID
 from nemo_library.utils.utils import log_error
 
 __all__ = ["focusMoveAttributeBefore", "focusCoupleAttributes"]
@@ -107,30 +108,26 @@ def focusCoupleAttributes(
     project_id = getProjectID(config, projectname)
 
     # map attribute names to internal names
-    imported_columnns_df = getImportedColumns(config=config, projectname=projectname)
+    ics = getImportedColumns(config=config, projectname=projectname)
+    ics_display = [ic.id for ic in ics if ic.displayName in attributenames]
 
-    attribute_ids = imported_columnns_df[
-        imported_columnns_df["displayName"].isin(attributenames)
-    ]["id"].to_list()
-    if len(attribute_ids) != len(attributenames):
+    if len(ics_display) != len(attributenames):
         log_error(
             f"Could not map all attributes to internal ids. Names given: {json.dumps(attributenames,indent=2)}, ids found: {json.dumps(attribute_ids,indent=2)}"
         )
 
+    # resolve previous attribute
+    previous_attribute_id = None
     if previous_attribute:
-        filterdf = imported_columnns_df[
-            imported_columnns_df["displayName"] == previous_attribute
-        ]
-        if len(filterdf) != 1:
+        for ic in ics:
+            if ic.displayName == previous_attribute:
+                previous_attribute_id = ic.id
+        if not previous_attribute_id:
             log_error(f"could not find previous attribute '{previous_attribute}'")
-        else:
-            previous_attribute_id = filterdf.iloc[0]["id"]
-    else:
-        previous_attribute_id = None
 
     # we can execute the API call now
     data = {
-        "attributeIds": attribute_ids,
+        "attributeIds": ics_display,
         "previousElementId": previous_attribute_id,
         "containingGroupInternalName": None,
     }

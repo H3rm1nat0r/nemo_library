@@ -8,25 +8,55 @@ import re
 import pandas as pd
 from typing import Optional, Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
-from nemo_library.features.nemo_persistence_api import _deserializeMetaDataObject, createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createSubProcesses, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteSubprocesses, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getSubProcesses, getTiles
-from nemo_library.features.nemo_projects_api import (
-    FilterType,
-    getDependencyTree,
+from nemo_library.features.nemo_persistence_api import (
+    _deserializeMetaDataObject,
+    createApplications,
+    createAttributeGroups,
+    createDefinedColumns,
+    createDiagrams,
+    createMetrics,
+    createPages,
+    createSubProcesses,
+    createTiles,
+    deleteApplications,
+    deleteAttributeGroups,
+    deleteDefinedColumns,
+    deleteDiagrams,
+    deleteMetrics,
+    deletePages,
+    deleteSubprocesses,
+    deleteTiles,
+    getApplications,
+    getAttributeGroups,
+    getDefinedColumns,
+    getDiagrams,
     getImportedColumns,
+    getMetrics,
+    getPages,
+    getSubProcesses,
+    getTiles,
 )
-from nemo_library.features.nemo_report_api import createReports, deleteReports, getReports
+from nemo_library.features.nemo_projects_api import (
+    getDependencyTree,
+)
+from nemo_library.features.nemo_report_api import (
+    createReports,
+    deleteReports,
+    getReports,
+)
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.model.diagram import Diagram
+from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.report import Report
 from nemo_library.model.tile import Tile
 from nemo_library.model.subprocess import SubProcess
 from nemo_library.utils.config import Config
-from nemo_library.utils.utils import FilterValue
+from nemo_library.utils.utils import FilterType, FilterValue, log_error
 
 __all__ = ["MetaDataLoad", "MetaDataCreate"]
 
@@ -85,7 +115,9 @@ def MetaDataCreate(
 
     # load data from NEMO
     applications_nemo = _fetch_data_from_nemo(config, projectname, getApplications)
-    attributegroups_nemo = _fetch_data_from_nemo(config, projectname, getAttributeGroups)
+    attributegroups_nemo = _fetch_data_from_nemo(
+        config, projectname, getAttributeGroups
+    )
     definedcolumns_nemo = _fetch_data_from_nemo(config, projectname, getDefinedColumns)
     diagrams_nemo = _fetch_data_from_nemo(config, projectname, getDiagrams)
     metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics)
@@ -162,40 +194,37 @@ def MetaDataCreate(
     attributegroups_nemo = _fetch_data_from_nemo(
         config, projectname, getAttributeGroups
     )
-    imported_columns_df = getImportedColumns(config, projectname)
+    ics = getImportedColumns(config, projectname)
 
     metric_lookup = {metric.internalName: metric for metric in metrics_nemo}
     dependency_tree = {
-        metric.internalName: list(
-            set(_collect_node_internal_names(d)))  
+        metric.internalName: list(set(_collect_node_internal_names(d)))
         for metric in metrics_nemo
-        if (d := getDependencyTree(config=config, id=metric.id)) is not None  
-    }    
+        if (d := getDependencyTree(config=config, id=metric.id)) is not None
+    }
 
     # reconcile focus order now
     for metric_internal_name, values in dependency_tree.items():
-        imported_columns_filtered_df = imported_columns_df[
-            imported_columns_df["internalName"].isin(values)
-        ]
-        for idx, row in imported_columns_filtered_df.iterrows():
+        ics_metric = [ic for ic in ics if ic.internalName in values]
+        for ic in ics_metric:
             if (
-                row["parentAttributeGroupInternalName"]
+                ic.parentAttributeGroupInternalName
                 != metric_lookup[metric_internal_name].parentAttributeGroupInternalName
             ):
 
                 # special case: we have the restriction, that we cannot have linked attributes and
                 # thus some fields might be in different groups. We don't want to move them now
                 # we
-                if row["parentAttributeGroupInternalName"] not in [
+                if ic.parentAttributeGroupInternalName not in [
                     ag.internalName for ag in attributegroups_nemo
                 ]:
                     logging.info(
-                        f"move: {row["internalName"]} from group {row["parentAttributeGroupInternalName"]} to {metric_lookup[metric_internal_name].parentAttributeGroupInternalName}"
+                        f"move: {ic.internalName} from group {ic.parentAttributeGroupInternalName} to {metric_lookup[metric_internal_name].parentAttributeGroupInternalName}"
                     )
                     focusMoveAttributeBefore(
                         config=config,
                         projectname=projectname,
-                        sourceInternalName=row["internalName"],
+                        sourceInternalName=ic.internalName,
                         groupInternalName=metric_lookup[
                             metric_internal_name
                         ].parentAttributeGroupInternalName,
@@ -205,11 +234,11 @@ def MetaDataCreate(
     subprocesses_nemo = _fetch_data_from_nemo(config, projectname, getSubProcesses)
     subprocesses_model = [
         SubProcess(
-            columnInternalNames=_date_columns(values,imported_columns_df),
+            columnInternalNames=_date_columns(values, ics),
             description=metric_lookup[metric_internal_name].description,
             descriptionTranslations=metric_lookup[
                 metric_internal_name
-            ].descriptionTranslations ,
+            ].descriptionTranslations,
             displayName=metric_lookup[metric_internal_name].displayName,
             displayNameTranslations=metric_lookup[
                 metric_internal_name
@@ -227,7 +256,7 @@ def MetaDataCreate(
             metric_internal_name,
             values,
         ) in dependency_tree.items()
-        if len(_date_columns(values,imported_columns_df)) > 1
+        if len(_date_columns(values, ics)) > 1
     ]
 
     # reconcile data
@@ -272,21 +301,30 @@ def MetaDataCreate(
                 config=config, projectname=projectname, **{key: updates[key]}
             )
 
-def _date_columns(columns: List[str],imported_columns_df: pd.DataFrame) -> List[str]:
+
+def _date_columns(
+    columns: List[str], imported_columns: List[ImportedColumn]
+) -> List[str]:
     date_cols = []
     for col in columns:
-        col_df = imported_columns_df[imported_columns_df["internalName"]==col]
-        if len(col_df) == 1 and col_df["dataType"].iloc[0] == "date":
+        ic = None
+        for ic_search in imported_columns:
+            if ic_search.internalName == col:
+                ic = ic_search
+
+        if not ic:
+            log_error(f"column {col} not found")
+
+        if ic.dataType == "date":
             date_cols.append(col)
-            
-    return date_cols            
-    
+
+    return date_cols
+
+
 def _collect_node_internal_names(tree: DependencyTree) -> List[str]:
-    names = [tree.nodeInternalName]  
+    names = [tree.nodeInternalName]
     for dep in tree.dependencies:
-        names.extend(
-            _collect_node_internal_names(dep)
-        ) 
+        names.extend(_collect_node_internal_names(dep))
     return names
 
 

@@ -7,8 +7,9 @@ import openpyxl
 import pandas as pd
 import configparser
 
+from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import getImportedColumns, getProjectList
+from nemo_library.features.nemo_projects_api import getProjectList
 from nemo_library.utils.utils import get_internal_name
 
 
@@ -102,14 +103,14 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
     mapping_fields = config.get_migman_mapping_fields()
     additional_fields = config.get_migman_additional_fields()
     synonym_fields = config.get_migman_synonym_fields()
+    migman_projects = config.get_migman_projects()
 
     # get data projects
     projectList = getProjectList(config=config)["displayName"].to_list()
     projectList = [
         project
         for project in projectList
-        if not project.startswith("Mapping")
-        and not project in ("Business Processes", "Master Data")
+        if project in migman_projects
     ]
 
     # scan projects for fields
@@ -118,9 +119,6 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
 
         logging.info(f"scan project '{project}' for mapping fields...")
 
-        # get list of fields
-        imported_columns_df = getImportedColumns(config=config, projectname=project)
-
         # remove (xxx)
         def remove_brackets_if_present(name):
             pattern = r"\(\d{3}\)$"
@@ -128,20 +126,19 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
                 return re.sub(pattern, "", name).strip()
             return name
 
-        imported_columns_df["displayName_cleaned"] = imported_columns_df[
-            "displayName"
-        ].apply(remove_brackets_if_present)
-        imported_columns = imported_columns_df["displayName_cleaned"].to_list()
+        # get list of fields
+        ics = getImportedColumns(config=config, projectname=project)
+        ics_cleaned = {remove_brackets_if_present(ic.displayName): ic for ic in ics}
 
         # let's search the fields now
         for field in mapping_fields:
             # Check if the mapping field or any of its synonyms exists in imported_columns
             matching_field = None
-            if field in imported_columns:
+            if field in ics_cleaned:
                 matching_field = field
             else:
                 for synonym in synonym_fields.get(field, []):
-                    if synonym in imported_columns:
+                    if synonym in ics_cleaned:
                         matching_field = synonym
                         break
 
@@ -150,33 +147,36 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
 
                 # Check if all additional fields are also present
                 additional_fields_present = all(
-                    additional_field in imported_columns
+                    additional_field in ics_cleaned
                     for additional_field in additional_fields.get(field, [])
                 )
                 if additional_fields_present:
 
                     # we have cut of the (...) for easier handling. Now we have add them back again and add useful information for further processing
-                    matching_field_display_name = imported_columns_df[
-                        imported_columns_df["displayName_cleaned"] == matching_field
-                    ]["displayName"].iloc[0]
-                    matching_field_internal_name = imported_columns_df[
-                        imported_columns_df["displayName_cleaned"] == matching_field
-                    ]["internalName"].iloc[0]
+                    matching_field_display_name = ics_cleaned[
+                        matching_field
+                    ].displayName
+                    matching_field_internal_name = ics_cleaned[
+                        matching_field
+                    ].internalName
+                    matching_field_import_name = ics_cleaned[matching_field].importName
 
                     additional_field_information = []
                     for additional_field in additional_fields.get(field, []):
-                        additional_field_display_name = imported_columns_df[
-                            imported_columns_df["displayName_cleaned"]
-                            == additional_field
-                        ]["displayName"].iloc[0]
-                        additional_field_internal_name = imported_columns_df[
-                            imported_columns_df["displayName_cleaned"]
-                            == additional_field
-                        ]["internalName"].iloc[0]
+                        additional_field_display_name = ics_cleaned[
+                            additional_field
+                        ].displayName
+                        additional_field_internal_name = ics_cleaned[
+                            additional_field
+                        ].internalName
+                        additional_field_import_name = ics_cleaned[
+                            additional_field
+                        ].importName
                         additional_field_information.append(
                             (
                                 additional_field_display_name,
                                 additional_field_internal_name,
+                                additional_field_import_name,
                             )
                         )
 
@@ -187,6 +187,7 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
                             "mapping_field": field,
                             "matching_field_display_name": matching_field_display_name,
                             "matching_field_internal_name": matching_field_internal_name,
+                            "matching_field_import_name": matching_field_import_name,
                             "additional_fields": additional_field_information,
                         }
                     )
@@ -220,6 +221,7 @@ def sqlQueryInMappingTable(
             for (
                 additional_field_label,
                 additional_field_internal_name,
+                additional_field_import_name,
             ), additional_field_definition in zip(
                 additional_fields, additional_field_global_definition
             ):

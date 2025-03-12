@@ -1,5 +1,6 @@
 import logging
 import pandas as pd
+from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
@@ -7,7 +8,6 @@ from nemo_library.features.focus import focusCoupleAttributes
 from nemo_library.features.nemo_projects_api import (
     createImportedColumns,
     createProject,
-    getImportedColumns,
     getProjectList,
 )
 from nemo_library.utils.migmanutils import (
@@ -123,16 +123,12 @@ def createMappingImportedColumnns(
     fields.append(get_display_name(f"source {field}"))
     fields.append(get_display_name(f"target {field}"))
 
-    importedColumnsList = getImportedColumns(config=config, projectname=projectname)
-    importedColumnsList = (
-        importedColumnsList["displayName"].to_list()
-        if not importedColumnsList.empty
-        else []
-    )
+    ics = getImportedColumns(config=config, projectname=projectname)
+    ics_display_name = [ic.displayName for ic in ics]
 
     new_columns = []
     for idx, fld in enumerate(fields):
-        if not fld in importedColumnsList:
+        if not fld in ics_display_name:
             new_columns.append(
                 {
                     "displayName": fld,
@@ -204,13 +200,14 @@ def coupleAttributes(
     projectname: str,
 ) -> None:
 
-    imported_columns = getImportedColumns(
+    ics = getImportedColumns(
         config=config,
         projectname=projectname,
-    )["displayName"].to_list()
+    )
+    ics_display_name = [ic.displayName for ic in ics]
     focusCoupleAttributes(
         config=config,
         projectname=projectname,
-        attributenames=imported_columns,
+        attributenames=ics_display_name,
         previous_attribute=None,
     )

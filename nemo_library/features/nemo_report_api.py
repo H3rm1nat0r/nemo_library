@@ -1,5 +1,10 @@
+import re
 from typing import List
-from nemo_library.features.nemo_persistence_api import _generic_metadata_create_or_update, _generic_metadata_delete, _generic_metadata_get
+from nemo_library.features.nemo_persistence_api import (
+    _generic_metadata_create_or_update,
+    _generic_metadata_delete,
+    _generic_metadata_get,
+)
 from nemo_library.features.nemo_projects_api import getProjectID
 from nemo_library.model.report import Report
 from nemo_library.utils.config import Config
@@ -86,7 +91,7 @@ def LoadReport(
 
     # Download the file into pandas
     try:
-        result = pd.read_csv(csv_url)
+        result = pd.read_csv(csv_url, sep=",", quotechar='"', escapechar="\\")
         if "_RECORD_COUNT" in result.columns:
             result.drop(columns=["_RECORD_COUNT"], inplace=True)
     except Exception as e:

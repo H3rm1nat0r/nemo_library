@@ -13,8 +13,9 @@ from botocore.exceptions import NoCredentialsError
 import pandas as pd
 import csv
 
+from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import createImportedColumn, createProject, getImportedColumns, getProjectID
+from nemo_library.features.nemo_projects_api import createImportedColumn, createProject, getProjectID
 from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name, log_error
 from nemo_library.features.import_configuration import ImportConfigurations
 
@@ -453,10 +454,8 @@ def synchronizeCsvColsAndImportedColumns(
         - Creates new imported columns in the project for any CSV column names not already present.
         - Uses utility functions `display_name`, `internal_name`, and `import_name` to format column names.
     """
-    df = getImportedColumns(config, projectname)
-    importedColumns = df["internalName"].to_list() if not df.empty else []
-
-    importedColumns = getImportedColumns(config, projectname)["internalName"].to_list()
+    ics = getImportedColumns(config, projectname)
+    ics_internal = [ic.internalName for ic in ics]
 
     # Read the first line of the CSV file to get column names
     with open(filename, "r") as file:
@@ -473,7 +472,7 @@ def synchronizeCsvColsAndImportedColumns(
         importName = get_import_name(column_name)
 
         # Check if the record with internal_name equal to the column name exists
-        if internalName in importedColumns:
+        if internalName in ics_internal:
             logging.info(f"Record found for column '{column_name}' in the DataFrame.")
         else:
             logging.info(

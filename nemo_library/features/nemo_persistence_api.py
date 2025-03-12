@@ -3,6 +3,7 @@ import logging
 import re
 from typing import Any, List, Type, TypeVar, get_type_hints
 
+import pandas as pd
 import requests
 
 from nemo_library.features.nemo_projects_api import getProjectID
@@ -10,6 +11,7 @@ from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.diagram import Diagram
+from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.subprocess import SubProcess
@@ -319,6 +321,25 @@ def getDefinedColumns(
         filter_value,
     )
 
+def getImportedColumns(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[ImportedColumn]:
+    """Fetches ImportedColumns metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "Columns",
+        "/exported",
+        ImportedColumn,
+        filter,
+        filter_type,
+        filter_value,
+    )
+
 
 def getSubProcesses(
     config: Config,
@@ -438,3 +459,4 @@ def createSubProcesses(
     _generic_metadata_create_or_update(
         config, projectname, subprocesses, "SubProcess", getSubProcesses
     )
+

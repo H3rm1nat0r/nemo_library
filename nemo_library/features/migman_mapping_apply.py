@@ -1,13 +1,15 @@
 import json
 import logging
+from typing import List
 import pandas as pd
+from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
+from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.focus import focusCoupleAttributes
 from nemo_library.features.nemo_projects_api import (
     createImportedColumns,
-    getImportedColumns,
 )
 from nemo_library.utils.migmanutils import (
     getMappingRelations,
@@ -49,12 +51,12 @@ def _process_project(
     # create "original" columns first (if not already existing)
 
     new_columns = []
-    importedcolumnsdf = getImportedColumns(config=config, projectname=project)
-    importedcolumnslist = importedcolumnsdf["displayName"].to_list()
+    ics = getImportedColumns(config=config, projectname=project)
+    ics_display_names = [ic.displayName for ic in ics]
     mapping_columns = mappingrelationsdf["matching_field_display_name"].to_list()
     for mapping_column in mapping_columns:
         mapcol = f"Mapped_{mapping_column}"
-        if not mapcol in importedcolumnslist:
+        if not mapcol in ics_display_names:
             new_columns.append(
                 {
                     "displayName": get_display_name(mapcol),
@@ -79,7 +81,7 @@ def _process_project(
     _apply_mapping(
         config=config,
         project=project,
-        importedcolumnsdf=importedcolumnsdf,
+        importedcolumns=ics,
         mappingrelationsdf=mappingrelationsdf,
     )
 
@@ -94,12 +96,12 @@ def _process_project(
 def _apply_mapping(
     config: Config,
     project: str,
-    importedcolumnsdf: pd.DataFrame,
+    importedcolumns: List[ImportedColumn],
     mappingrelationsdf: pd.DataFrame,
 ) -> None:
     select_statement = _select_statement(
         config=config,
-        importedcolumnsdf=importedcolumnsdf,
+        importedcolumns=importedcolumns,
         mappingrelationsdf=mappingrelationsdf,
     )
 
@@ -147,19 +149,17 @@ def _focus_couple_attributes(
 
 def _select_statement(
     config: Config,
-    importedcolumnsdf: pd.DataFrame,
+    importedcolumns: List[ImportedColumn],
     mappingrelationsdf: pd.DataFrame,
 ) -> str:
 
     # filter original-values, they will be re-created again
-    importedcolumnsdf = importedcolumnsdf[
-        ~importedcolumnsdf["displayName"].str.startswith("Mapped_")
-    ]
+    importedcolumns = [ic for ic in importedcolumns if not ic.displayName.startswith("Mapped_")]
 
     # start with easy things: select fields that are not touched
     selectfrags = [
-        f'data.{row["internalName"]} as "{row["displayName"]}"'
-        for idx, row in importedcolumnsdf.iterrows()
+        f'data.{ic.internalName} as "{ic.displayName}"'
+        for ic in importedcolumns
     ]
 
     # add mapped fields now
@@ -184,7 +184,7 @@ ON
                 row["mapping_field"], []
             )
 
-            for (label, name), definition in zip(
+            for (label, name, importname), definition in zip(
                 additional_fields, additional_field_global_definition
             ):
                 joinfrag += f"\n\tAND mapping_{get_internal_name(row["mapping_field"])}.{get_internal_name("source_" + definition)} = data.{name}"

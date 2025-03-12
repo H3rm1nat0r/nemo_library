@@ -2,12 +2,13 @@ from typing import List
 import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
-from nemo_library.features.nemo_persistence_api import createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getMetrics, getPages, getTiles
+from nemo_library.features.nemo_persistence_api import createApplications, createAttributeGroups, createDefinedColumns, createDiagrams, createMetrics, createPages, createTiles, deleteApplications, deleteAttributeGroups, deleteDefinedColumns, deleteDiagrams, deleteMetrics, deletePages, deleteTiles, getApplications, getAttributeGroups, getDefinedColumns, getDiagrams, getImportedColumns, getMetrics, getPages, getTiles
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport, createReports, deleteReports, getReports
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.diagram import Diagram
+from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.report import Report
@@ -34,7 +35,6 @@ from nemo_library.features.nemo_projects_api import (
     createOrUpdateRule,
     createProject,
     deleteProject,
-    getImportedColumns,
     getProjectID,
     getProjectList,
     getProjectProperty,
@@ -280,26 +280,6 @@ class NemoLibrary:
     def MigManExportData(self) -> None:
         MigManExportData(self.config)
 
-    def getImportedColumns(self, projectname: str) -> pd.DataFrame:
-        """
-        Retrieves the imported columns for a specified project and returns them as a Pandas DataFrame.
-
-        Args:
-            projectname (str): The name of the project for which to retrieve imported columns.
-
-        Returns:
-            pd.DataFrame: A DataFrame containing metadata about the imported columns.
-
-        Raises:
-            RuntimeError: If the HTTP GET request to fetch the columns fails (non-200 status code).
-
-        Notes:
-            - Fetches the project ID using `getProjectID`.
-            - Sends an HTTP GET request to retrieve column metadata for the specified project.
-            - Parses the JSON response and converts it into a normalized Pandas DataFrame.
-            - Logs errors and raises exceptions for failed requests or invalid responses.
-        """
-        return getImportedColumns(self.config, projectname)
 
     def createImportedColumns(self, projectname: str, columns: dict) -> None:
         createImportedColumns(
@@ -742,6 +722,22 @@ class NemoLibrary:
             filter_value=filter_value,
         )
 
+    def getImportedColumns(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[ImportedColumn]:
+        """Fetches ImportedColumns metadata with the given filters."""
+        return getImportedColumns(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+        
     def getReports(
         self,
         projectname: str,

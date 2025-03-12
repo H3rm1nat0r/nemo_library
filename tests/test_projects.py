@@ -73,14 +73,14 @@ def test_createImportedColumn():
         description="Rechnungsdatum",
     )
     importedColumns = nl.getImportedColumns(IC_PROJECT_NAME)
-    assert "Rechnungsdatum" in importedColumns["displayName"].to_list()
+    assert "Rechnungsdatum" in [ic.displayName for ic in importedColumns]
 
 
 def test_getImportedColumns():
     nl = getNL()
-    df = nl.getImportedColumns(IC_PROJECT_NAME)
+    ic = nl.getImportedColumns(IC_PROJECT_NAME)
     assert (
-        len(df) == 1
+        len(ic) == 1
     )  # we have checked the behavior in test_createImportedColumn already...
 
 

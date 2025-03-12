@@ -1,12 +1,12 @@
 import logging
 import os
 import pandas as pd
+from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.features.nemo_report_api import createOrUpdateReport
 from nemo_library.utils.config import Config
 from nemo_library.features.focus import _get_attribute_tree
 from nemo_library.features.nemo_projects_api import (
     createOrUpdateRule,
-    getImportedColumns,
 )
 from nemo_library.utils.utils import get_internal_name
 
@@ -215,14 +215,13 @@ def _get_report_field_list(
         raise ValueError("Field list is empty!")
 
     # validate fields given
-    internal_names_NEMO = getImportedColumns(config=config, projectname=project_name)[
-        "internalName"
-    ].to_list()
-    fields_not_existing = set(report_field_list) - set(internal_names_NEMO)
+    ics_nemo = getImportedColumns(config=config, projectname=project_name)
+    ics_nemo_internal = [ic.internalName for ic in ics_nemo]
+    fields_not_existing = set(report_field_list) - set(ics_nemo_internal)
     if fields_not_existing:
         raise ValueError(
             f"""One or many fields not found in project: {fields_not_existing}.
-List of fields available: {internal_names_NEMO}"""
+List of fields available: {ics_nemo_internal}"""
         )
 
     return report_field_list

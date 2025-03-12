@@ -1,1 +1,1 @@
-pytest --cov=nemo_library -v -x --log-cli-level=INFO
+pytest --cov=nemo_library -v -x --log-cli-level=INFO "$@"

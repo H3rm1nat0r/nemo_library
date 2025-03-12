@@ -5,6 +5,7 @@ import os
 import re
 import pandas as pd
 
+from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
@@ -12,7 +13,6 @@ from nemo_library.features.nemo_projects_api import (
     createImportedColumns,
     createOrUpdateRule,
     createProject,
-    getImportedColumns,
     getProjectList,
 )
 from nemo_library.utils.migmanutils import (
@@ -137,10 +137,8 @@ def _load_data(
 
         dbdf = dbdf[(dbdf["project_name"] == project) & (dbdf["postfix"] == postfix)]
         columns_migman = dbdf["import_name"].to_list()
-        columns_nemo = getImportedColumns(config, project_name)
-        columns_nemo_import_names = (
-            [] if columns_nemo.empty else columns_nemo["importName"].to_list()
-        )
+        ics_nemo = getImportedColumns(config, project_name)
+        ics_import_names = [ic.importName for ic in ics_nemo]
 
         new_columns = []
         for col in datadf_cleaned.columns:
@@ -150,7 +148,7 @@ def _load_data(
                 )
 
             # column already defined in nemo? if not, create it
-            if not col in columns_nemo_import_names:
+            if not col in ics_import_names:
                 logging.info(
                     f"column '{col}' not found in project {project_name}. Create it."
                 )

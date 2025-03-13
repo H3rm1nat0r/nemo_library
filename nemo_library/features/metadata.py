@@ -101,7 +101,8 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     reports_model = _load_data_from_json(config, "reports", Report)
 
     # generate objects based on modell
-    tiles_model = _generate_tiles(metrics_model)
+    tiles_model = [] #_generate_tiles(metrics_model) # no more tiles
+    
 
     # sort attribute groups
     hierarchy, _ = _attribute_groups_build_hierarchy(attributegroups_model)

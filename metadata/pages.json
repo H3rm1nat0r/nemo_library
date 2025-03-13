@@ -2,7 +2,7 @@
     {
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Advisor OTIF",
+        "displayName": "OTIF",
         "displayNameTranslations": {},
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_otif",
@@ -108,7 +108,7 @@
     {
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Advisor Overview",
+        "displayName": "Overview",
         "displayNameTranslations": {},
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_overview",
@@ -164,7 +164,7 @@
     {
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Advisor DPO",
+        "displayName": "DPO",
         "displayNameTranslations": {},
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_dpo",

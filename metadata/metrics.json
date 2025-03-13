@@ -5,7 +5,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time (days)",
+        "displayName": "(C) Purch Order Preparation Time (days)",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_order_preparation_time_days": "mean"
@@ -31,7 +31,7 @@
         "dateColumn": "pur_inv_ext_doc_date",
         "description": "Time (days) needed for invoice processing in purchasing",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Invoice Processing Time",
+        "displayName": "(C) Purch Invoice Processing Time",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_invoice_processing_time_days": "mean"
@@ -57,7 +57,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Delivery Deviation (amount)",
+        "displayName": "(C) Purch Delivery Deviation (amount)",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_delivery_deviation_amount": "mean"
@@ -83,7 +83,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation On Time Rate",
+        "displayName": "(C) Purch Replenishment Deviation On Time Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_on_time": "mean"
@@ -109,7 +109,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time On Time Rate",
+        "displayName": "(C) Purch Order Preparation Time On Time Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_order_preparation_time_on_time": "mean"
@@ -135,7 +135,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "Reflects the percentage of purchase invoices that were paid too early.",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Early Delivery Rate",
+        "displayName": "(C) Purch Early Delivery Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_delivery_deviation_early": "mean"
@@ -161,7 +161,7 @@
         "dateColumn": "pur_stock_rec_doc_date",
         "description": "Average days taken for goods receipt processing in purchasing",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Goods Receipt Processing Time",
+        "displayName": "(C) Purch Goods Receipt Processing Time",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_goods_receipt_processing_time_days": "mean"
@@ -187,7 +187,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "Reflects the percentage of purchase invoices that were over delivered",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Over Delivery Rate",
+        "displayName": "(C) Purch Over Delivery Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_delivery_deviation_overdelivery": "mean"
@@ -213,7 +213,7 @@
         "dateColumn": "pur_inv_doc_date",
         "description": "Reflects the percentage of purchase invoices that were paid too late.",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Late Payments Rate",
+        "displayName": "(C) Purch Late Payments Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_payment_deviation_too_late": "mean"
@@ -239,7 +239,7 @@
         "dateColumn": "pur_stock_rec_doc_date",
         "description": "Reflects the percentage of Goods Receipt that were processed on time",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing On Time Goods Receipt Processing Rate",
+        "displayName": "(C) Purch On Time Goods Receipt Processing Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_goods_receipt_processing_time_on_time_boolean": "mean"
@@ -265,7 +265,7 @@
         "dateColumn": null,
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Number of Suppliers per Part",
+        "displayName": "(C) Purch Number of Suppliers per Part",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "supplier_i_d": "count_distinct",
@@ -292,7 +292,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Delivery Deviation (days)",
+        "displayName": "(C) Purch Delivery Deviation (days)",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_delivery_deviation_days": "mean"
@@ -318,7 +318,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation Too Low Rate",
+        "displayName": "(C) Purch Replenishment Deviation Too Low Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_too_low": "mean"
@@ -344,7 +344,7 @@
         "dateColumn": "pur_inv_doc_date",
         "description": "Reflects the percentage of purchase invoices that were paid too early.",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Early Payments Rate",
+        "displayName": "(C) Purch Early Payments Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_payment_deviation_too_early": "mean"
@@ -370,7 +370,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation Too High Rate",
+        "displayName": "(C) Purch Replenishment Deviation Too High Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_too_high": "mean"
@@ -396,7 +396,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time Too Low Rate",
+        "displayName": "(C) Purch Order Preparation Time Too Low Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_order_preparation_time_too_low": "mean"
@@ -422,7 +422,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "Reflects the percentage of purchase invoices that were paid on time",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing On Time Delivery Rate",
+        "displayName": "(C) Purch On Time Delivery Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_delivery_deviation_on_time": "mean"
@@ -448,7 +448,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Confirmation Rate",
+        "displayName": "(C) Purch Order Confirmation Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_order_confirmed_bool": "mean"
@@ -474,7 +474,7 @@
         "dateColumn": "pur_inv_doc_date",
         "description": "Reflects the percentage of purchase invoices that were paid on time",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing On Time Payments Rate",
+        "displayName": "(C) Purch On Time Payments Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_payment_deviation_on_time": "mean"
@@ -500,7 +500,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "Reflects the percentage of purchase invoices that were delivered in full",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing In Full Delivery Rate",
+        "displayName": "(C) Purch In Full Delivery Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_delivery_deviation_in_full": "mean"
@@ -526,7 +526,7 @@
         "dateColumn": "pur_order_line_delivery_date",
         "description": "Reflects the percentage of Deliveries that were on time and in full",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing OTIF Rate",
+        "displayName": "(C) Purch OTIF Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_otif": "mean"
@@ -552,7 +552,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "Reflects the percentage of purchase invoices that were under delivered",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Under Delivery Rate",
+        "displayName": "(C) Purch Under Delivery Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_delivery_deviation_underdelivery": "mean"
@@ -578,7 +578,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "Reflects the percentage of purchase invoices that were paid too late.",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Late Delivery Rate",
+        "displayName": "(C) Purch Late Delivery Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_delivery_deviation_late": "mean"
@@ -604,7 +604,7 @@
         "dateColumn": "pur_inv_ext_doc_date",
         "description": "Reflects the percentage of Invoices that were processed on time",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing On Time Invoice Processing Rate",
+        "displayName": "(C) Purch On Time Invoice Processing Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_invoice_processing_time_on_time_boolean": "mean"
@@ -630,7 +630,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation (days)",
+        "displayName": "(C) Purch Replenishment Deviation (days)",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_days": "mean"
@@ -656,7 +656,7 @@
         "dateColumn": "pur_inv_doc_date",
         "description": "Average days purchasing payments are too EARLY",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Payment Deviation",
+        "displayName": "(C) Purch Payment Deviation",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_payment_deviation_days": "mean"
@@ -682,7 +682,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Order Preparation Time Too High Rate",
+        "displayName": "(C) Purch Order Preparation Time Too High Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_order_preparation_time_too_high": "mean"

@@ -5,7 +5,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation (days)",
+        "displayName": "(C) Purch Replenishment Deviation (days)",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_days": "mean"
@@ -31,7 +31,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation Too High Rate",
+        "displayName": "(C) Purch Replenishment Deviation Too High Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_too_high": "mean"
@@ -57,7 +57,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation On Time Rate",
+        "displayName": "(C) Purch Replenishment Deviation On Time Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_on_time": "mean"
@@ -83,7 +83,7 @@
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(Conservative) Purchasing Replenishment Deviation Too Low Rate",
+        "displayName": "(C) Purch Replenishment Deviation Too Low Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_too_low": "mean"

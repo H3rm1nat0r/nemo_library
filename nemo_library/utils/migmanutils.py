@@ -6,7 +6,8 @@ import re
 import openpyxl
 import pandas as pd
 
-from nemo_library.features.nemo_persistence_api import getImportedColumns, getProjects
+from nemo_library.features.nemo_persistence_api import getImportedColumns
+from nemo_library.features.nemo_persistence_api import getProjects
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import get_internal_name
 

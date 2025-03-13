@@ -4,6 +4,7 @@ import pandas as pd
 
 from nemo_library import NemoLibrary
 from nemo_library.model.imported_column import ImportedColumn
+from nemo_library.model.project import Project
 
 IC_PROJECT_NAME = "gs_unit_test_Intercompany"
 
@@ -56,10 +57,11 @@ def test_createProject():
         nl.deleteProjects([projectid])
 
     # now we can create the project
-    nl.createProject(
-        IC_PROJECT_NAME,
-        "used for unit tests of nemo_library",
-    )
+    nl.createProjects([Project(
+        displayName=IC_PROJECT_NAME,
+        description="used for unit tests of nemo_library",
+    )])
+    
     projectid = nl.getProjectID(IC_PROJECT_NAME)
     assert projectid is not None
 

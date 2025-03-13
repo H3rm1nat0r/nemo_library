@@ -1,4 +1,5 @@
-from nemo_library.features.nemo_persistence_api import deleteProjects, getProjects
+from nemo_library.features.nemo_persistence_api import deleteProjects
+from nemo_library.features.nemo_persistence_api import getProjects
 from nemo_library.utils.config import Config
 
 __all__ = ["MigManDeleteProjects"]

@@ -36,7 +36,7 @@ from nemo_library.features.nemo_persistence_api import (
     getSubProcesses,
     getTiles,
 )
-from nemo_library.features.nemo_projects_api import (
+from nemo_library.features.projects import (
     getDependencyTree,
 )
 from nemo_library.features.nemo_report_api import (

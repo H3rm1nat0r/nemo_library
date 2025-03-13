@@ -1,8 +1,7 @@
 import re
 from typing import List
+from nemo_library.features.nemo_persistence_api import _generic_metadata_create_or_update, _generic_metadata_delete
 from nemo_library.features.nemo_persistence_api import (
-    _generic_metadata_create_or_update,
-    _generic_metadata_delete,
     _generic_metadata_get,
 )
 from nemo_library.features.nemo_persistence_api import getProjectID

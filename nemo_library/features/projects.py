@@ -58,63 +58,6 @@ def getProjectProperty(
     return response.text[1:-1]  # cut off leading and trailing "
 
 
-def createProject(
-    config: Config,
-    projectname: str,
-    description: str,
-) -> None:
-    """
-    Creates a new project with the specified name and description in the NEMO system.
-
-    Args:
-        config (Config): Configuration object containing connection details and headers.
-        projectname (str): The display name for the new project.
-        description (str): A brief description of the project.
-
-    Returns:
-        None
-
-    Raises:
-        RuntimeError: If the HTTP POST request to create the project fails (non-201 status code).
-
-    Notes:
-        - Generates a table name for the project by converting the project name to uppercase,
-          replacing invalid characters with underscores, and ensuring it starts with "PROJECT_".
-        - Sends a POST request to the project creation endpoint with the required metadata.
-        - Logs an error if the request fails and raises an exception.
-    """
-
-    headers = config.connection_get_headers()
-    ENDPOINT_URL = (
-        config.get_config_nemo_url() + "/api/nemo-persistence/metadata/Project"
-    )
-    table_name = re.sub(r"[^A-Z0-9_]", "_", projectname.upper()).strip()
-    if not table_name.startswith("PROJECT_"):
-        table_name = "PROJECT_" + table_name
-
-    data = {
-        "autoDataRefresh": True,
-        "displayName": projectname,
-        "description": description,
-        "type": "IndividualData",
-        "status": "Active",
-        "tableName": table_name,
-        "importErrorType": "NoError",
-        "id": "",
-        "s3DataSourcePath": "",
-        "showInitialConfiguration": False,
-        "tenant": config.get_tenant(),
-        "type": "0",
-    }
-
-    response = requests.post(ENDPOINT_URL, headers=headers, json=data)
-
-    if response.status_code != 201:
-        log_error(
-            f"Request failed. Status: {response.status_code}, error: {response.text}"
-        )
-
-
 def setProjectMetaData(
     config: Config,
     projectname: str,

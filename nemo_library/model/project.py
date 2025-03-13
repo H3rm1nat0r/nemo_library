@@ -1,69 +1,85 @@
 from dataclasses import asdict, dataclass, field
-from typing import List, Optional, Dict
+import re
+from typing import List, Dict, Optional
 from datetime import datetime
+from uuid import UUID
 
 
 @dataclass
-class ColumnInfo:
-    id: str
-    internalName: str
+class ColumnDetails:
     displayName: str
+    id: UUID
+    internalName: str
 
 
 @dataclass
 class ErrorDetails:
-    id: str
-    fileOnlyColumns: List[ColumnInfo] = field(default_factory=list)
-    metadataOnlyColumns: List[ColumnInfo] = field(default_factory=list)
+    fileOnlyColumns: List[ColumnDetails]
+    id: UUID
+    metadataOnlyColumns: List[ColumnDetails]
 
 
 @dataclass
 class Warning:
-    id: str
-    importWarningType: str
-    columnId: str
-    metadataDataType: str
+    columnId: UUID
     databaseDataType: str
-    rowNumber: int
-    rawRowNumber: int
     fieldName: str
     fieldNumber: int
     fieldValue: str
+    id: UUID
     maxLength: int
+    metadataDataType: str
+    rawRowNumber: int
+    rowNumber: int
 
 
 @dataclass
 class DataSourceImportRecord:
-    id: str
-    uploadId: str
-    status: str
-    errorType: str
-    staDateTime: datetime
     endDateTime: datetime
-    startedByUsername: str
+    errorDetails: ErrorDetails
+    errorType: str
+    id: UUID
     recordsOmittedDueToWarnings: int
-    warnings: List[Warning] = field(default_factory=list)
-    errorDetails: Optional[ErrorDetails] = None
+    startedByUsername: str
+    status: str
+    uploadId: str
+    warnings: List[Warning]
+
+
+@dataclass
+class ProjectProperty:
+    key: str
+    projectId: UUID
+    tenant: str
+    value: str
 
 
 @dataclass
 class Project:
-    id: str = ""
-    metadataTemplateId: str = ""
-    tableName: str = ""
-    displayName: str = None
-    status: str = ""
-    type: str = ""
-    description: str = ""
-    dataSourceImportErrorType: str = ""
-    tenant: str = ""
-    expDateFrom: datetime = ""
-    expDateTo: datetime = ""
-    processDateColumnName: str = ""
-    numberOfRecords: int = None
-    showInitialConfiguration: bool = True
     autoDataRefresh: bool = True
     dataSourceImportRecords: List[DataSourceImportRecord] = field(default_factory=list)
+    description: str = ""
+    descriptionTranslations: Dict[str, str] = field(default_factory=dict)
+    displayName: str = None
+    displayNameTranslations: Dict[str, str] = field(default_factory=dict)
+    id: str = ""
+    importErrorType: str = "NoError"
+    projectProperties: List[ProjectProperty] = field(default_factory=list)
+    s3DataSourcePath: str = ""
+    showInitialConfiguration: bool = False
+    status: str = "Active"
+    tableName: str = None
+    tenant: str = ""
+    type: str = "IndividualData"
 
     def to_dict(self):
         return asdict(self)
+
+    def __post_init__(self):
+
+        if not self.tableName:
+            self.tableName = re.sub(
+                r"[^A-Z0-9_]", "_", self.displayName.upper()
+            ).strip()
+            if not self.tableName.startswith("PROJECT_"):
+                self.tableName = "PROJECT_" + self.tableName

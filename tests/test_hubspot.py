@@ -4,6 +4,7 @@ from nemo_library import NemoLibrary
 from datetime import datetime
 
 from nemo_library.model.imported_column import ImportedColumn
+from nemo_library.model.project import Project
 
 HS_PROJECT_NAME = "gs_unit_test_HubSpot"
 
@@ -22,7 +23,9 @@ def test_FetchDealFromHubSpotAndUploadToNEMO():
     if project_id:
         nl.deleteProjects([project_id])
 
-    nl.createProject(HS_PROJECT_NAME, "project for unit tests")
+    nl.createProjects(
+        [Project(displayName=HS_PROJECT_NAME, description="project for unit tests")]
+    )
     new_columns = []
     new_columns.append(ImportedColumn(displayName="deal_id", dataType="float"))
     new_columns.append(

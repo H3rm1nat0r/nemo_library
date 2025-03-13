@@ -22,7 +22,7 @@ def test_clean():
             delete.append(project_map[project])
         
     for mapping in nl.config.get_migman_mapping_fields():
-        if project in project_map:
+        if f"Mapping {mapping}" in project_map:
             delete.append(project_map[f"Mapping {mapping}"])
 
     if delete:

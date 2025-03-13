@@ -3,8 +3,8 @@ import logging
 import re
 from typing import Any, List, Type, TypeVar, get_type_hints
 
-import pandas as pd
 import requests
+
 
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
@@ -26,7 +26,6 @@ def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
     """
     Recursively deserializes JSON data into a nested DataClass structure.
     """
-    print(json.dumps(value,indent=4))
     if isinstance(value, list):
         # Check if we expect a list of DataClasses
         if hasattr(target_type, "__origin__") and target_type.__origin__ is list:
@@ -48,38 +47,91 @@ def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
     return value  # Primitive values
 
 
-def getProjectID(
+def _generic_metadata_create_or_update(
     config: Config,
     projectname: str,
-) -> str:
+    objects: List[T],
+    endpoint: str,
+    get_existing_func,
+) -> None:
     """
-    Retrieves the unique project ID for a given project name.
+    Generic function to create or update metadata entries.
 
-    Args:
-        config (Config): Configuration object containing connection details.
-        projectname (str): The name of the project for which to retrieve the ID.
-
-    Returns:
-        str: The unique identifier (ID) of the specified project.
-
-    Raises:
-        ValueError: If the project name cannot be uniquely identified in the project list.
-
-    Notes:
-        - This function relies on the `getProjectList` function to fetch the full project list.
-        - If multiple or no entries match the given project name, an error is logged, and the first matching ID is returned.
+    :param config: Configuration containing connection details
+    :param projectname: Name of the project
+    :param objects: List of objects to create or update
+    :param endpoint: API endpoint (e.g., "Tiles" or "Pages")
+    :param get_existing_func: Function to check if an object already exists
     """
-    project = getProjects(
-        config,
-        filter=projectname,
-        filter_type=FilterType.EQUAL,
-        filter_value=FilterValue.DISPLAYNAME,
-    )
-    if len(project) != 1:
-        return None
 
-    return project[0].id
+    # Initialize request
+    headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
 
+    for obj in objects:
+        logging.info(f"Create/update {endpoint} '{obj.displayName}'")
+
+        obj.tenant = config.get_tenant()
+        obj.projectId = project_id
+
+        # Check if the object already exists
+        existing_object = get_existing_func(
+            config=config,
+            projectname=projectname,
+            filter=obj.internalName,
+            filter_type=FilterType.EQUAL,
+            filter_value=FilterValue.INTERNALNAME,
+        )
+
+        if len(existing_object) == 1:
+            # Update existing object
+            obj.id = existing_object[0].id
+            response = requests.put(
+                f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",
+                json=obj.to_dict(),
+                headers=headers,
+            )
+            if response.status_code != 200:
+                log_error(
+                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",}\nStatus: {response.status_code}, error: {response.text}"
+                )
+
+        else:
+            # Create new object
+            response = requests.post(
+                f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}",
+                json=obj.to_dict(),
+                headers=headers,
+            )
+            if response.status_code != 201:
+                log_error(
+                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
+                )
+
+def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> None:
+    """
+    Generic function to delete metadata entries.
+
+    :param config: Configuration containing connection details
+    :param ids: List of IDs to be deleted
+    :param endpoint: API endpoint (e.g., "Metrics" or "Columns")
+    """
+
+    # Initialize request
+    headers = config.connection_get_headers()
+
+    for obj_id in ids:
+        logging.info(f"Deleting {endpoint[:-1]} with ID {obj_id}")
+
+        response = requests.delete(
+            f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}",
+            headers=headers,
+        )
+
+        if response.status_code != 204:
+            log_error(
+                f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}"}\nStatus: {response.status_code}, error: {response.text}"
+            )
 
 def _generic_metadata_get(
     config: Config,
@@ -148,94 +200,40 @@ def _generic_metadata_get(
     cleaned_data = clean_meta_data(filtered_data)
     return [_deserializeMetaDataObject(item, return_type) for item in cleaned_data]
 
-
-def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> None:
-    """
-    Generic function to delete metadata entries.
-
-    :param config: Configuration containing connection details
-    :param ids: List of IDs to be deleted
-    :param endpoint: API endpoint (e.g., "Metrics" or "Columns")
-    """
-
-    # Initialize request
-    headers = config.connection_get_headers()
-
-    for obj_id in ids:
-        logging.info(f"Deleting {endpoint[:-1]} with ID {obj_id}")
-
-        response = requests.delete(
-            f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}",
-            headers=headers,
-        )
-
-        if response.status_code != 204:
-            log_error(
-                f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}"}\nStatus: {response.status_code}, error: {response.text}"
-            )
-
-
-def _generic_metadata_create_or_update(
+def getProjectID(
     config: Config,
     projectname: str,
-    objects: List[T],
-    endpoint: str,
-    get_existing_func,
-) -> None:
+) -> str:
     """
-    Generic function to create or update metadata entries.
+    Retrieves the unique project ID for a given project name.
 
-    :param config: Configuration containing connection details
-    :param projectname: Name of the project
-    :param objects: List of objects to create or update
-    :param endpoint: API endpoint (e.g., "Tiles" or "Pages")
-    :param get_existing_func: Function to check if an object already exists
+    Args:
+        config (Config): Configuration object containing connection details.
+        projectname (str): The name of the project for which to retrieve the ID.
+
+    Returns:
+        str: The unique identifier (ID) of the specified project.
+
+    Raises:
+        ValueError: If the project name cannot be uniquely identified in the project list.
+
+    Notes:
+        - This function relies on the `getProjectList` function to fetch the full project list.
+        - If multiple or no entries match the given project name, an error is logged, and the first matching ID is returned.
     """
+    projects = getProjects(
+        config,
+        filter=projectname,
+        filter_type=FilterType.EQUAL,
+        filter_value=FilterValue.DISPLAYNAME,
+    )        
+    if len(projects) != 1:
+        return None
 
-    # Initialize request
-    headers = config.connection_get_headers()
-    project_id = getProjectID(config, projectname)
+    return projects[0].id
 
-    for obj in objects:
-        logging.info(f"Create/update {endpoint} '{obj.displayName}'")
 
-        obj.tenant = config.get_tenant()
-        obj.projectId = project_id
 
-        # Check if the object already exists
-        existing_object = get_existing_func(
-            config=config,
-            projectname=projectname,
-            filter=obj.internalName,
-            filter_type=FilterType.EQUAL,
-            filter_value=FilterValue.INTERNALNAME,
-        )
-
-        if len(existing_object) == 1:
-            # Update existing object
-            obj.id = existing_object[0].id
-            response = requests.put(
-                f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",
-                json=obj.to_dict(),
-                headers=headers,
-            )
-            if response.status_code != 200:
-                log_error(
-                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",}\nStatus: {response.status_code}, error: {response.text}"
-                )
-
-        else:
-            # Create new object
-            response = requests.post(
-                f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}",
-                json=obj.to_dict(),
-                headers=headers,
-            )
-            if response.status_code != 201:
-                print(obj.to_dict())
-                log_error(
-                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
-                )
 
 
 def getAttributeGroups(
@@ -396,53 +394,6 @@ def getSubProcesses(
         filter_value,
     )
 
-def getProjects(
-    config: Config,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Project]:
-    """Fetches Projects metadata with the given filters."""
-    
-    # cannot use the generic meta data getter, since this is "above" the other object
-    
-    headers = config.connection_get_headers()
-
-    response = requests.get(
-        config.get_config_nemo_url() + "/api/nemo-projects/projects", headers=headers
-    )
-    if response.status_code != 200:
-        log_error(
-            f"request failed. Status: {response.status_code}, error: {response.text}"
-        )
-    data = json.loads(response.text)
-    
-    def match_filter(value: str, filter: str, filter_type: FilterType) -> bool:
-        """Applies the given filter to the value."""
-        if filter == "*":
-            return True
-        elif filter_type == FilterType.EQUAL:
-            return value == filter
-        elif filter_type == FilterType.STARTSWITH:
-            return value.startswith(filter)
-        elif filter_type == FilterType.ENDSWITH:
-            return value.endswith(filter)
-        elif filter_type == FilterType.CONTAINS:
-            return filter in value
-        elif filter_type == FilterType.REGEX:
-            return re.search(filter, value) is not None
-        return False
-
-    # Apply filter to the data
-    filtered_data = [
-        item
-        for item in data
-        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
-    ]
-
-    # Clean metadata and return the list of objects
-    cleaned_data = clean_meta_data(filtered_data)
-    return [_deserializeMetaDataObject(item, Project) for item in cleaned_data]    
 
 
 def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
@@ -489,10 +440,6 @@ def deleteSubprocesses(config: Config, subprocesses: List[str]) -> None:
     """Deletes a list of SubProcesses by their IDs."""
     _generic_metadata_delete(config, subprocesses, "SubProcess")
 
-def deleteProjects(config: Config, projects: List[str]) -> None:
-    """Deletes a list of projects by their IDs."""
-    _generic_metadata_delete(config, projects, "Project")
-
 
 def createDefinedColumns(
     config: Config, projectname: str, definedcolumns: List[DefinedColumn]
@@ -502,6 +449,7 @@ def createDefinedColumns(
         config, projectname, definedcolumns, "Columns", getDefinedColumns
     )
 
+
 def createImportedColumns(
     config: Config, projectname: str, importedcolumns: List[ImportedColumn]
 ) -> None:
@@ -509,6 +457,7 @@ def createImportedColumns(
     _generic_metadata_create_or_update(
         config, projectname, importedcolumns, "Columns", getImportedColumns
     )
+
 
 def createMetrics(config: Config, projectname: str, metrics: List[Metric]) -> None:
     """Creates or updates a list of Metrics."""
@@ -559,5 +508,103 @@ def createSubProcesses(
     _generic_metadata_create_or_update(
         config, projectname, subprocesses, "SubProcess", getSubProcesses
     )
+
+
+def getProjects(
+    config: Config,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Project]:
+    """Fetches Projects metadata with the given filters."""
+
+    # cannot use the generic meta data getter, since this is "above" the other object
+
+    headers = config.connection_get_headers()
+
+    response = requests.get(
+        config.get_config_nemo_url() + "/api/nemo-projects/projects", headers=headers
+    )
+    if response.status_code != 200:
+        log_error(
+            f"request failed. Status: {response.status_code}, error: {response.text}"
+        )
+    data = json.loads(response.text)
+
+    def match_filter(value: str, filter: str, filter_type: FilterType) -> bool:
+        """Applies the given filter to the value."""
+        if filter == "*":
+            return True
+        elif filter_type == FilterType.EQUAL:
+            return value == filter
+        elif filter_type == FilterType.STARTSWITH:
+            return value.startswith(filter)
+        elif filter_type == FilterType.ENDSWITH:
+            return value.endswith(filter)
+        elif filter_type == FilterType.CONTAINS:
+            return filter in value
+        elif filter_type == FilterType.REGEX:
+            return re.search(filter, value) is not None
+        return False
+
+    # Apply filter to the data
+    filtered_data = [
+        item
+        for item in data
+        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
+    ]
+
+    # Clean metadata and return the list of objects
+    cleaned_data = clean_meta_data(filtered_data)
+    return [_deserializeMetaDataObject(item, Project) for item in cleaned_data]
+
+
+def deleteProjects(config: Config, projects: List[str]) -> None:
+    """Deletes a list of projects by their IDs."""
+    _generic_metadata_delete(config, projects, "Project")
+
+
+def createProjects(config: Config, projects: List[Project]) -> None:
+    """Creates or updates a list of Projects."""
+    # Initialize request
+    headers = config.connection_get_headers()
+
+    for project in projects:
+        logging.info(f"Create/update Project '{project.displayName}'")
+
+        project.tenant = config.get_tenant()
+
+        # Check if the object already exists
+        existing_object = getProjects(
+            config=config,
+            filter=project.displayName,
+            filter_type=FilterType.EQUAL,
+            filter_value=FilterValue.DISPLAYNAME,
+        )
+
+        if len(existing_object) == 1:
+            # Update existing object
+            project.id = existing_object[0].id
+            response = requests.put(
+                f"{config.get_config_nemo_url()}/api/nemo-projects/projects/{project.id}",
+                json=project.to_dict(),
+                headers=headers,
+            )
+            if response.status_code != 200:
+                log_error(
+                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-projects/projects/{project.id}"}\nStatus: {response.status_code}, error: {response.text}"
+                )
+
+        else:
+            # Create new object
+            response = requests.post(
+                f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Project",
+                json=project.to_dict(),
+                headers=headers,
+            )
+            if response.status_code != 201:
+                log_error(
+                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Project"}\nStatus: {response.status_code}, error: {response.text}"
+                )
 
 

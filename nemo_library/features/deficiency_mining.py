@@ -5,7 +5,7 @@ from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.features.nemo_report_api import createOrUpdateReport
 from nemo_library.utils.config import Config
 from nemo_library.features.focus import _get_attribute_tree
-from nemo_library.features.nemo_projects_api import (
+from nemo_library.features.projects import (
     createOrUpdateRule,
 )
 from nemo_library.utils.utils import get_internal_name
@@ -277,7 +277,6 @@ def _import_xlsx_file(
     extra_columns = set(actual_columns) - set(expected_columns)
 
     if missing_columns or extra_columns:
-        print(df.columns.to_list())
         raise ValueError(
             f"Headers do not match!\n"
             f"Missing columns: {', '.join(missing_columns) if missing_columns else 'None'}\n"

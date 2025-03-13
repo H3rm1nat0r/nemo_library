@@ -32,6 +32,7 @@ from nemo_library.features.nemo_persistence_api import (
     getSubProcesses,
     getTiles,
 )
+from nemo_library.features.nemo_persistence_api import createProjects
 from nemo_library.features.nemo_report_api import (
     LoadReport,
     createOrUpdateReport,
@@ -70,9 +71,8 @@ from nemo_library.features.migman_create_project_templates import (
 from nemo_library.features.migman_load_data import MigManLoadData
 from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
-from nemo_library.features.nemo_projects_api import (
+from nemo_library.features.projects import (
     createOrUpdateRule,
-    createProject,
     getProjectProperty,
     setProjectMetaData,
 )
@@ -115,7 +115,6 @@ class NemoLibrary:
         )
 
         super().__init__()
-
 
     def getProjectID(self, projectname: str) -> str:
         """
@@ -195,30 +194,6 @@ class NemoLibrary:
             max_pages=max_pages,
         )
 
-    def createProject(self, projectname: str, description: str) -> None:
-        """
-        Creates a new project with the specified name and description in the NEMO system.
-
-        Args:
-            projectname (str): The display name for the new project.
-            description (str): A brief description of the project.
-
-        Returns:
-            None
-
-        Raises:
-            RuntimeError: If the HTTP POST request to create the project fails (non-201 status code).
-
-        Notes:
-            - Generates a table name for the project by converting the project name to uppercase,
-            replacing invalid characters with underscores, and ensuring it starts with "PROJECT_".
-            - Sends a POST request to the project creation endpoint with the required metadata.
-            - Logs an error if the request fails and raises an exception.
-        """
-        return createProject(
-            config=self.config, projectname=projectname, description=description
-        )
-
     def setProjectMetaData(
         self,
         projectname: str,
@@ -254,7 +229,6 @@ class NemoLibrary:
             processdate_column,
             corpcurr_value,
         )
-
 
     def MigManInitDatabase(self) -> None:
         MigManInitDatabase()
@@ -827,3 +801,7 @@ class NemoLibrary:
     def createReports(self, projectname: str, reports: List[Report]) -> None:
         """Creates or updates a list of Reports."""
         createReports(config=self.config, projectname=projectname, reports=reports)
+
+    def createProjects(self, projects: List[Project]) -> None:
+        """Creates or updates a list of Projects."""
+        createProjects(config=self.config, projects=projects)

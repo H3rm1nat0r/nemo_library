@@ -11,16 +11,16 @@ import requests
 import boto3
 from botocore.exceptions import NoCredentialsError
 import pandas as pd
-import csv
 
 from nemo_library.features.nemo_persistence_api import (
     createImportedColumns,
     getImportedColumns,
     getProjectID,
 )
+from nemo_library.features.nemo_persistence_api import createProjects
 from nemo_library.model.imported_column import ImportedColumn
+from nemo_library.model.project import Project
 from nemo_library.utils.config import Config
-from nemo_library.features.nemo_projects_api import createProject
 from nemo_library.utils.utils import (
     get_internal_name,
     log_error,
@@ -188,9 +188,7 @@ def ReUploadFile(
         project_id = getProjectID(config, projectname)
         if not project_id:
             logging.info(f"Project {projectname} not found - create it")
-            createProject(
-                config=config, projectname=projectname, description="AUTOCREATED"
-            )
+            createProjects(config=config,projects=[Project(displayName=projectname)])
             project_id = getProjectID(config, projectname)
 
         headers = config.connection_get_headers()

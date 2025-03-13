@@ -13,4 +13,4 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 nl = NemoLibrary()
-nl.MetaDataCreate(projectname=PROJECT_NAME,prefix="(Conservative)")
+nl.MetaDataCreate(projectname=PROJECT_NAME,prefix="(C)")

@@ -90,6 +90,7 @@ def MetaDataLoad(config: Config, projectname: str, prefix: str) -> None:
 def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
 
     # load data from model (JSON)
+    logging.info(f"load model from JSON files in folder {config.get_metadata()}")
     applications_model = _load_data_from_json(config, "applications", Application)
     attributegroups_model = _load_data_from_json(
         config, "attributegroups", AttributeGroup
@@ -101,14 +102,16 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     reports_model = _load_data_from_json(config, "reports", Report)
 
     # generate objects based on modell
-    tiles_model = [] #_generate_tiles(metrics_model) # no more tiles
-    
+    tiles_model = []  # _generate_tiles(metrics_model) # no more tiles
 
     # sort attribute groups
     hierarchy, _ = _attribute_groups_build_hierarchy(attributegroups_model)
     attributegroups_model = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
 
     # load data from NEMO
+    logging.info(
+        f"load model from NEMO files from project {projectname}, prefix {prefix}"
+    )
     applications_nemo = _fetch_data_from_nemo(
         config, projectname, getApplications, prefix
     )
@@ -129,6 +132,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     updates: Dict[str, List[T]] = {}
     creates: Dict[str, List[T]] = {}
 
+    logging.info(f"reconcile both models")
     for key, model_list, nemo_list in [
         ("applications", applications_model, applications_nemo),
         ("attributegroups", attributegroups_model, attributegroups_nemo),
@@ -147,6 +151,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
         creates[key] = _find_new_objects(model_list, nemo_list)
 
     # Start with deletions
+    logging.info(f"start deletions")
     delete_functions = {
         "applications": deleteApplications,
         "pages": deletePages,
@@ -164,6 +169,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
             delete_function(config=config, **{key: objects_to_delete})
 
     # Now do updates and creates in a reverse  order
+    logging.info(f"start creates and updates")
     create_functions = {
         "reports": createReports,
         "diagrams": createDiagrams,
@@ -189,6 +195,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
 
     # sub processes and focus order depends on dependency tree for objects
     # refresh data from server
+    logging.info(f"get dependency tree for metrics")
     metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics, prefix)
     attributegroups_nemo = _fetch_data_from_nemo(
         config, projectname, getAttributeGroups, prefix
@@ -203,6 +210,14 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     }
 
     # reconcile focus order now
+    logging.info(f"reconcile order in focus")
+    
+    # move global attribute to top
+    focusMoveAttributeBefore(
+        config=config, projectname=projectname, sourceInternalName="conservative_global"
+    )
+    
+    # now move the other ones
     for metric_internal_name, values in dependency_tree.items():
         ics_metric = [ic for ic in ics if ic.internalName in values]
         for ic in ics_metric:
@@ -230,6 +245,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
                     )
 
     # generate sub processes
+    logging.info(f"generate sub processes")
     subprocesses_nemo = _fetch_data_from_nemo(
         config, projectname, getSubProcesses, prefix
     )
@@ -421,7 +437,7 @@ def _find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
                 }
 
             if differences:
-                for attrname, (new_value,old_value) in differences.items():
+                for attrname, (new_value, old_value) in differences.items():
                     logging.info(f"{attrname}: {old_value} --> {new_value}")
                 updates.append(model_obj)
 

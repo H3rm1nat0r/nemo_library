@@ -33,7 +33,7 @@ def MigManCreateMapping(config: Config):
     mappingrelationsdf = getMappingRelations(config=config)
 
     # get all projects
-    projects_display_names = [project.displayName for project in getProjects()]
+    projects_display_names = [project.displayName for project in getProjects(config)]
 
     # iterate every given field and check whether to create the appropriate project and upload data
     for field in mapping_fields:

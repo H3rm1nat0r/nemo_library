@@ -63,10 +63,7 @@ __all__ = ["MetaDataLoad", "MetaDataCreate"]
 T = TypeVar("T")
 
 
-def MetaDataLoad(
-    config: Config,
-    projectname: str,
-) -> None:
+def MetaDataLoad(config: Config, projectname: str, prefix: str) -> None:
 
     functions = {
         "applications": getApplications,
@@ -82,7 +79,7 @@ def MetaDataLoad(
         data = func(
             config=config,
             projectname=projectname,
-            filter="(Conservative)",
+            filter=prefix,
             filter_type=FilterType.STARTSWITH,
             filter_value=FilterValue.DISPLAYNAME,
         )
@@ -90,10 +87,7 @@ def MetaDataLoad(
         _export_data_to_json(config, name, data)
 
 
-def MetaDataCreate(
-    config: Config,
-    projectname: str,
-) -> None:
+def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
 
     # load data from model (JSON)
     applications_model = _load_data_from_json(config, "applications", Application)
@@ -114,16 +108,20 @@ def MetaDataCreate(
     attributegroups_model = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
 
     # load data from NEMO
-    applications_nemo = _fetch_data_from_nemo(config, projectname, getApplications)
-    attributegroups_nemo = _fetch_data_from_nemo(
-        config, projectname, getAttributeGroups
+    applications_nemo = _fetch_data_from_nemo(
+        config, projectname, getApplications, prefix
     )
-    definedcolumns_nemo = _fetch_data_from_nemo(config, projectname, getDefinedColumns)
-    diagrams_nemo = _fetch_data_from_nemo(config, projectname, getDiagrams)
-    metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics)
-    pages_nemo = _fetch_data_from_nemo(config, projectname, getPages)
-    reports_nemo = _fetch_data_from_nemo(config, projectname, getReports)
-    tiles_nemo = _fetch_data_from_nemo(config, projectname, getTiles)
+    attributegroups_nemo = _fetch_data_from_nemo(
+        config, projectname, getAttributeGroups, prefix
+    )
+    definedcolumns_nemo = _fetch_data_from_nemo(
+        config, projectname, getDefinedColumns, prefix
+    )
+    diagrams_nemo = _fetch_data_from_nemo(config, projectname, getDiagrams, prefix)
+    metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics, prefix)
+    pages_nemo = _fetch_data_from_nemo(config, projectname, getPages, prefix)
+    reports_nemo = _fetch_data_from_nemo(config, projectname, getReports, prefix)
+    tiles_nemo = _fetch_data_from_nemo(config, projectname, getTiles, prefix)
 
     # reconcile data
     deletions: Dict[str, List[T]] = {}
@@ -190,9 +188,9 @@ def MetaDataCreate(
 
     # sub processes and focus order depends on dependency tree for objects
     # refresh data from server
-    metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics)
+    metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics, prefix)
     attributegroups_nemo = _fetch_data_from_nemo(
-        config, projectname, getAttributeGroups
+        config, projectname, getAttributeGroups, prefix
     )
     ics = getImportedColumns(config, projectname)
 
@@ -231,7 +229,9 @@ def MetaDataCreate(
                     )
 
     # generate sub processes
-    subprocesses_nemo = _fetch_data_from_nemo(config, projectname, getSubProcesses)
+    subprocesses_nemo = _fetch_data_from_nemo(
+        config, projectname, getSubProcesses, prefix
+    )
     subprocesses_model = [
         SubProcess(
             columnInternalNames=_date_columns(values, ics),
@@ -348,11 +348,11 @@ def attribute_groups_sort_hierarchy(hierarchy, root_key=None):
     return sorted_list
 
 
-def _fetch_data_from_nemo(config: Config, projectname: str, func):
+def _fetch_data_from_nemo(config: Config, projectname: str, func, prefix: str):
     return func(
         config=config,
         projectname=projectname,
-        filter="(Conservative)",
+        filter=prefix,
         filter_type=FilterType.STARTSWITH,
     )
 
@@ -381,7 +381,7 @@ def _generate_tiles(metrics: List[Metric]) -> List[Tile]:
             graphic="",
             internalName=metric.internalName,
             status="Mandatory",
-            tileGroup="(Conservative)",
+            tileGroup="",
             tileGroupTranslations={},
             tileSourceID=metric.id,
             tileSourceInternalName=metric.internalName,
@@ -420,7 +420,7 @@ def _find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
                 }
 
             if differences:
-                for attrname, (old_value, new_value) in differences.items():
+                for attrname, (new_value,old_value) in differences.items():
                     logging.info(f"{attrname}: {old_value} --> {new_value}")
                 updates.append(model_obj)
 

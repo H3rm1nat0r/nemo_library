@@ -527,14 +527,16 @@ class NemoLibrary:
     def MetaDataLoad(
         self,
         projectname: str,
+        prefix: str
     ):
-        MetaDataLoad(self.config, projectname)
+        MetaDataLoad(self.config, projectname, prefix)
 
     def MetaDataCreate(
         self,
         projectname: str,
+        prefix: str
     ):
-        MetaDataCreate(self.config, projectname)
+        MetaDataCreate(self.config, projectname, prefix)
 
     def getAttributeGroups(
         self,

@@ -428,7 +428,7 @@ def deletePages(config: Config, pages: List[str]) -> None:
 
 def deleteApplications(config: Config, applications: List[str]) -> None:
     """Deletes a list of Pages by their IDs."""
-    _generic_metadata_delete(config, applications, "Pages")
+    _generic_metadata_delete(config, applications, "Applications")
 
 
 def deleteDiagrams(config: Config, diagrams: List[str]) -> None:

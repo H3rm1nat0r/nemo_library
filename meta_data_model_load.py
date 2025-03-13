@@ -13,7 +13,3 @@ logging.basicConfig(
 )
 nl = NemoLibrary()
 nl.MetaDataLoad(projectname=PROJECT_NAME,prefix="(C)")
-
-
-# ag = nl.getMetrics(projectname=PROJECT_NAME,filter="Timm",filter_type=FilterType.CONTAINS)
-# print(json.dumps(ag[0].to_dict(),indent=4))

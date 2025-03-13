@@ -1,7 +1,7 @@
 from typing import List
 import pandas as pd
 
-from nemo_library.features.metadata import MetaDataCreate, MetaDataLoad
+from nemo_library.features.metadata import MetaDataCreate, MetaDataDelete, MetaDataLoad
 from nemo_library.features.nemo_persistence_api import (
     createApplications,
     createAttributeGroups,
@@ -537,6 +537,13 @@ class NemoLibrary:
         prefix: str
     ):
         MetaDataCreate(self.config, projectname, prefix)
+
+    def MetaDataDelete(
+        self,
+        projectname: str,
+        prefix: str
+    ):
+        MetaDataDelete(self.config, projectname, prefix)
 
     def getAttributeGroups(
         self,

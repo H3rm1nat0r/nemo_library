@@ -86,6 +86,41 @@ def MetaDataLoad(config: Config, projectname: str, prefix: str) -> None:
 
         _export_data_to_json(config, name, data)
 
+def MetaDataDelete(config: Config, projectname: str, prefix: str) -> None:
+
+    get_functions = {
+        "applications": getApplications,
+        "attributegroups": getAttributeGroups,
+        "definedcolumns": getDefinedColumns,
+        "diagrams": getDiagrams,
+        "metrics": getMetrics,
+        "pages": getPages,
+        "reports": getReports,
+    }
+
+    delete_functions = {
+        "applications": deleteApplications,
+        "pages": deletePages,
+        "tiles": deleteTiles,
+        "metrics": deleteMetrics,
+        "definedcolumns": deleteDefinedColumns,
+        "attributegroups": deleteAttributeGroups,
+        "diagrams": deleteDiagrams,
+        "reports": deleteReports,
+    }
+
+    for name, func in get_functions.items():
+        data = func(
+            config=config,
+            projectname=projectname,
+            filter=prefix,
+            filter_type=FilterType.STARTSWITH,
+            filter_value=FilterValue.DISPLAYNAME,
+        )
+
+        objects_to_delete = [obj.id for obj in data]
+        
+        delete_functions[name](config=config, **{name: objects_to_delete})
 
 def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
 

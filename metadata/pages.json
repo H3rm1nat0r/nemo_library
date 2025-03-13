@@ -71,6 +71,16 @@
                 "type": "Prediction"
             },
             {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_order_lead_time_days",
+                "contentTranslations": {},
+                "id": "",
+                "row": 5,
+                "rowSpan": 1,
+                "type": "Prediction"
+            },
+            {
                 "column": 4,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_order_preparation_time_days",

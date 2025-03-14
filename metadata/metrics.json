@@ -443,6 +443,32 @@
         "tenant": ""
     },
     {
+        "aggregateBy": "conservative_sales_payment_terms_days",
+        "aggregateFunction": "mean(conservative_sales_payment_terms_days)",
+        "dateColumn": "invoice_doc_date",
+        "description": "Average days given in payment terms",
+        "descriptionTranslations": {},
+        "displayName": "(C) Sales Payment Terms",
+        "displayNameTranslations": {},
+        "groupByAggregations": {
+            "conservative_sales_payment_terms_days": "mean"
+        },
+        "groupByColumn": "invoice_doc_i_d",
+        "isCrawlable": true,
+        "optimizationOrientation": "Min",
+        "optimizationTarget": false,
+        "scopeId": null,
+        "scopeName": null,
+        "unit": "days",
+        "defaultScopeRestrictions": [],
+        "focusOrder": "",
+        "internalName": "conservative_sales_payment_terms_days",
+        "parentAttributeGroupInternalName": "conservative_sales_payment_terms",
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
         "aggregateBy": "conservative_purchasing_replenishment_deviation_too_high",
         "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_too_high)",
         "dateColumn": "pur_order_doc_date",

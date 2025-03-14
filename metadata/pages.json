@@ -2,7 +2,7 @@
     {
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(C) OTIF",
+        "displayName": "(C) Purch OTIF",
         "displayNameTranslations": {},
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_otif",
@@ -118,7 +118,7 @@
     {
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(C) Overview",
+        "displayName": "(C) Purch Overview",
         "displayNameTranslations": {},
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_overview",
@@ -174,7 +174,7 @@
     {
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(C) DPO",
+        "displayName": "(C) Purch DPO",
         "displayNameTranslations": {},
         "hideIfColumns": [],
         "internalName": "conservative_purchasing_advisor_dpo",
@@ -183,12 +183,22 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 1,
+                "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_goods_receipt_processing_time_on_time_rate",
+                "content": "conservative_purchasing_goods_receipt_processing_time",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,
+                "rowSpan": 1,
+                "type": "Prediction"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_purchasing_dunning_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 3,
                 "rowSpan": 1,
                 "type": "Prediction"
             },
@@ -203,26 +213,6 @@
                 "type": "Prediction"
             },
             {
-                "column": 4,
-                "columnSpan": 1,
-                "content": "conservative_purchasing_payment_deviation_days",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Prediction"
-            },
-            {
-                "column": 1,
-                "columnSpan": 3,
-                "content": "conservative_purchasing_payment_deviation_too_early_rate,conservative_purchasing_payment_deviation_too_late_rate,conservative_purchasing_payment_deviation_on_time_rate",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Prediction"
-            },
-            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "conservative_purchasing_number_of_suppliers_per_part",
@@ -233,12 +223,22 @@
                 "type": "Prediction"
             },
             {
-                "column": 2,
+                "column": 1,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_goods_receipt_processing_time",
+                "content": "conservative_purchasing_goods_receipt_processing_time_on_time_rate",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,
+                "rowSpan": 1,
+                "type": "Prediction"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_global_payment_deviation_days",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
                 "rowSpan": 1,
                 "type": "Prediction"
             },
@@ -251,6 +251,113 @@
                 "row": 2,
                 "rowSpan": 1,
                 "type": "Prediction"
+            },
+            {
+                "column": 1,
+                "columnSpan": 3,
+                "content": "conservative_global_payment_deviation_too_early_rate,conservative_global_payment_deviation_too_late_rate,conservative_global_payment_deviation_on_time_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Prediction"
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(C) Sales Advisor FOT",
+        "displayNameTranslations": {},
+        "hideIfColumns": [],
+        "internalName": "conservative_sales_advisor_fot",
+        "numberOfColumns": 10,
+        "numberOfRows": 10,
+        "showIfColumns": [],
+        "visuals": [],
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(C) Sales DSO",
+        "displayNameTranslations": {},
+        "hideIfColumns": [],
+        "internalName": "conservative_sales_advisor_dso",
+        "numberOfColumns": 4,
+        "numberOfRows": 3,
+        "showIfColumns": [],
+        "visuals": [
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_sales_payment_deviation_days",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Prediction"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "conservative_sales_dunning_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Prediction"
+            },
+            {
+                "column": 1,
+                "columnSpan": 3,
+                "content": "conservative_sales_payment_deviation_too_early_rate,conservative_sales_payment_deviation_too_late_rate,conservative_sales_payment_deviation_on_time_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Prediction"
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": ""
+    },
+    {
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "(C) Sales Overview",
+        "displayNameTranslations": {},
+        "hideIfColumns": [],
+        "internalName": "conservative_sales_advisor_overview",
+        "numberOfColumns": 2,
+        "numberOfRows": 3,
+        "showIfColumns": [],
+        "visuals": [
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "d_s_o",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 2,
+                "type": "Prediction"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "d_s_o",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Metric"
             }
         ],
         "id": "",

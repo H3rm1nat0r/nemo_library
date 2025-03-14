@@ -13,8 +13,8 @@ def getNL():
 
 def test_create():
     nl = getNL()
-    nl.MetaDataCreate(META_PROJECT_NAME)
+    nl.MetaDataCreate(META_PROJECT_NAME,"(C)")
     
 def test_load():
     nl = getNL()
-    nl.MetaDataLoad(META_PROJECT_NAME)
+    nl.MetaDataLoad(META_PROJECT_NAME,"(C)")

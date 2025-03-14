@@ -290,13 +290,33 @@
         "hideIfColumns": [],
         "internalName": "conservative_sales_advisor_dso",
         "numberOfColumns": 4,
-        "numberOfRows": 3,
+        "numberOfRows": 2,
         "showIfColumns": [],
         "visuals": [
             {
                 "column": 4,
                 "columnSpan": 1,
                 "content": "conservative_sales_payment_deviation_days",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Prediction"
+            },
+            {
+                "column": 4,
+                "columnSpan": 1,
+                "content": "conservative_sales_aov",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Prediction"
+            },
+            {
+                "column": 1,
+                "columnSpan": 3,
+                "content": "conservative_sales_payment_deviation_too_early_rate,conservative_sales_payment_deviation_too_late_rate,conservative_sales_payment_deviation_on_time_rate",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
@@ -314,12 +334,22 @@
                 "type": "Prediction"
             },
             {
-                "column": 1,
-                "columnSpan": 3,
-                "content": "conservative_sales_payment_deviation_too_early_rate,conservative_sales_payment_deviation_too_late_rate,conservative_sales_payment_deviation_on_time_rate",
+                "column": 2,
+                "columnSpan": 1,
+                "content": "conservative_sales_goods_receipt_processing_time",
                 "contentTranslations": {},
                 "id": "",
-                "row": 1,
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Prediction"
+            },
+            {
+                "column": 3,
+                "columnSpan": 1,
+                "content": "conservative_sales_goods_receipt_processing_time_on_time_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
                 "rowSpan": 1,
                 "type": "Prediction"
             }

@@ -16,6 +16,7 @@ from nemo_library.features.nemo_persistence_api import (
     createDiagrams,
     createMetrics,
     createPages,
+    createReports,
     createSubProcesses,
     createTiles,
     deleteApplications,
@@ -24,6 +25,7 @@ from nemo_library.features.nemo_persistence_api import (
     deleteDiagrams,
     deleteMetrics,
     deletePages,
+    deleteReports,
     deleteSubprocesses,
     deleteTiles,
     getApplications,
@@ -39,9 +41,7 @@ from nemo_library.features.nemo_persistence_api import (
 from nemo_library.features.nemo_persistence_api import (
     getDependencyTree,
 )
-from nemo_library.features.nemo_report_api import (
-    createReports,
-    deleteReports,
+from nemo_library.features.nemo_persistence_api import (
     getReports,
 )
 from nemo_library.model.application import Application

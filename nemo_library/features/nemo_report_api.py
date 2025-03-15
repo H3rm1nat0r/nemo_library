@@ -1,13 +1,7 @@
 import re
-from typing import List
-from nemo_library.features.nemo_persistence_api import _generic_metadata_create_or_update, _generic_metadata_delete
-from nemo_library.features.nemo_persistence_api import (
-    _generic_metadata_get,
-)
 from nemo_library.features.nemo_persistence_api import getProjectID
-from nemo_library.model.report import Report
 from nemo_library.utils.config import Config
-from nemo_library.utils.utils import FilterType, FilterValue, log_error
+from nemo_library.utils.utils import log_error
 
 
 import pandas as pd
@@ -96,38 +90,6 @@ def LoadReport(
     except Exception as e:
         log_error(f"Download failed. Status: {e}")
     return result
-
-
-def deleteReports(config: Config, reports: List[str]) -> None:
-    """Deletes a list of Reports by their IDs."""
-    _generic_metadata_delete(config, reports, "Reports")
-
-
-def getReports(
-    config: Config,
-    projectname: str,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Report]:
-    """Fetches Reports metadata with the given filters."""
-    return _generic_metadata_get(
-        config,
-        projectname,
-        "Reports",
-        "/reports",
-        Report,
-        filter,
-        filter_type,
-        filter_value,
-    )
-
-
-def createReports(config: Config, projectname: str, reports: List[Report]) -> None:
-    """Creates or updates a list of Reports."""
-    _generic_metadata_create_or_update(
-        config, projectname, reports, "Reports", getReports
-    )
 
 
 def createOrUpdateReport(

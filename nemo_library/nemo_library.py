@@ -10,6 +10,7 @@ from nemo_library.features.nemo_persistence_api import (
     createImportedColumns,
     createMetrics,
     createPages,
+    createReports,
     createTiles,
     deleteApplications,
     deleteAttributeGroups,
@@ -19,6 +20,7 @@ from nemo_library.features.nemo_persistence_api import (
     deleteMetrics,
     deletePages,
     deleteProjects,
+    deleteReports,
     deleteTiles,
     getApplications,
     getAttributeGroups,
@@ -29,6 +31,7 @@ from nemo_library.features.nemo_persistence_api import (
     getPages,
     getProjectID,
     getProjects,
+    getReports,
     getSubProcesses,
     getTiles,
 )
@@ -36,9 +39,6 @@ from nemo_library.features.nemo_persistence_api import createProjects
 from nemo_library.features.nemo_report_api import (
     LoadReport,
     createOrUpdateReport,
-    createReports,
-    deleteReports,
-    getReports,
 )
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup

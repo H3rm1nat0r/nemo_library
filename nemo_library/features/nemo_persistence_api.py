@@ -15,6 +15,7 @@ from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.project import Project
+from nemo_library.model.report import Report
 from nemo_library.model.subprocess import SubProcess
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
@@ -628,5 +629,37 @@ def getDependencyTree(config: Config, id: str) -> DependencyTree:
 
     data = json.loads(response.text)
     return DependencyTree.from_dict(data)
+
+
+def getReports(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> List[Report]:
+    """Fetches Reports metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "Reports",
+        "/reports",
+        Report,
+        filter,
+        filter_type,
+        filter_value,
+    )
+
+
+def createReports(config: Config, projectname: str, reports: List[Report]) -> None:
+    """Creates or updates a list of Reports."""
+    _generic_metadata_create_or_update(
+        config, projectname, reports, "Reports", getReports
+    )
+
+
+def deleteReports(config: Config, reports: List[str]) -> None:
+    """Deletes a list of Reports by their IDs."""
+    _generic_metadata_delete(config, reports, "Reports")
 
 

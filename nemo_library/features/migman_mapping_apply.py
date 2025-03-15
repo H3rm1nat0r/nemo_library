@@ -2,9 +2,10 @@ import json
 import logging
 from typing import List
 import pandas as pd
-from nemo_library.features.nemo_persistence_api import getImportedColumns
-from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
+from nemo_library.features.nemo_persistence_api import createReports, getImportedColumns
+from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.model.imported_column import ImportedColumn
+from nemo_library.model.report import Report
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.focus import focusCoupleAttributes
@@ -57,13 +58,15 @@ def _process_project(
     for mapping_column in mapping_columns:
         mapcol = f"Mapped_{mapping_column}"
         if not mapcol in ics_display_names:
-            new_columns.append(ImportedColumn(
-                displayName=get_display_name(mapcol),
-                importName=get_import_name(mapcol),
-                internalName=get_internal_name(mapcol),
-                description= f"Original value of {mapping_column}",
-                dataType="string"
-            ))
+            new_columns.append(
+                ImportedColumn(
+                    displayName=get_display_name(mapcol),
+                    importName=get_import_name(mapcol),
+                    internalName=get_internal_name(mapcol),
+                    description=f"Original value of {mapping_column}",
+                    dataType="string",
+                )
+            )
 
     if new_columns:
         createImportedColumns(
@@ -103,14 +106,19 @@ def _apply_mapping(
         mappingrelationsdf=mappingrelationsdf,
     )
 
-    createOrUpdateReport(
+    createReports(
         config=config,
         projectname=project,
-        displayName="(MAPPING) map data",
-        querySyntax=select_statement,
-        internalName="MAPPING_map_data",
-        description="Map data",
+        reports=[
+            Report(
+                displayName="(MAPPING) map data",
+                querySyntax=select_statement,
+                internalName="MAPPING_map_data",
+                description="Map data",
+            )
+        ],
     )
+
     df = LoadReport(
         config=config,
         projectname=project,
@@ -152,12 +160,13 @@ def _select_statement(
 ) -> str:
 
     # filter original-values, they will be re-created again
-    importedcolumns = [ic for ic in importedcolumns if not ic.displayName.startswith("Mapped_")]
+    importedcolumns = [
+        ic for ic in importedcolumns if not ic.displayName.startswith("Mapped_")
+    ]
 
     # start with easy things: select fields that are not touched
     selectfrags = [
-        f'data.{ic.internalName} as "{ic.displayName}"'
-        for ic in importedcolumns
+        f'data.{ic.internalName} as "{ic.displayName}"' for ic in importedcolumns
     ]
 
     # add mapped fields now

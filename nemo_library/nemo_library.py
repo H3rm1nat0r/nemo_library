@@ -78,6 +78,7 @@ from nemo_library.features.projects import (
 )
 from nemo_library.utils.utils import FilterType, FilterValue
 
+from deprecated import deprecated
 
 class NemoLibrary:
 
@@ -329,6 +330,7 @@ class NemoLibrary:
             format_data=format_data,
         )
 
+    @deprecated(reason="Please use 'createReports' API instead")
     def createOrUpdateReport(
         self,
         projectname: str,

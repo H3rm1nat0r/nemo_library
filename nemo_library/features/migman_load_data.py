@@ -7,13 +7,15 @@ import pandas as pd
 
 from nemo_library.features.nemo_persistence_api import (
     createImportedColumns,
+    createReports,
     getImportedColumns,
     getProjectID,
 )
 from nemo_library.features.nemo_persistence_api import createProjects
-from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
+from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.project import Project
+from nemo_library.model.report import Report
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.features.projects import (
@@ -220,13 +222,17 @@ FROM
 WHERE
     not timestamp_file = 'timestamp_file'
 """
-    createOrUpdateReport(
+    createReports(
         config=config,
         projectname=project_name,
-        displayName="static information",
-        querySyntax=sql_query,
-        internalName="static_information",
-        description="return static information",
+        reports=[
+            Report(
+                displayName="static information",
+                querySyntax=sql_query,
+                internalName="static_information",
+                description="return static information",
+            )
+        ],
     )
 
 
@@ -372,13 +378,17 @@ def _update_deficiency_mining(
                 report_display_name = f"(DEFICIENCIES) {idx + 1:03} {display_name}"
                 report_internal_name = get_internal_name(report_display_name)
 
-                createOrUpdateReport(
+                createReports(
                     config=config,
                     projectname=project_name,
-                    displayName=report_display_name,
-                    internalName=report_internal_name,
-                    querySyntax=sql_statement,
-                    description=f"Deficiency Mining Report for column '{display_name}' in project '{project_name}'",
+                    reports=[
+                        Report(
+                            displayName=report_display_name,
+                            internalName=report_internal_name,
+                            querySyntax=sql_statement,
+                            description=f"Deficiency Mining Report for column '{display_name}' in project '{project_name}'",
+                        )
+                    ],
                 )
 
                 createOrUpdateRule(
@@ -472,13 +482,17 @@ FROM
     report_display_name = f"(DEFICIENCIES) GLOBAL"
     report_internal_name = get_internal_name(report_display_name)
 
-    createOrUpdateReport(
+    createReports(
         config=config,
         projectname=project_name,
-        displayName=report_display_name,
-        internalName=report_internal_name,
-        querySyntax=sql_statement,
-        description=f"Deficiency Mining Report for  project '{project_name}'",
+        reports=[
+            Report(
+                displayName=report_display_name,
+                internalName=report_internal_name,
+                querySyntax=sql_statement,
+                description=f"Deficiency Mining Report for  project '{project_name}'",
+            )
+        ],
     )
 
     createOrUpdateRule(
@@ -524,13 +538,17 @@ WHERE
     report_display_name = f"(MigMan) All records with no message"
     report_internal_name = get_internal_name(report_display_name)
 
-    createOrUpdateReport(
+    createReports(
         config=config,
         projectname=project_name,
-        displayName=report_display_name,
-        internalName=report_internal_name,
-        querySyntax=sql_statement,
-        description=f"MigMan export with valid data for project '{project_name}'",
+        reports=[
+            Report(
+                displayName=report_display_name,
+                internalName=report_internal_name,
+                querySyntax=sql_statement,
+                description=f"MigMan export with valid data for project '{project_name}'",
+            )
+        ],
     )
 
 
@@ -566,11 +584,15 @@ WHERE
     report_display_name = f"(Customer) All records with message"
     report_internal_name = get_internal_name(report_display_name)
 
-    createOrUpdateReport(
+    createReports(
         config=config,
         projectname=project_name,
-        displayName=report_display_name,
-        internalName=report_internal_name,
-        querySyntax=sql_statement,
-        description=f"export invalid data for project '{project_name}'",
+        reports=[
+            Report(
+                displayName=report_display_name,
+                internalName=report_internal_name,
+                querySyntax=sql_statement,
+                description=f"export invalid data for project '{project_name}'",
+            )
+        ],
     )

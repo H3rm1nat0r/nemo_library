@@ -2,7 +2,7 @@ import re
 from nemo_library.features.nemo_persistence_api import getProjectID
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import log_error
-
+from deprecated import deprecated
 
 import pandas as pd
 import requests
@@ -91,7 +91,7 @@ def LoadReport(
         log_error(f"Download failed. Status: {e}")
     return result
 
-
+@deprecated(reason="Please use 'createReports' API instead")
 def createOrUpdateReport(
     config: Config,
     projectname: str,

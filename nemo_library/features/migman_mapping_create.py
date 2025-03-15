@@ -2,13 +2,15 @@ import logging
 import pandas as pd
 from nemo_library.features.nemo_persistence_api import (
     createImportedColumns,
+    createReports,
     getImportedColumns,
     getProjects,
 )
 from nemo_library.features.nemo_persistence_api import createProjects
-from nemo_library.features.nemo_report_api import LoadReport, createOrUpdateReport
+from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.project import Project
+from nemo_library.model.report import Report
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
 from nemo_library.features.focus import focusCoupleAttributes
@@ -161,13 +163,18 @@ def loadData(
         mappingrelationsdf=mappingrelationsdf,
     )
 
-    createOrUpdateReport(
+    createReports(
         config=config,
         projectname=projectname,
-        displayName="source mapping",
-        querySyntax=queryforreport,
-        description="load all source values and map them",
+        reports=[
+            Report(
+                displayName="source mapping",
+                querySyntax=queryforreport,
+                description="load all source values and map them",
+            )
+        ],
     )
+
     df = LoadReport(
         config=config,
         projectname=projectname,

@@ -1,12 +1,11 @@
 import logging
 import os
 import pandas as pd
+from nemo_library.features.nemo_persistence_api import createReports
 from nemo_library.features.nemo_report_api import LoadReport
+from nemo_library.model.report import Report
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadFile
-from nemo_library.features.nemo_report_api import (
-    createOrUpdateReport,
-)
 from nemo_library.utils.migmanutils import (
     getMappingFilePath,
     getMappingRelations,
@@ -74,13 +73,16 @@ def collectData(
         newProject=False,
         mappingrelationsdf=mappingrelationsdf,
     )
-
-    createOrUpdateReport(
+    createReports(
         config=config,
         projectname=projectname,
-        displayName="source mapping",
-        querySyntax=queryforreport,
-        description="load all source values and map them",
+        reports=[
+            Report(
+                displayName="source mapping",
+                querySyntax=queryforreport,
+                description="load all source values and map them",
+            )
+        ],
     )
 
     df = LoadReport(
@@ -105,5 +107,3 @@ def collectData(
         update_project_settings=False,
     )
     logging.info(f"upload to project {projectname} completed")
-
-

@@ -5,7 +5,6 @@ import json
 from typing import TypeVar
 
 from nemo_library.features.nemo_persistence_api import getProjectID
-from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import (
     log_error,
@@ -108,27 +107,6 @@ def setProjectMetaData(
         log_error(
             f"Request failed. Status: {response.status_code}, error: {response.text}"
         )
-
-
-def getDependencyTree(config: Config, id: str) -> DependencyTree:
-    # Initialize request
-    headers = config.connection_get_headers()
-    data = {"id": id}
-
-    response = requests.get(
-        f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Metrics/DependencyTree",
-        headers=headers,
-        params=data,
-    )
-
-    if response.status_code != 200:
-        log_error(
-            f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Metrics/DependencyTree",
-        )
-        return None
-
-    data = json.loads(response.text)
-    return DependencyTree.from_dict(data)
 
 
 def createOrUpdateRule(

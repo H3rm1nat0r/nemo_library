@@ -9,6 +9,7 @@ import requests
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
+from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.model.diagram import Diagram
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
@@ -606,5 +607,26 @@ def createProjects(config: Config, projects: List[Project]) -> None:
                 log_error(
                     f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Project"}\nStatus: {response.status_code}, error: {response.text}"
                 )
+
+
+def getDependencyTree(config: Config, id: str) -> DependencyTree:
+    # Initialize request
+    headers = config.connection_get_headers()
+    data = {"id": id}
+
+    response = requests.get(
+        f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Metrics/DependencyTree",
+        headers=headers,
+        params=data,
+    )
+
+    if response.status_code != 200:
+        log_error(
+            f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Metrics/DependencyTree",
+        )
+        return None
+
+    data = json.loads(response.text)
+    return DependencyTree.from_dict(data)
 
 

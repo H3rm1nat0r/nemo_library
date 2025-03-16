@@ -110,6 +110,7 @@ def _generic_metadata_create_or_update(
                     f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
+
 def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> None:
     """
     Generic function to delete metadata entries.
@@ -134,6 +135,7 @@ def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> N
             log_error(
                 f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}"}\nStatus: {response.status_code}, error: {response.text}"
             )
+
 
 def _generic_metadata_get(
     config: Config,
@@ -202,6 +204,7 @@ def _generic_metadata_get(
     cleaned_data = clean_meta_data(filtered_data)
     return [_deserializeMetaDataObject(item, return_type) for item in cleaned_data]
 
+
 def getProjectID(
     config: Config,
     projectname: str,
@@ -228,14 +231,11 @@ def getProjectID(
         filter=projectname,
         filter_type=FilterType.EQUAL,
         filter_value=FilterValue.DISPLAYNAME,
-    )        
+    )
     if len(projects) != 1:
         return None
 
     return projects[0].id
-
-
-
 
 
 def getAttributeGroups(
@@ -395,7 +395,6 @@ def getSubProcesses(
         filter_type,
         filter_value,
     )
-
 
 
 def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
@@ -661,5 +660,3 @@ def createReports(config: Config, projectname: str, reports: List[Report]) -> No
 def deleteReports(config: Config, reports: List[str]) -> None:
     """Deletes a list of Reports by their IDs."""
     _generic_metadata_delete(config, reports, "Reports")
-
-

@@ -5,6 +5,10 @@ from uuid import UUID
 
 @dataclass
 class SubProcess:
+    """
+    Represents a subprocess with various attributes including names, descriptions, 
+    translations, aggregations, and identifiers.
+    """
     columnInternalNames: List[str]
     description: str
     descriptionTranslations: Dict[str, str]
@@ -20,4 +24,10 @@ class SubProcess:
     tenant: str
 
     def to_dict(self):
+        """
+        Converts the SubProcess instance to a dictionary.
+
+        Returns:
+            dict: A dictionary representation of the SubProcess instance.
+        """
         return asdict(self)

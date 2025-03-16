@@ -15,7 +15,12 @@ from nemo_library.utils.utils import get_internal_name
 def initializeFolderStructure(
     project_path: str,
 ) -> None:
+    """
+    Initialize the folder structure for a given project path.
 
+    Args:
+        project_path (str): The path to the project directory.
+    """
     folders = [
         "templates",
         "mappings",
@@ -29,10 +34,26 @@ def initializeFolderStructure(
 
 
 def getMappingFilePath(projectname: str, local_project_path: str) -> str:
+    """
+    Get the file path for the mapping file of a given project.
+
+    Args:
+        projectname (str): The name of the project.
+        local_project_path (str): The local path to the project directory.
+
+    Returns:
+        str: The file path to the mapping file.
+    """
     return os.path.join(local_project_path, "mappings", f"{projectname}.csv")
 
 
 def load_database() -> pd.DataFrame:
+    """
+    Load the database from a pickle file.
+
+    Returns:
+        pd.DataFrame: The loaded database as a DataFrame.
+    """
     with importlib.resources.open_binary(
         "nemo_library.templates", "migmantemplates.pkl"
     ) as file:
@@ -42,10 +63,30 @@ def load_database() -> pd.DataFrame:
 
 
 def getProjectName(project: str, addon: str, postfix: str) -> str:
+    """
+    Generate a project name based on the given parameters.
+
+    Args:
+        project (str): The base project name.
+        addon (str): An optional addon to the project name.
+        postfix (str): An optional postfix to the project name.
+
+    Returns:
+        str: The generated project name.
+    """
     return f"{project}{" " + addon if addon else ""}{(" (" + postfix + ")") if postfix else ""}"
 
 
 def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
+    """
+    Extract NEMO steps from a pA Migration Status file.
+
+    Args:
+        file (str): The path to the pA Migration Status file.
+
+    Returns:
+        list[str]: A list of NEMO steps.
+    """
     workbook = openpyxl.load_workbook(file)
     worksheet = workbook["Status Datenübernahme"]
 
@@ -97,7 +138,15 @@ def getNEMOStepsFrompAMigrationStatusFile(file: str) -> list[str]:
 
 
 def getMappingRelations(config: Config) -> pd.DataFrame:
+    """
+    Get mapping relations based on the given configuration.
 
+    Args:
+        config (Config): The configuration object.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the mapping relations.
+    """
     # get configuration
     mapping_fields = config.get_migman_mapping_fields()
     additional_fields = config.get_migman_additional_fields()
@@ -196,7 +245,18 @@ def sqlQueryInMappingTable(
     newProject: bool,
     mappingrelationsdf: pd.DataFrame,
 ) -> str:
+    """
+    Generate an SQL query for the mapping table based on the given parameters.
 
+    Args:
+        config (Config): The configuration object.
+        field (str): The field to be queried.
+        newProject (bool): Whether the project is new.
+        mappingrelationsdf (pd.DataFrame): The DataFrame containing mapping relations.
+
+    Returns:
+        str: The generated SQL query.
+    """
     projects = mappingrelationsdf["project"].to_list()
     display_names = mappingrelationsdf["matching_field_display_name"].to_list()
     internal_names = mappingrelationsdf["matching_field_internal_name"].to_list()

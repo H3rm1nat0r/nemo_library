@@ -5,6 +5,13 @@ import keyring
 
 class PasswordManager:
     def __init__(self, service_name, username):
+        """
+        Initializes the PasswordManager with the given service name and username.
+
+        Args:
+            service_name (str): The name of the service for which the password is managed.
+            username (str): The username associated with the service.
+        """
         self.service_name = service_name
         self.username = username
 

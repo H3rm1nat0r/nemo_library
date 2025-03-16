@@ -19,6 +19,16 @@ class FilterValue(Enum):
 
 
 def get_display_name(column: str, idx: int = None) -> str:
+    """
+    Returns the display name for a column, optionally including an index.
+
+    Args:
+        column (str): The name of the column.
+        idx (int, optional): The index to include in the display name. Defaults to None.
+
+    Returns:
+        str: The display name for the column.
+    """
     if idx:
         return f"{column} ({idx:03})"
     else:
@@ -26,14 +36,43 @@ def get_display_name(column: str, idx: int = None) -> str:
 
 
 def get_internal_name(column: str, idx: int = None) -> str:
+    """
+    Returns the sanitized internal name for a column, optionally including an index.
+
+    Args:
+        column (str): The name of the column.
+        idx (int, optional): The index to include in the internal name. Defaults to None.
+
+    Returns:
+        str: The sanitized internal name for the column.
+    """
     return get_sanitized_name(get_display_name(column, idx))
 
 
 def get_import_name(column: str, idx: int = None) -> str:
+    """
+    Returns the import name for a column, optionally including an index.
+
+    Args:
+        column (str): The name of the column.
+        idx (int, optional): The index to include in the import name. Defaults to None.
+
+    Returns:
+        str: The import name for the column.
+    """
     return get_display_name(column, idx)
 
 
 def get_sanitized_name(displayName: str) -> str:
+    """
+    Returns a sanitized version of the display name, suitable for use as an internal name.
+
+    Args:
+        displayName (str): The display name to sanitize.
+
+    Returns:
+        str: The sanitized name.
+    """
     return re.sub(r"[^a-z0-9_]", "_", displayName.lower()).strip()
 
 
@@ -53,6 +92,15 @@ def log_error(error_message: str, error_type: Type[BaseException] = ValueError) 
 
 
 def clean_meta_data(data):
+    """
+    Cleans metadata from a list of elements by removing specific columns.
+
+    Args:
+        data (list): The list of elements to clean.
+
+    Returns:
+        list: The cleaned list of elements.
+    """
     for element in data:
         for column in [
             "attributeGroupInternalName",

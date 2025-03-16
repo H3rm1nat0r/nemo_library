@@ -8,6 +8,7 @@ certifi
 charset-normalizer
 coverage
 Delorean
+Deprecated
 docutils
 et_xmlfile
 hubspot
@@ -52,4 +53,5 @@ tzdata
 tzlocal
 urllib3
 wheel
+wrapt
 XlsxWriter

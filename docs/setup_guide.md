@@ -120,7 +120,7 @@ else:
      from nemo_library import NemoLibrary
 
      nl = NemoLibrary()
-     print(nl.getProjectList())
+     print(nl.getProjects())
      ```
 
 3. **Run the Script**:

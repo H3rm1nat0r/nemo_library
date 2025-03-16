@@ -223,7 +223,7 @@ def getProjectID(
         ValueError: If the project name cannot be uniquely identified in the project list.
 
     Notes:
-        - This function relies on the `getProjectList` function to fetch the full project list.
+        - This function relies on the `getProjects` function to fetch the full project list.
         - If multiple or no entries match the given project name, an error is logged, and the first matching ID is returned.
     """
     projects = getProjects(

@@ -33,11 +33,11 @@ nemo = NemoLibrary()
 
 ### Projects
 
-- **`getProjectList()`**
+- **`getProjects()`**
   - **Description:** Returns a list of all projects as a Pandas DataFrame.
   - **Example:**
     ```python
-    projects = nemo.getProjectList()
+    projects = nemo.getProjects()
     print(projects)
     ```
 
@@ -424,8 +424,8 @@ nemo = NemoLibrary()
 
 - **Fetching and Analyzing Project Data**
   ```python
-  projects = nemo.getProjectList()
-  print(projects.head())
+  projects = nemo.getProjects()
+  print(projects)
   ```
 
 - **HubSpot Integration**

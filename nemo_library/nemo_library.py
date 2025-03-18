@@ -80,6 +80,7 @@ from nemo_library.utils.utils import FilterType, FilterValue
 
 from deprecated import deprecated
 
+
 class NemoLibrary:
 
     def __init__(
@@ -97,6 +98,7 @@ class NemoLibrary:
         migman_additional_fields: dict[str, list[str]] = None,
         migman_synonym_fields: dict[str, list[str]] = None,
         migman_multi_projects: dict[str, list[str]] = None,
+        metadata: str = None,
     ):
 
         self.config = Config(
@@ -113,6 +115,7 @@ class NemoLibrary:
             migman_additional_fields=migman_additional_fields,
             migman_synonym_fields=migman_synonym_fields,
             migman_multi_projects=migman_multi_projects,
+            metadata=metadata,
         )
 
         super().__init__()
@@ -526,25 +529,13 @@ class NemoLibrary:
         """
         FetchDealFromHubSpotAndUploadToNEMO(self.config, projectname)
 
-    def MetaDataLoad(
-        self,
-        projectname: str,
-        prefix: str
-    ):
+    def MetaDataLoad(self, projectname: str, prefix: str):
         MetaDataLoad(self.config, projectname, prefix)
 
-    def MetaDataCreate(
-        self,
-        projectname: str,
-        prefix: str
-    ):
+    def MetaDataCreate(self, projectname: str, prefix: str):
         MetaDataCreate(self.config, projectname, prefix)
 
-    def MetaDataDelete(
-        self,
-        projectname: str,
-        prefix: str
-    ):
+    def MetaDataDelete(self, projectname: str, prefix: str):
         MetaDataDelete(self.config, projectname, prefix)
 
     def getAttributeGroups(

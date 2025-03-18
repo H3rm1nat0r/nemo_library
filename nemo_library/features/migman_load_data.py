@@ -334,12 +334,6 @@ def _update_deficiency_mining(
                 )
                 frag_msg.append(f"{display_name} is not a valid email")
 
-            elif "s_ustid_ustid" in internal_name:
-                frag_check.append(
-                    f"NOT {internal_name} LIKE_REGEXPR('^(ATU[0-9]{8}|BE0[0-9]{9}|BG[0-9]{9,10}|CY[0-9]{8}L|CZ[0-9]{8,10}|DE[0-9]{9}|DK[0-9]{8}|EE[0-9]{9}|EL[0-9]{9}|ES[A-Z0-9][0-9]{7}[A-Z0-9]|FI[0-9]{8}|FR[A-Z0-9]{2}[0-9]{9}|HR[0-9]{11}|HU[0-9]{8}|IE[A-Z0-9][0-9]{7}[A-Z]{0,1}|IT[0-9]{11}|LT[0-9]{9,12}|LU[0-9]{8}|LV[0-9]{11}|MT[0-9]{8}|NL[0-9]{9}B[0-9]{2}|PL[0-9]{10}|PT[0-9]{9}|RO[0-9]{2,10}|SE[0-9]{12}|SI[0-9]{8}|SK[0-9]{10})$')"
-                )
-                frag_msg.append(f"{display_name} is not a valid UstID")
-
             # now build deficiency mining report for this column (if there are checks)
             if frag_check:
 

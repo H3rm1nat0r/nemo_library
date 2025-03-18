@@ -1,1 +1,1 @@
-{"resources":{"Scripts/Test.sql":{"default-schema":"MIG","default-datasource":"sap_hana-193b4f270c2-19cbab1b7af0e0f2"}}}
+{"resources":{"Scripts/Test.sql":{"default-schema":"MIG","default-datasource":"sap_hana-193b4f270c2-19cbab1b7af0e0f2"},"Scripts/genius.sql":{"default-schema":"MIG","default-datasource":"sap_hana-193b4f270c2-19cbab1b7af0e0f2"}}}

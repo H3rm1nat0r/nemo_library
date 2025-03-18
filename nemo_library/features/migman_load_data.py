@@ -250,6 +250,7 @@ def _update_deficiency_mining(
     # create column specific fragments
     frags_checked = []
     frags_msg = []
+    joins = {}
     for idx, (display_name, internal_name, data_type, format) in enumerate(
         zip(
             dbdf["display_name"],
@@ -334,6 +335,21 @@ def _update_deficiency_mining(
                 )
                 frag_msg.append(f"{display_name} is not a valid email")
 
+            # VAT_ID
+            if "s_ustid_ustid" in internal_name:
+                joins[internal_name] = {"CLASSIFICATION": "VAT_ID"}
+                frag_check.append(
+                    f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS != 'ok')"
+                )
+                frag_msg.append(f"{display_name} is not a valid VAT ID")
+            # URL
+            elif "s_adresse_homepage" in internal_name:
+                joins[internal_name] = {"CLASSIFICATION": "URL"}
+                frag_check.append(
+                    f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS != 'ok')"
+                )
+                frag_msg.append(f"{display_name} is not a valid URL")
+                
             # now build deficiency mining report for this column (if there are checks)
             if frag_check:
 
@@ -359,14 +375,22 @@ def _update_deficiency_mining(
                 status_conditions = " OR ".join(frag_check)
 
                 sql_statement = f"""SELECT
-    \tCASE 
-    \t\tWHEN {status_conditions} THEN 'check'
-        ELSE 'ok'
-    END AS STATUS
-    \t,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
-    \t,{',\n\t'.join(sorted_columns)}
-    FROM
-    $schema.$table"""
+\tCASE 
+\t\tWHEN {status_conditions} THEN 'check'
+\tELSE 'ok'
+\tEND AS STATUS
+\t,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
+\t,{',\n\t'.join(sorted_columns)}
+FROM
+\t$schema.$table
+"""
+                for join in joins:
+                    sql_statement += f"""LEFT JOIN
+\tMIG.SHARED_NAIGENT genius_{join}
+ON  
+\t    genius_{join}.CLASSIFICATION = '{joins[join]["CLASSIFICATION"]}'
+\tAND genius_{join}.VALUE          = {join}
+"""
 
                 # create the report
                 report_display_name = f"(DEFICIENCIES) {idx + 1:03} {display_name}"

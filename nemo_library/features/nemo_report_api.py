@@ -91,6 +91,7 @@ def LoadReport(
         log_error(f"Download failed. Status: {e}")
     return result
 
+
 @deprecated(reason="Please use 'createReports' API instead")
 def createOrUpdateReport(
     config: Config,

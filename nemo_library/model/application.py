@@ -13,6 +13,7 @@ class Forecast:
         groupBy (str): The attribute to group by.
         metric (str): The metric to forecast.
     """
+
     groupBy: str
     metric: str
 
@@ -26,6 +27,7 @@ class PageReference:
         order (int): The order of the page.
         page (str): The page identifier.
     """
+
     order: int
     page: str
 
@@ -53,6 +55,7 @@ class Application:
         projectId (str): The project identifier.
         tenant (str): The tenant identifier.
     """
+
     active: bool = True
     description: str = ""
     descriptionTranslations: Dict[str, str] = field(default_factory=dict)

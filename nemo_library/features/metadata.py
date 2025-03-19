@@ -92,6 +92,7 @@ def MetaDataLoad(config: Config, projectname: str, prefix: str) -> None:
 
         _export_data_to_json(config, name, data)
 
+
 def MetaDataDelete(config: Config, projectname: str, prefix: str) -> None:
 
     get_functions = {
@@ -128,8 +129,9 @@ def MetaDataDelete(config: Config, projectname: str, prefix: str) -> None:
         )
 
         objects_to_delete = [obj.id for obj in data]
-        
+
         delete_functions[name](config=config, **{name: objects_to_delete})
+
 
 def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
 
@@ -260,12 +262,12 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
 
     # reconcile focus order now
     logging.info(f"reconcile order in focus")
-    
+
     # move global attribute to top
     focusMoveAttributeBefore(
         config=config, projectname=projectname, sourceInternalName="conservative_global"
     )
-    
+
     # now move the other ones
     for metric_internal_name, values in dependency_tree.items():
         ics_metric = [ic for ic in ics if ic.internalName in values]

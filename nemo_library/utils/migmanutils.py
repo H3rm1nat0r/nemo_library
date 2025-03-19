@@ -154,7 +154,11 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
     migman_projects = config.get_migman_projects()
 
     # get data projects
-    projects_display_name_migman = [project.displayName for project in getProjects(config) if project.displayName in migman_projects]
+    projects_display_name_migman = [
+        project.displayName
+        for project in getProjects(config)
+        if project.displayName in migman_projects
+    ]
 
     # scan projects for fields
     data = []

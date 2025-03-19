@@ -364,16 +364,16 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
     batch_size = 1000  # HubSpot API Limit
 
     for i in range(0, len(deal_ids), batch_size):
-        batch_ids = deal_ids[i:i + batch_size]
+        batch_ids = deal_ids[i : i + batch_size]
         batch_input = BatchInputPublicObjectId(inputs=batch_ids)
-        
+
         try:
             associations = hs.crm.associations.batch_api.read(
                 from_object_type="deals",
                 to_object_type="company",
                 batch_input_public_object_id=batch_input,
             )
-            
+
             for result in associations.results:
                 deal_id = result._from.id
                 to_dict = result.to
@@ -386,10 +386,11 @@ def add_company_information(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
                     )
             logging.info(f"Company batch {i // batch_size + 1} loaded...")
         except Exception as e:
-            logging.error(f"Error during loading Companies Batch {i // batch_size + 1}: {e}")
-    
-    company_association_df = pd.DataFrame(company_association_rows)
+            logging.error(
+                f"Error during loading Companies Batch {i // batch_size + 1}: {e}"
+            )
 
+    company_association_df = pd.DataFrame(company_association_rows)
 
     # Create a DataFrame from the expanded rows
     company_association_df = pd.DataFrame(company_association_rows)
@@ -481,11 +482,11 @@ def load_activities(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
     """
     activity_association_rows = []
     deal_ids = deals["deal_id"].unique().tolist()
-    batch_size = 1000  
+    batch_size = 1000
 
     for activity_type in ACTIVITY_TYPES:
         for i in range(0, len(deal_ids), batch_size):
-            batch_ids = deal_ids[i:i + batch_size]  
+            batch_ids = deal_ids[i : i + batch_size]
             batch_input = BatchInputPublicObjectId(inputs=batch_ids)
 
             try:
@@ -494,7 +495,7 @@ def load_activities(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
                     to_object_type=activity_type,
                     batch_input_public_object_id=batch_input,
                 )
-                
+
                 for result in associations.results:
                     deal_id = result._from.id
                     to_dict = result.to
@@ -506,11 +507,13 @@ def load_activities(hs: HubSpot, deals: pd.DataFrame) -> pd.DataFrame:
                                 "update_type": activity_type,
                             }
                         )
-                
+
                 logging.info(f"{activity_type} batch {i // batch_size + 1} loaded...")
             except Exception as e:
-                logging.error(f"Fehler beim Laden von {activity_type} Batch {i // batch_size + 1}: {e}")
-    
+                logging.error(
+                    f"Fehler beim Laden von {activity_type} Batch {i // batch_size + 1}: {e}"
+                )
+
     activity_association_df = pd.DataFrame(activity_association_rows)
     return activity_association_df
 

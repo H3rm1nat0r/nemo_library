@@ -9,6 +9,7 @@ class DefinedColumn:
     """
     Represents a defined column with various attributes related to its type, data, and metadata.
     """
+
     categorialType: bool = False
     columnType: str = "DefinedColumn"
     containsSensitiveData: bool = False
@@ -32,7 +33,7 @@ class DefinedColumn:
     def to_dict(self):
         """
         Converts the DefinedColumn instance to a dictionary.
-        
+
         Returns:
             dict: A dictionary representation of the DefinedColumn instance.
         """

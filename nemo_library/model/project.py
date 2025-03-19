@@ -4,39 +4,44 @@ from typing import List, Dict, Optional
 from datetime import datetime
 from uuid import UUID
 
+
 @dataclass
 class ColumnDetails:
     """
     Represents the details of a column.
-    
+
     Attributes:
         displayName (str): The display name of the column.
         id (UUID): The unique identifier of the column.
         internalName (str): The internal name of the column.
     """
+
     displayName: str
     id: UUID
     internalName: str
+
 
 @dataclass
 class ErrorDetails:
     """
     Represents the details of an error.
-    
+
     Attributes:
         fileOnlyColumns (List[ColumnDetails]): Columns that are only in the file.
         id (UUID): The unique identifier of the error.
         metadataOnlyColumns (List[ColumnDetails]): Columns that are only in the metadata.
     """
+
     fileOnlyColumns: List[ColumnDetails]
     id: UUID
     metadataOnlyColumns: List[ColumnDetails]
+
 
 @dataclass
 class Warning:
     """
     Represents a warning in the data source import process.
-    
+
     Attributes:
         columnId (UUID): The unique identifier of the column.
         databaseDataType (str): The data type in the database.
@@ -49,6 +54,7 @@ class Warning:
         rawRowNumber (int): The raw row number.
         rowNumber (int): The row number.
     """
+
     columnId: UUID
     databaseDataType: str
     fieldName: str
@@ -60,11 +66,12 @@ class Warning:
     rawRowNumber: int
     rowNumber: int
 
+
 @dataclass
 class DataSourceImportRecord:
     """
     Represents a record of a data source import.
-    
+
     Attributes:
         endDateTime (datetime): The end date and time of the import.
         errorDetails (ErrorDetails): The details of any errors that occurred.
@@ -76,6 +83,7 @@ class DataSourceImportRecord:
         uploadId (str): The unique identifier of the upload.
         warnings (List[Warning]): A list of warnings that occurred during the import.
     """
+
     endDateTime: datetime
     errorDetails: ErrorDetails
     errorType: str
@@ -86,27 +94,30 @@ class DataSourceImportRecord:
     uploadId: str
     warnings: List[Warning]
 
+
 @dataclass
 class ProjectProperty:
     """
     Represents a property of a project.
-    
+
     Attributes:
         key (str): The key of the property.
         projectId (UUID): The unique identifier of the project.
         tenant (str): The tenant associated with the project.
         value (str): The value of the property.
     """
+
     key: str
     projectId: UUID
     tenant: str
     value: str
 
+
 @dataclass
 class Project:
     """
     Represents a project.
-    
+
     Attributes:
         autoDataRefresh (bool): Whether the data refresh is automatic.
         dataSourceImportRecords (List[DataSourceImportRecord]): A list of data source import records.
@@ -124,6 +135,7 @@ class Project:
         tenant (str): The tenant associated with the project.
         type (str): The type of the project.
     """
+
     autoDataRefresh: bool = True
     dataSourceImportRecords: List[DataSourceImportRecord] = field(default_factory=list)
     description: str = ""
@@ -143,7 +155,7 @@ class Project:
     def to_dict(self):
         """
         Converts the Project instance to a dictionary.
-        
+
         Returns:
             dict: The dictionary representation of the Project instance.
         """

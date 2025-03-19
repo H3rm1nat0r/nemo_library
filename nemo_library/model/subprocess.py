@@ -3,12 +3,14 @@ from typing import List, Dict
 from datetime import datetime
 from uuid import UUID
 
+
 @dataclass
 class SubProcess:
     """
-    Represents a subprocess with various attributes including names, descriptions, 
+    Represents a subprocess with various attributes including names, descriptions,
     translations, aggregations, and identifiers.
     """
+
     columnInternalNames: List[str]
     description: str
     descriptionTranslations: Dict[str, str]

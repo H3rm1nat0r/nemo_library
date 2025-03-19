@@ -1,4 +1,5 @@
 import re
+from deprecated import deprecated
 import pandas as pd
 import requests
 import json
@@ -109,6 +110,7 @@ def setProjectMetaData(
         )
 
 
+@deprecated(reason="Please use 'createRules' API instead")
 def createOrUpdateRule(
     config: Config,
     projectname: str,

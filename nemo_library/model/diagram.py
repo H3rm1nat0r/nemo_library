@@ -1,6 +1,7 @@
 from dataclasses import dataclass, asdict
 from typing import Dict, List
 
+
 @dataclass
 class Argument:
     """
@@ -11,9 +12,11 @@ class Argument:
         column (str): The column name.
         dataType (str): The data type of the column.
     """
+
     aggregation: str
     column: str
     dataType: str
+
 
 @dataclass
 class Value:
@@ -28,12 +31,14 @@ class Value:
         legend (str): The legend for the value.
         legendTranslations (Dict[str, str]): Translations for the legend.
     """
+
     aggregation: str
     chartType: str
     column: str
     id: str
     legend: str
     legendTranslations: Dict[str, str]
+
 
 @dataclass
 class Diagram:
@@ -59,6 +64,7 @@ class Diagram:
         projectId (str): The project identifier.
         tenant (str): The tenant identifier.
     """
+
     alternateVisualization: bool
     argument: Argument
     argumentAxisTitle: str

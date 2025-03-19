@@ -22,6 +22,7 @@ class Report:
     projectId (str): The project ID associated with the report.
     tenant (str): The tenant associated with the report.
     """
+
     columns: List[str] = field(default_factory=list)
     description: str = ""
     descriptionTranslations: Dict[str, str] = field(default_factory=dict)
@@ -50,5 +51,5 @@ class Report:
         """
         if self.internalName is None:
             self.internalName = get_internal_name(self.displayName)
-            
+
         self.columns = [col.upper() for col in self.columns]

@@ -1,11 +1,13 @@
 from dataclasses import dataclass, field, asdict
 from typing import Dict, Optional
 
+
 @dataclass
 class Tile:
     """
     Represents a Tile with various attributes related to its display and metadata.
     """
+
     aggregation: str
     description: str
     descriptionTranslations: Dict[str, str]
@@ -33,4 +35,3 @@ class Tile:
             dict: A dictionary representation of the Tile instance.
         """
         return asdict(self)
-

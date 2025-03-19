@@ -9,6 +9,7 @@ class ImportedColumn:
     """
     Represents an imported column with various attributes related to its metadata.
     """
+
     categorialType: bool = False
     columnType: str = "ExportedColumn"
     containsSensitiveData: bool = False
@@ -32,7 +33,7 @@ class ImportedColumn:
     def to_dict(self):
         """
         Converts the ImportedColumn instance to a dictionary.
-        
+
         Returns:
             dict: A dictionary representation of the ImportedColumn instance.
         """

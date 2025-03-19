@@ -138,7 +138,7 @@ def test_focusMoveAttributeBefore():
     assert True
 
 
-def test_createOrUpdateReport():
+def test_createReports():
     nl = getNL()
     select = """WITH Params AS (
     SELECT ADD_MONTHS(

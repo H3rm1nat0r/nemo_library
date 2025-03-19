@@ -9,6 +9,7 @@ class AttributeGroup:
     """
     Represents a group of attributes with various properties and settings.
     """
+
     attributeGroupType: str = "Standard"
     defaultMetricGroup: bool = False
     defaultDefinedColumnGroup: bool = False

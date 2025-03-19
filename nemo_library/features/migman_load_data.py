@@ -8,6 +8,7 @@ import pandas as pd
 from nemo_library.features.nemo_persistence_api import (
     createImportedColumns,
     createReports,
+    createRules,
     getImportedColumns,
     getProjectID,
 )
@@ -16,11 +17,9 @@ from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.project import Project
 from nemo_library.model.report import Report
+from nemo_library.model.rule import Rule
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
-from nemo_library.features.projects import (
-    createOrUpdateRule,
-)
 from nemo_library.utils.migmanutils import (
     getNEMOStepsFrompAMigrationStatusFile,
     getProjectName,
@@ -349,7 +348,7 @@ def _update_deficiency_mining(
                     f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS != 'ok')"
                 )
                 frag_msg.append(f"{display_name} is not a valid URL")
-                
+
             # now build deficiency mining report for this column (if there are checks)
             if frag_check:
 
@@ -386,7 +385,7 @@ FROM
 """
                 for join in joins:
                     sql_statement += f"""LEFT JOIN
-\tMIG.SHARED_NAIGENT genius_{join}
+\t$schema.SHARED_NAIGENT genius_{join}
 ON  
 \t    genius_{join}.CLASSIFICATION = '{joins[join]["CLASSIFICATION"]}'
 \tAND genius_{join}.VALUE          = {join}
@@ -409,13 +408,17 @@ ON
                     ],
                 )
 
-                createOrUpdateRule(
+                createRules(
                     config=config,
                     projectname=project_name,
-                    displayName=f"DM_{idx:03}: {display_name}",
-                    ruleSourceInternalName=report_internal_name,
-                    ruleGroup="02 Columns",
-                    description=f"Deficiency Mining Rule for column '{display_name}' in project '{project_name}'",
+                    rules=[
+                        Rule(
+                            displayName=f"DM_{idx:03}: {display_name}",
+                            ruleSourceInternalName=report_internal_name,
+                            ruleGroup="02 Columns",
+                            description=f"Deficiency Mining Rule for column '{display_name}' in project '{project_name}'",
+                        )
+                    ],
                 )
 
             logging.info(
@@ -431,6 +434,7 @@ ON
         frags_checked=frags_checked,
         frags_msg=frags_msg,
         sorted_columns=sorted_columns,
+        joins=joins,
     )
 
     # create report for mig man
@@ -441,6 +445,7 @@ ON
         dbdf=dbdf,
         case_statement_specific=case_statement_specific,
         status_conditions=status_conditions,
+        joins=joins,
     )
 
     # create report for the customer containing all errors
@@ -451,6 +456,7 @@ ON
         dbdf=dbdf,
         case_statement_specific=case_statement_specific,
         status_conditions=status_conditions,
+        joins=joins,
     )
 
     logging.info(f"Project {project_name}: {len(frags_checked)} checks implemented...")
@@ -465,6 +471,7 @@ def _create_dm_rule_global(
     frags_checked: list[str],
     frags_msg: list[str],
     sorted_columns: list[str],
+    joins: dict[str, dict[str, str]],
 ) -> (str, str):  # type: ignore
 
     # case statements for messages and dm report
@@ -486,15 +493,24 @@ def _create_dm_rule_global(
             ELSE 'ok'
         END AS STATUS
     FROM
-        $schema.$table
+        $schema.$table"""
+
+    for join in joins:
+        sql_statement += f"""
+LEFT JOIN
+\t$schema.SHARED_NAIGENT genius_{join}
+ON  
+\t    genius_{join}.CLASSIFICATION = '{joins[join]["CLASSIFICATION"]}'
+\tAND genius_{join}.VALUE          = {join}"""
+
+    sql_statement += f"""       
 )
 SELECT
       Status
     , DEFICIENCY_MININNG_MESSAGE
     , {',\n\t'.join(sorted_columns)}
 FROM 
-    CTEDefMining
-"""
+    CTEDefMining"""
 
     # create the report
     report_display_name = f"(DEFICIENCIES) GLOBAL"
@@ -513,13 +529,17 @@ FROM
         ],
     )
 
-    createOrUpdateRule(
+    createRules(
         config=config,
         projectname=project_name,
-        displayName="Global",
-        ruleSourceInternalName=report_internal_name,
-        ruleGroup="01 Global",
-        description=f"Deficiency Mining Rule for project '{project_name}'",
+        rules=[
+            Rule(
+                displayName="Global",
+                ruleSourceInternalName=report_internal_name,
+                ruleGroup="01 Global",
+                description=f"Deficiency Mining Rule for project '{project_name}'",
+            )
+        ],
     )
 
     return case_statement_specific, status_conditions
@@ -532,6 +552,7 @@ def _create_report_for_migman(
     dbdf: pd.DataFrame,
     case_statement_specific: str,
     status_conditions: str,
+    joins: dict[str, dict[str, str]],
 ) -> None:
     sql_statement = f"""WITH CTEDefMining AS (
     SELECT
@@ -542,7 +563,17 @@ def _create_report_for_migman(
             ELSE 'ok'
         END AS STATUS
     FROM
-        $schema.$table
+        $schema.$table"""
+
+    for join in joins:
+        sql_statement += f"""
+LEFT JOIN
+\t$schema.SHARED_NAIGENT genius_{join}
+ON  
+\t    genius_{join}.CLASSIFICATION = '{joins[join]["CLASSIFICATION"]}'
+\tAND genius_{join}.VALUE          = {join}"""
+
+    sql_statement += f"""       
 )
 SELECT
     {',\n\t'.join([f"{intname} as \"{paname}\"" for intname,dispname,paname in zip(dbdf["internal_name"],dbdf["display_name"],dbdf["migman_header_label"]) if dispname in columns_in_file])}
@@ -550,7 +581,7 @@ FROM
     CTEDefMining
 WHERE
     STATUS = 'ok'
-"""
+    """
 
     # create the report
     report_display_name = f"(MigMan) All records with no message"
@@ -577,6 +608,7 @@ def _create_report_for_customer(
     dbdf: pd.DataFrame,
     case_statement_specific: str,
     status_conditions: str,
+    joins: dict[str, dict[str, str]],
 ) -> None:
     sql_statement = f"""WITH CTEDefMining AS (
     SELECT
@@ -587,7 +619,17 @@ def _create_report_for_customer(
             ELSE 'ok'
         END AS STATUS
     FROM
-        $schema.$table
+        $schema.$table"""
+
+    for join in joins:
+        sql_statement += f"""
+LEFT JOIN
+\t$schema.SHARED_NAIGENT genius_{join}
+ON  
+\t    genius_{join}.CLASSIFICATION = '{joins[join]["CLASSIFICATION"]}'
+\tAND genius_{join}.VALUE          = {join}"""
+
+    sql_statement += f"""       
 )
 SELECT
     DEFICIENCY_MININNG_MESSAGE,

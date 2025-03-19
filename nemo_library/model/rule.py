@@ -8,19 +8,19 @@ class Rule:
     """
     Represents a rule  with various properties and settings.
     """
+
     active: bool = True
-    description: str = None
+    description: str = ""
     descriptionTranslations: Dict[str, str] = field(default_factory=dict)
     displayName: str = None
     displayNameTranslations: Dict[str, str] = field(default_factory=dict)
     internalName: str = None
-    ruleGroup: str = None
+    ruleGroup: str = ""
     ruleGroupTranslations: Dict[str, str] = field(default_factory=dict)
-    ruleSourceInternalName: str = None
-    id: str = None
-    metadataTemplateId: str = None
-    projectId: str = None
-    tenant: str = None
+    ruleSourceInternalName: str = ""
+    id: str = ""
+    projectId: str = ""
+    tenant: str = ""
 
     def to_dict(self):
         """

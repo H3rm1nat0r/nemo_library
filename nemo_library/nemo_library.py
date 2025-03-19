@@ -378,6 +378,7 @@ class NemoLibrary:
             description,
         )
 
+    @deprecated(reason="Please use 'createRules' API instead")
     def createOrUpdateRule(
         self,
         projectname: str,

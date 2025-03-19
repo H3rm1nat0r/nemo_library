@@ -3,7 +3,11 @@ import logging
 import re
 from typing import Tuple
 import pandas as pd
-from nemo_library.utils.utils import get_display_name, get_import_name, get_internal_name
+from nemo_library.utils.utils import (
+    get_display_name,
+    get_import_name,
+    get_internal_name,
+)
 
 __all__ = ["MigManInitDatabase"]
 
@@ -14,7 +18,7 @@ def MigManInitDatabase() -> None:
         "nemo_library.templates.migmantemplates"
     ):
         dfs.append(_process_file(resource))
-        
+
     databasedf = pd.concat(dfs)
     databasedf.to_pickle("./nemo_library/templates/migmantemplates.pkl")
 
@@ -30,7 +34,7 @@ def _process_file(resource: str) -> pd.DataFrame:
     # load dummy headers from first line
     dummyheaders = _import_dummy_header(resource)
     dfdesc = _import_datadescription(resource, dummyheaders)
-    df = _add_calculated_fields(dfdesc,project,postfix)
+    df = _add_calculated_fields(dfdesc, project, postfix)
     return df
 
 
@@ -97,10 +101,18 @@ def _import_datadescription(resource: str, dummyheaders: pd.DataFrame) -> pd.Dat
     return dfdesc
 
 
-def _add_calculated_fields(dfdesc: pd.DataFrame, project:str, postfix:str) -> pd.DataFrame:
+def _add_calculated_fields(
+    dfdesc: pd.DataFrame, project: str, postfix: str
+) -> pd.DataFrame:
     dfdesc["project_name"] = project
     dfdesc["postfix"] = postfix if postfix != "MAIN" else ""
-    dfdesc["display_name"] = dfdesc.apply(lambda row: get_display_name(row["Location in proALPHA"], row.name), axis=1)
-    dfdesc["internal_name"] = dfdesc.apply(lambda row: get_internal_name(row["Location in proALPHA"], row.name), axis=1)
-    dfdesc["import_name"] = dfdesc.apply(lambda row: get_import_name(row["Location in proALPHA"], row.name), axis=1)
+    dfdesc["display_name"] = dfdesc.apply(
+        lambda row: get_display_name(row["Location in proALPHA"], row.name), axis=1
+    )
+    dfdesc["internal_name"] = dfdesc.apply(
+        lambda row: get_internal_name(row["Location in proALPHA"], row.name), axis=1
+    )
+    dfdesc["import_name"] = dfdesc.apply(
+        lambda row: get_import_name(row["Location in proALPHA"], row.name), axis=1
+    )
     return dfdesc

@@ -1,13 +1,15 @@
 import logging
 import os
 import pandas as pd
-from nemo_library.features.nemo_persistence_api import createReports, getImportedColumns
+from nemo_library.features.nemo_persistence_api import (
+    createReports,
+    createRules,
+    getImportedColumns,
+)
 from nemo_library.model.report import Report
+from nemo_library.model.rule import Rule
 from nemo_library.utils.config import Config
 from nemo_library.features.focus import _get_attribute_tree
-from nemo_library.features.projects import (
-    createOrUpdateRule,
-)
 from nemo_library.utils.utils import get_internal_name
 
 LEVELS = ["PROJECT_NAME", "RULE_GROUP", "RULE_NAME"]
@@ -183,13 +185,17 @@ AND ({exception})
         ],
     )
 
-    createOrUpdateRule(
+    createRules(
         config=config,
         projectname=level0_item,
-        displayName=f"{level2_item}",
-        ruleSourceInternalName=report_internal_name,
-        ruleGroup=level1_item,
-        description=f"Deficiency Mining Rule for {level0_item}, {level1_item}, {level2_item}'",
+        rules=[
+            Rule(
+                displayName=level2_item,
+                ruleSourceInternalName=report_internal_name,
+                ruleGroup=level1_item,
+                description=f"Deficiency Mining Rule for {level0_item}, {level1_item}, {level2_item}'",
+            )
+        ],
     )
 
 

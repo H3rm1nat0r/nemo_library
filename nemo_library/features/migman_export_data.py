@@ -27,7 +27,7 @@ def MigManExportData(config: Config) -> None:
         projects = config.get_migman_projects()
 
     project_list_nemo = [project.displayName for project in getProjects(config)]
-    
+
     dbdf = load_database()
     for project in projects:
 
@@ -48,16 +48,30 @@ def MigManExportData(config: Config) -> None:
         if multi_projects_list:
             for addon in multi_projects_list:
                 for postfix in postfixes:
-                    _export_data(config,local_project_directory,project_list_nemo,project, addon, postfix)
+                    _export_data(
+                        config,
+                        local_project_directory,
+                        project_list_nemo,
+                        project,
+                        addon,
+                        postfix,
+                    )
         else:
             for postfix in postfixes:
-                _export_data(config,local_project_directory,project_list_nemo,project, None, postfix)
+                _export_data(
+                    config,
+                    local_project_directory,
+                    project_list_nemo,
+                    project,
+                    None,
+                    postfix,
+                )
 
 
 def _export_data(
     config: Config,
     local_project_directory: str,
-    project_list_nemo : list[str],
+    project_list_nemo: list[str],
     project: str,
     addon: str,
     postfix: str,
@@ -71,11 +85,16 @@ def _export_data(
     project_name = getProjectName(project, addon, postfix)
 
     if project_name not in project_list_nemo:
-        logging.info(f"Project '{project_name}' not available in NEMO. No data exported")
+        logging.info(
+            f"Project '{project_name}' not available in NEMO. No data exported"
+        )
         return
 
     for folder, file_postfix, report_name in data:
 
+        logging.info(
+            f"Exporting '{project}', addon '{addon}', postfix '{postfix}', report name: '{report_name}' to '{folder}'"
+        )
         file_name = os.path.join(
             local_project_directory,
             folder,

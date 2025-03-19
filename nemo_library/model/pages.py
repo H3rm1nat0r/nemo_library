@@ -1,6 +1,7 @@
 from dataclasses import dataclass, asdict
 from typing import Dict, List
 
+
 @dataclass
 class Visual:
     """
@@ -16,6 +17,7 @@ class Visual:
         rowSpan (int): The number of rows the visual spans.
         type (str): The type of the visual.
     """
+
     column: int
     columnSpan: int
     content: str
@@ -24,6 +26,7 @@ class Visual:
     row: int
     rowSpan: int
     type: str
+
 
 @dataclass
 class Page:
@@ -45,6 +48,7 @@ class Page:
         projectId (str): The project identifier the page belongs to.
         tenant (str): The tenant identifier the page belongs to.
     """
+
     description: str
     descriptionTranslations: Dict[str, str]
     displayName: str

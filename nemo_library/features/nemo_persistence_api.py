@@ -532,9 +532,7 @@ def createSubProcesses(
 
 def createRules(config: Config, projectname: str, rules: List[Rule]) -> None:
     """Creates or updates a list of Rules."""
-    _generic_metadata_create_or_update(
-        config, projectname, rules, "Rule", getRules
-    )
+    _generic_metadata_create_or_update(config, projectname, rules, "Rule", getRules)
 
 
 def getProjects(

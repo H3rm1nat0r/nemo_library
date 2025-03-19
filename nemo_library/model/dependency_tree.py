@@ -2,6 +2,7 @@ from dataclasses import asdict, dataclass, field
 from typing import List, Optional
 import json
 
+
 @dataclass
 class DependencyTree:
     """
@@ -16,6 +17,7 @@ class DependencyTree:
     nodeInternalName (str): Internal name of the node.
     nodeType (str): Type of the node.
     """
+
     dependencies: List[Optional["DependencyTree"]] = field(default_factory=list)
     dependencyType: Optional[str] = None
     nodeConflictState: str = ""
@@ -35,7 +37,11 @@ class DependencyTree:
         Returns:
         DependencyTree: An instance of DependencyTree.
         """
-        dependencies = [DependencyTree.from_dict(dep) for dep in data.get("dependencies", [])] if "dependencies" in data else []
+        dependencies = (
+            [DependencyTree.from_dict(dep) for dep in data.get("dependencies", [])]
+            if "dependencies" in data
+            else []
+        )
         return DependencyTree(
             dependencies=dependencies,
             dependencyType=data.get("dependencyType"),

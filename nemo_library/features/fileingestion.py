@@ -188,7 +188,7 @@ def ReUploadFile(
         project_id = getProjectID(config, projectname)
         if not project_id:
             logging.info(f"Project {projectname} not found - create it")
-            createProjects(config=config,projects=[Project(displayName=projectname)])
+            createProjects(config=config, projects=[Project(displayName=projectname)])
             project_id = getProjectID(config, projectname)
 
         headers = config.connection_get_headers()
@@ -205,6 +205,7 @@ def ReUploadFile(
             ) as f_out:
                 shutil.copyfileobj(f_in, f_out)
         logging.info(f"File {filename} has been compressed to {gzipped_filename}")
+        time.sleep(1)
 
         # Retrieve temporary credentials from NEMO TVM
         response = requests.get(

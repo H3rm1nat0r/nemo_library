@@ -17,6 +17,7 @@ from nemo_library.features.nemo_persistence_api import (
     createMetrics,
     createPages,
     createReports,
+    createRules,
     createSubProcesses,
     createTiles,
     deleteApplications,
@@ -26,6 +27,7 @@ from nemo_library.features.nemo_persistence_api import (
     deleteMetrics,
     deletePages,
     deleteReports,
+    deleteRules,
     deleteSubprocesses,
     deleteTiles,
     getApplications,
@@ -35,6 +37,7 @@ from nemo_library.features.nemo_persistence_api import (
     getImportedColumns,
     getMetrics,
     getPages,
+    getRules,
     getSubProcesses,
     getTiles,
 )
@@ -53,6 +56,7 @@ from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.report import Report
+from nemo_library.model.rule import Rule
 from nemo_library.model.tile import Tile
 from nemo_library.model.subprocess import SubProcess
 from nemo_library.utils.config import Config
@@ -73,9 +77,11 @@ def MetaDataLoad(config: Config, projectname: str, prefix: str) -> None:
         "metrics": getMetrics,
         "pages": getPages,
         "reports": getReports,
+        "rules": getRules,
     }
 
     for name, func in functions.items():
+        logging.info(f"load {name} from NEMO")
         data = func(
             config=config,
             projectname=projectname,
@@ -96,6 +102,7 @@ def MetaDataDelete(config: Config, projectname: str, prefix: str) -> None:
         "metrics": getMetrics,
         "pages": getPages,
         "reports": getReports,
+        "rules": getRules,
     }
 
     delete_functions = {
@@ -107,9 +114,11 @@ def MetaDataDelete(config: Config, projectname: str, prefix: str) -> None:
         "attributegroups": deleteAttributeGroups,
         "diagrams": deleteDiagrams,
         "reports": deleteReports,
+        "rules": deleteRules,
     }
 
     for name, func in get_functions.items():
+        logging.info(f"delete {name} from NEMO")
         data = func(
             config=config,
             projectname=projectname,
@@ -135,6 +144,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     metrics_model = _load_data_from_json(config, "metrics", Metric)
     pages_model = _load_data_from_json(config, "pages", Page)
     reports_model = _load_data_from_json(config, "reports", Report)
+    rules_model = _load_data_from_json(config, "rules", Rule)
 
     # generate objects based on modell
     tiles_model = []  # _generate_tiles(metrics_model) # no more tiles
@@ -161,6 +171,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     pages_nemo = _fetch_data_from_nemo(config, projectname, getPages, prefix)
     reports_nemo = _fetch_data_from_nemo(config, projectname, getReports, prefix)
     tiles_nemo = _fetch_data_from_nemo(config, projectname, getTiles, prefix)
+    rules_nemo = _fetch_data_from_nemo(config, projectname, getRules, prefix)
 
     # reconcile data
     deletions: Dict[str, List[T]] = {}
@@ -177,6 +188,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
         ("pages", pages_model, pages_nemo),
         ("reports", reports_model, reports_nemo),
         ("tiles", tiles_model, tiles_nemo),
+        ("rules", rules_model, rules_nemo),
     ]:
         nemo_list_cleaned = copy.deepcopy(nemo_list)
         nemo_list_cleaned = _clean_fields(nemo_list_cleaned)
@@ -195,6 +207,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
         "definedcolumns": deleteDefinedColumns,
         "attributegroups": deleteAttributeGroups,
         "diagrams": deleteDiagrams,
+        "rules": deleteRules,
         "reports": deleteReports,
     }
 
@@ -207,6 +220,7 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     logging.info(f"start creates and updates")
     create_functions = {
         "reports": createReports,
+        "rules": createRules,
         "diagrams": createDiagrams,
         "attributegroups": createAttributeGroups,
         "definedcolumns": createDefinedColumns,

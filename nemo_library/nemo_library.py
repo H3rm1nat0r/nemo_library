@@ -11,6 +11,7 @@ from nemo_library.features.nemo_persistence_api import (
     createMetrics,
     createPages,
     createReports,
+    createRules,
     createTiles,
     deleteApplications,
     deleteAttributeGroups,
@@ -21,6 +22,7 @@ from nemo_library.features.nemo_persistence_api import (
     deletePages,
     deleteProjects,
     deleteReports,
+    deleteRules,
     deleteTiles,
     getApplications,
     getAttributeGroups,
@@ -32,6 +34,7 @@ from nemo_library.features.nemo_persistence_api import (
     getProjectID,
     getProjects,
     getReports,
+    getRules,
     getSubProcesses,
     getTiles,
 )
@@ -49,6 +52,7 @@ from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.project import Project
 from nemo_library.model.report import Report
+from nemo_library.model.rule import Rule
 from nemo_library.model.subprocess import SubProcess
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
@@ -711,6 +715,30 @@ class NemoLibrary:
             filter_type=filter_type,
             filter_value=filter_value,
         )
+
+    def getRules(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> List[Rule]:
+        """Fetches Rules metadata with the given filters."""
+        return getRules(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def createRules(self, projectname: str, rules: List[Rule]) -> None:
+        """Creates or updates a list of Rules."""
+        createRules(config=self.config, projectname=projectname, rules=rules)
+
+    def deleteRules(self, rules: List[str]) -> None:
+        """Deletes a list of Rules by their IDs."""
+        deleteRules(config=self.config, rules=rules)
 
     def deleteDefinedColumns(self, definedcolumns: List[str]) -> None:
         """Deletes a list of Defined Columns by their IDs."""

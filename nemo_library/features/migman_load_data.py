@@ -29,6 +29,7 @@ from nemo_library.utils.utils import (
     get_internal_name,
     log_error,
 )
+from nemo_library.features.import_configuration import ImportConfigurations
 
 __all__ = ["MigManLoadData"]
 
@@ -193,7 +194,15 @@ def _load_data(
             update_project_settings=False,
             version=3,
             datasource_ids=[{"key": "datasource_id", "value": project_name}],
+            import_configuration=ImportConfigurations(
+                skip_first_rows=1,
+                record_delimiter="\n",
+                field_delimiter=";",
+                optionally_enclosed_by='"',
+                escape_character="\\",
+            ),
         )
+
         _update_static_report(config=config, project_name=project_name)
 
         # if there are new columns, update all reports

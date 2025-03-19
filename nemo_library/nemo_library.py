@@ -2,6 +2,7 @@ from typing import List
 import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataDelete, MetaDataLoad
+from nemo_library.features.migman_precheck_files import MigManPrecheckFiles
 from nemo_library.features.nemo_persistence_api import (
     createApplications,
     createAttributeGroups,
@@ -241,6 +242,9 @@ class NemoLibrary:
     def MigManInitDatabase(self) -> None:
         MigManInitDatabase()
 
+    def MigManPrecheckFiles(self) -> None:
+        MigManPrecheckFiles(self.config)
+        
     def MigManCreateProjectTemplates(self) -> None:
         MigManCreateProjectTemplates(self.config)
 

@@ -20,14 +20,15 @@ def test_clean():
     for project in nl.config.get_migman_projects():
         if project in project_map:
             delete.append(project_map[project])
-        
+
     for mapping in nl.config.get_migman_mapping_fields():
         if f"Mapping {mapping}" in project_map:
             delete.append(project_map[f"Mapping {mapping}"])
 
     if delete:
         nl.deleteProjects(delete)
-    
+
+
 def test_MigManCreateProjectTemplates():
     nl = getNL()
     test_dir = nl.config.get_migman_local_project_directory()
@@ -39,6 +40,11 @@ def test_MigManCreateProjectTemplates():
     nl.MigManCreateProjectTemplates()
 
     assert os.path.exists(test_dir)
+
+
+def test_MigManPrecheckFiles():
+    nl = getNL()
+    nl.MigManPrecheckFiles()
 
 
 def test_MigManLoadData():
@@ -58,13 +64,16 @@ def test_MigManCreateMapping():
     nl = getNL()
     nl.MigManCreateMapping()
 
+
 def test_MigManLoadMapping():
     nl = getNL()
     nl.MigManLoadMapping()
 
+
 def test_MigManApplyMapping():
     nl = getNL()
     nl.MigManApplyMapping()
+
 
 def test_MigManExportData():
     nl = getNL()
@@ -96,8 +105,8 @@ def test_final():
     delete = []
     for project in nl.config.get_migman_projects():
         delete.append(project_map[project])
-        
+
     for mapping in nl.config.get_migman_mapping_fields():
         delete.append(project_map[f"Mapping {mapping}"])
-        
+
     nl.deleteProjects(delete)

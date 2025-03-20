@@ -6,7 +6,10 @@
         "description": "",
         "descriptionTranslations": {},
         "displayName": "(C) Purch Replenishment Deviation (days)",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "(K) Eink Wiederbeschaffung Abweichung (Tage)",
+            "en": "(C) Purch Replenishment Deviation (days)"
+        },
         "groupByAggregations": {
             "conservative_purchasing_replenishment_deviation_days": "mean"
         },

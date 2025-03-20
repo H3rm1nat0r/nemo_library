@@ -242,8 +242,8 @@ class NemoLibrary:
     def MigManInitDatabase(self) -> None:
         MigManInitDatabase()
 
-    def MigManPrecheckFiles(self) -> None:
-        MigManPrecheckFiles(self.config)
+    def MigManPrecheckFiles(self) -> dict[str: str]:
+        return MigManPrecheckFiles(self.config)
         
     def MigManCreateProjectTemplates(self) -> None:
         MigManCreateProjectTemplates(self.config)

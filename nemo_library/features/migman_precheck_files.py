@@ -13,7 +13,7 @@ from nemo_library.utils.migmanutils import (
 __all__ = ["MigManPrecheckFiles"]
 
 
-def MigManPrecheckFiles(config: Config) -> None:
+def MigManPrecheckFiles(config: Config) -> dict[str: str]:
 
     # get configuration
     local_project_directory = config.get_migman_local_project_directory()
@@ -66,7 +66,7 @@ def MigManPrecheckFiles(config: Config) -> None:
         logging.info(
             f"status of project {project}: {json.dumps(status[project],indent=4)}"
         )
-
+    return status
 
 def _check_data(
     config: Config,

@@ -62,12 +62,18 @@ from nemo_library.model.subprocess import SubProcess
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import FilterType, FilterValue, log_error
 
-__all__ = ["MetaDataLoad", "MetaDataCreate"]
+__all__ = ["MetaDataLoad", "MetaDataDelete", "MetaDataCreate"]
 
 T = TypeVar("T")
 
 
-def MetaDataLoad(config: Config, projectname: str, prefix: str) -> None:
+def MetaDataLoad(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> None:
 
     functions = {
         "applications": getApplications,
@@ -85,15 +91,21 @@ def MetaDataLoad(config: Config, projectname: str, prefix: str) -> None:
         data = func(
             config=config,
             projectname=projectname,
-            filter=prefix,
-            filter_type=FilterType.STARTSWITH,
-            filter_value=FilterValue.DISPLAYNAME,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
         )
 
         _export_data_to_json(config, name, data)
 
 
-def MetaDataDelete(config: Config, projectname: str, prefix: str) -> None:
+def MetaDataDelete(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> None:
 
     get_functions = {
         "applications": getApplications,
@@ -123,9 +135,9 @@ def MetaDataDelete(config: Config, projectname: str, prefix: str) -> None:
         data = func(
             config=config,
             projectname=projectname,
-            filter=prefix,
-            filter_type=FilterType.STARTSWITH,
-            filter_value=FilterValue.DISPLAYNAME,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
         )
 
         objects_to_delete = [obj.id for obj in data]
@@ -133,7 +145,13 @@ def MetaDataDelete(config: Config, projectname: str, prefix: str) -> None:
         delete_functions[name](config=config, **{name: objects_to_delete})
 
 
-def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
+def MetaDataCreate(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> None:
 
     # load data from model (JSON)
     logging.info(f"load model from JSON files in folder {config.get_metadata()}")
@@ -156,24 +174,79 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     attributegroups_model = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
 
     # load data from NEMO
-    logging.info(
-        f"load model from NEMO files from project {projectname}, prefix {prefix}"
-    )
+    logging.info(f"load model from NEMO files from project {projectname}")
     applications_nemo = _fetch_data_from_nemo(
-        config, projectname, getApplications, prefix
+        config=config,
+        projectname=projectname,
+        func=getApplications,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
     )
     attributegroups_nemo = _fetch_data_from_nemo(
-        config, projectname, getAttributeGroups, prefix
+        config=config,
+        projectname=projectname,
+        func=getAttributeGroups,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
     )
     definedcolumns_nemo = _fetch_data_from_nemo(
-        config, projectname, getDefinedColumns, prefix
+        config=config,
+        projectname=projectname,
+        func=getDefinedColumns,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
     )
-    diagrams_nemo = _fetch_data_from_nemo(config, projectname, getDiagrams, prefix)
-    metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics, prefix)
-    pages_nemo = _fetch_data_from_nemo(config, projectname, getPages, prefix)
-    reports_nemo = _fetch_data_from_nemo(config, projectname, getReports, prefix)
-    tiles_nemo = _fetch_data_from_nemo(config, projectname, getTiles, prefix)
-    rules_nemo = _fetch_data_from_nemo(config, projectname, getRules, prefix)
+    diagrams_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getDiagrams,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    metrics_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getMetrics,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    pages_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getPages,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    reports_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getReports,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    tiles_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getTiles,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    rules_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getRules,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
 
     # reconcile data
     deletions: Dict[str, List[T]] = {}
@@ -247,9 +320,21 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     # sub processes and focus order depends on dependency tree for objects
     # refresh data from server
     logging.info(f"get dependency tree for metrics")
-    metrics_nemo = _fetch_data_from_nemo(config, projectname, getMetrics, prefix)
+    metrics_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getMetrics,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
     attributegroups_nemo = _fetch_data_from_nemo(
-        config, projectname, getAttributeGroups, prefix
+        config=config,
+        projectname=projectname,
+        func=getAttributeGroups,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
     )
     ics = getImportedColumns(config, projectname)
 
@@ -298,7 +383,12 @@ def MetaDataCreate(config: Config, projectname: str, prefix: str) -> None:
     # generate sub processes
     logging.info(f"generate sub processes")
     subprocesses_nemo = _fetch_data_from_nemo(
-        config, projectname, getSubProcesses, prefix
+        config=config,
+        projectname=projectname,
+        func=getSubProcesses,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
     )
     subprocesses_model = [
         SubProcess(
@@ -416,12 +506,20 @@ def attribute_groups_sort_hierarchy(hierarchy, root_key=None):
     return sorted_list
 
 
-def _fetch_data_from_nemo(config: Config, projectname: str, func, prefix: str):
+def _fetch_data_from_nemo(
+    config: Config,
+    projectname: str,
+    func,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+):
     return func(
         config=config,
         projectname=projectname,
-        filter=prefix,
-        filter_type=FilterType.STARTSWITH,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
     )
 
 

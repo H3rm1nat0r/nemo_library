@@ -242,9 +242,9 @@ class NemoLibrary:
     def MigManInitDatabase(self) -> None:
         MigManInitDatabase()
 
-    def MigManPrecheckFiles(self) -> dict[str: str]:
+    def MigManPrecheckFiles(self) -> dict[str:str]:
         return MigManPrecheckFiles(self.config)
-        
+
     def MigManCreateProjectTemplates(self) -> None:
         MigManCreateProjectTemplates(self.config)
 
@@ -538,14 +538,50 @@ class NemoLibrary:
         """
         FetchDealFromHubSpotAndUploadToNEMO(self.config, projectname)
 
-    def MetaDataLoad(self, projectname: str, prefix: str):
-        MetaDataLoad(self.config, projectname, prefix)
+    def MetaDataLoad(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ):
+        MetaDataLoad(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
 
-    def MetaDataCreate(self, projectname: str, prefix: str):
-        MetaDataCreate(self.config, projectname, prefix)
+    def MetaDataCreate(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ):
+        MetaDataCreate(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
 
-    def MetaDataDelete(self, projectname: str, prefix: str):
-        MetaDataDelete(self.config, projectname, prefix)
+    def MetaDataDelete(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ):
+        MetaDataDelete(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
 
     def getAttributeGroups(
         self,

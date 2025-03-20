@@ -11,7 +11,13 @@ from nemo_library.features.nemo_persistence_api import getProjects
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import get_internal_name
 
-
+def get_migman_project_list(config: Config):
+    proALPHA_project_status_file = config.get_migman_proALPHA_project_status_file()
+    if proALPHA_project_status_file:
+        return getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
+    else:
+        return config.get_migman_projects()
+    
 def initializeFolderStructure(
     project_path: str,
 ) -> None:
@@ -151,7 +157,7 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
     mapping_fields = config.get_migman_mapping_fields()
     additional_fields = config.get_migman_additional_fields()
     synonym_fields = config.get_migman_synonym_fields()
-    migman_projects = config.get_migman_projects()
+    migman_projects = get_migman_project_list(config)
 
     # get data projects
     projects_display_name_migman = [

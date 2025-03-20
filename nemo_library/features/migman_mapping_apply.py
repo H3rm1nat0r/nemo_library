@@ -26,6 +26,11 @@ __all__ = ["MigManApplyMapping"]
 
 def MigManApplyMapping(config: Config) -> None:
 
+    mapping_fields = config.get_migman_mapping_fields()
+    if not mapping_fields:
+        logging.info(f"no mapping fields defined")
+        return
+
     # get configuration
     mappingrelationsdf = getMappingRelations(config=config)
 

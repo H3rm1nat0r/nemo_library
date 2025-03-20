@@ -31,6 +31,9 @@ def MigManCreateMapping(config: Config):
     # get configuration
     local_project_directory = config.get_migman_local_project_directory()
     mapping_fields = config.get_migman_mapping_fields()
+    if not mapping_fields:
+        logging.info(f"no mapping fields defined")
+        return
     additional_fields = config.get_migman_additional_fields()
     mappingrelationsdf = getMappingRelations(config=config)
 

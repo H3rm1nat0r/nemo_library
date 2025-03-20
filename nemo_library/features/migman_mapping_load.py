@@ -20,6 +20,9 @@ def MigManLoadMapping(config: Config):
     # get configuration
     local_project_directory = config.get_migman_local_project_directory()
     mapping_fields = config.get_migman_mapping_fields()
+    if not mapping_fields:
+        logging.info(f"no mapping fields defined")
+        return
     mappingrelationsdf = getMappingRelations(config=config)
 
     # iterate every given field upload data

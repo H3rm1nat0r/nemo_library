@@ -17,6 +17,7 @@ def test_clean():
     projects = nl.getProjects()
     project_map = {project.displayName: project.id for project in projects}
     delete = []
+    
     for project in nl.config.get_migman_projects():
         if project in project_map:
             delete.append(project_map[project])

@@ -21,7 +21,7 @@ from nemo_library.model.rule import Rule
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.utils.migmanutils import (
-    getNEMOStepsFrompAMigrationStatusFile,
+    get_migman_project_list,
     getProjectName,
     load_database,
 )
@@ -39,13 +39,7 @@ def MigManLoadData(config: Config) -> None:
     # get configuration
     local_project_directory = config.get_migman_local_project_directory()
     multi_projects = config.get_migman_multi_projects()
-
-    # if there is a status file given, we ignore the given projects and get the project list from the status file
-    proALPHA_project_status_file = config.get_migman_proALPHA_project_status_file()
-    if proALPHA_project_status_file:
-        projects = getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
-    else:
-        projects = config.get_migman_projects()
+    projects = get_migman_project_list(config)
 
     dbdf = load_database()
     for project in projects:

@@ -347,13 +347,6 @@ def MetaDataCreate(
 
     # reconcile focus order now
     logging.info(f"reconcile order in focus")
-
-    # move global attribute to top
-    focusMoveAttributeBefore(
-        config=config, projectname=projectname, sourceInternalName="conservative_global"
-    )
-
-    # now move the other ones
     for metric_internal_name, values in dependency_tree.items():
         ics_metric = [ic for ic in ics if ic.internalName in values]
         for ic in ics_metric:

@@ -5,8 +5,7 @@ import json
 import logging
 from pathlib import Path
 import re
-import pandas as pd
-from typing import Optional, Type, TypeVar, List, Dict
+from typing import Type, TypeVar, List, Dict
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.nemo_persistence_api import (
     _deserializeMetaDataObject,
@@ -60,7 +59,7 @@ from nemo_library.model.rule import Rule
 from nemo_library.model.tile import Tile
 from nemo_library.model.subprocess import SubProcess
 from nemo_library.utils.config import Config
-from nemo_library.utils.utils import FilterType, FilterValue, log_error
+from nemo_library.utils.utils import FilterType, FilterValue
 
 __all__ = ["MetaDataLoad", "MetaDataDelete", "MetaDataCreate"]
 

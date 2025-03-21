@@ -341,16 +341,16 @@ def _update_deficiency_mining(
             if "s_ustid_ustid" in internal_name:
                 joins[internal_name] = {"CLASSIFICATION": "VAT_ID"}
                 frag_check.append(
-                    f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS != 'ok')"
+                    f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS = 'check')"
                 )
-                frag_msg.append(f"{display_name} is not a valid VAT ID")
+                frag_msg.append(f"genius analysis: ' || genius_{internal_name}.STATUS_MESSAGE || '")
             # URL
             elif "s_adresse_homepage" in internal_name:
                 joins[internal_name] = {"CLASSIFICATION": "URL"}
                 frag_check.append(
-                    f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS != 'ok')"
+                    f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS = 'check')"
                 )
-                frag_msg.append(f"{display_name} is not a valid URL")
+                frag_msg.append(f"genius analysis: ' || genius_{internal_name}.STATUS_MESSAGE || '")
 
             # now build deficiency mining report for this column (if there are checks)
             if frag_check:

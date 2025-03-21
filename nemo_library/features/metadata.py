@@ -83,6 +83,8 @@ def MetaDataLoad(
         "pages": getPages,
         "reports": getReports,
         "rules": getRules,
+        "tiles": getTiles, 
+        "subprocesses": getSubProcesses,
     }
 
     for name, func in functions.items():
@@ -115,12 +117,12 @@ def MetaDataDelete(
         "pages": getPages,
         "reports": getReports,
         "rules": getRules,
-        "processes": getSubProcesses,
+        "subprocesses": getSubProcesses,
         "tiles": getTiles, 
     }
 
     delete_functions = {
-        "processes": deleteSubprocesses,
+        "subprocesses": deleteSubprocesses,
         "applications": deleteApplications,
         "pages": deletePages,
         "tiles": deleteTiles,
@@ -167,10 +169,9 @@ def MetaDataCreate(
     pages_model = _load_data_from_json(config, "pages", Page)
     reports_model = _load_data_from_json(config, "reports", Report)
     rules_model = _load_data_from_json(config, "rules", Rule)
-
-    # generate objects based on modell
-    tiles_model = []  # _generate_tiles(metrics_model) # no more tiles
-
+    subprocesses_model = _load_data_from_json(config, "subprocesses", SubProcess)
+    tiles_model = _load_data_from_json(config, "tiles", Tile)
+    
     # sort attribute groups
     hierarchy, _ = _attribute_groups_build_hierarchy(attributegroups_model)
     attributegroups_model = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
@@ -249,6 +250,14 @@ def MetaDataCreate(
         filter_type=filter_type,
         filter_value=filter_value,
     )
+    subprocesses_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getSubProcesses,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
 
     # reconcile data
     deletions: Dict[str, List[T]] = {}
@@ -266,6 +275,7 @@ def MetaDataCreate(
         ("reports", reports_model, reports_nemo),
         ("tiles", tiles_model, tiles_nemo),
         ("rules", rules_model, rules_nemo),
+        ("subprocesses", subprocesses_model, subprocesses_nemo),
     ]:
         nemo_list_cleaned = copy.deepcopy(nemo_list)
         nemo_list_cleaned = _clean_fields(nemo_list_cleaned)
@@ -286,6 +296,7 @@ def MetaDataCreate(
         "diagrams": deleteDiagrams,
         "rules": deleteRules,
         "reports": deleteReports,
+        "subprocesses": deleteSubprocesses,
     }
 
     for key, delete_function in delete_functions.items():
@@ -305,6 +316,7 @@ def MetaDataCreate(
         "tiles": createTiles,
         "pages": createPages,
         "applications": createApplications,
+        "subprocesses": createSubProcesses,
     }
 
     for key, create_function in create_functions.items():
@@ -374,87 +386,6 @@ def MetaDataCreate(
                             metric_internal_name
                         ].parentAttributeGroupInternalName,
                     )
-
-    # generate sub processes
-    logging.info(f"generate sub processes")
-    subprocesses_nemo = _fetch_data_from_nemo(
-        config=config,
-        projectname=projectname,
-        func=getSubProcesses,
-        filter=filter,
-        filter_type=filter_type,
-        filter_value=filter_value,
-    )
-    subprocesses_model = []
-    # subprocesses_model = [
-    #     SubProcess(
-    #         columnInternalNames=_date_columns(values, ics),
-    #         description=metric_lookup[metric_internal_name].description,
-    #         descriptionTranslations=metric_lookup[
-    #             metric_internal_name
-    #         ].descriptionTranslations,
-    #         displayName=metric_lookup[metric_internal_name].displayName,
-    #         displayNameTranslations=metric_lookup[
-    #             metric_internal_name
-    #         ].displayNameTranslations,
-    #         groupByAggregations={},
-    #         groupByColumn="",
-    #         internalName=metric_lookup[metric_internal_name].internalName,
-    #         isAggregation=False,
-    #         timeUnit="days",
-    #         id="",
-    #         projectId="",
-    #         tenant="",
-    #     )
-    #     for (
-    #         metric_internal_name,
-    #         values,
-    #     ) in dependency_tree.items()
-    #     if len(_date_columns(values, ics)) > 1
-    # ]
-
-    # reconcile data
-    deletions: Dict[str, List[T]] = {}
-    updates: Dict[str, List[T]] = {}
-    creates: Dict[str, List[T]] = {}
-
-    for key, model_list, nemo_list in [
-        ("subprocesses", subprocesses_model, subprocesses_nemo),
-    ]:
-        nemo_list_cleaned = copy.deepcopy(nemo_list)
-        nemo_list_cleaned = _clean_fields(nemo_list_cleaned)
-
-        deletions[key] = _find_deletions(model_list, nemo_list)
-        updates[key] = _find_updates(model_list, nemo_list_cleaned)
-        creates[key] = _find_new_objects(model_list, nemo_list)
-
-    # Start with deletions
-    delete_functions = {
-        "subprocesses": deleteSubprocesses,
-    }
-
-    for key, delete_function in delete_functions.items():
-        if deletions[key]:
-            objects_to_delete = [data_nemo.id for data_nemo in deletions[key]]
-            delete_function(config=config, **{key: objects_to_delete})
-
-    # Now do updates and creates in a reverse  order
-    create_functions = {
-        "subprocesses": createSubProcesses,
-    }
-
-    for key, create_function in create_functions.items():
-        # create new objects first
-        if creates[key]:
-            create_function(
-                config=config, projectname=projectname, **{key: creates[key]}
-            )
-        # now the changes
-        if updates[key]:
-            create_function(
-                config=config, projectname=projectname, **{key: updates[key]}
-            )
-
 
 def _date_columns(
     columns: List[str], imported_columns: List[ImportedColumn]
@@ -529,34 +460,6 @@ def _load_data_from_json(config, file: str, cls: Type[T]) -> List[T]:
         data = json.load(f)
 
     return [_deserializeMetaDataObject(item, cls) for item in data]
-
-
-def _generate_tiles(metrics: List[Metric]) -> List[Tile]:
-    tiles = [
-        Tile(
-            aggregation="Mean",
-            description=f"Tile for metric {metric.displayName}",
-            descriptionTranslations={},
-            displayName=metric.displayName,
-            displayNameTranslations={},
-            frequency="Month",
-            graphic="",
-            internalName=metric.internalName,
-            status="Mandatory",
-            tileGroup="",
-            tileGroupTranslations={},
-            tileSourceID=metric.id,
-            tileSourceInternalName=metric.internalName,
-            type="Metric",
-            unit="",
-            id="",
-            projectId="",
-            tenant="",
-        )
-        for metric in metrics
-    ]
-
-    return tiles
 
 
 def _find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:

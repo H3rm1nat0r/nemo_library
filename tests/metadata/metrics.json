@@ -1,17 +1,14 @@
 [
     {
-        "aggregateBy": "conservative_purchasing_replenishment_deviation_days",
-        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_days)",
+        "aggregateBy": "conservative_purchasing_replenishment_deviation_too_low",
+        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_too_low)",
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(C) Purch Replenishment Deviation (days)",
-        "displayNameTranslations": {
-            "de": "(K) Eink Wiederbeschaffung Abweichung (Tage)",
-            "en": "(C) Purch Replenishment Deviation (days)"
-        },
+        "displayName": "(C) Purch Replenishment Deviation Too Low Rate",
+        "displayNameTranslations": {},
         "groupByAggregations": {
-            "conservative_purchasing_replenishment_deviation_days": "mean"
+            "conservative_purchasing_replenishment_deviation_too_low": "mean"
         },
         "groupByColumn": "pur_order_doc_i_d",
         "isCrawlable": true,
@@ -19,10 +16,10 @@
         "optimizationTarget": false,
         "scopeId": null,
         "scopeName": null,
-        "unit": "days",
+        "unit": "percent",
         "defaultScopeRestrictions": [],
         "focusOrder": "",
-        "internalName": "conservative_purchasing_replenishment_deviation_days",
+        "internalName": "conservative_purchasing_replenishment_deviation_too_low",
         "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
         "id": "",
         "projectId": "",
@@ -81,15 +78,18 @@
         "tenant": ""
     },
     {
-        "aggregateBy": "conservative_purchasing_replenishment_deviation_too_low",
-        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_too_low)",
+        "aggregateBy": "conservative_purchasing_replenishment_deviation_days",
+        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_days)",
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(C) Purch Replenishment Deviation Too Low Rate",
-        "displayNameTranslations": {},
+        "displayName": "(C) Purch Replenishment Deviation (days)",
+        "displayNameTranslations": {
+            "de": "(K) Eink Wiederbeschaffung Abweichung (Tage)",
+            "en": "(C) Purch Replenishment Deviation (days)"
+        },
         "groupByAggregations": {
-            "conservative_purchasing_replenishment_deviation_too_low": "mean"
+            "conservative_purchasing_replenishment_deviation_days": "mean"
         },
         "groupByColumn": "pur_order_doc_i_d",
         "isCrawlable": true,
@@ -97,10 +97,10 @@
         "optimizationTarget": false,
         "scopeId": null,
         "scopeName": null,
-        "unit": "percent",
+        "unit": "days",
         "defaultScopeRestrictions": [],
         "focusOrder": "",
-        "internalName": "conservative_purchasing_replenishment_deviation_too_low",
+        "internalName": "conservative_purchasing_replenishment_deviation_days",
         "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
         "id": "",
         "projectId": "",

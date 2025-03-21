@@ -382,32 +382,33 @@ def MetaDataCreate(
         filter_type=filter_type,
         filter_value=filter_value,
     )
-    subprocesses_model = [
-        SubProcess(
-            columnInternalNames=_date_columns(values, ics),
-            description=metric_lookup[metric_internal_name].description,
-            descriptionTranslations=metric_lookup[
-                metric_internal_name
-            ].descriptionTranslations,
-            displayName=metric_lookup[metric_internal_name].displayName,
-            displayNameTranslations=metric_lookup[
-                metric_internal_name
-            ].displayNameTranslations,
-            groupByAggregations={},
-            groupByColumn="",
-            internalName=metric_lookup[metric_internal_name].internalName,
-            isAggregation=False,
-            timeUnit="days",
-            id="",
-            projectId="",
-            tenant="",
-        )
-        for (
-            metric_internal_name,
-            values,
-        ) in dependency_tree.items()
-        if len(_date_columns(values, ics)) > 1
-    ]
+    subprocesses_model = []
+    # subprocesses_model = [
+    #     SubProcess(
+    #         columnInternalNames=_date_columns(values, ics),
+    #         description=metric_lookup[metric_internal_name].description,
+    #         descriptionTranslations=metric_lookup[
+    #             metric_internal_name
+    #         ].descriptionTranslations,
+    #         displayName=metric_lookup[metric_internal_name].displayName,
+    #         displayNameTranslations=metric_lookup[
+    #             metric_internal_name
+    #         ].displayNameTranslations,
+    #         groupByAggregations={},
+    #         groupByColumn="",
+    #         internalName=metric_lookup[metric_internal_name].internalName,
+    #         isAggregation=False,
+    #         timeUnit="days",
+    #         id="",
+    #         projectId="",
+    #         tenant="",
+    #     )
+    #     for (
+    #         metric_internal_name,
+    #         values,
+    #     ) in dependency_tree.items()
+    #     if len(_date_columns(values, ics)) > 1
+    # ]
 
     # reconcile data
     deletions: Dict[str, List[T]] = {}

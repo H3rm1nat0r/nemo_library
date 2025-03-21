@@ -386,12 +386,12 @@ def _update_deficiency_mining(
 FROM
 \t$schema.$table
 """
-                for join in joins:
+                if internal_name in joins:
                     sql_statement += f"""LEFT JOIN
-\t$schema.SHARED_NAIGENT genius_{join}
+\t$schema.SHARED_NAIGENT genius_{internal_name}
 ON  
-\t    genius_{join}.CLASSIFICATION = '{joins[join]["CLASSIFICATION"]}'
-\tAND genius_{join}.VALUE          = {join}
+\t    genius_{internal_name}.CLASSIFICATION = '{joins[internal_name]["CLASSIFICATION"]}'
+\tAND genius_{internal_name}.VALUE          = {internal_name}
 """
 
                 # create the report

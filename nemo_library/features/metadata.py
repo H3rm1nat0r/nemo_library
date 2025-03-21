@@ -115,9 +115,12 @@ def MetaDataDelete(
         "pages": getPages,
         "reports": getReports,
         "rules": getRules,
+        "processes": getSubProcesses,
+        "tiles": getTiles, 
     }
 
     delete_functions = {
+        "processes": deleteSubprocesses,
         "applications": deleteApplications,
         "pages": deletePages,
         "tiles": deleteTiles,

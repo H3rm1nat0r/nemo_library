@@ -1,6 +1,5 @@
 from dataclasses import asdict, dataclass, field
 import re
-from typing import List, Dict, Optional
 from datetime import datetime
 from uuid import UUID
 
@@ -27,14 +26,14 @@ class ErrorDetails:
     Represents the details of an error.
 
     Attributes:
-        fileOnlyColumns (List[ColumnDetails]): Columns that are only in the file.
+        fileOnlyColumns (list[ColumnDetails]): Columns that are only in the file.
         id (UUID): The unique identifier of the error.
-        metadataOnlyColumns (List[ColumnDetails]): Columns that are only in the metadata.
+        metadataOnlyColumns (list[ColumnDetails]): Columns that are only in the metadata.
     """
 
-    fileOnlyColumns: List[ColumnDetails]
+    fileOnlyColumns: list[ColumnDetails]
     id: UUID
-    metadataOnlyColumns: List[ColumnDetails]
+    metadataOnlyColumns: list[ColumnDetails]
 
 
 @dataclass
@@ -81,7 +80,7 @@ class DataSourceImportRecord:
         startedByUsername (str): The username of the person who started the import.
         status (str): The status of the import.
         uploadId (str): The unique identifier of the upload.
-        warnings (List[Warning]): A list of warnings that occurred during the import.
+        warnings (list[Warning]): A list of warnings that occurred during the import.
     """
 
     endDateTime: datetime
@@ -92,7 +91,7 @@ class DataSourceImportRecord:
     startedByUsername: str
     status: str
     uploadId: str
-    warnings: List[Warning]
+    warnings: list[Warning]
 
 
 @dataclass
@@ -120,14 +119,14 @@ class Project:
 
     Attributes:
         autoDataRefresh (bool): Whether the data refresh is automatic.
-        dataSourceImportRecords (List[DataSourceImportRecord]): A list of data source import records.
+        dataSourceImportRecords (list[DataSourceImportRecord]): A list of data source import records.
         description (str): The description of the project.
-        descriptionTranslations (Dict[str, str]): Translations of the description.
+        descriptionTranslations (dict[str, str]): Translations of the description.
         displayName (str): The display name of the project.
-        displayNameTranslations (Dict[str, str]): Translations of the display name.
+        displayNameTranslations (dict[str, str]): Translations of the display name.
         id (str): The unique identifier of the project.
         importErrorType (str): The type of import error.
-        projectProperties (List[ProjectProperty]): A list of project properties.
+        projectProperties (list[ProjectProperty]): A list of project properties.
         s3DataSourcePath (str): The S3 data source path.
         showInitialConfiguration (bool): Whether to show the initial configuration.
         status (str): The status of the project.
@@ -137,14 +136,14 @@ class Project:
     """
 
     autoDataRefresh: bool = True
-    dataSourceImportRecords: List[DataSourceImportRecord] = field(default_factory=list)
+    dataSourceImportRecords: list[DataSourceImportRecord] = field(default_factory=list)
     description: str = ""
-    descriptionTranslations: Dict[str, str] = field(default_factory=dict)
+    descriptionTranslations: dict[str, str] = field(default_factory=dict)
     displayName: str = None
-    displayNameTranslations: Dict[str, str] = field(default_factory=dict)
+    displayNameTranslations: dict[str, str] = field(default_factory=dict)
     id: str = ""
     importErrorType: str = "NoError"
-    projectProperties: List[ProjectProperty] = field(default_factory=list)
+    projectProperties: list[ProjectProperty] = field(default_factory=list)
     s3DataSourcePath: str = ""
     showInitialConfiguration: bool = False
     status: str = "Active"

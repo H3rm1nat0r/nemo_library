@@ -1,4 +1,3 @@
-from typing import List
 import pandas as pd
 
 from nemo_library.features.metadata import MetaDataCreate, MetaDataDelete, MetaDataLoad
@@ -69,7 +68,7 @@ from nemo_library.features.import_configuration import ImportConfigurations
 from nemo_library.features.migman_delete_projects import MigManDeleteProjects
 from nemo_library.features.migman_export_data import MigManExportData
 from nemo_library.features.migman_mapping_apply import MigManApplyMapping
-from nemo_library.features.migman_init_database import MigManInitDatabase
+from nemo_library.features.migman_database import MigManDatabaseAddWebInformation, MigManDatabaseInit
 from nemo_library.features.migman_create_project_templates import (
     MigManCreateProjectTemplates,
 )
@@ -240,8 +239,11 @@ class NemoLibrary:
         )
 
     def MigManInitDatabase(self) -> None:
-        MigManInitDatabase()
+        MigManDatabaseInit()
 
+    def MigManDatabaseAddWebInformation(self) -> None:
+        MigManDatabaseAddWebInformation()
+        
     def MigManPrecheckFiles(self) -> dict[str:str]:
         return MigManPrecheckFiles(self.config)
 
@@ -589,7 +591,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[AttributeGroup]:
+    ) -> list[AttributeGroup]:
         """Fetches AttributeGroups metadata with the given filters."""
         return getAttributeGroups(
             config=self.config,
@@ -605,7 +607,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[Metric]:
+    ) -> list[Metric]:
         """Fetches Metrics metadata with the given filters."""
         return getMetrics(
             config=self.config,
@@ -621,7 +623,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[Tile]:
+    ) -> list[Tile]:
         """Fetches Tiles metadata with the given filters."""
         return getTiles(
             config=self.config,
@@ -637,7 +639,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[Page]:
+    ) -> list[Page]:
         """Fetches Pages metadata with the given filters."""
         return getPages(
             config=self.config,
@@ -653,7 +655,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[Application]:
+    ) -> list[Application]:
         """Fetches Applications metadata with the given filters."""
         return getApplications(
             config=self.config,
@@ -669,7 +671,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[Diagram]:
+    ) -> list[Diagram]:
         """Fetches Diagrams metadata with the given filters."""
         return getDiagrams(
             config=self.config,
@@ -685,7 +687,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[DefinedColumn]:
+    ) -> list[DefinedColumn]:
         """Fetches DefinedColumns metadata with the given filters."""
         return getDefinedColumns(
             config=self.config,
@@ -701,7 +703,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[ImportedColumn]:
+    ) -> list[ImportedColumn]:
         """Fetches ImportedColumns metadata with the given filters."""
         return getImportedColumns(
             config=self.config,
@@ -717,7 +719,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[Report]:
+    ) -> list[Report]:
         """Fetches Reports metadata with the given filters."""
         return getReports(
             config=self.config,
@@ -733,7 +735,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[SubProcess]:
+    ) -> list[SubProcess]:
         """Fetches Reports metadata with the given filters."""
         return getSubProcesses(
             config=self.config,
@@ -748,7 +750,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[Project]:
+    ) -> list[Project]:
         """Fetches Reports metadata with the given filters."""
         return getProjects(
             config=self.config,
@@ -763,7 +765,7 @@ class NemoLibrary:
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> List[Rule]:
+    ) -> list[Rule]:
         """Fetches Rules metadata with the given filters."""
         return getRules(
             config=self.config,
@@ -773,56 +775,56 @@ class NemoLibrary:
             filter_value=filter_value,
         )
 
-    def createRules(self, projectname: str, rules: List[Rule]) -> None:
+    def createRules(self, projectname: str, rules: list[Rule]) -> None:
         """Creates or updates a list of Rules."""
         createRules(config=self.config, projectname=projectname, rules=rules)
 
-    def deleteRules(self, rules: List[str]) -> None:
+    def deleteRules(self, rules: list[str]) -> None:
         """Deletes a list of Rules by their IDs."""
         deleteRules(config=self.config, rules=rules)
 
-    def deleteDefinedColumns(self, definedcolumns: List[str]) -> None:
+    def deleteDefinedColumns(self, definedcolumns: list[str]) -> None:
         """Deletes a list of Defined Columns by their IDs."""
         deleteDefinedColumns(config=self.config, definedcolumns=definedcolumns)
 
-    def deleteImportedColumns(self, importedcolumns: List[str]) -> None:
+    def deleteImportedColumns(self, importedcolumns: list[str]) -> None:
         """Deletes a list of Imported Columns by their IDs."""
         deleteImportedColumns(config=self.config, importedcolumns=importedcolumns)
 
-    def deleteMetrics(self, metrics: List[str]) -> None:
+    def deleteMetrics(self, metrics: list[str]) -> None:
         """Deletes a list of Metrics by their IDs."""
         deleteMetrics(config=self.config, metrics=metrics)
 
-    def deleteTiles(self, tiles: List[str]) -> None:
+    def deleteTiles(self, tiles: list[str]) -> None:
         """Deletes a list of Tiles by their IDs."""
         deleteTiles(config=self.config, tiles=tiles)
 
-    def deleteAttributeGroups(self, attributegroups: List[str]) -> None:
+    def deleteAttributeGroups(self, attributegroups: list[str]) -> None:
         """Deletes a list of AttributeGroups by their IDs."""
         deleteAttributeGroups(config=self.config, attributegroups=attributegroups)
 
-    def deletePages(self, pages: List[str]) -> None:
+    def deletePages(self, pages: list[str]) -> None:
         """Deletes a list of Pages by their IDs."""
         deletePages(config=self.config, pages=pages)
 
-    def deleteApplications(self, applications: List[str]) -> None:
+    def deleteApplications(self, applications: list[str]) -> None:
         """Deletes a list of Pages by their IDs."""
         deleteApplications(config=self.config, applications=applications)
 
-    def deleteDiagrams(self, diagrams: List[str]) -> None:
+    def deleteDiagrams(self, diagrams: list[str]) -> None:
         """Deletes a list of Diagrams by their IDs."""
         deleteDiagrams(config=self.config, diagrams=diagrams)
 
-    def deleteReports(self, reports: List[str]) -> None:
+    def deleteReports(self, reports: list[str]) -> None:
         """Deletes a list of Reports by their IDs."""
         deleteReports(config=self.config, reports=reports)
 
-    def deleteProjects(self, projects: List[str]) -> None:
+    def deleteProjects(self, projects: list[str]) -> None:
         """Deletes a list of Projects by their IDs."""
         deleteProjects(config=self.config, projects=projects)
 
     def createDefinedColumns(
-        self, projectname: str, definedcolumns: List[DefinedColumn]
+        self, projectname: str, definedcolumns: list[DefinedColumn]
     ) -> None:
         """Creates or updates a list of DefinedColumns."""
         createDefinedColumns(
@@ -830,49 +832,49 @@ class NemoLibrary:
         )
 
     def createImportedColumns(
-        self, projectname: str, importedcolumns: List[ImportedColumn]
+        self, projectname: str, importedcolumns: list[ImportedColumn]
     ) -> None:
         """Creates or updates a list of ImportedColumns."""
         createImportedColumns(
             config=self.config, projectname=projectname, importedcolumns=importedcolumns
         )
 
-    def createMetrics(self, projectname: str, metrics: List[Metric]) -> None:
+    def createMetrics(self, projectname: str, metrics: list[Metric]) -> None:
         """Creates or updates a list of Metrics."""
         createMetrics(config=self.config, projectname=projectname, metrics=metrics)
 
-    def createTiles(self, projectname: str, tiles: List[Tile]) -> None:
+    def createTiles(self, projectname: str, tiles: list[Tile]) -> None:
         """Creates or updates a list of Tiles."""
         createTiles(config=self.config, projectname=projectname, tiles=tiles)
 
     def createAttributeGroups(
-        self, projectname: str, attributegroups: List[AttributeGroup]
+        self, projectname: str, attributegroups: list[AttributeGroup]
     ) -> None:
         """Creates or updates a list of AttributeGroups."""
         createAttributeGroups(
             config=self.config, projectname=projectname, attributegroups=attributegroups
         )
 
-    def createPages(self, projectname: str, pages: List[Page]) -> None:
+    def createPages(self, projectname: str, pages: list[Page]) -> None:
         """Creates or updates a list of Pages."""
         createPages(config=self.config, projectname=projectname, pages=pages)
 
     def createApplications(
-        self, projectname: str, applications: List[Application]
+        self, projectname: str, applications: list[Application]
     ) -> None:
         """Creates or updates a list of Applications."""
         createApplications(
             config=self.config, projectname=projectname, applications=applications
         )
 
-    def createDiagrams(self, projectname: str, diagrams: List[Diagram]) -> None:
+    def createDiagrams(self, projectname: str, diagrams: list[Diagram]) -> None:
         """Creates or updates a list of Diagrams."""
         createDiagrams(config=self.config, projectname=projectname, diagrams=diagrams)
 
-    def createReports(self, projectname: str, reports: List[Report]) -> None:
+    def createReports(self, projectname: str, reports: list[Report]) -> None:
         """Creates or updates a list of Reports."""
         createReports(config=self.config, projectname=projectname, reports=reports)
 
-    def createProjects(self, projects: List[Project]) -> None:
+    def createProjects(self, projects: list[Project]) -> None:
         """Creates or updates a list of Projects."""
         createProjects(config=self.config, projects=projects)

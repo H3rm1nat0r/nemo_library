@@ -1,5 +1,4 @@
-from dataclasses import dataclass, field, asdict
-from typing import Dict, Optional
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -10,15 +9,15 @@ class Tile:
 
     aggregation: str
     description: str
-    descriptionTranslations: Dict[str, str]
+    descriptionTranslations: dict[str, str]
     displayName: str
-    displayNameTranslations: Dict[str, str]
+    displayNameTranslations: dict[str, str]
     frequency: str
     graphic: str
     internalName: str
     status: str
     tileGroup: str
-    tileGroupTranslations: Dict[str, str]
+    tileGroupTranslations: dict[str, str]
     tileSourceID: str
     tileSourceInternalName: str
     type: str

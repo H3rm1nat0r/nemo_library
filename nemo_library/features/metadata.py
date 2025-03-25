@@ -5,7 +5,7 @@ import json
 import logging
 from pathlib import Path
 import re
-from typing import Type, TypeVar, List, Dict
+from typing import Type, TypeVar
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.nemo_persistence_api import (
     _deserializeMetaDataObject,
@@ -260,9 +260,9 @@ def MetaDataCreate(
     )
 
     # reconcile data
-    deletions: Dict[str, List[T]] = {}
-    updates: Dict[str, List[T]] = {}
-    creates: Dict[str, List[T]] = {}
+    deletions: dict[str, list[T]] = {}
+    updates: dict[str, list[T]] = {}
+    creates: dict[str, list[T]] = {}
 
     logging.info(f"reconcile both models")
     for key, model_list, nemo_list in [
@@ -388,8 +388,8 @@ def MetaDataCreate(
                     )
 
 def _date_columns(
-    columns: List[str], imported_columns: List[ImportedColumn]
-) -> List[str]:
+    columns: list[str], imported_columns: list[ImportedColumn]
+) -> list[str]:
     date_cols = []
     for col in columns:
         ic = None
@@ -403,7 +403,7 @@ def _date_columns(
     return date_cols
 
 
-def _collect_node_internal_names(tree: DependencyTree) -> List[str]:
+def _collect_node_internal_names(tree: DependencyTree) -> list[str]:
     names = [tree.nodeInternalName]
     for dep in tree.dependencies:
         names.extend(_collect_node_internal_names(dep))
@@ -450,7 +450,7 @@ def _fetch_data_from_nemo(
     )
 
 
-def _load_data_from_json(config, file: str, cls: Type[T]) -> List[T]:
+def _load_data_from_json(config, file: str, cls: Type[T]) -> list[T]:
     """
     Loads JSON data from a file and converts it into a list of DataClass instances,
     handling nested structures recursively.
@@ -462,12 +462,12 @@ def _load_data_from_json(config, file: str, cls: Type[T]) -> List[T]:
     return [_deserializeMetaDataObject(item, cls) for item in data]
 
 
-def _find_deletions(model_list: List[T], nemo_list: List[T]) -> List[T]:
+def _find_deletions(model_list: list[T], nemo_list: list[T]) -> list[T]:
     model_keys = {obj.internalName for obj in model_list}
     return [obj for obj in nemo_list if obj.internalName not in model_keys]
 
 
-def _find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
+def _find_updates(model_list: list[T], nemo_list: list[T]) -> list[T]:
     updates = []
     nemo_dict = {getattr(obj, "internalName"): obj for obj in nemo_list}
     for model_obj in model_list:
@@ -492,7 +492,7 @@ def _find_updates(model_list: List[T], nemo_list: List[T]) -> List[T]:
     return updates
 
 
-def _find_new_objects(model_list: List[T], nemo_list: List[T]) -> List[T]:
+def _find_new_objects(model_list: list[T], nemo_list: list[T]) -> list[T]:
     nemo_keys = {getattr(obj, "internalName") for obj in nemo_list}
     return [obj for obj in model_list if getattr(obj, "internalName") not in nemo_keys]
 

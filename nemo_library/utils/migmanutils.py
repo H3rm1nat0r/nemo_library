@@ -8,8 +8,10 @@ import pandas as pd
 
 from nemo_library.features.nemo_persistence_api import getImportedColumns
 from nemo_library.features.nemo_persistence_api import getProjects
+from nemo_library.model.migman import MigMan
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import get_internal_name
+
 
 def get_migman_project_list(config: Config):
     proALPHA_project_status_file = config.get_migman_proALPHA_project_status_file()
@@ -17,7 +19,8 @@ def get_migman_project_list(config: Config):
         return getNEMOStepsFrompAMigrationStatusFile(proALPHA_project_status_file)
     else:
         return config.get_migman_projects()
-    
+
+
 def initializeFolderStructure(
     project_path: str,
 ) -> None:
@@ -51,21 +54,6 @@ def getMappingFilePath(projectname: str, local_project_path: str) -> str:
         str: The file path to the mapping file.
     """
     return os.path.join(local_project_path, "mappings", f"{projectname}.csv")
-
-
-def load_database() -> pd.DataFrame:
-    """
-    Load the database from a pickle file.
-
-    Returns:
-        pd.DataFrame: The loaded database as a DataFrame.
-    """
-    with importlib.resources.open_binary(
-        "nemo_library.templates", "migmantemplates.pkl"
-    ) as file:
-        df = pd.read_pickle(file)
-
-    return df
 
 
 def getProjectName(project: str, addon: str, postfix: str) -> str:
@@ -344,3 +332,52 @@ ON
     {"\n\tAND ".join(joinfrags)}"""
 
     return query
+
+
+def is_migman_project_existing(
+    database: list[MigMan],
+    project: str,
+) -> True:
+    return len([x.nemo_import_name for x in database if x.project == project]) > 0
+
+
+def get_migman_postfixes(
+    database: list[MigMan],
+    project: str,
+) -> list[str]:
+    return list(set([x.postfix for x in database if x.project == project]))
+
+
+def get_migman_fields(
+    database: list[MigMan],
+    project: str,
+    postfix: str,
+) -> list[str]:
+    return [
+        x.nemo_import_name
+        for x in database
+        if x.project == project and x.postfix == postfix
+    ]
+
+
+def get_migman_mandatory_fields(
+    database: list[MigMan],
+    project: str,
+    postfix: str,
+) -> list[str]:
+    return [
+        x.nemo_import_name
+        for x in database
+        if x.project == project and x.postfix == postfix and x.snow_mandatory == True
+    ]
+
+
+def get_mig_man_field(
+    database: list[MigMan], project: str, postfix: str, index: int
+) -> MigMan:
+    columns = [
+        x
+        for x in database
+        if x.project == project and x.postfix == postfix and x.index == index
+    ]
+    return columns[0] if columns else None

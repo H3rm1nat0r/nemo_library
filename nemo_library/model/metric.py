@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict, field
-from typing import Optional, Dict, Any, List
+from typing import Optional, Any
 
 from nemo_library.utils.utils import get_internal_name
 
@@ -19,13 +19,13 @@ class Metric:
         The column representing the date.
     description : str
         The description of the metric.
-    descriptionTranslations : Dict[str, str]
+    descriptionTranslations : dict[str, str]
         Translations for the description.
     displayName : str
         The display name of the metric.
-    displayNameTranslations : Dict[str, str]
+    displayNameTranslations : dict[str, str]
         Translations for the display name.
-    groupByAggregations : Dict[str, str]
+    groupByAggregations : dict[str, str]
         Aggregations to group by.
     groupByColumn : str
         The column to group by.
@@ -41,7 +41,7 @@ class Metric:
         The name of the scope.
     unit : str
         The unit of the metric.
-    defaultScopeRestrictions : List[Any]
+    defaultScopeRestrictions : list[Any]
         Default restrictions for the scope.
     focusOrder : str
         The order of focus.
@@ -61,10 +61,10 @@ class Metric:
     aggregateFunction: str = ""
     dateColumn: Optional[str] = ""
     description: str = ""
-    descriptionTranslations: Dict[str, str] = field(default_factory=dict)
+    descriptionTranslations: dict[str, str] = field(default_factory=dict)
     displayName: str = ""
-    displayNameTranslations: Dict[str, str] = field(default_factory=dict)
-    groupByAggregations: Dict[str, str] = field(default_factory=dict)
+    displayNameTranslations: dict[str, str] = field(default_factory=dict)
+    groupByAggregations: dict[str, str] = field(default_factory=dict)
     groupByColumn: str = ""
     isCrawlable: bool = True
     optimizationOrientation: str = ""
@@ -72,7 +72,7 @@ class Metric:
     scopeId: Optional[str] = ""
     scopeName: Optional[str] = ""
     unit: str = ""
-    defaultScopeRestrictions: List[Any] = field(default_factory=list)
+    defaultScopeRestrictions: list[Any] = field(default_factory=list)
     focusOrder: str = ""
     internalName: str = ""
     parentAttributeGroupInternalName: str = ""

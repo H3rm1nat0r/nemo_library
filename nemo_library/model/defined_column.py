@@ -1,5 +1,5 @@
 from dataclasses import dataclass, asdict, field
-from typing import Dict, Optional
+from typing import Optional
 
 from nemo_library.utils.utils import get_import_name, get_internal_name
 
@@ -15,9 +15,9 @@ class DefinedColumn:
     containsSensitiveData: bool = False
     dataType: str = "string"
     description: str = ""
-    descriptionTranslations: Dict[str, str] = field(default_factory=dict)
+    descriptionTranslations: dict[str, str] = field(default_factory=dict)
     displayName: str = None
-    displayNameTranslations: Dict[str, str] = field(default_factory=dict)
+    displayNameTranslations: dict[str, str] = field(default_factory=dict)
     formula: str = ""
     groupByColumnInternalName: Optional[str] = field(default_factory=str)
     importName: str = None

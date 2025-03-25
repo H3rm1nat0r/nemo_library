@@ -1,6 +1,4 @@
 from dataclasses import asdict, dataclass
-from typing import List, Dict
-from datetime import datetime
 from uuid import UUID
 
 
@@ -11,12 +9,12 @@ class SubProcess:
     translations, aggregations, and identifiers.
     """
 
-    columnInternalNames: List[str]
+    columnInternalNames: list[str]
     description: str
-    descriptionTranslations: Dict[str, str]
+    descriptionTranslations: dict[str, str]
     displayName: str
-    displayNameTranslations: Dict[str, str]
-    groupByAggregations: Dict[str, str]
+    displayNameTranslations: dict[str, str]
+    groupByAggregations: dict[str, str]
     groupByColumn: str
     internalName: str
     isAggregation: bool

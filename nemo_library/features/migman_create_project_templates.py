@@ -1,12 +1,15 @@
 import logging
 import os
+from nemo_library.features.migman_database import MigManDatabaseLoad
+from nemo_library.model.migman import MigMan
 from nemo_library.utils.config import Config
 from nemo_library.utils.migmanutils import (
+    get_migman_fields,
+    get_migman_postfixes,
     get_migman_project_list,
     initializeFolderStructure,
-    load_database,
+    is_migman_project_existing,
 )
-from nemo_library.utils.utils import log_error
 import pandas as pd
 
 
@@ -23,16 +26,16 @@ def MigManCreateProjectTemplates(config: Config) -> None:
     # initialize project folder structure
     initializeFolderStructure(local_project_directory)
 
-    dbdf = load_database()
+    # load database
+    database = MigManDatabaseLoad()
     for project in projects:
 
         # check for project in database
-        filtereddbdf = dbdf[dbdf["project_name"] == project]
-        if filtereddbdf.empty:
-            log_error(f"project '{project}' not found in database")
+        if not is_migman_project_existing(database,project):
+            raise ValueError(f"project '{project}' not found in database")
 
         # get list of postfixes
-        postfixes = filtereddbdf["postfix"].unique().tolist()
+        postfixes = get_migman_postfixes(database,project)
 
         # init project
         multi_projects_list = (
@@ -44,17 +47,17 @@ def MigManCreateProjectTemplates(config: Config) -> None:
             for addon in multi_projects_list:
                 for postfix in postfixes:
                     _create_project_template_file(
-                        dbdf, local_project_directory, project, addon, postfix
+                        database, local_project_directory, project, addon, postfix
                     )
         else:
             for postfix in postfixes:
                 _create_project_template_file(
-                    dbdf, local_project_directory, project, None, postfix
+                    database, local_project_directory, project, None, postfix
                 )
 
 
 def _create_project_template_file(
-    dbdf: pd.DataFrame,
+    database: list[MigMan],
     local_project_directory: str,
     project: str,
     addon: str,
@@ -64,9 +67,9 @@ def _create_project_template_file(
     logging.info(
         f"Create project template file for '{project}', addon '{addon}', postfix '{postfix}'"
     )
+    
+    columns = get_migman_fields(database,project,postfix)
 
-    dbdf = dbdf[(dbdf["project_name"] == project) & (dbdf["postfix"] == postfix)]
-    columns = dbdf["import_name"].to_list()
     data = {col: [""] for col in columns}
     templatedf = pd.DataFrame(data=data, columns=columns)
     templatedf.to_csv(

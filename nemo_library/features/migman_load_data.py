@@ -5,6 +5,9 @@ import os
 import re
 import pandas as pd
 
+from tabulate import tabulate
+
+from nemo_library.features.migman_database import MigManDatabaseLoad
 from nemo_library.features.nemo_persistence_api import (
     createImportedColumns,
     createReports,
@@ -15,15 +18,20 @@ from nemo_library.features.nemo_persistence_api import (
 from nemo_library.features.nemo_persistence_api import createProjects
 from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.model.imported_column import ImportedColumn
+from nemo_library.model.migman import MigMan
 from nemo_library.model.project import Project
 from nemo_library.model.report import Report
 from nemo_library.model.rule import Rule
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
 from nemo_library.utils.migmanutils import (
+    get_mig_man_field,
+    get_migman_fields,
+    get_migman_mandatory_fields,
+    get_migman_postfixes,
     get_migman_project_list,
     getProjectName,
-    load_database,
+    is_migman_project_existing,
 )
 from nemo_library.utils.utils import (
     get_internal_name,
@@ -41,16 +49,15 @@ def MigManLoadData(config: Config) -> None:
     multi_projects = config.get_migman_multi_projects()
     projects = get_migman_project_list(config)
 
-    dbdf = load_database()
+    database = MigManDatabaseLoad()
     for project in projects:
 
         # check for project in database
-        filtereddbdf = dbdf[dbdf["project_name"] == project]
-        if filtereddbdf.empty:
-            log_error(f"project '{project}' not found in database")
+        if not is_migman_project_existing(database, project):
+            raise ValueError(f"project '{project}' not found in database")
 
         # get list of postfixes
-        postfixes = filtereddbdf["postfix"].unique().tolist()
+        postfixes = get_migman_postfixes(database, project)
 
         # init project
         multi_projects_list = (
@@ -62,18 +69,23 @@ def MigManLoadData(config: Config) -> None:
             for addon in multi_projects_list:
                 for postfix in postfixes:
                     _load_data(
-                        config, dbdf, local_project_directory, project, addon, postfix
+                        config,
+                        database,
+                        local_project_directory,
+                        project,
+                        addon,
+                        postfix,
                     )
         else:
             for postfix in postfixes:
                 _load_data(
-                    config, dbdf, local_project_directory, project, None, postfix
+                    config, database, local_project_directory, project, None, postfix
                 )
 
 
 def _load_data(
     config: Config,
-    dbdf: pd.DataFrame,
+    database: list[MigMan],
     local_project_directory: str,
     project: str,
     addon: str,
@@ -140,17 +152,27 @@ def _load_data(
                 f"totally empty columns removed. Here is the list {json.dumps(columns_to_drop.to_list(),indent=2)}"
             )
 
-        dbdf = dbdf[(dbdf["project_name"] == project) & (dbdf["postfix"] == postfix)]
-        columns_migman = dbdf["import_name"].to_list()
+        # reconcile migman columns with columns from import file
+        columns_migman = get_migman_fields(database, project, postfix)
+        for col in datadf_cleaned.columns:
+            if not col in columns_migman:
+                raise ValueError(
+                    f"file {file_name} contains column '{col}' that is not defined in MigMan Template"
+                )
+
+        # check mandatory fields
+        mandatoryfields = get_migman_mandatory_fields(database, project, postfix)
+        for field in mandatoryfields:
+            if not field in datadf_cleaned.columns:
+                raise ValueError(
+                    f"file {file_name} is missing mandatory field '{field}'"
+                )
+
         ics_nemo = getImportedColumns(config, project_name)
         ics_import_names = [ic.importName for ic in ics_nemo]
 
         new_columns = []
         for col in datadf_cleaned.columns:
-            if not col in columns_migman:
-                log_error(
-                    f"file {file_name} contains column '{col}' that is not defined in MigMan Template"
-                )
 
             # column already defined in nemo? if not, create it
             if not col in ics_import_names:
@@ -158,20 +180,36 @@ def _load_data(
                     f"column '{col}' not found in project {project_name}. Create it."
                 )
 
-                coldb = dbdf.iloc[columns_migman.index(col)]
-                description = "\n".join(
-                    [f"{key}: {value}" for key, value in coldb.items()]
+                col_migman = get_mig_man_field(
+                    database, project, postfix, columns_migman.index(col) + 1
+                )
+
+                if not col_migman:
+                    log_error(f"could nof find record in migman database for project '{project}', postfix '{postfix}' and index {columns_migman.index(col) + 1}")
+                    
+                # Convert JSON data to a list of tuples
+                table_data = [
+                    (key, value if value else "<None>") for key, value in col_migman.to_dict().items()
+                ]
+
+                # Print the table
+                description = tabulate(
+                    table_data,
+                    headers=["Field", "Value"],
+                    tablefmt="plain",
+                    maxcolwidths=[35, 30],
                 )
                 new_columns.append(
                     ImportedColumn(
-                        displayName=coldb["display_name"],
-                        importName=coldb["import_name"],
-                        internalName=coldb["internal_name"],
+                        displayName=col_migman.nemo_display_name,
+                        importName=col_migman.nemo_import_name,
+                        internalName=col_migman.nemo_internal_name,
                         description=description,
                         dataType="string",
-                        focusOrder=f"{columns_migman.index(col):03}",
+                        focusOrder=f"{(columns_migman.index(col) + 1):03}",
                     )
                 )
+
         if new_columns:
             createImportedColumns(
                 config=config,
@@ -204,8 +242,9 @@ def _load_data(
             _update_deficiency_mining(
                 config=config,
                 project_name=project_name,
+                postfix=postfix,
                 columns_in_file=datadf_cleaned.columns,
-                dbdf=dbdf,
+                database=database,
             )
     else:
         logging.info(f"File {file_name} for project {project_name} not found")
@@ -241,8 +280,9 @@ WHERE
 def _update_deficiency_mining(
     config: Config,
     project_name: str,
+    postfix: str,
     columns_in_file: list[str],
-    dbdf: pd.DataFrame,
+    database: list[MigMan],
 ) -> None:
 
     logging.info(
@@ -253,130 +293,145 @@ def _update_deficiency_mining(
     frags_checked = []
     frags_msg = []
     joins = {}
-    for idx, (display_name, internal_name, data_type, format) in enumerate(
-        zip(
-            dbdf["display_name"],
-            dbdf["internal_name"],
-            dbdf["Data Type"],
-            dbdf["Format"],
-        )
-    ):
+    migman_fields = [
+        x
+        for x in database
+        if x.project == project_name
+        and x.postfix == postfix
+        and x.nemo_import_name in columns_in_file
+    ]
+    for migman_field in migman_fields:
 
-        if display_name in columns_in_file:
-            frag_check = []
-            frag_msg = []
+        frag_check = []
+        frag_msg = []
 
-            # data type specific checks
-            match data_type.lower():
-                case "character":
-                    # Parse format to get maximum length
-                    match = re.search(r"x\((\d+)\)", format)
-                    field_length = int(match.group(1)) if match else len(format)
-                    frag_check.append(f"LENGTH({internal_name}) > {field_length}")
-                    frag_msg.append(
-                        f"{display_name} exceeds field length (max {field_length} digits)"
-                    )
+        # data type specific checks
+        match migman_field.desc_section_data_type.lower():
+            case "character":
+                # Parse format to get maximum length
+                match = re.search(r"x\((\d+)\)", migman_field.desc_section_format)
+                field_length = int(match.group(1)) if match else len(format)
+                frag_check.append(
+                    f"LENGTH({migman_field.nemo_internal_name}) > {field_length}"
+                )
+                frag_msg.append(
+                    f"{migman_field.nemo_display_name} exceeds field length (max {field_length} digits)"
+                )
 
-                case "integer" | "decimal":
-                    # Parse format
-                    negative_numbers = "-" in format
-                    if negative_numbers:
-                        format = format.replace("-", "")
+            case "integer" | "decimal":
+                # Parse format
+                negative_numbers = "-" in migman_field.desc_section_format
+                format = (
+                    migman_field.desc_section_format.replace("-", "")
+                    if negative_numbers
+                    else migman_field.desc_section_format
+                )
 
-                    if not negative_numbers:
-                        frag_check.append(
-                            f"LEFT(TRIM({internal_name}), 1) = '-' OR RIGHT(TRIM({internal_name}), 1) = '-'"
-                        )
-                        frag_msg.append(f"{display_name} must not be negative")
-
-                    # decimals?
-                    decimals = len(format.split(".")[1]) if "." in format else 0
-                    if decimals > 0:
-                        format = format[: len(format) - decimals - 1]
-                        frag_check.append(
-                            f"""LOCATE(TO_VARCHAR(TRIM({internal_name})), '.') > 0 AND 
-                LENGTH(RIGHT(TO_VARCHAR(TRIM({internal_name})), 
-                            LENGTH(TO_VARCHAR(TRIM({internal_name}))) - 
-                            LOCATE(TO_VARCHAR(TRIM({internal_name})), '.'))) > {decimals}"""
-                        )
-                        frag_msg.append(
-                            f"{display_name} has too many decimals ({decimals} allowed)"
-                        )
-
-                    match = re.search(r"z\((\d+)\)", format)
-                    field_length = int(match.group(1)) if match else len(format)
-
+                if not negative_numbers:
                     frag_check.append(
-                        f"""LENGTH(
-                        LEFT(
-                            REPLACE(TO_VARCHAR(TRIM({internal_name})), '-', ''), 
-                            LOCATE('.', REPLACE(TO_VARCHAR(TRIM({internal_name})), '-', '')) - 1
-                        )
-                    ) > {field_length}"""
+                        f"LEFT(TRIM({migman_field.nemo_internal_name}), 1) = '-' OR RIGHT(TRIM({migman_field.nemo_internal_name}), 1) = '-'"
                     )
                     frag_msg.append(
-                        f"{display_name} has too many digits before the decimal point ({field_length} allowed)"
+                        f"{migman_field.nemo_display_name} must not be negative"
                     )
 
+                # decimals?
+                decimals = len(format.split(".")[1]) if "." in format else 0
+                if decimals > 0:
+                    format = format[: len(format) - decimals - 1]
                     frag_check.append(
-                        f"NOT {internal_name} LIKE_REGEXPR('^[-]?[0-9]+(\\.[0-9]+)?[-]?$')"
+                        f"""LOCATE(TO_VARCHAR(TRIM({migman_field.nemo_internal_name})), '.') > 0 AND 
+            LENGTH(RIGHT(TO_VARCHAR(TRIM({migman_field.nemo_internal_name})), 
+                        LENGTH(TO_VARCHAR(TRIM({migman_field.nemo_internal_name}))) - 
+                        LOCATE(TO_VARCHAR(TRIM({migman_field.nemo_internal_name})), '.'))) > {decimals}"""
                     )
-                    frag_msg.append(f"{display_name} is not a valid number")
-
-                case "date":
-                    frag_check.append(
-                        f"NOT {internal_name} LIKE_REGEXPR('^(\\d{{4}})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$')"
+                    frag_msg.append(
+                        f"{migman_field.nemo_display_name} has too many decimals ({decimals} allowed)"
                     )
-                    frag_msg.append(f"{display_name} is not a valid date")
 
-            # special fields
+                match = re.search(r"z\((\d+)\)", format)
+                field_length = int(match.group(1)) if match else len(format)
 
-            if "mail" in internal_name:
                 frag_check.append(
-                    f"NOT {internal_name} LIKE_REGEXPR('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{{2,}}$')"
-                )
-                frag_msg.append(f"{display_name} is not a valid email")
-
-            # VAT_ID
-            if "s_ustid_ustid" in internal_name:
-                joins[internal_name] = {"CLASSIFICATION": "VAT_ID"}
-                frag_check.append(
-                    f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS = 'check')"
-                )
-                frag_msg.append(f"genius analysis: ' || genius_{internal_name}.STATUS_MESSAGE || '")
-            # URL
-            elif "s_adresse_homepage" in internal_name:
-                joins[internal_name] = {"CLASSIFICATION": "URL"}
-                frag_check.append(
-                    f"(genius_{internal_name}.STATUS IS NOT NULL AND genius_{internal_name}.STATUS = 'check')"
-                )
-                frag_msg.append(f"genius analysis: ' || genius_{internal_name}.STATUS_MESSAGE || '")
-
-            # now build deficiency mining report for this column (if there are checks)
-            if frag_check:
-
-                # save checks and messages for total report
-                frags_checked.extend(frag_check)
-                frags_msg.extend(frag_msg)
-                sorted_columns = [f'{internal_name} AS "{display_name}"'] + [
-                    f'{intname} AS "{dispname}"'
-                    for dispname, intname in zip(
-                        dbdf["display_name"], dbdf["internal_name"]
+                    f"""LENGTH(
+                    LEFT(
+                        REPLACE(TO_VARCHAR(TRIM({migman_field.nemo_internal_name})), '-', ''), 
+                        LOCATE('.', REPLACE(TO_VARCHAR(TRIM({migman_field.nemo_internal_name})), '-', '')) - 1
                     )
-                    if intname != internal_name and dispname in columns_in_file
+                ) > {field_length}"""
+                )
+                frag_msg.append(
+                    f"{migman_field.nemo_display_name} has too many digits before the decimal point ({field_length} allowed)"
+                )
+
+                frag_check.append(
+                    f"NOT {migman_field.nemo_internal_name} LIKE_REGEXPR('^[-]?[0-9]+(\\.[0-9]+)?[-]?$')"
+                )
+                frag_msg.append(
+                    f"{migman_field.nemo_display_name} is not a valid number"
+                )
+
+            case "date":
+                frag_check.append(
+                    f"NOT {migman_field.nemo_internal_name} LIKE_REGEXPR('^(\\d{{4}})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$')"
+                )
+                frag_msg.append(f"{migman_field.nemo_display_name} is not a valid date")
+
+        # special fields
+
+        if "mail" in migman_field.nemo_internal_name:
+            frag_check.append(
+                f"NOT {migman_field.nemo_internal_name} LIKE_REGEXPR('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{{2,}}$')"
+            )
+            frag_msg.append(f"{migman_field.nemo_display_name} is not a valid email")
+
+        # VAT_ID
+        if "s_ustid_ustid" in migman_field.nemo_internal_name:
+            joins[migman_field.nemo_internal_name] = {"CLASSIFICATION": "VAT_ID"}
+            frag_check.append(
+                f"(genius_{migman_field.nemo_internal_name}.STATUS IS NOT NULL AND genius_{migman_field.nemo_internal_name}.STATUS = 'check')"
+            )
+            frag_msg.append(
+                f"genius analysis: ' || genius_{migman_field.nemo_internal_name}.STATUS_MESSAGE || '"
+            )
+        # URL
+        elif "s_adresse_homepage" in migman_field.nemo_internal_name:
+            joins[migman_field.nemo_internal_name] = {"CLASSIFICATION": "URL"}
+            frag_check.append(
+                f"(genius_{migman_field.nemo_internal_name}.STATUS IS NOT NULL AND genius_{migman_field.nemo_internal_name}.STATUS = 'check')"
+            )
+            frag_msg.append(
+                f"genius analysis: ' || genius_{migman_field.nemo_internal_name}.STATUS_MESSAGE || '"
+            )
+
+        # now build deficiency mining report for this column (if there are checks)
+        if frag_check:
+
+            # save checks and messages for total report
+            frags_checked.extend(frag_check)
+            frags_msg.extend(frag_msg)
+            sorted_columns = [
+                f'{migman_field.nemo_internal_name} AS "{migman_field.nemo_display_name}"'
+            ] + [
+                f'{other_field.nemo_internal_name} AS "{other_field.nemo_display_name}"'
+                for other_field in database
+                if other_field.project == project_name
+                and other_field.postfix == postfix
+                and other_field.index != migman_field.index
+                and other_field.nemo_import_name in columns_in_file
+            ]
+
+            # case statements for messages and dm report
+            case_statement_specific = " ||\n\t".join(
+                [
+                    f"CASE\n\t\tWHEN {check}\n\t\tTHEN CHAR(10) || '{msg}'\n\t\tELSE ''\n\tEND"
+                    for check, msg in zip(frag_check, frag_msg)
                 ]
+            )
 
-                # case statements for messages and dm report
-                case_statement_specific = " ||\n\t".join(
-                    [
-                        f"CASE\n\t\tWHEN {check}\n\t\tTHEN CHAR(10) || '{msg}'\n\t\tELSE ''\n\tEND"
-                        for check, msg in zip(frag_check, frag_msg)
-                    ]
-                )
+            status_conditions = " OR ".join(frag_check)
 
-                status_conditions = " OR ".join(frag_check)
-
-                sql_statement = f"""SELECT
+            sql_statement = f"""SELECT
 \tCASE 
 \t\tWHEN {status_conditions} THEN 'check'
 \tELSE 'ok'
@@ -386,54 +441,55 @@ def _update_deficiency_mining(
 FROM
 \t$schema.$table
 """
-                if internal_name in joins:
-                    sql_statement += f"""LEFT JOIN
-\t$schema.SHARED_NAIGENT genius_{internal_name}
+            if migman_field.nemo_internal_name in joins:
+                sql_statement += f"""LEFT JOIN
+\t$schema.SHARED_NAIGENT genius_{migman_field.nemo_internal_name}
 ON  
-\t    genius_{internal_name}.CLASSIFICATION = '{joins[internal_name]["CLASSIFICATION"]}'
-\tAND genius_{internal_name}.VALUE          = {internal_name}
+\t    genius_{migman_field.nemo_internal_name}.CLASSIFICATION = '{joins[migman_field.nemo_internal_name]["CLASSIFICATION"]}'
+\tAND genius_{migman_field.nemo_internal_name}.VALUE          = {migman_field.nemo_internal_name}
 """
 
-                # create the report
-                report_display_name = f"(DEFICIENCIES) {idx + 1:03} {display_name}"
-                report_internal_name = get_internal_name(report_display_name)
+            # create the report
+            report_display_name = f"(DEFICIENCIES) {migman_field.index:03} {migman_field.nemo_display_name}"
+            report_internal_name = get_internal_name(report_display_name)
 
-                createReports(
-                    config=config,
-                    projectname=project_name,
-                    reports=[
-                        Report(
-                            displayName=report_display_name,
-                            internalName=report_internal_name,
-                            querySyntax=sql_statement,
-                            description=f"Deficiency Mining Report for column '{display_name}' in project '{project_name}'",
-                        )
-                    ],
-                )
-
-                createRules(
-                    config=config,
-                    projectname=project_name,
-                    rules=[
-                        Rule(
-                            displayName=f"DM_{idx:03}: {display_name}",
-                            ruleSourceInternalName=report_internal_name,
-                            ruleGroup="02 Columns",
-                            description=f"Deficiency Mining Rule for column '{display_name}' in project '{project_name}'",
-                        )
-                    ],
-                )
-
-            logging.info(
-                f"project: {project_name}, column: {display_name}: {len(frag_check)} frags added"
+            createReports(
+                config=config,
+                projectname=project_name,
+                reports=[
+                    Report(
+                        displayName=report_display_name,
+                        internalName=report_internal_name,
+                        querySyntax=sql_statement,
+                        description=f"Deficiency Mining Report for column '{migman_field.nemo_display_name}' in project '{project_name}'",
+                    )
+                ],
             )
+
+            createRules(
+                config=config,
+                projectname=project_name,
+                rules=[
+                    Rule(
+                        displayName=f"DM_{migman_field.index:03}: {migman_field.nemo_display_name}",
+                        ruleSourceInternalName=report_internal_name,
+                        ruleGroup="02 Columns",
+                        description=f"Deficiency Mining Rule for column '{migman_field.nemo_display_name}' in project '{project_name}'",
+                    )
+                ],
+            )
+
+        logging.info(
+            f"project: {project_name}, column: {migman_field.nemo_display_name}: {len(frag_check)} frags added"
+        )
 
     # now setup global dm report and rule
     case_statement_specific, status_conditions = _create_dm_rule_global(
         config=config,
         project_name=project_name,
+        postfix=postfix,
         columns_in_file=columns_in_file,
-        dbdf=dbdf,
+        database=database,
         frags_checked=frags_checked,
         frags_msg=frags_msg,
         sorted_columns=sorted_columns,
@@ -444,8 +500,9 @@ ON
     _create_report_for_migman(
         config=config,
         project_name=project_name,
+        postfix=postfix,
         columns_in_file=columns_in_file,
-        dbdf=dbdf,
+        database=database,
         case_statement_specific=case_statement_specific,
         status_conditions=status_conditions,
         joins=joins,
@@ -455,8 +512,9 @@ ON
     _create_report_for_customer(
         config=config,
         project_name=project_name,
+        postfix=postfix,
         columns_in_file=columns_in_file,
-        dbdf=dbdf,
+        database=database,
         case_statement_specific=case_statement_specific,
         status_conditions=status_conditions,
         joins=joins,
@@ -469,8 +527,9 @@ ON
 def _create_dm_rule_global(
     config: Config,
     project_name: str,
+    postfix: str,
     columns_in_file: list[str],
-    dbdf: pd.DataFrame,
+    database: list[MigMan],
     frags_checked: list[str],
     frags_msg: list[str],
     sorted_columns: list[str],
@@ -489,7 +548,7 @@ def _create_dm_rule_global(
 
     sql_statement = f"""WITH CTEDefMining AS (
     SELECT
-        {',\n\t\t'.join([intname for intname, dispname in zip(dbdf["internal_name"],dbdf["display_name"]) if dispname in columns_in_file])}
+        {',\n\t\t'.join([x.nemo_internal_name for x in database if x.project == project_name and x.postfix == postfix and x.nemo_display_name in columns_in_file])}
         ,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
         ,CASE 
             WHEN {status_conditions} THEN 'check'
@@ -551,15 +610,16 @@ FROM
 def _create_report_for_migman(
     config: Config,
     project_name: str,
+    postfix: str,
     columns_in_file: list[str],
-    dbdf: pd.DataFrame,
+    database: list[MigMan],
     case_statement_specific: str,
     status_conditions: str,
     joins: dict[str, dict[str, str]],
 ) -> None:
     sql_statement = f"""WITH CTEDefMining AS (
     SELECT
-        {',\n\t\t'.join([intname for intname, dispname in zip(dbdf["internal_name"],dbdf["display_name"]) if dispname in columns_in_file])}
+        {',\n\t\t'.join([x.nemo_internal_name for x in database if x.project == project_name and x.postfix == postfix and x.nemo_display_name in columns_in_file])}
         ,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
         ,CASE 
             WHEN {status_conditions} THEN 'check'
@@ -579,7 +639,7 @@ ON
     sql_statement += f"""       
 )
 SELECT
-    {',\n\t'.join([f"{intname} as \"{paname}\"" for intname,dispname,paname in zip(dbdf["internal_name"],dbdf["display_name"],dbdf["migman_header_label"]) if dispname in columns_in_file])}
+    {',\n\t'.join([f"{x.nemo_internal_name} as \"{x.header_section_label}\"" for x in database if x.project == project_name and x.postfix == postfix and x.nemo_display_name in columns_in_file])}
 FROM 
     CTEDefMining
 WHERE
@@ -607,15 +667,16 @@ WHERE
 def _create_report_for_customer(
     config: Config,
     project_name: str,
+    postfix: str,
     columns_in_file: list[str],
-    dbdf: pd.DataFrame,
+    database: list[MigMan],
     case_statement_specific: str,
     status_conditions: str,
     joins: dict[str, dict[str, str]],
 ) -> None:
     sql_statement = f"""WITH CTEDefMining AS (
     SELECT
-        {',\n\t\t'.join([intname for intname, dispname in zip(dbdf["internal_name"],dbdf["display_name"]) if dispname in columns_in_file])}
+        {',\n\t\t'.join([x.nemo_internal_name for x in database if x.project == project_name and x.postfix == postfix and x.nemo_display_name in columns_in_file])}
         ,LTRIM({case_statement_specific},CHAR(10)) AS DEFICIENCY_MININNG_MESSAGE
         ,CASE 
             WHEN {status_conditions} THEN 'check'
@@ -636,7 +697,7 @@ ON
 )
 SELECT
     DEFICIENCY_MININNG_MESSAGE,
-    {',\n\t'.join([f"{intname} as \"{paname}\"" for intname,dispname,paname in zip(dbdf["internal_name"],dbdf["display_name"],dbdf["migman_header_label"]) if dispname in columns_in_file])}
+    {',\n\t'.join([f"{x.nemo_internal_name} as \"{x.header_section_label}\"" for x in database if x.project == project_name and x.postfix == postfix and x.nemo_display_name in columns_in_file])}
 FROM 
     CTEDefMining
 WHERE

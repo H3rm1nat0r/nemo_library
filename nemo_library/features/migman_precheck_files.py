@@ -3,11 +3,16 @@ import logging
 import os
 import pandas as pd
 
+from nemo_library.features.migman_database import MigManDatabaseLoad
+from nemo_library.model.migman import MigMan
 from nemo_library.utils.config import Config
 from nemo_library.utils.migmanutils import (
+    get_migman_fields,
+    get_migman_mandatory_fields,
+    get_migman_postfixes,
     get_migman_project_list,
     getProjectName,
-    load_database,
+    is_migman_project_existing,
 )
 
 __all__ = ["MigManPrecheckFiles"]
@@ -20,18 +25,18 @@ def MigManPrecheckFiles(config: Config) -> dict[str: str]:
     multi_projects = config.get_migman_multi_projects()
     projects = get_migman_project_list(config)
 
-    dbdf = load_database()
+    database = MigManDatabaseLoad()
     status = {}
     for project in projects:
 
         try:
+            
             # check for project in database
-            filtereddbdf = dbdf[dbdf["project_name"] == project]
-            if filtereddbdf.empty:
+            if not is_migman_project_existing(database,project):
                 raise ValueError(f"project '{project}' not found in database")
 
             # get list of postfixes
-            postfixes = filtereddbdf["postfix"].unique().tolist()
+            postfixes = get_migman_postfixes(database,project)
 
             # init project
             multi_projects_list = (
@@ -44,7 +49,7 @@ def MigManPrecheckFiles(config: Config) -> dict[str: str]:
                     for postfix in postfixes:
                         _check_data(
                             config,
-                            dbdf,
+                            database,
                             local_project_directory,
                             project,
                             addon,
@@ -53,7 +58,7 @@ def MigManPrecheckFiles(config: Config) -> dict[str: str]:
             else:
                 for postfix in postfixes:
                     _check_data(
-                        config, dbdf, local_project_directory, project, None, postfix
+                        config, database, local_project_directory, project, None, postfix
                     )
 
             status[project] = "ok"
@@ -70,7 +75,7 @@ def MigManPrecheckFiles(config: Config) -> dict[str: str]:
 
 def _check_data(
     config: Config,
-    dbdf: pd.DataFrame,
+    database: list[MigMan],
     local_project_directory: str,
     project: str,
     addon: str,
@@ -98,11 +103,19 @@ def _check_data(
         columns_to_drop = datadf.columns[datadf.isna().all()]
         datadf_cleaned = datadf.drop(columns=columns_to_drop)
 
-        dbdf = dbdf[(dbdf["project_name"] == project) & (dbdf["postfix"] == postfix)]
-        columns_migman = dbdf["import_name"].to_list()
-
+        # check if all columns are defined in MigMan
+        columns_migman = get_migman_fields(database,project,postfix)
         for col in datadf_cleaned.columns:
             if not col in columns_migman:
                 raise ValueError(
                     f"file {file_name} contains column '{col}' that is not defined in MigMan Template"
                 )
+
+        # check mandatory fields
+        mandatoryfields = get_migman_mandatory_fields(database,project,postfix)
+        for field in mandatoryfields:
+            if not field in datadf_cleaned.columns:
+                raise ValueError(
+                    f"file {file_name} is missing mandatory field '{field}'"
+                )
+

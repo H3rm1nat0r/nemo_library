@@ -1,5 +1,4 @@
 from dataclasses import dataclass, asdict, field
-from typing import Dict, List
 
 from nemo_library.utils.utils import get_internal_name
 
@@ -40,16 +39,16 @@ class Application:
     Attributes:
         active (bool): Indicates if the application is active.
         description (str): The description of the application.
-        descriptionTranslations (Dict[str, str]): Translations for the description.
+        descriptionTranslations (dict[str, str]): Translations for the description.
         displayName (str): The display name of the application.
-        displayNameTranslations (Dict[str, str]): Translations for the display name.
+        displayNameTranslations (dict[str, str]): Translations for the display name.
         download (str): The download link for the application.
-        forecasts (List[Forecast]): List of forecast configurations.
+        forecasts (list[Forecast]): List of forecast configurations.
         formatCompact (bool): Indicates if the format is compact.
         internalName (str): The internal name of the application.
-        links (List[str]): List of related links.
-        models (List[str]): List of associated models.
-        pages (List[PageReference]): List of page references.
+        links (list[str]): List of related links.
+        models (list[str]): List of associated models.
+        pages (list[PageReference]): List of page references.
         scopeName (str): The scope name of the application.
         id (str): The unique identifier of the application.
         projectId (str): The project identifier.
@@ -58,16 +57,16 @@ class Application:
 
     active: bool = True
     description: str = ""
-    descriptionTranslations: Dict[str, str] = field(default_factory=dict)
+    descriptionTranslations: dict[str, str] = field(default_factory=dict)
     displayName: str = None
-    displayNameTranslations: Dict[str, str] = field(default_factory=dict)
+    displayNameTranslations: dict[str, str] = field(default_factory=dict)
     download: str = ""
-    forecasts: List[Forecast] = field(default_factory=list)
+    forecasts: list[Forecast] = field(default_factory=list)
     formatCompact: bool = False
     internalName: str = None
-    links: List[str] = field(default_factory=list)
-    models: List[str] = field(default_factory=list)
-    pages: List[PageReference] = field(default_factory=list)
+    links: list[str] = field(default_factory=list)
+    models: list[str] = field(default_factory=list)
+    pages: list[PageReference] = field(default_factory=list)
     scopeName: str = ""
     id: str = ""
     projectId: str = ""

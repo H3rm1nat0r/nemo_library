@@ -1,6 +1,5 @@
 from dataclasses import asdict, dataclass, field
-from typing import List, Optional
-import json
+from typing import Optional
 
 
 @dataclass
@@ -9,7 +8,7 @@ class DependencyTree:
     A class to represent a dependency tree node.
 
     Attributes:
-    dependencies (List[Optional["DependencyTree"]]): List of child dependency nodes.
+    dependencies (list[Optional["DependencyTree"]]): List of child dependency nodes.
     dependencyType (Optional[str]): Type of the dependency.
     nodeConflictState (str): Conflict state of the node.
     nodeDisplayName (str): Display name of the node.
@@ -18,7 +17,7 @@ class DependencyTree:
     nodeType (str): Type of the node.
     """
 
-    dependencies: List[Optional["DependencyTree"]] = field(default_factory=list)
+    dependencies: list[Optional["DependencyTree"]] = field(default_factory=list)
     dependencyType: Optional[str] = None
     nodeConflictState: str = ""
     nodeDisplayName: str = ""

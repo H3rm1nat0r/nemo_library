@@ -1,5 +1,4 @@
 from dataclasses import dataclass, asdict
-from typing import Dict, List
 
 
 @dataclass
@@ -29,7 +28,7 @@ class Value:
         column (str): The column name.
         id (str): The unique identifier for the value.
         legend (str): The legend for the value.
-        legendTranslations (Dict[str, str]): Translations for the legend.
+        legendTranslations (dict[str, str]): Translations for the legend.
     """
 
     aggregation: str
@@ -37,7 +36,7 @@ class Value:
     column: str
     id: str
     legend: str
-    legendTranslations: Dict[str, str]
+    legendTranslations: dict[str, str]
 
 
 @dataclass
@@ -49,17 +48,17 @@ class Diagram:
         alternateVisualization (bool): Indicates if there is an alternate visualization.
         argument (Argument): The argument for the diagram.
         argumentAxisTitle (str): The title of the argument axis.
-        argumentAxisTitleTranslations (Dict[str, str]): Translations for the argument axis title.
+        argumentAxisTitleTranslations (dict[str, str]): Translations for the argument axis title.
         description (str): The description of the diagram.
-        descriptionTranslations (Dict[str, str]): Translations for the description.
+        descriptionTranslations (dict[str, str]): Translations for the description.
         displayName (str): The display name of the diagram.
-        displayNameTranslations (Dict[str, str]): Translations for the display name.
+        displayNameTranslations (dict[str, str]): Translations for the display name.
         internalName (str): The internal name of the diagram.
         report (str): The report associated with the diagram.
         summary (str): The summary of the diagram.
         valueAxisTitle (str): The title of the value axis.
-        valueAxisTitleTranslations (Dict[str, str]): Translations for the value axis title.
-        values (List[Value]): The list of values in the diagram.
+        valueAxisTitleTranslations (dict[str, str]): Translations for the value axis title.
+        values (list[Value]): The list of values in the diagram.
         id (str): The unique identifier for the diagram.
         projectId (str): The project identifier.
         tenant (str): The tenant identifier.
@@ -68,17 +67,17 @@ class Diagram:
     alternateVisualization: bool
     argument: Argument
     argumentAxisTitle: str
-    argumentAxisTitleTranslations: Dict[str, str]
+    argumentAxisTitleTranslations: dict[str, str]
     description: str
-    descriptionTranslations: Dict[str, str]
+    descriptionTranslations: dict[str, str]
     displayName: str
-    displayNameTranslations: Dict[str, str]
+    displayNameTranslations: dict[str, str]
     internalName: str
     report: str
     summary: str
     valueAxisTitle: str
-    valueAxisTitleTranslations: Dict[str, str]
-    values: List[Value]
+    valueAxisTitleTranslations: dict[str, str]
+    values: list[Value]
     id: str
     projectId: str
     tenant: str

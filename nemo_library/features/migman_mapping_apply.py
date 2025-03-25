@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import List
 import pandas as pd
 from nemo_library.features.nemo_persistence_api import createReports, getImportedColumns
 from nemo_library.features.nemo_report_api import LoadReport
@@ -102,7 +101,7 @@ def _process_project(
 def _apply_mapping(
     config: Config,
     project: str,
-    importedcolumns: List[ImportedColumn],
+    importedcolumns: list[ImportedColumn],
     mappingrelationsdf: pd.DataFrame,
 ) -> None:
     select_statement = _select_statement(
@@ -160,7 +159,7 @@ def _focus_couple_attributes(
 
 def _select_statement(
     config: Config,
-    importedcolumns: List[ImportedColumn],
+    importedcolumns: list[ImportedColumn],
     mappingrelationsdf: pd.DataFrame,
 ) -> str:
 

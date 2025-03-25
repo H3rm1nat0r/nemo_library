@@ -1,5 +1,4 @@
 from dataclasses import dataclass, asdict, field
-from typing import Dict
 from nemo_library.utils.utils import get_internal_name
 
 
@@ -11,12 +10,12 @@ class Rule:
 
     active: bool = True
     description: str = ""
-    descriptionTranslations: Dict[str, str] = field(default_factory=dict)
+    descriptionTranslations: dict[str, str] = field(default_factory=dict)
     displayName: str = None
-    displayNameTranslations: Dict[str, str] = field(default_factory=dict)
+    displayNameTranslations: dict[str, str] = field(default_factory=dict)
     internalName: str = None
     ruleGroup: str = ""
-    ruleGroupTranslations: Dict[str, str] = field(default_factory=dict)
+    ruleGroupTranslations: dict[str, str] = field(default_factory=dict)
     ruleSourceInternalName: str = ""
     id: str = ""
     projectId: str = ""

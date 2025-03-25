@@ -1,5 +1,4 @@
 from dataclasses import dataclass, asdict, field
-from typing import Dict
 
 from nemo_library.utils.utils import get_internal_name
 
@@ -14,7 +13,7 @@ class AttributeGroup:
     defaultMetricGroup: bool = False
     defaultDefinedColumnGroup: bool = False
     displayName: str = None
-    displayNameTranslations: Dict[str, str] = field(default_factory=dict)
+    displayNameTranslations: dict[str, str] = field(default_factory=dict)
     isCoupled: bool = False
     focusOrder: str = ""
     internalName: str = None

@@ -53,7 +53,7 @@ def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
 def _generic_metadata_create_or_update(
     config: Config,
     projectname: str,
-    objects: List[T],
+    objects: list[T],
     endpoint: str,
     get_existing_func,
 ) -> None:
@@ -115,7 +115,7 @@ def _generic_metadata_create_or_update(
                 )
 
 
-def _generic_metadata_delete(config: Config, ids: List[str], endpoint: str) -> None:
+def _generic_metadata_delete(config: Config, ids: list[str], endpoint: str) -> None:
     """
     Generic function to delete metadata entries.
 
@@ -151,7 +151,7 @@ def _generic_metadata_get(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[T]:
+) -> list[T]:
     """
     Generic method to fetch and filter metadata for different objects.
 
@@ -251,7 +251,7 @@ def getAttributeGroups(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[AttributeGroup]:
+) -> list[AttributeGroup]:
     """Fetches AttributeGroups metadata with the given filters."""
     return _generic_metadata_get(
         config,
@@ -271,7 +271,7 @@ def getMetrics(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Metric]:
+) -> list[Metric]:
     """Fetches Metrics metadata with the given filters."""
     return _generic_metadata_get(
         config, projectname, "Metrics", "", Metric, filter, filter_type, filter_value
@@ -284,7 +284,7 @@ def getTiles(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Tile]:
+) -> list[Tile]:
     """Fetches Tiles metadata with the given filters."""
     return _generic_metadata_get(
         config, projectname, "Tiles", "", Tile, filter, filter_type, filter_value
@@ -297,7 +297,7 @@ def getPages(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Page]:
+) -> list[Page]:
     """Fetches Pages metadata with the given filters."""
     return _generic_metadata_get(
         config, projectname, "Pages", "", Page, filter, filter_type, filter_value
@@ -310,7 +310,7 @@ def getApplications(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Application]:
+) -> list[Application]:
     """Fetches Applications metadata with the given filters."""
     return _generic_metadata_get(
         config,
@@ -330,7 +330,7 @@ def getDiagrams(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Diagram]:
+) -> list[Diagram]:
     """Fetches Diagrams metadata with the given filters."""
     return _generic_metadata_get(
         config,
@@ -350,7 +350,7 @@ def getDefinedColumns(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[DefinedColumn]:
+) -> list[DefinedColumn]:
     """Fetches DefinedColumns metadata with the given filters."""
     return _generic_metadata_get(
         config,
@@ -370,7 +370,7 @@ def getImportedColumns(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[ImportedColumn]:
+) -> list[ImportedColumn]:
     """Fetches ImportedColumns metadata with the given filters."""
     return _generic_metadata_get(
         config,
@@ -390,7 +390,7 @@ def getSubProcesses(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[SubProcess]:
+) -> list[SubProcess]:
     """Fetches SubProcesss metadata with the given filters."""
     return _generic_metadata_get(
         config,
@@ -410,65 +410,65 @@ def getRules(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Rule]:
+) -> list[Rule]:
     """Fetches Rules metadata with the given filters."""
     return _generic_metadata_get(
         config, projectname, "Rule", "/rules", Rule, filter, filter_type, filter_value
     )
 
 
-def deleteDefinedColumns(config: Config, definedcolumns: List[str]) -> None:
+def deleteDefinedColumns(config: Config, definedcolumns: list[str]) -> None:
     """Deletes a list of Defined Columns by their IDs."""
     _generic_metadata_delete(config, definedcolumns, "Columns")
 
 
-def deleteImportedColumns(config: Config, importedcolumns: List[str]) -> None:
+def deleteImportedColumns(config: Config, importedcolumns: list[str]) -> None:
     """Deletes a list of Imported Columns by their IDs."""
     _generic_metadata_delete(config, importedcolumns, "Columns")
 
 
-def deleteMetrics(config: Config, metrics: List[str]) -> None:
+def deleteMetrics(config: Config, metrics: list[str]) -> None:
     """Deletes a list of Metrics by their IDs."""
     _generic_metadata_delete(config, metrics, "Metrics")
 
 
-def deleteTiles(config: Config, tiles: List[str]) -> None:
+def deleteTiles(config: Config, tiles: list[str]) -> None:
     """Deletes a list of Tiles by their IDs."""
     _generic_metadata_delete(config, tiles, "Tiles")
 
 
-def deleteAttributeGroups(config: Config, attributegroups: List[str]) -> None:
+def deleteAttributeGroups(config: Config, attributegroups: list[str]) -> None:
     """Deletes a list of AttributeGroups by their IDs."""
     _generic_metadata_delete(config, attributegroups, "AttributeGroup")
 
 
-def deletePages(config: Config, pages: List[str]) -> None:
+def deletePages(config: Config, pages: list[str]) -> None:
     """Deletes a list of Pages by their IDs."""
     _generic_metadata_delete(config, pages, "Pages")
 
 
-def deleteApplications(config: Config, applications: List[str]) -> None:
+def deleteApplications(config: Config, applications: list[str]) -> None:
     """Deletes a list of Pages by their IDs."""
     _generic_metadata_delete(config, applications, "Applications")
 
 
-def deleteDiagrams(config: Config, diagrams: List[str]) -> None:
+def deleteDiagrams(config: Config, diagrams: list[str]) -> None:
     """Deletes a list of Diagrams by their IDs."""
     _generic_metadata_delete(config, diagrams, "Diagrams")
 
 
-def deleteSubprocesses(config: Config, subprocesses: List[str]) -> None:
+def deleteSubprocesses(config: Config, subprocesses: list[str]) -> None:
     """Deletes a list of SubProcesses by their IDs."""
     _generic_metadata_delete(config, subprocesses, "SubProcess")
 
 
-def deleteRules(config: Config, rules: List[str]) -> None:
+def deleteRules(config: Config, rules: list[str]) -> None:
     """Deletes a list of Rules by their IDs."""
     _generic_metadata_delete(config, rules, "Rule")
 
 
 def createDefinedColumns(
-    config: Config, projectname: str, definedcolumns: List[DefinedColumn]
+    config: Config, projectname: str, definedcolumns: list[DefinedColumn]
 ) -> None:
     """Creates or updates a list of DefinedColumns."""
     _generic_metadata_create_or_update(
@@ -477,7 +477,7 @@ def createDefinedColumns(
 
 
 def createImportedColumns(
-    config: Config, projectname: str, importedcolumns: List[ImportedColumn]
+    config: Config, projectname: str, importedcolumns: list[ImportedColumn]
 ) -> None:
     """Creates or updates a list of ImportedColumns."""
     _generic_metadata_create_or_update(
@@ -485,20 +485,20 @@ def createImportedColumns(
     )
 
 
-def createMetrics(config: Config, projectname: str, metrics: List[Metric]) -> None:
+def createMetrics(config: Config, projectname: str, metrics: list[Metric]) -> None:
     """Creates or updates a list of Metrics."""
     _generic_metadata_create_or_update(
         config, projectname, metrics, "Metrics", getMetrics
     )
 
 
-def createTiles(config: Config, projectname: str, tiles: List[Tile]) -> None:
+def createTiles(config: Config, projectname: str, tiles: list[Tile]) -> None:
     """Creates or updates a list of Tiles."""
     _generic_metadata_create_or_update(config, projectname, tiles, "Tiles", getTiles)
 
 
 def createAttributeGroups(
-    config: Config, projectname: str, attributegroups: List[AttributeGroup]
+    config: Config, projectname: str, attributegroups: list[AttributeGroup]
 ) -> None:
     """Creates or updates a list of AttributeGroups."""
     _generic_metadata_create_or_update(
@@ -506,13 +506,13 @@ def createAttributeGroups(
     )
 
 
-def createPages(config: Config, projectname: str, pages: List[Page]) -> None:
+def createPages(config: Config, projectname: str, pages: list[Page]) -> None:
     """Creates or updates a list of Pages."""
     _generic_metadata_create_or_update(config, projectname, pages, "Pages", getPages)
 
 
 def createApplications(
-    config: Config, projectname: str, applications: List[Application]
+    config: Config, projectname: str, applications: list[Application]
 ) -> None:
     """Creates or updates a list of Applications."""
     _generic_metadata_create_or_update(
@@ -520,7 +520,7 @@ def createApplications(
     )
 
 
-def createDiagrams(config: Config, projectname: str, diagrams: List[Diagram]) -> None:
+def createDiagrams(config: Config, projectname: str, diagrams: list[Diagram]) -> None:
     """Creates or updates a list of Diagrams."""
     _generic_metadata_create_or_update(
         config, projectname, diagrams, "Diagrams", getDiagrams
@@ -528,7 +528,7 @@ def createDiagrams(config: Config, projectname: str, diagrams: List[Diagram]) ->
 
 
 def createSubProcesses(
-    config: Config, projectname: str, subprocesses: List[SubProcess]
+    config: Config, projectname: str, subprocesses: list[SubProcess]
 ) -> None:
     """Creates or updates a list of SubProcesses."""
     _generic_metadata_create_or_update(
@@ -536,7 +536,7 @@ def createSubProcesses(
     )
 
 
-def createRules(config: Config, projectname: str, rules: List[Rule]) -> None:
+def createRules(config: Config, projectname: str, rules: list[Rule]) -> None:
     """Creates or updates a list of Rules."""
     _generic_metadata_create_or_update(config, projectname, rules, "Rule", getRules)
 
@@ -546,7 +546,7 @@ def getProjects(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Project]:
+) -> list[Project]:
     """Fetches Projects metadata with the given filters."""
 
     # cannot use the generic meta data getter, since this is "above" the other object
@@ -590,12 +590,12 @@ def getProjects(
     return [_deserializeMetaDataObject(item, Project) for item in cleaned_data]
 
 
-def deleteProjects(config: Config, projects: List[str]) -> None:
+def deleteProjects(config: Config, projects: list[str]) -> None:
     """Deletes a list of projects by their IDs."""
     _generic_metadata_delete(config, projects, "Project")
 
 
-def createProjects(config: Config, projects: List[Project]) -> None:
+def createProjects(config: Config, projects: list[Project]) -> None:
     """Creates or updates a list of Projects."""
     # Initialize request
     headers = config.connection_get_headers()
@@ -666,7 +666,7 @@ def getReports(
     filter: str = "*",
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> List[Report]:
+) -> list[Report]:
     """Fetches Reports metadata with the given filters."""
     return _generic_metadata_get(
         config,
@@ -680,13 +680,13 @@ def getReports(
     )
 
 
-def createReports(config: Config, projectname: str, reports: List[Report]) -> None:
+def createReports(config: Config, projectname: str, reports: list[Report]) -> None:
     """Creates or updates a list of Reports."""
     _generic_metadata_create_or_update(
         config, projectname, reports, "Reports", getReports
     )
 
 
-def deleteReports(config: Config, reports: List[str]) -> None:
+def deleteReports(config: Config, reports: list[str]) -> None:
     """Deletes a list of Reports by their IDs."""
     _generic_metadata_delete(config, reports, "Reports")

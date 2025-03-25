@@ -1,14 +1,15 @@
 import logging
 import os
+from nemo_library.features.migman_database import MigManDatabaseLoad
 from nemo_library.features.nemo_persistence_api import getProjects
 from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.utils.config import Config
 from nemo_library.utils.migmanutils import (
+    get_migman_postfixes,
     get_migman_project_list,
     getProjectName,
-    load_database,
+    is_migman_project_existing,
 )
-from nemo_library.utils.utils import log_error
 
 __all__ = ["MigManExportData"]
 
@@ -22,16 +23,17 @@ def MigManExportData(config: Config) -> None:
 
     project_list_nemo = [project.displayName for project in getProjects(config)]
 
-    dbdf = load_database()
+    # load database
+    database = MigManDatabaseLoad()
+    
     for project in projects:
 
         # check for project in database
-        filtereddbdf = dbdf[dbdf["project_name"] == project]
-        if filtereddbdf.empty:
-            log_error(f"project '{project}' not found in database")
+        if not is_migman_project_existing(database,project):
+            raise ValueError(f"project '{project}' not found in database")
 
         # get list of postfixes
-        postfixes = filtereddbdf["postfix"].unique().tolist()
+        postfixes = get_migman_postfixes(database,project)
 
         # init project
         multi_projects_list = (

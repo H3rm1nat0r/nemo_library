@@ -1,6 +1,6 @@
 M_RessGruppe.RessGruppe;M_RessGruppeSpr.Bezeichnung;M_RessGruppe.FrozenZone;M_RessGruppe.Server;M_RessGruppe.PlanKapProzent;M_RessGruppe.AdressNr;M_RessGruppe.Kalender
 ;;?;;0;?;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Ressourcengruppe;Resource Group;M_RessGruppe.RessGruppe;CHARACTER;x(6);
 2;Bezeichnung;Description;M_RessGruppeSpr.Bezeichnung;CHARACTER;x(30);
 3;Frozen Zone;Frozen Zone;M_RessGruppe.FrozenZone;INTEGER;z9;

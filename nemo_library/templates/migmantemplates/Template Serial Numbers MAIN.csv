@@ -1,6 +1,6 @@
 MS_SNR.Seriennummer;MS_SNR.SNRArt;MS_SNR.SNrTyp;MS_SNR.ZweiteSerienNummer;MS_SNR.SNRStatus;MS_SNR.ArtikelAktuell;MS_SNR.Bemerkung;MS_SNR.Inbetriebnahme;MS_SNR.Garantiezeit;MS_SNR.GarantieAb;MS_SNR.GarantieBis;MS_SNR.Baujahr;MS_SNR.Baumonat;MS_SNR.PruefZeugnis;MS_SNRAustausch.ASeriennummer;MS_SNRAustausch.AnlageDatum;MS_SNR.HerstellungsOrt;MS_SNR.Version;MS_SNR.Sachbearbeiter;MS_SNR.Wiedervorlage;MS_SNR.Kunde;MS_SNR.VerteilerGruppe;MS_SNR.AdressNr;MS_SNR.Serviceobjekt;MS_SNR.RessArt;MS_SNR.Ressource;S_KoTraeger.KostenTraeger;MS_SNR.Bezugsgroesse;MS_SNR.Periodizitaet;BBM_WflLockStatus.BBM_WflLockStatus_ID;MS_SNR.Wartung;MS_SNR.qp_902_RessArt;MS_SNR.qp_902_Resource;MS_SNR.qp_902_InventoryNumber
 ;;;;0;;;?;0;?;?;0;0;;;today;;;;?;0;;?;0;0;;;;0;0;?;;;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Seriennummer;Serial Number;MS_SNR.Seriennummer;CHARACTER;x(20);
 2;SNRArt;Serial Number Category;MS_SNR.SNRArt;CHARACTER;x(6);
 3;Seriennummerntyp;Serial Number Type;MS_SNR.SNrTyp;CHARACTER;x(6);

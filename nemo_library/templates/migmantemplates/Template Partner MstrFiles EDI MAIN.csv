@@ -1,6 +1,6 @@
 SD_PartnerEDI.Konto;SD_PartnerEDI.Belegart;SD_PartnerEDI.lfdNr;SD_PartnerEDI.Nachricht;SD_PartnerEDI.Syntax;SD_PartnerEDI.SyntaxKennung;SD_PartnerEDIVerb.Next_TransmissionNo;SD_PartnerEDIVerb.Last_TransmissionNo;BG_FKopf.FormularNr;SD_PartnerEDIVerb.FormularAnzahl;SD_PartnerEDIVerb.Verzeichnis;BBM_WflWorkGroup.BBM_WflWorkGroup_ID;SD_PartnerEDIVerb.CollectiveTransmission;SD_PartnerEDI.Test;SD_PartnerEDI.aktiv
 0;;0;0;0;;1;0;0;1;;;no;yes;no
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Kunde/Lieferant;Account;SD_PartnerEDI.Konto;INTEGER;zzzzzzzz;
 2;Belegart;Document Type;SD_PartnerEDI.Belegart;CHARACTER;x(3);
 3;laufende Nr;Counter;SD_PartnerEDI.lfdNr;INTEGER;zzzzzzz9;

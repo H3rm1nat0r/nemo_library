@@ -1,6 +1,6 @@
 S_Anlage.Anlage;S_Anlage.Suchbegriff;S_Anlage.Selektion;S_AnlageSpr.Bezeichnung1;S_AnlageSpr.Bezeichnung2;S_AnlageSpr.Bezeichnung3;S_AnlageSpr.Bezeichnung4;S_Anlage.AnlageArt;S_Anlage.Hauptanlage;S_Anlage.Kostenstelle;S_Anlage.AnlageNr;S_Anlage.ZugangsDatum;S_Anlage.InbetriebDatum;S_Anlage.Artikel;S_Anlage.Lieferant;S_Anlage.Hersteller;S_Anlage.Menge;S_Anlage.AbgangsDatum;S_Anlage.VtgAnlA;S_Anlage.realisiert;S_Anlage.Bild;S_Anlage.gueltig_bis;S_Anlage.F_TradeTax;S_Anlage.F_TradeTaxAmount;S_KoTraeger.KostenTraeger
 ;;;;;;;;?;0;;?;?;;0;0;0;?;yes;no;;?;no;0;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Inventarnummer;Fixed Asset Number;S_Anlage.Anlage;CHARACTER;x(20);
 2;Suchbegriff;Search Term;S_Anlage.Suchbegriff;CHARACTER;x(12);
 3;Selektion;Selection;S_Anlage.Selektion;CHARACTER;x(20);

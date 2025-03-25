@@ -1,6 +1,6 @@
 MMM_Transport.Kunde;MMM_Transport.Versandart;MMM_Transport.Lieferant;MMM_Transport.TransportPartnerID;MMM_Transport.Carrier;MMM_Transport.LorryType;MMM_Transport.MeansOfTransport;MMM_Transport.MeansOfTransportNo;MMM_Transport.Lieferadresse;MMM_Transport.Abladestelle
 0;0;0;;;0;0;;?;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Kunde;Customer;MMM_Transport.Kunde;INTEGER;zzzzzzzz;
 2;Versandart;Shipping Type;MMM_Transport.Versandart;INTEGER;zz9;
 3;Lieferant;Supplier;MMM_Transport.Lieferant;INTEGER;zzzzzzzz;

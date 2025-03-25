@@ -1,6 +1,6 @@
 SBM_IncDriver.SBM_IncDriverGroup_ID;SBM_IncDriver.SBM_IncDriver_ID;DBM_ShortDescription.ShortDesc1;SBM_IncDriver.Suchbegriff;SBM_IncDriver.Selektion;SBM_IncDriver.SBM_IncDriver_Type;SBM_IncDriver.StartTermin;SBM_IncDriver.EndTermin;SBM_IncDriver.Direkt_Bebuchbar;SBM_IncDriver.Verantwortlicher
 0;;;;;B;01/01/0001;12/31/9999;yes;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;ETrGruppe;Income Object Group;SBM_IncDriver.SBM_IncDriverGroup_ID;INTEGER;9;
 2;Ergebnisträger;Income Objects;SBM_IncDriver.SBM_IncDriver_ID;CHARACTER;x(20);
 3;Bezeichnung;Description 1;DBM_ShortDescription.ShortDesc1;CHARACTER;x(80);

@@ -1,6 +1,6 @@
 JBT_Project.Projekt;JBT_ProjectStr.PSC;JBT_ProjectStr.PSC;JBT_ProjSeqRel.AOB;JBT_ProjSeqRel.Pufferzeit
 ;;;0;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Projekt;Project;JBT_Project.Projekt;CHARACTER;x(20);
 2;PSC;Project Structure Code;JBT_ProjectStr.PSC;CHARACTER;x(60);
 3;PSC;Project Structure Code;JBT_ProjectStr.PSC;CHARACTER;x(60);

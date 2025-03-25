@@ -1,6 +1,6 @@
 DRC_Table.DRC_Table_ID;c_MainIndexFields;BBT_WflLockStatusInst.BBM_WflLockStatus_ID;BBT_WflLockStatusInst.LimitedFrom;BBT_WflLockStatusInst.LimitedTo;BBT_WflLockStatusInst.Remark
 ;;0;?;?;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Table Name;Table Name;DRC_Table.DRC_Table_ID;CHARACTER;x(25);
 2;c_MainIndexFields;;;;;
 3;Zustand;Status;BBT_WflLockStatusInst.BBM_WflLockStatus_ID;INTEGER;zz9;

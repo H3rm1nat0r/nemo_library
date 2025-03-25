@@ -1,6 +1,6 @@
 c_Index;MB_Ressource.RessPos;MB_Ressource.RessArt;MB_Ressource.AltGruppe;MB_Ressource.Ressource;MB_Ressource.Bemerkung;MB_Ressource.AlternativGr
 ;0;0;;;;no
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Index;;;;;
 2;Ressourcenposition;Resource Line;MB_Ressource.RessPos;INTEGER;zzz9;
 3;Ressourcenart;Resource Category;MB_Ressource.RessArt;INTEGER;99;

@@ -1,6 +1,6 @@
 S_ArtPreiseStaffel.Artikel;S_ArtPreiseStaffel.PreisGruppe;S_ArtPreiseStaffel.gueltig_ab;S_ArtPreiseStaffel.gueltig_bis;S_ArtPreiseDatum.StaffelGruppe;S_ArtPreiseStaffel.StaffelMenge;S_ArtPreiseStaffel.Preis;c_XXXplauto;S_PreisGruppe.Waehrung
 ;;?;?;;0;0;;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Teil;Part;S_ArtPreiseStaffel.Artikel;CHARACTER;x(20);
 2;Preisliste;Price Group;S_ArtPreiseStaffel.PreisGruppe;CHARACTER;x(6);
 3;gültig ab;Valid From;S_ArtPreiseStaffel.gueltig_ab;DATE;99.99.9999;

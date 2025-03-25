@@ -1,6 +1,6 @@
 S_Groesse.Groesse;S_GroesseSpr.Bezeichnung;S_Groesse.GroessenFolge;S_Groesse.Breite;S_Groesse.Tiefe;S_Groesse.Hoehe;S_Groesse.ProLadeEinheit;S_Groesse.ProArtikel;S_Groesse.ProPlatz
 ;;0;0;0;0;no;no;no
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Größe;Size;S_Groesse.Groesse;CHARACTER;x(6);
 2;Bezeichnung Größe;Description Size;S_GroesseSpr.Bezeichnung;CHARACTER;x(30);
 3;Reihenfolge;Size Sequence;S_Groesse.GroessenFolge;INTEGER;zz9;

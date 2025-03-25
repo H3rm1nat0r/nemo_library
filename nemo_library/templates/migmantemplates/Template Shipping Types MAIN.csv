@@ -1,6 +1,6 @@
 S_VersandArt.VersandArt;S_VersandArtSpr.Bezeichnung;S_VersandArt.Suchbegriff;S_VersandArt.Selektion;S_VersandArt.Verkehrszweig;S_VersandArt.EDL;S_VersandArt.Versendung;S_VersandArt.Strecke;S_VersandArt.WEBShop;S_VersandArt.archived;S_VersandArt.uCI_DirectPrint;S_VersandArt.uCA_ChargeFreight;S_VersandArt.uCW_Lieferzeitfenster;S_VersandArt.uCW_Tourenplanung;S_Lieferant.Lieferant
 0;;;;3;no;no;no;no;no;no;yes;yes;no;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Versandart;Shipping Type;S_VersandArt.VersandArt;INTEGER;zz9;
 2;Bezeichnung;Description Shipping Type;S_VersandArtSpr.Bezeichnung;CHARACTER;x(70);
 3;Suchbegriff;Search Term;S_VersandArt.Suchbegriff;CHARACTER;x(12);

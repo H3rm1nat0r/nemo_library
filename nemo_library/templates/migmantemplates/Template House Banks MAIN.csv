@@ -1,6 +1,6 @@
 S_Konto.Konto;SBM_BankDataAcc.BankDataCounter;S_Bank.Bank;S_Bank.BLZ;S_Bank.SwiftNr;SBM_BankDataAcc.BankKonto;SBM_BankDataAcc.IBAN;SBM_BankDataAcc.MainBank;SBM_BankDataAcc.AccountHolder;S_Waehrung.Waehrung;c_XXXbankmodify;S_Bank.Selektion;S_Bank.Suchbegriff;S_Adresse.Name1;S_Adresse.Staat;S_Adresse.PLZ;S_Adresse.Ort;S_Adresse.Strasse;S_Adresse.Telefon;S_Adresse.Telefax;S_Adresse.EMail;SBM_BankDataAcc.F_ExpenseAcc;SBM_BankDataAcc.F_FormNrAdvice;SBM_BankDataAcc.F_InterBank;SBM_BankDataAcc.F_NrFormsAdvice;SBM_BankDataAcc.cRU_Currency
 0;0;?;;;;;no;;0;;;;;;;;;;;;?;0;?;1;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Konto;Account;S_Konto.Konto;INTEGER;zzzzzzzz;
 2;Bankverb Konto;Counter;SBM_BankDataAcc.BankDataCounter;INTEGER;zz9;
 3;Bank;Bank;S_Bank.Bank;CHARACTER;x(12);

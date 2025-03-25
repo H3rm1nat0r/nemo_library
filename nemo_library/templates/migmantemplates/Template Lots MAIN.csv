@@ -1,6 +1,6 @@
 MC_Charge.Artikel;MC_Charge.Charge;MC_Charge.VerteilerGruppe;MC_Charge.LieferantenCharge;MC_Charge.KundenCharge;MC_Charge.PruefZeugnis;MC_Charge.VerfallsDatum;MC_Charge.Herkunftsland;MC_Charge.Bemerkung1;MC_Charge.Bemerkung2;MC_Charge.Bemerkung3;MC_Charge.Bemerkung4;MC_Charge.LetzterZugang;MC_Charge.LetzterAbgang;MC_Charge.AnlageBenutzer;MC_Charge.Anlagedatum;MC_Charge.AenderungBenutzer;MC_Charge.AenderungDatum;BBM_WflLockStatus.BBM_WflLockStatus_ID;MC_Charge.ArtVar;MC_Charge.uCI_ChangeNoBOM;MC_Charge.uCI_ChangeNoDrawing;MC_Charge.uCI_ChangeNoProcess;MC_Charge.uCI_IndexNoBOM;MC_Charge.uCI_IndexNoDrawing;MC_Charge.uCI_IndexNoProcess;MC_Charge.CustomerIndex;MC_Charge.CustomerSubIndex
 ;;;;;;?;QU;;;;;?;?;;today;;?;0;;;;;;?;;;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Teil;Part;MC_Charge.Artikel;CHARACTER;x(20);
 2;Chargennummer;Lot Number;MC_Charge.Charge;CHARACTER;x(20);
 3;Verteilergruppe;Work Group;MC_Charge.VerteilerGruppe;CHARACTER;x(6);

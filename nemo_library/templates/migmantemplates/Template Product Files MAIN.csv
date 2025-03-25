@@ -1,6 +1,6 @@
 MS_ProdAkte.Seriennummer;MS_ProdAkte.SNRArt;MS_ProdAkte.Akte;MS_ProdAkte.Sachbearbeiter;MS_ProdAkte.VerteilerGruppe;MS_ProdAkte.FormularNr;MS_ProdAkte.FormularAnzahl;MS_ProdAkte.Bemerkung;MS_ProdAkte.Zusatzakte;MS_ProdAkte.StatusAenderung;MS_ProdAkte.IndexNr;MS_ProdAkte.AenderungsNummer;MS_ProdAkte.RessArt;MS_ProdAkte.Ressource
 ;;0;;;0;1;;no;?;;;0;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Seriennummer;Serial Number;MS_ProdAkte.Seriennummer;CHARACTER;x(20);
 2;SNRArt;Serial Number Category;MS_ProdAkte.SNRArt;CHARACTER;x(6);
 3;Akte;File;MS_ProdAkte.Akte;INTEGER;zzzzzzz9;

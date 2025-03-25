@@ -1,6 +1,6 @@
 S_Ansprech.Kontenbereich;S_Ansprech.Konto;S_Ansprech.AnsprechNr;S_Ansprech.Name;S_Ansprech.Abteilung;S_Ansprech.Funktion;S_Ansprech.Selektionscode;S_Ansprech.Telefon;S_Ansprech.EMail;S_Ansprech.AnzeigeFolge;S_Ansprech.Selektion;S_Ansprech.Telefax;S_Ansprech.Handy;S_Ansprech.Anrede;S_Ansprech.Titel;S_Ansprech.Vorname;S_Ansprech.Nachname;S_Ansprech.AdressAnrede;S_Ansprech.BriefAnrede;S_Ansprech.AdressNr;S_Ansprech.Hobby;S_Ansprech.Praesente;S_Ansprech.Geburtstag;S_Ansprech.RobinsonCheck;c_S_ANSPRECHselectcodeautocreate;S_SelektionscodeSpr.Bezeichnung;S_Ansprech.I_PlaceOfBirth;S_Ansprech.I_StateOfBirth;S_Ansprech.I_CountryOfBirth
 0;0;0;;;;0;;;999;;;;;;;;;;?;;;?;yes;;;;;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Kontenbereich;Range of Accounts;S_Ansprech.Kontenbereich;INTEGER;9;
 2;Kunde/Lieferant;Customer/Supplier;S_Ansprech.Konto;INTEGER;zzzzzzzz;
 3;AnsprechNr;Contact Person No.;S_Ansprech.AnsprechNr;INTEGER;zzz9;

@@ -1,6 +1,6 @@
 PMM_Drawing.PMM_Drawing_ID;PMM_Drawing.IndexNo;PMM_Drawing.CadConfiguration;DBM_ShortDescription.ShortDesc1;DBM_ShortDescription.ShortDesc2;DBM_ShortDescription.ShortDesc3;DBM_ShortDescription.ShortDesc4
 ;;;;;;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Zeichnung;Drawing;PMM_Drawing.PMM_Drawing_ID;CHARACTER;x(30);
 2;Indexnummer;Index Number;PMM_Drawing.IndexNo;CHARACTER;x99;
 3;Konfiguration;Configuration;PMM_Drawing.CadConfiguration;CHARACTER;x(50);

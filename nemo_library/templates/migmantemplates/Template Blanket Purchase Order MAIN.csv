@@ -1,6 +1,6 @@
 E_RA_Kopf.BelegNummer;E_RA_Kopf.Lieferant;E_RA_Kopf.BelegDatum;E_RA_Kopf.AuftragsArt;E_RA_Kopf.SBM_ProfitCenter_ID;E_RA_Kopf.Sachbearbeiter;E_RA_Kopf.Empfaenger;E_RA_Kopf.Wiedervorlage;E_RA_Kopf.VerteilerGruppe;E_RA_Kopf.Sprache;E_RA_Kopf.BelegInfo;E_RA_Kopf.Empfaenger_Telefon;E_RA_Kopf.Vertragsnummer;E_RA_Kopf.Vertragsdatum;E_RA_Kopf.gueltig_ab;E_RA_Kopf.gueltig_bis;E_RA_Kopf.Waehrung;E_RA_Kopf.Lieferhinweis;E_RA_Kopf.LieferBedingung;E_RA_Kopf.FormularNr;E_RA_Kopf.FormularAnzahl;E_RA_Kopf.Kopftext1;E_RA_Kopf.Kopftext2;E_RA_Kopf.Kopftext3;E_RA_Kopf.Kopftext4;E_RA_Kopf.Bemerkung1;E_RA_Kopf.Bemerkung2;E_RA_Kopf.Bemerkung3;S_BestellAdresse.BestellAdresse
 0;0;today;;;;;?;;D;;;;?;today;?;0;;0;0;1;;;;;;;;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Belegnummer;Document Number;E_RA_Kopf.BelegNummer;INTEGER;zzzzzzz9;
 2;Lieferant;Supplier;E_RA_Kopf.Lieferant;INTEGER;zzzzzzzz;
 3;Belegdatum;Document Date;E_RA_Kopf.BelegDatum;DATE;99.99.9999;

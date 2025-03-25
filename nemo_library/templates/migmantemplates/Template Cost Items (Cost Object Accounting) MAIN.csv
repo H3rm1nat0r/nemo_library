@@ -1,6 +1,6 @@
 S_TrKoArt.TrKoArt;S_TrKoArt.Suchbegriff;S_TrKoArt.Selektion;S_TrKoArt.Art;S_TrKoArtSpr.Bezeichnung;BBM_WflWorkGroup.BBM_WflWorkGroup_ID;S_TrKoArt.Fix;S_TrKoArt.entlast_KoSt;S_TrKoArt.entlast_KoArt;S_TrKoArt.BezugsKoA;S_TrKoArt.bwl_fix;S_TrKoArt.bwl_prop;S_TrKoArt.st_fix;S_TrKoArt.st_prop;S_TrKoArt.Direkt_Bebuchbar;S_TrKoArt.Bwl;S_TrKoArt.Steu;S_TrKoArt.BezugsGroesse;S_TrKoArt.BwlFixBetrag;S_TrKoArt.BwlVarBetrag;S_TrKoArt.StFixBetrag;S_TrKoArt.StVarBetrag;S_TrKoArt.ZuschlArt
 0;;;B;;;100;0;0;0;0;0;0;0;yes;yes;yes;;0;0;0;0;yes
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Kostenart;Cost Item;S_TrKoArt.TrKoArt;INTEGER;zzzzzzzz;
 2;Suchbegriff;Search Term;S_TrKoArt.Suchbegriff;CHARACTER;x(12);
 3;Selektion;Selection;S_TrKoArt.Selektion;CHARACTER;x(20);

@@ -1,6 +1,6 @@
 S_KtoZuord.Gruppe;S_KtoZuord.gueltig_ab;S_KtoZuord.Konto;S_Steuer.Steuer;S_Staat.IsoAlpha2Code;S_KtoZuord.Bereich;c_XXX_suche_mit_staat;SBM_SubAcctGroup.SBM_SubAcctGroup_ID;S_KtoZuord.F_PurchasingAcc
 0;today;0;0;;K;;;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Gruppe;Revenue Group/Purchasing Group;S_KtoZuord.Gruppe;INTEGER;zz9;
 2;gültig ab;Valid From;S_KtoZuord.gueltig_ab;DATE;99.99.9999;
 3;Konto;Revenue Account/Purchasing Account;S_KtoZuord.Konto;INTEGER;zzzzzzzz;

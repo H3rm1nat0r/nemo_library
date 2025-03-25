@@ -1,6 +1,6 @@
 PMM_Routing.PMM_Routing_ID;PMM_Operation.OperationPosition;PMM_BomHead.Part;PMM_BomHead.PartVariant;PMM_BomPart.BOMPartPosition;PMM_OperationRef.OperationValueFactor;c_DeleteOperationRef
 ;0;;;0;1;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Prozess;Routing;PMM_Routing.PMM_Routing_ID;CHARACTER;x(20);
 2;AktivitätenPos;Operation Line;PMM_Operation.OperationPosition;INTEGER;zzz9;
 3;Teil;Part;PMM_BomHead.Part;CHARACTER;x(20);

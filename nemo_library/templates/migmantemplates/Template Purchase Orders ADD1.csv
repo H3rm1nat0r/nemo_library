@@ -1,6 +1,6 @@
 E_BelegKopf.BelegNummer;E_BelegPos.PositionsNr;E_BelegPos.Artikel;E_BelegPos.Bezeichnung1;E_BelegPos.Bezeichnung2;E_BelegPos.Bezeichnung3;E_BelegPos.Bezeichnung4;E_BelegPos.LagerOrt;E_BelegPos.Menge;E_BelegPos.Gewicht;E_BelegPos.Wunschtermin;E_BelegPos.Liefertermin;E_BelegPos.Einzelpreis;E_BelegPos.Wert_RZ_1;E_BelegPos.Wert_RZ_2;E_BelegPos.proz_RZ_1;E_BelegPos.proz_RZ_2;E_BelegPos.proz_RZ_3;E_BelegPos.MMM_CusRefOrder_ID;E_BelegPos.KoAuftrag;E_BelegPos.Anlage;E_BelegPos.Wert_RZ_Art_1;E_BelegPos.Wert_RZ_Art_2;E_BelegPos.proz_RZ_Art_1;E_BelegPos.proz_RZ_Art_2;E_BelegPos.proz_RZ_Art_3;E_BelegPos.gelieferte_Menge;E_BelegPos.Warenwert;E_BelegPos.Warenwert_offen;E_BelegPos.Ausschussmenge;c_PackInstructAdopt;E_BelegPos.H_Lieferbedingung;E_BelegPos.H_Incoterm;E_BelegPos.uCI_MinimumShelfLife;E_BelegPos.uCI_ReqDeliveryDate;E_BelegPos.uCI_ArrivalDate;E_BelegPos.uCI_Lot;E_BelegPos.uCA_AddCosts;E_BelegPos.uCA_AddCosts_Type;E_BelegPos.uCA_OneOffCosts;E_BelegPos.uCA_OneOffCosts_Type;E_BelegPos.uCE_PONumber;S_KostenStelle.Kostenstelle;S_KoTraeger.KostenTraeger
 0;1;;;;;;?;0;0;today;?;0;0;0;0;0;0;;no;;;;;;;0;0;0;0;;0;;0;?;?;;0;;0;;?;0;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Belegnummer;Document Number;E_BelegKopf.BelegNummer;INTEGER;zzzzzzz9;
 2;Position;Line;E_BelegPos.PositionsNr;DECIMAL;zz9.9;
 3;Teil;Part;E_BelegPos.Artikel;CHARACTER;x(20);

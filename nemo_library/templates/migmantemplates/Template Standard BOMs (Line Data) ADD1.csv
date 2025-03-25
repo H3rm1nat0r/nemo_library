@@ -1,6 +1,6 @@
 PMM_BomHead.Part;PMM_BomHead.PartVariant;PMM_BomLine.BomLinePosition;PMM_BomPart.BOMPartPosition;PMM_BomLineRef.MaterialQtyFactor;c_DeleteBomLineRef
 ;;0;0;1;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Teil;Part;PMM_BomHead.Part;CHARACTER;x(20);
 2;Variante;Variant;PMM_BomHead.PartVariant;CHARACTER;x(6);
 3;Position;BOM Line;PMM_BomLine.BomLinePosition;INTEGER;zzzzz9;

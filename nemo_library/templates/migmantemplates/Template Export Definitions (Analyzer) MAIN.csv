@@ -1,6 +1,6 @@
 IS_Export.ExportID;IS_Export.ExportName;IS_Export.MasterID;IS_Export.ExportConfigID;IS_Export.ExportFile;IS_Export.History;IS_Export.TimeShiftBackwards;IS_Export.TimeShiftForwards;IS_Export.ParameterValue;IS_Export.geschuetztesFormat;IS_Export.einfuegen;IS_Export.nextExecution;IS_Export.nextExecutionoffset
 ;;;;;0;0;0;;no;no;today;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Export;Unique Key of Export;IS_Export.ExportID;CHARACTER;x(32);
 2;Bezeichnung;Export Name;IS_Export.ExportName;CHARACTER;x(70);
 3;Master;Unique Key of Master;IS_Export.MasterID;CHARACTER;x(12);

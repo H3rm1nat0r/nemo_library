@@ -1,6 +1,6 @@
 ML_Ort.LagerOrt;ML_OrtSpr.Bezeichnung;MLM_StockValueGroup.MLM_StockValueGroup_ID;ML_Ort.AdressNr;ML_Ort.StorageType;ML_Ort.Lagergruppe;ML_Ort.UnloadingPoint;ML_Ort.MPStrategie;ML_Ort.Disponibel;ML_Ort.Buchungssperre;ML_Ort.gesperrt;ML_Ort.Konto;ML_Ort.LagerBereich;ML_Ort.SupLogCenter;ML_Ort.KundenNummer;ML_Ort.uCI_WerkLieferantEdi;ML_Ort.uCI_WMS_ID;ML_Ort.uCI_CostIncObject;ML_Ort.uCI_CostCenter
 0;;0;?;0;0;;man;yes;no;no;0;?;0;;;;;?
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Lagerort;Storage Area;ML_Ort.LagerOrt;INTEGER;zzzzzzz9;
 2;Bezeichnung;Description Storage Area;ML_OrtSpr.Bezeichnung;CHARACTER;x(30);
 3;Wertgruppe;Value Group;MLM_StockValueGroup.MLM_StockValueGroup_ID;INTEGER;zzzzzzz9;

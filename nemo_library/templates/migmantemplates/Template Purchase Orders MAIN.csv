@@ -1,6 +1,6 @@
 E_BelegKopf.BelegNummer;E_BelegKopf.Lieferant;E_BelegKopf.BelegDatum;E_BelegKopf.AuftragsArt;E_BelegKopf.VersandArt;E_BelegKopf.LieferBedingung;E_BelegKopf.VerteilerGruppe;E_BelegKopf.Waehrung;E_BelegKopf.Preisgueltigkeit;E_BelegKopf.Wunschtermin;E_BelegKopf.LagerOrt;S_KostenStelle.Kostenstelle;S_KoTraeger.KostenTraeger;E_BelegKopf.Sachbearbeiter;E_BelegKopf.Empfaenger;E_BelegKopf.BelegInfo;E_BelegKopf.Lieferhinweis;E_BelegKopf.ZahlungsZiel;E_BelegKopf.ZahlungsArt;E_BelegKopf.FormularNr;E_BelegKopf.FormularAnzahl;E_BelegKopf.Kopftext1;E_BelegKopf.Kopftext2;E_BelegKopf.Kopftext3;E_BelegKopf.Kopftext4;E_BelegKopf.Bemerkung1;E_BelegKopf.Bemerkung2;E_BelegKopf.Bemerkung3;S_BestellAdresse.BestellAdresse;S_FirmenRechAdr.FirmenRechnungsAdresse;S_AnliefAdr.AnlieferAdresse;E_BelegKopf.SBPruefung;E_BelegKopf.Pruefungsdatum;E_BelegKopf.Wiedervorlage;E_BelegKopf.AdviceOfCredit;E_BelegKopf.Steuerdatum;E_BelegKopf.UebertrHinweis;E_BelegKopf.SBM_ProfitCenter_ID;E_BelegKopf.Konto;E_BelegKopf.H_IntraDate;E_BelegKopf.uCI_DocClosing
 0;0;today;;0;0;;0;today;today;?;0;;;;;;0;0;0;1;;;;;;;;0;0;0;;?;?;no;?;no;;0;today;no
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Belegnummer;Document Number;E_BelegKopf.BelegNummer;INTEGER;zzzzzzz9;
 2;Lieferant;Supplier;E_BelegKopf.Lieferant;INTEGER;zzzzzzzz;
 3;Belegdatum;Document Date;E_BelegKopf.BelegDatum;DATE;99.99.9999;

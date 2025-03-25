@@ -1,6 +1,6 @@
 S_Lieferant.Lieferant;SBM_RemitToAddress.RemitToAddress;S_Adresse.AdressNr;S_Adresse.Name1;S_Adresse.Staat;S_Adresse.Ort;S_Adresse.Suchbegriff;S_Adresse.Selektion;S_Adresse.BriefAnrede;S_Adresse.Anrede;S_Adresse.Titel;S_Adresse.Vorname;S_Adresse.Name2;S_Adresse.Name3;S_Adresse.PLZ;S_Adresse.CityPrefix;S_Adresse.CityPostfix;S_Adresse.StreetPrefix;S_Adresse.Strasse;S_Adresse.StreetPostfix;S_Adresse.Hausnummer;S_Adresse.Bundesland;S_Adresse.PLZ_Postfach;S_Adresse.Postfach;S_Adresse.Telefonbuch;S_Adresse.EMail;S_Adresse.HomePage;S_Adresse.Handy;S_Adresse.Telefon;S_Adresse.AutoTelefon;S_Adresse.Telefax;S_Adresse.Telefon2;S_Adresse.Telefax2;S_Adresse.Longitude;S_Adresse.Latitude
 0;0;0;;;;;;;;;;;;;;;;;;;;;;yes;;;;;;;;;0;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Lieferant;Supplier;S_Lieferant.Lieferant;INTEGER;zzzzzzzz;
 2;Zahlungsadresse;Remit-To Address;SBM_RemitToAddress.RemitToAddress;INTEGER;zz9;
 3;Adressnummer;Address Number;S_Adresse.AdressNr;INTEGER;zzzzzzz9;

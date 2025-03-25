@@ -1,6 +1,6 @@
 MLM_StorPartData.Part;MLM_StorPartData.Storagearea;ML_Lagergruppe.lagergruppe;MLM_StorPartData.StorageInfo;MLM_StorPartData.OrderPoint;MLM_StorPartData.SafetyStock;MLM_StorPartData.MaximumOnHand;MLM_StorPartData.ReplenishLevel;MLM_StorPartData.CycleCountLevel;MLM_StorPartData.TriggerPoint;MLM_StorPartData.TransferQuantity;MLM_StorPartData.TargetOnHand;MLM_StorPartData.PostingLock;MLM_StorPartData.PermPhysicalInventory;MLM_StorPartData.WHTransferSuggestions;MLM_StorPartData.Archived;MLM_StorPartData.uCW_OrderPointCalculated;MLM_StorPartData.uCW_ReplenishLevelCalculated;MLM_StorPartData.uCW_CalculationDate
 ;0;0;;0;0;0;0;0;0;0;0;no;yes;no;no;0;0;?
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Teil;Part;MLM_StorPartData.Part;CHARACTER;x(20);
 2;Lagerort;Storage Area;MLM_StorPartData.Storagearea;INTEGER;zzzzzzz9;
 3;Dispobereich;MRP Area;ML_Lagergruppe.lagergruppe;INTEGER;zzzzzzz9;

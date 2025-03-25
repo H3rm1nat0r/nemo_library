@@ -1,6 +1,6 @@
 GMT_OaPThresholdValue.Part;GMT_OaPThresholdValue.CalculationTime;GMT_OaPThresholdValue.ValuationDate;GMT_OaPThresholdValue.DestinationCountry;GMT_OaPThresholdValue.Agreement;GMT_OaPThresholdValue.PrefOriginCountry;GMT_OaPThresholdValue.OriginCountryComLaw;GMT_OaPThresholdValue.ProdInOriginCountry;GMT_OaPThresholdValue.StateOriginCountry;GMT_OaPThresholdValue.CommCodeComLaw;GMT_OaPThresholdValue.CommCodePref;GMT_OaPThresholdValue.PrefMinSellingPrice;GMT_OaPThresholdValue.ValueOfOrigMaterials;GMT_OaPThresholdValue.ValueOfNonOrigMaterials;GMT_OaPThresholdValue.CumulationCountries;GMT_OaPThresholdValue.OaPCumulation;GMT_OaPThresholdValue.ManufacturingCosts;GMT_OaPThresholdValue.Currency;GMT_OaPThresholdValue.LotSize;GMT_OaPThresholdValue.QtyUnit;GMT_OaPThresholdValue.AALACountry
 ;?;?;;;;;;;;;0;0;0;;0;0;0;1;0;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Teil;Part;GMT_OaPThresholdValue.Part;CHARACTER;x(20);
 2;KalkZeitpunkt;Calculation Time;GMT_OaPThresholdValue.CalculationTime;DATETIME-TZ;99.99.9999 HH:MM:SS.SSS+HH:MM;
 3;Bewertungsdatum;Valuation Date;GMT_OaPThresholdValue.ValuationDate;DATE;99.99.9999;

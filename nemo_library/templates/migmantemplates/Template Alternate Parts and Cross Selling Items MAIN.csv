@@ -1,6 +1,6 @@
 S_ArtAlternativ.AlternativArtikel;S_ArtAlternativ.Typ;S_ArtAlternativ.Artikel;S_ArtAlternativSpr.Bemerkung;S_ArtAlternativ.Menge
 ;A;;;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Alternativteil;Alternate Part;S_ArtAlternativ.AlternativArtikel;CHARACTER;x(20);
 2;Typ;Type;S_ArtAlternativ.Typ;CHARACTER;x;
 3;Teil;Part;S_ArtAlternativ.Artikel;CHARACTER;x(20);

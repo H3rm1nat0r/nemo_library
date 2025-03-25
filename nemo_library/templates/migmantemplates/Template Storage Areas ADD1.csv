@@ -1,6 +1,6 @@
 ML_Ort.LagerOrt;MP_Bereich.LagerBereich;MP_Bereich.LagerTyp;MP_BereichSpr.Bezeichnung;MP_Bereich.PrioEin;MP_Bereich.AnzEinlagScheine;MP_Bereich.FormularNr_Einlag;MP_Bereich.PrioAus;MP_Bereich.AnzAuslagScheine;MP_Bereich.FormularNr_Auslag
 0;;;;10;0;0;10;0;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Lagerort;Storage Area;ML_Ort.LagerOrt;INTEGER;zzzzzzz9;
 2;Lagerbereich;Storage Area Section;MP_Bereich.LagerBereich;CHARACTER;x(3);
 3;Lagerbereichstyp;Storage Type;MP_Bereich.LagerTyp;CHARACTER;x(3);

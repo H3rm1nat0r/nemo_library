@@ -1,6 +1,6 @@
 BS_Merkm.SMArt;BS_Merkm.SMLeiste;BS_Merkm.Merkmal;BS_MerkmSpr.Bezeichnung;BS_Merkm.FormelNr;BS_Merkm.FeldFormat;BS_MerkmSpr.EinheitBez;BS_Merkm.AnzeigeFolge;BS_Merkm.automatisch;BS_Merkm.Auspr_automatisch;BS_Merkm.EingabeZwang;BS_Merkm.Drucken;BS_Merkm.DefaultAuspr;c_XXXmmlauto;BS_Merkm.uCW_IndexSpecification;BS_Merkm.uCW_IndexSpecificationDesc
 ;;;;0;x(20);;0;no;no;no;yes;;;no;no
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Merkmalsart;ClassSystem Type;BS_Merkm.SMArt;CHARACTER;x(3);
 2;Merkmalsleiste;Classification System;BS_Merkm.SMLeiste;CHARACTER;x(8);
 3;Merkmal;Feature;BS_Merkm.Merkmal;CHARACTER;x(6);

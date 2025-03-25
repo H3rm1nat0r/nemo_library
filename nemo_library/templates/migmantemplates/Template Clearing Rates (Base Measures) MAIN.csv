@@ -1,6 +1,6 @@
 S_BezugDatum.BezugsGroesse;S_BezugDatum.Bwl;S_BezugDatum.Art;S_BezugDatum.gueltig_ab;S_BezugDatum.fix;S_BezugDatum.variabel
 ;yes;;?;0;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Bezugsgröße;Base Measure;S_BezugDatum.BezugsGroesse;CHARACTER;x(4);
 2;Relevanz;Managerial;S_BezugDatum.Bwl;LOGICAL;bwl/steuerlich;
 3;VerrSatzArt;Type of Clearing Rate;S_BezugDatum.Art;CHARACTER;x(8);

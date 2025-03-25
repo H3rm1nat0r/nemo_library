@@ -1,6 +1,6 @@
 E_RA_Kopf.BelegNummer;E_RA_Pos.PositionsNr;E_RA_Pos.Artikel;E_RA_Pos.Menge;E_RA_Pos.Mindestmenge;E_RA_Pos.Gewicht;E_RA_Pos.Einzelpreis;E_RA_Pos.Wert_RZ_1;E_RA_Pos.Wert_RZ_2;E_RA_Pos.Wert_RZ_Art_1;E_RA_Pos.Wert_RZ_Art_2;E_RA_Pos.proz_RZ_1;E_RA_Pos.proz_RZ_2;E_RA_Pos.proz_RZ_3;E_RA_Pos.proz_RZ_Art_1;E_RA_Pos.proz_RZ_Art_2;E_RA_Pos.proz_RZ_Art_3;E_RA_Pos.H_Incoterm;E_RA_Pos.H_Lieferbedingung
 0;1;;0;0;0;0;0;0;;;0;0;0;;;;;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Belegnummer;Document Number;E_RA_Kopf.BelegNummer;INTEGER;zzzzzzz9;
 2;Position;Line;E_RA_Pos.PositionsNr;DECIMAL;zz9.9;
 3;Teil;Part;E_RA_Pos.Artikel;CHARACTER;x(20);

@@ -1,6 +1,6 @@
 M_PackVorschrift.Vorschrift;M_PackVorschrift.Bemerkung;M_PackVorschrift.Suchbegriff;M_PackVorschriftSpr.Bezeichnung;M_PackVorschrift.uCA_PriceID
 ;;;;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;VerpVorschrift;Packaging Instruction;M_PackVorschrift.Vorschrift;CHARACTER;x(20);
 2;Bemerkung;Remarks;M_PackVorschrift.Bemerkung;CHARACTER;x(255);
 3;Suchbegriff;Search Term;M_PackVorschrift.Suchbegriff;CHARACTER;x(12);

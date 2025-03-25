@@ -1,6 +1,6 @@
 BS_Kopf.SMArt;BS_Kopf.SMLeiste;BS_KopfSpr.Bezeichnung;BS_Kopf.Drucken
 ;;;yes
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Merkmalsart;ClassSystem Type;BS_Kopf.SMArt;CHARACTER;x(3);
 2;Merkmalsleiste;Classification System;BS_Kopf.SMLeiste;CHARACTER;x(8);
 3;Bezeichnung;Description CLS;BS_KopfSpr.Bezeichnung;CHARACTER;x(50);

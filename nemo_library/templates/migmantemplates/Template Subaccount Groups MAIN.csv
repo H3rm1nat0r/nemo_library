@@ -1,6 +1,6 @@
 SBM_SubAcctGroup.SBM_SubAcctGroup_ID;SBM_SubAcctGroup.SubAcctGroupCategory;DBM_ShortDescription.ShortDesc1;SBM_SubAcctGroup.Material;SBM_SubAcctGroup.DeliveryCosts;SBM_SubAcctGroup.Labor;SBM_SubAcctGroup.Machine;SBM_SubAcctGroup.AddDim1;SBM_SubAcctGroup.AddDim2
 ;0;;0;0;0;0;0;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;UnterKtoGr;Subaccount Group;SBM_SubAcctGroup.SBM_SubAcctGroup_ID;CHARACTER;x(6);
 2;UnterKtoGrArt;Subaccount Group Category;SBM_SubAcctGroup.SubAcctGroupCategory;INTEGER;9;
 3;Bezeichnung;Description 1;DBM_ShortDescription.ShortDesc1;CHARACTER;x(80);

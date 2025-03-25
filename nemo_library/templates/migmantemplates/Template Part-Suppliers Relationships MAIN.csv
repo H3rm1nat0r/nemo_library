@@ -1,6 +1,6 @@
 E_ArtLief.Artikel;E_ArtLief.Lieferant;E_ArtLief.BestellNr;E_ArtLief.Hauptlieferant;E_ArtLief.archiviert;E_ArtLief.Bezeichnung1;E_ArtLief.Bezeichnung2;E_ArtLief.Bezeichnung3;E_ArtLief.Bezeichnung4;E_ArtLief.Betriebskalender;E_ArtLief.Lieferzeit;E_ArtLief.Lieferzeiteinheit;E_ArtLief.MindestBestellmenge;E_ArtLief.Grundmenge;S_Mengeneinheit.Mengeneinheit;E_ArtLief.Mengenfaktor;E_ArtLief.Gewicht;E_ArtLief.positive_Toleranz;E_ArtLief.negative_Toleranz;S_SNRArtTyp.SNRTyp;E_ArtLief.GrundmengeBeachten;E_ArtLief.LEErforderlich;E_ArtLief.LEAnfordJahr;E_ArtLief.LEAnfordDatum;E_ArtLief.LEErhalten;E_ArtLief.LEGueltigBis;S_LiefRabatt.Rabattgruppe;S_ProdGruppe.Produktgruppe;S_PreisEinheit.Preiseinheit;E_ArtLief.Preisbezug;S_RabZuArt.Rz_Art.value1;S_RabZuArt.Rz_Art.value2;S_RabZuArt.Rz_Art.value3;S_RabZuArt.Rz_Art.value4;S_RabZuArt.Rz_Art.value5;S_RabZuArt.Rz_Art.perc1;S_RabZuArt.Rz_Art.perc2;S_RabZuArt.Rz_Art.perc3;S_RabZuArt.Rz_Art.perc4;S_RabZuArt.Rz_Art.perc5;E_ArtLief.PCExternalConfiguration;M_PackVorschrift.Vorschrift;E_ArtLief.Fuellmenge;c_E_ARTLIEFAddCosts_s_rabz;E_ArtLief.uCW_PriceFromSupplier;E_ArtLief.uCW_ManufacturerPrice
 ;0;;no;no;;;;;?;0;4;0;0;0;1;0;0;0;;no;no;0;?;no;?;;;0;yes;;;;;;;;;;;no;;0;;?;no
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Teil;Part;E_ArtLief.Artikel;CHARACTER;x(20);
 2;Lieferant;Supplier;E_ArtLief.Lieferant;INTEGER;zzzzzzzz;
 3;Lief-TeileNr;Supplier Part Number;E_ArtLief.BestellNr;CHARACTER;x(30);

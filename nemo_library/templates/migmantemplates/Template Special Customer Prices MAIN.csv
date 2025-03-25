@@ -1,6 +1,6 @@
 S_ArtKundeDatum.Kunde;S_ArtKundeDatum.Artikel;S_ArtKundeDatum.gueltig_ab;S_ArtKundeDatum.gueltig_bis;S_ArtKundeDatum.StaffelGruppe;S_ArtKundeStaffel.StaffelMenge;S_Kunde.Waehrung;S_ArtKundeStaffel.Preis;S_ArtKundeDatum.uCW_Delisted
 0;;?;?;;0;0;0;no
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Kunde;Customer;S_ArtKundeDatum.Kunde;INTEGER;zzzzzzzz;
 2;Teil;Part;S_ArtKundeDatum.Artikel;CHARACTER;x(20);
 3;gültig ab;Valid From;S_ArtKundeDatum.gueltig_ab;DATE;99.99.9999;

@@ -1,6 +1,6 @@
 K_LeistungsVerfl.von_KoStelle;K_LeistungsVerfl.KostenArt;K_LeistungsVerfl.nach_KoStelle;K_LeistungsVerfl.Bwl;K_LeistungsVerfl.entlast_KoArt;K_LeistungsVerfl.belast_KoArt;K_LeistungsVerfl.Steu;K_LeistungsVerfl.entlast_st_KoA;K_LeistungsVerfl.belast_st_KoA;K_LeistungsVerfl.BezugsGroesse;K_LeistungsVerfl.BezugsKoArt;K_LeistungsVerfl.Fix;K_LeistungsVerfl.StartTermin;K_LeistungsVerfl.EndTermin;K_LeistungsVerfl.Zulaessig
 0;0;0;yes;0;0;yes;0;0;;0;?;01/01/0001;12/31/9999;yes
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;von Kostenstelle;From Cost Center;K_LeistungsVerfl.von_KoStelle;INTEGER;zzzzzzz9;
 2;Kostenart;Cost Item;K_LeistungsVerfl.KostenArt;INTEGER;zzzzzzzz;
 3;an Kostenstelle;To Cost Center;K_LeistungsVerfl.nach_KoStelle;INTEGER;zzzzzzz9;

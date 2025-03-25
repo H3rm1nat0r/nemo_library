@@ -1,6 +1,6 @@
 S_ArtKtoGr.KontenGruppe;S_ArtKtoGrSpr.Bezeichnung;S_ArtKtoGr.Verbrauchskonto;S_ArtKtoGr.Bestandskonto;S_ArtKtoGr.WA_VerrechnungsKonto;S_ArtKtoGr.WE_VerrechnungsKonto;S_ArtKtoGr.Verrechnungskonto;S_ArtKtoGr.FremdVerrechkonto;S_ArtKtoGr.OnHandChangeSettlement;S_ArtKtoGr.AbsorbedLabor;S_ArtKtoGr.AbsorbedLaborIHS;S_ArtKtoGr.AbsorbedMachine;S_ArtKtoGr.AbsorbedMachineIHS;S_ArtKtoGr.AbsorbedAddDim1;S_ArtKtoGr.AbsorbedAddDim1IHS;S_ArtKtoGr.AbsorbedAddDim2;S_ArtKtoGr.AbsorbedAddDim2IHS;SBM_SubAcctGroup.SBM_SubAcctGroup_ID.WIP;SBM_SubAcctGroup.SBM_SubAcctGroup_ID.WIPIHS;SBM_SubAcctGroup.SBM_SubAcctGroup_ID.WIPPriceVar;SBM_SubAcctGroup.SBM_SubAcctGroup_ID.WIPCNVar
 ;;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;;;;
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Kontengruppe;Account Group;S_ArtKtoGr.KontenGruppe;CHARACTER;x(6);
 2;Bezeichnung;Description Account Group;S_ArtKtoGrSpr.Bezeichnung;CHARACTER;x(30);
 3;Verbr/BestVeränd;Consumption Account;S_ArtKtoGr.Verbrauchskonto;INTEGER;zzzzzzzz;

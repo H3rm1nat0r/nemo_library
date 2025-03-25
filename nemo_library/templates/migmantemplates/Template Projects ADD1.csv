@@ -1,6 +1,6 @@
 JBT_ProjectStr.Projekt;JBT_ProjectStr.PSC;JBT_ProjectStr.Position;JBT_ProjectStr.Projektvorgang;JBT_ProjectStr.Teilaufgabe;DBM_ShortDescription.ShortDesc1;DBM_ShortDescription.ShortDesc2;DBM_ShortDescription.ShortDesc3;DBM_ShortDescription.ShortDesc4;JBT_ProjectStr.Solldauer;JBT_ProjectStr.Zeiteinheit;JBT_ProjectStr.Vorgangsstatus;JBT_ProjectStr.Fortschritt;JBT_ProjectStr.imUmsatz;JBT_ProjectStr.Sachbearbeiter;JBT_ProjectStr.Verteilergruppe;JBT_ProjectStr.BlockLoadSetting;JBT_ProjectStr.DemandDateSetting;JBT_ProjectStr.freeActPlan;JBT_ProjectStr.freeDataEntry;JBT_ProjectStr.Starttermin;JBT_ProjectStr.Startfix;JBT_ProjectStr.Endtermin;JBT_ProjectStr.Endefix;JBT_ProjectStr.Wiedervorlage;JBT_ProjectStr.FAZ;JBT_ProjectStr.SAZ;JBT_ProjectStr.FEZ;JBT_ProjectStr.SEZ;JBT_ProjectStr.Meilenstein
 ;;0;;no;;;;;1;3;b;0;0;;;1;1;yes;yes;?;no;?;no;?;?;?;?;?;no
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Projekt;Project;JBT_ProjectStr.Projekt;CHARACTER;x(20);
 2;PSC;Project Structure Code;JBT_ProjectStr.PSC;CHARACTER;x(60);
 3;Position;Line;JBT_ProjectStr.Position;INTEGER;zzzzz9;

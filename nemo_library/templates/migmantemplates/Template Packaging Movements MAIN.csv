@@ -1,6 +1,6 @@
 M_PackKonto.Bereich;M_PackKonto.Konto;M_PackKonto.Buchungsschl;M_PackKonto.Bemerkung;M_PackKonto.LagerOrt;M_PackKonto.LagerBereich;M_PackKonto.LagerPlatz;M_PackKonto.Menge;M_PackKonto.Packmittel;M_PackKonto.Zubehoer;M_PackKonto.Fremdeigentum;M_PackKonto.PoolKonto
 V;0;;;?;;;0;;no;no;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Bereich LT;Book;M_PackKonto.Bereich;CHARACTER;x;
 2;Packmittelpool;Packaging Pool;M_PackKonto.Konto;INTEGER;zzzzzzzz;
 3;Buchungsschlüssel;Posting Code;M_PackKonto.Buchungsschl;CHARACTER;x(4);

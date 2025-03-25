@@ -1,6 +1,6 @@
 S_KunARabDatum.Kunde;S_KunARabDatum.Rabattgruppe;S_KunARabDatum.gueltig_ab;S_KunARabDatum.gueltig_bis;S_KunARabDatum.StaffelGruppe;S_KunARabStaffel.StaffelMenge;S_KunARabStaffel.Rabatt1;S_KunARabStaffel.Rabatt2;S_KunARabStaffel.Rabatt3
 0;;?;?;;0;0;0;0
-Column;Column Name;Description / Remark;Location in proALPHA;Data Type;Format
+Column;Column Name;Description / Remark;Location in Proalpha;Data Type;Format
 1;Kunde;Customer;S_KunARabDatum.Kunde;INTEGER;zzzzzzzz;
 2;Rabattgruppe;Discount Group;S_KunARabDatum.Rabattgruppe;CHARACTER;x(6);
 3;gültig ab;Valid From;S_KunARabDatum.gueltig_ab;DATE;99.99.9999;

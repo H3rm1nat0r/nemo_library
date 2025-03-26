@@ -156,7 +156,7 @@ def _load_data(
         columns_migman = get_migman_fields(database, project, postfix)
         for col in datadf_cleaned.columns:
             if not col in columns_migman:
-                raise ValueError(
+                log_error(
                     f"file {file_name} contains column '{col}' that is not defined in MigMan Template"
                 )
 
@@ -365,7 +365,7 @@ def _update_deficiency_mining(
                 )
 
                 frag_check.append(
-                    f"NOT {migman_field.nemo_internal_name} LIKE_REGEXPR('^[-]?[0-9]+(\\.[0-9]+)?[-]?$')"
+                    f"NOT {migman_field.nemo_internal_name} LIKE_REGEXPR('^[-]?(?:[0-9]+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$')"
                 )
                 frag_msg.append(
                     f"{migman_field.nemo_display_name} is not a valid number"

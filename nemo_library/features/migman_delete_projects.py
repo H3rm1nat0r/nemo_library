@@ -18,7 +18,14 @@ def MigManDeleteProjects(config: Config) -> None:
     """
     projects = getProjects(config)
     migmanprojects = get_migman_project_list(config)
-    to_delete = [
-        project.id for project in projects if project.displayName in migmanprojects
-    ]
-    deleteProjects(config, to_delete)
+    migmanmappingfields = config.get_migman_mapping_fields()
+    project_map = {project.displayName: project.id for project in projects}
+    delete = []
+    for project in migmanprojects:
+        delete.append(project_map[project])
+
+    for mapping in migmanmappingfields:
+        delete.append(project_map[f"Mapping {mapping}"])
+
+    deleteProjects(config,delete)
+    

@@ -11,8 +11,18 @@ def getNL():
         config_file="tests/config.ini",
     )
 
-
-def test_clean():
+def test_full():
+    _test_clean()
+    _test_MigManCreateProjectTemplates()
+    _test_MigManPrecheckFiles()
+    _test_MigManLoadData()
+    _test_MigManCreateMapping()
+    _test_MigManLoadMapping()
+    _test_MigManApplyMapping()
+    _test_MigManExportData()
+    _test_final()
+    
+def _test_clean():
     nl = getNL()
     projects = nl.getProjects()
     project_map = {project.displayName: project.id for project in projects}
@@ -30,7 +40,7 @@ def test_clean():
         nl.deleteProjects(delete)
 
 
-def test_MigManCreateProjectTemplates():
+def _test_MigManCreateProjectTemplates():
     nl = getNL()
     test_dir = nl.config.get_migman_local_project_directory()
     if os.path.exists(test_dir):
@@ -43,12 +53,12 @@ def test_MigManCreateProjectTemplates():
     assert os.path.exists(test_dir)
 
 
-def test_MigManPrecheckFiles():
+def _test_MigManPrecheckFiles():
     nl = getNL()
     nl.MigManPrecheckFiles()
 
 
-def test_MigManLoadData():
+def _test_MigManLoadData():
     nl = getNL()
     shutil.copy(
         "./tests/migman_master/CUSTOMERS.csv",
@@ -61,22 +71,22 @@ def test_MigManLoadData():
     nl.MigManLoadData()
 
 
-def test_MigManCreateMapping():
+def _test_MigManCreateMapping():
     nl = getNL()
     nl.MigManCreateMapping()
 
 
-def test_MigManLoadMapping():
+def _test_MigManLoadMapping():
     nl = getNL()
     nl.MigManLoadMapping()
 
 
-def test_MigManApplyMapping():
+def _test_MigManApplyMapping():
     nl = getNL()
     nl.MigManApplyMapping()
 
 
-def test_MigManExportData():
+def _test_MigManExportData():
     nl = getNL()
     nl.MigManExportData()
     assert os.path.exists(
@@ -95,19 +105,10 @@ def test_MigManExportData():
     )
 
 
-def test_final():
+def _test_final():
     nl = getNL()
+    nl.MigManDeleteProjects()
     test_dir = nl.config.get_migman_local_project_directory()
     if os.path.exists(test_dir):
         shutil.rmtree(test_dir)
 
-    projects = nl.getProjects()
-    project_map = {project.displayName: project.id for project in projects}
-    delete = []
-    for project in nl.config.get_migman_projects():
-        delete.append(project_map[project])
-
-    for mapping in nl.config.get_migman_mapping_fields():
-        delete.append(project_map[f"Mapping {mapping}"])
-
-    nl.deleteProjects(delete)

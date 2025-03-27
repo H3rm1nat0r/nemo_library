@@ -1,5 +1,6 @@
 import pandas as pd
 
+from nemo_library.features.deprecated import createOrUpdateReport, createOrUpdateRule
 from nemo_library.features.metadata import MetaDataCreate, MetaDataDelete, MetaDataLoad
 from nemo_library.features.migman_precheck_files import MigManPrecheckFiles
 from nemo_library.features.nemo_persistence_api import (
@@ -41,7 +42,6 @@ from nemo_library.features.nemo_persistence_api import (
 from nemo_library.features.nemo_persistence_api import createProjects
 from nemo_library.features.nemo_report_api import (
     LoadReport,
-    createOrUpdateReport,
 )
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
@@ -76,7 +76,6 @@ from nemo_library.features.migman_load_data import MigManLoadData
 from nemo_library.features.migman_mapping_create import MigManCreateMapping
 from nemo_library.features.migman_mapping_load import MigManLoadMapping
 from nemo_library.features.projects import (
-    createOrUpdateRule,
     getProjectProperty,
     setProjectMetaData,
 )

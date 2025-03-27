@@ -15,7 +15,7 @@
         "unit": "days",
         "focusOrder": "",
         "internalName": "conservative_purchasing_replenishment_deviation_days",
-        "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
+        "parentAttributeGroupInternalName": null,
         "id": "",
         "projectId": "",
         "tenant": ""
@@ -36,7 +36,7 @@
         "unit": "",
         "focusOrder": "",
         "internalName": "conservative_purchasing_replenishment_deviation_too_low",
-        "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
+        "parentAttributeGroupInternalName": null,
         "id": "",
         "projectId": "",
         "tenant": ""
@@ -57,7 +57,7 @@
         "unit": "",
         "focusOrder": "",
         "internalName": "conservative_purchasing_replenishment_deviation_on_time",
-        "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
+        "parentAttributeGroupInternalName": null,
         "id": "",
         "projectId": "",
         "tenant": ""
@@ -78,7 +78,7 @@
         "unit": "",
         "focusOrder": "",
         "internalName": "conservative_purchasing_replenishment_deviation_too_high",
-        "parentAttributeGroupInternalName": "conservative_purchasing_replenishment",
+        "parentAttributeGroupInternalName": null,
         "id": "",
         "projectId": "",
         "tenant": ""

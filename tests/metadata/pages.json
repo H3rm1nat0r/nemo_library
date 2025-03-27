@@ -11,9 +11,9 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 2,
+                "column": 1,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_too_low",
+                "content": "conservative_purchasing_replenishment_deviation_too_high",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,
@@ -31,22 +31,22 @@
                 "type": "Tile"
             },
             {
-                "column": 1,
+                "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_days",
+                "content": "conservative_purchasing_replenishment_deviation_too_low",
                 "contentTranslations": {},
                 "id": "",
-                "row": 1,
+                "row": 2,
                 "rowSpan": 1,
                 "type": "Tile"
             },
             {
                 "column": 1,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_too_high",
+                "content": "conservative_purchasing_replenishment_deviation_days",
                 "contentTranslations": {},
                 "id": "",
-                "row": 2,
+                "row": 1,
                 "rowSpan": 1,
                 "type": "Tile"
             }

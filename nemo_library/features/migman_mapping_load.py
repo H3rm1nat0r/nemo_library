@@ -50,7 +50,12 @@ def MigManLoadMapping(config: Config):
                 sep=";",
                 dtype=str,
             )
-            ReUploadDataFrame(config=config, projectname=projectname, df=datadf)
+            ReUploadDataFrame(
+                config=config,
+                projectname=projectname,
+                df=datadf,
+                update_project_settings=False,
+            )
             logging.info(f"upload to project {projectname} completed")
 
         # maybe the source data have been updated, so we update our mapping data now

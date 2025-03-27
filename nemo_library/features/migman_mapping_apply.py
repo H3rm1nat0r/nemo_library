@@ -1,9 +1,15 @@
 import json
 import logging
 import pandas as pd
-from nemo_library.features.nemo_persistence_api import createReports, getImportedColumns
+from nemo_library.features.migman_database import MigManDatabaseLoad
+from nemo_library.features.nemo_persistence_api import (
+    createReports,
+    getImportedColumns,
+    getReports,
+)
 from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.model.imported_column import ImportedColumn
+from nemo_library.model.migman import MigMan
 from nemo_library.model.report import Report
 from nemo_library.utils.config import Config
 from nemo_library.features.fileingestion import ReUploadDataFrame
@@ -15,9 +21,12 @@ from nemo_library.utils.migmanutils import (
     getMappingRelations,
 )
 from nemo_library.utils.utils import (
+    FilterType,
+    FilterValue,
     get_display_name,
     get_import_name,
     get_internal_name,
+    log_error,
 )
 
 __all__ = ["MigManApplyMapping"]
@@ -41,6 +50,7 @@ def MigManApplyMapping(config: Config) -> None:
 
     # get configuration
     mappingrelationsdf = getMappingRelations(config=config)
+    database = MigManDatabaseLoad()
 
     # extract list of affected projects from that dictionary
     projects = mappingrelationsdf["project"].unique().tolist()
@@ -53,6 +63,7 @@ def MigManApplyMapping(config: Config) -> None:
             config=config,
             project=project,
             mappingrelationsdf=mappingrelationsdf_filtered,
+            database=database,
         )
 
 
@@ -60,15 +71,17 @@ def _process_project(
     config: Config,
     project: str,
     mappingrelationsdf: pd.DataFrame,
+    database: list[MigMan],
 ) -> None:
     """
     Processes a single project by creating new columns, applying mappings,
-    and coupling attributes.
+    coupling attributes, and adjusting reports.
 
     Args:
         config (Config): The configuration object.
         project (str): The name of the project to process.
         mappingrelationsdf (pd.DataFrame): DataFrame containing mapping relations for the project.
+        database (list[MigMan]): List of MigMan objects representing the database.
 
     Returns:
         None
@@ -116,6 +129,14 @@ def _process_project(
         config=config,
         project=project,
         mappingrelationsdf=mappingrelationsdf,
+    )
+
+    _adjust_reports(
+        config=config,
+        project=project,
+        importedcolumns=ics,
+        mappingrelationsdf=mappingrelationsdf,
+        database=database,
     )
 
 
@@ -264,3 +285,83 @@ FROM
 """
 
     return select
+
+
+def _adjust_reports(
+    config: Config,
+    project: str,
+    importedcolumns: list[ImportedColumn],
+    mappingrelationsdf: pd.DataFrame,
+    database: list[MigMan],
+) -> None:
+    """
+    Adjusts reports for the project by replacing original columns with mapped columns.
+
+    Args:
+        config (Config): The configuration object.
+        project (str): The name of the project.
+        importedcolumns (list[ImportedColumn]): List of imported columns for the project.
+        mappingrelationsdf (pd.DataFrame): DataFrame containing mapping relations for the project.
+        database (list[MigMan]): List of MigMan objects representing the database.
+
+    Returns:
+        None
+    """
+
+    def _adjust_report_query(report_internal_name: str) -> None:
+        logging.info(f"adjusting report '{report_internal_name}'")
+        reports = getReports(
+            config=config,
+            projectname=project,
+            filter=report_internal_name,
+            filter_type=FilterType.EQUAL,
+            filter_value=FilterValue.INTERNALNAME,
+        )
+
+        # skip fields without reports
+        if len(reports) == 1:
+            report = reports[0]
+            report_query = report.querySyntax
+            for internal_name in internal_names:
+                report_query = report_query.replace(
+                    "\t" + internal_name + " ", f"\tmapped_{internal_name} "
+                )
+                report_query = report_query.replace(
+                    "\t" + internal_name + ",", f"\tmapped_{internal_name},"
+                )
+            report.querySyntax = report_query
+            report_list.append(report)
+
+    report_list = []
+
+    # iterate over all deficiency mining reports and replace the "original" columns with the "mapped" columns
+    internal_names = mappingrelationsdf["matching_field_internal_name"].to_list()
+
+    # lets start with the field specific reports
+    migman_fields = [
+        x
+        for x in database
+        if x.project == project
+        and x.nemo_internal_name in [x.internalName for x in importedcolumns]
+    ]
+    for field in migman_fields:
+        report_display_name = (
+            f"(DEFICIENCIES) {field.index:03} {field.nemo_display_name}"
+        )
+        report_internal_name = get_internal_name(report_display_name)
+        _adjust_report_query(report_internal_name)
+
+    # now adjust the project specific reports
+    for report in [
+        "_customer__all_records_with_message",
+        "_deficiencies__global",
+        "_migman__all_records_with_no_message",
+    ]:
+        _adjust_report_query(report)
+
+    createReports(
+        config=config,
+        projectname=project,
+        reports=report_list,
+    )
+    logging.info(f"project '{project}': reports adjusted")

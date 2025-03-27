@@ -1,4 +1,3 @@
-
 # Guide to Using the nemo_library
 
 The **nemo_library** is a powerful Python library designed to automate various tasks. To use it, you'll need an environment where you can write and execute Python code. This step-by-step guide explains how to set everything up, even if you're new to programming or Python.
@@ -73,9 +72,11 @@ To ensure the **nemo_library** works correctly and to avoid conflicts with other
    ```
 
 ---
+
 ## 5. Configure the nemo_library
 
-please create a file "config.ini". This is an example for the content:
+Create a file named `config.ini` in your project folder. Below is an example configuration:
+
 ```
 [nemo_library]
 nemo_url = https://enter.nemo-ai.com
@@ -84,9 +85,18 @@ userid = <your userid>
 password = <your password>
 environment = [prod|dev|demo]
 hubspot_api_token = <your API token, if you are going to use the HubSpot adapter, blank if not used>
+migman_local_project_directory = <path to your local project directory>
+migman_proALPHA_project_status_file = <path to the proALPHA project status file>
+migman_projects = ["project1", "project2"]
+migman_mapping_fields = ["field1", "field2"]
+migman_additional_fields = {"field_group1": ["fieldA", "fieldB"]}
+migman_synonym_fields = {"field_group2": ["synonym1", "synonym2"]}
+migman_multi_projects = {"project_group": ["projectA", "projectB"]}
+metadata = <path to metadata directory>
 ```
 
-If you don't want to pass userid/password in a file (which is readable to everybody that has access to the file), you can use Windows Credential Manager or MacOS key chain to store your password. Please use "nemo_library" as "Program name". As an alternative, you can programmatically set your password by using this code
+### Alternative Password Storage
+If you don't want to store your `userid` and `password` in a file (which is readable by anyone with access to the file), you can use Windows Credential Manager or macOS Keychain to store your password. Use "nemo_library" as the "Program name". Alternatively, you can programmatically set your password using the following code:
 
 ```python
 from nemo_library.sub_password_handler import *
@@ -108,6 +118,8 @@ if retrieved_password:
 else:
     print(f"No password found for user '{username}' in service '{service_name}'.")
 ```
+
+---
 
 ## 6. Start Using the nemo_library
 

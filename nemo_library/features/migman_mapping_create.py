@@ -27,7 +27,16 @@ __all__ = ["MigManCreateMapping"]
 
 
 def MigManCreateMapping(config: Config):
+    """
+    Main function to create mapping projects and upload data.
 
+    This function retrieves configuration details, checks for existing projects,
+    and creates new mapping projects for specified fields if they do not already exist.
+    It also uploads data, generates mapping templates, and couples attributes.
+
+    Args:
+        config (Config): Configuration object containing authentication and system settings.
+    """
     # get configuration
     local_project_directory = config.get_migman_local_project_directory()
     mapping_fields = config.get_migman_mapping_fields()
@@ -94,6 +103,7 @@ def createMappingProject(
 
     Args:
         config (Config): Configuration object containing authentication and system settings.
+        projectname (str): The name of the project to be created.
         field (str): The name of the field for which the mapping project is to be created.
 
     Returns:
@@ -115,6 +125,21 @@ def createMappingImportedColumnns(
     field: str,
     additional_fields: dict[str, list[str]],
 ) -> dict[str, str]:
+    """
+    Creates imported columns for a mapping project.
+
+    This function checks for existing imported columns in the project and adds new ones
+    for the specified field and any additional fields.
+
+    Args:
+        config (Config): Configuration object containing authentication and system settings.
+        projectname (str): The name of the project to which columns are added.
+        field (str): The primary field for which columns are created.
+        additional_fields (dict[str, list[str]]): Additional fields to include in the project.
+
+    Returns:
+        dict[str, str]: A dictionary of created column names and their data types.
+    """
 
     fields = []
 
@@ -158,6 +183,19 @@ def loadData(
     mappingrelationsdf: pd.DataFrame,
     local_project_directory: str,
 ) -> None:
+    """
+    Loads data into a mapping project and generates a mapping template.
+
+    This function creates a report for the mapping project, retrieves the data,
+    exports it as a CSV template, and uploads the template to the project.
+
+    Args:
+        config (Config): Configuration object containing authentication and system settings.
+        projectname (str): The name of the project to which data is loaded.
+        field (str): The field for which data is loaded.
+        mappingrelationsdf (pd.DataFrame): DataFrame containing mapping relations.
+        local_project_directory (str): Local directory path for storing the mapping template.
+    """
 
     queryforreport = sqlQueryInMappingTable(
         config=config,
@@ -208,6 +246,16 @@ def coupleAttributes(
     config: Config,
     projectname: str,
 ) -> None:
+    """
+    Couples attributes in a mapping project.
+
+    This function retrieves imported columns for the project and couples them
+    using the focusCoupleAttributes utility.
+
+    Args:
+        config (Config): Configuration object containing authentication and system settings.
+        projectname (str): The name of the project for which attributes are coupled.
+    """
 
     ics = getImportedColumns(
         config=config,

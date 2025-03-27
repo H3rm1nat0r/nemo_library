@@ -86,6 +86,13 @@ from deprecated import deprecated
 
 
 class NemoLibrary:
+    """
+    A library for interacting with the NEMO system, providing methods for managing projects,
+    reports, metadata, and other entities.
+
+    Attributes:
+        config (Config): Configuration object initialized with user-provided or default settings.
+    """
 
     def __init__(
         self,
@@ -104,6 +111,25 @@ class NemoLibrary:
         migman_multi_projects: dict[str, list[str]] = None,
         metadata: str = None,
     ):
+        """
+        Initializes the NemoLibrary instance with configuration settings.
+
+        Args:
+            config_file (str): Path to the configuration file. Defaults to "config.ini".
+            environment (str, optional): Environment name (e.g., "dev", "prod"). Defaults to None.
+            tenant (str, optional): Tenant name. Defaults to None.
+            userid (str, optional): User ID for authentication. Defaults to None.
+            password (str, optional): Password for authentication. Defaults to None.
+            hubspot_api_token (str, optional): API token for HubSpot integration. Defaults to None.
+            migman_local_project_directory (str, optional): Directory for local project files. Defaults to None.
+            migman_proALPHA_project_status_file (str, optional): Path to the project status file. Defaults to None.
+            migman_projects (list[str], optional): List of project names. Defaults to None.
+            migman_mapping_fields (list[str], optional): List of mapping fields. Defaults to None.
+            migman_additional_fields (dict[str, list[str]], optional): Additional fields for mapping. Defaults to None.
+            migman_synonym_fields (dict[str, list[str]], optional): Synonym fields for mapping. Defaults to None.
+            migman_multi_projects (dict[str, list[str]], optional): Multi-project configurations. Defaults to None.
+            metadata (str, optional): Metadata configuration. Defaults to None.
+        """
 
         self.config = Config(
             config_file=config_file,
@@ -239,33 +265,96 @@ class NemoLibrary:
         )
 
     def MigManInitDatabase(self) -> None:
+        """
+        Initializes the database for the Migration Manager (MigMan).
+
+        Notes:
+            - This method sets up the necessary database structure for MigMan operations.
+        """
         MigManDatabaseInit()
 
     def MigManDatabaseAddWebInformation(self) -> None:
+        """
+        Adds web-related information to the Migration Manager (MigMan) database.
+
+        Notes:
+            - This method populates the database with additional web-based metadata.
+        """
         MigManDatabaseAddWebInformation()
         
     def MigManPrecheckFiles(self) -> dict[str:str]:
+        """
+        Performs a pre-check on files required for the Migration Manager (MigMan).
+
+        Returns:
+            dict[str:str]: A dictionary containing the status of pre-checked files.
+
+        Notes:
+            - This method validates the presence and integrity of required files.
+        """
         return MigManPrecheckFiles(self.config)
 
     def MigManCreateProjectTemplates(self) -> None:
+        """
+        Creates project templates for the Migration Manager (MigMan).
+
+        Notes:
+            - This method generates reusable templates for MigMan projects.
+        """
         MigManCreateProjectTemplates(self.config)
 
     def MigManDeleteProjects(self) -> None:
+        """
+        Deletes projects managed by the Migration Manager (MigMan).
+
+        Notes:
+            - This method removes projects and their associated data from the system.
+        """
         MigManDeleteProjects(self.config)
 
     def MigManLoadData(self) -> None:
+        """
+        Loads data into the Migration Manager (MigMan) system.
+
+        Notes:
+            - This method imports data required for MigMan operations.
+        """
         MigManLoadData(self.config)
 
     def MigManCreateMapping(self):
+        """
+        Creates a mapping configuration for the Migration Manager (MigMan).
+
+        Notes:
+            - This method defines relationships between source and target data fields.
+        """
         MigManCreateMapping(self.config)
 
     def MigManLoadMapping(self):
+        """
+        Loads an existing mapping configuration into the Migration Manager (MigMan).
+
+        Notes:
+            - This method retrieves and applies a predefined mapping configuration.
+        """
         MigManLoadMapping(self.config)
 
     def MigManApplyMapping(self):
+        """
+        Applies the mapping configuration in the Migration Manager (MigMan).
+
+        Notes:
+            - This method executes the mapping to transform data as per the configuration.
+        """
         MigManApplyMapping(self.config)
 
     def MigManExportData(self) -> None:
+        """
+        Exports data from the Migration Manager (MigMan) system.
+
+        Notes:
+            - This method extracts data for external use or backup purposes.
+        """
         MigManExportData(self.config)
 
     def ReUploadDataFrame(

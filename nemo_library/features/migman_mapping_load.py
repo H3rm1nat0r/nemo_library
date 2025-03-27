@@ -5,7 +5,7 @@ from nemo_library.features.nemo_persistence_api import createReports
 from nemo_library.features.nemo_report_api import LoadReport
 from nemo_library.model.report import Report
 from nemo_library.utils.config import Config
-from nemo_library.features.fileingestion import ReUploadFile
+from nemo_library.features.fileingestion import ReUploadDataFrame, ReUploadFile
 from nemo_library.utils.migmanutils import (
     getMappingFilePath,
     getMappingRelations,
@@ -16,7 +16,16 @@ __all__ = ["MigManLoadMapping"]
 
 
 def MigManLoadMapping(config: Config):
+    """
+    Loads and processes mapping data for the specified fields in the configuration.
 
+    This function retrieves mapping fields from the configuration, checks for the existence
+    of mapping files, uploads the data, and updates the mapping data if necessary. It also
+    generates reports and exports mapping templates.
+
+    Args:
+        config (Config): The configuration object containing settings for the mapping process.
+    """
     # get configuration
     local_project_directory = config.get_migman_local_project_directory()
     mapping_fields = config.get_migman_mapping_fields()
@@ -36,12 +45,12 @@ def MigManLoadMapping(config: Config):
         logging.info(f"checking for data file {file_path}")
 
         if os.path.exists(file_path):
-            ReUploadFile(
-                config=config,
-                projectname=projectname,
-                filename=file_path,
-                update_project_settings=False,
+            datadf = pd.read_csv(
+                file_path,
+                sep=";",
+                dtype=str,
             )
+            ReUploadDataFrame(config=config, projectname=projectname, df=datadf)
             logging.info(f"upload to project {projectname} completed")
 
         # maybe the source data have been updated, so we update our mapping data now
@@ -69,7 +78,19 @@ def collectData(
     mappingrelationsdf: pd.DataFrame,
     local_project_directory: str,
 ):
+    """
+    Collects and processes mapping data for a specific field and project.
 
+    This function generates a report for the mapping data, exports it as a CSV file,
+    and uploads the file to the specified project.
+
+    Args:
+        config (Config): The configuration object containing settings for the mapping process.
+        projectname (str): The name of the project to which the mapping data belongs.
+        field (str): The specific mapping field being processed.
+        mappingrelationsdf (pd.DataFrame): A DataFrame containing mapping relations for the field.
+        local_project_directory (str): The local directory where mapping files are stored.
+    """
     queryforreport = sqlQueryInMappingTable(
         config=config,
         field=field,

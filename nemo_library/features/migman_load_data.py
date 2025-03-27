@@ -43,7 +43,20 @@ __all__ = ["MigManLoadData"]
 
 
 def MigManLoadData(config: Config) -> None:
+    """
+    Main function to load data for MigMan projects.
 
+    This function retrieves the configuration, checks for the existence of projects in the database,
+    and processes data files for each project and its associated postfixes. If the project or columns
+    are not defined in NEMO, they are created. Data is then uploaded, and deficiency mining reports
+    are updated.
+
+    Args:
+        config (Config): Configuration object containing MigMan settings.
+
+    Raises:
+        ValueError: If a project is not found in the database.
+    """
     # get configuration
     local_project_directory = config.get_migman_local_project_directory()
     multi_projects = config.get_migman_multi_projects()
@@ -91,7 +104,21 @@ def _load_data(
     addon: str,
     postfix: str,
 ) -> None:
+    """
+    Loads data for a specific project, addon, and postfix.
 
+    This function checks for the existence of the data file, validates its contents,
+    and uploads it to NEMO. It also creates missing columns and updates deficiency
+    mining reports.
+
+    Args:
+        config (Config): Configuration object.
+        database (list[MigMan]): List of MigMan database entries.
+        local_project_directory (str): Path to the local project directory.
+        project (str): Name of the project.
+        addon (str): Addon name (optional).
+        postfix (str): Postfix for the project.
+    """
     # check for file first
     project_name = getProjectName(project, addon, postfix)
     file_name = os.path.join(
@@ -185,11 +212,14 @@ def _load_data(
                 )
 
                 if not col_migman:
-                    log_error(f"could nof find record in migman database for project '{project}', postfix '{postfix}' and index {columns_migman.index(col) + 1}")
-                    
+                    log_error(
+                        f"could nof find record in migman database for project '{project}', postfix '{postfix}' and index {columns_migman.index(col) + 1}"
+                    )
+
                 # Convert JSON data to a list of tuples
                 table_data = [
-                    (key, value if value else "<None>") for key, value in col_migman.to_dict().items()
+                    (key, value if value else "<None>")
+                    for key, value in col_migman.to_dict().items()
                 ]
 
                 # Print the table
@@ -254,7 +284,15 @@ def _update_static_report(
     config: Config,
     project_name: str,
 ) -> None:
+    """
+    Updates the static information report for a project.
 
+    This report contains the latest timestamp of the uploaded file.
+
+    Args:
+        config (Config): Configuration object.
+        project_name (str): Name of the project.
+    """
     sql_query = """
 SELECT  
     MAX(timestamp_file) AS timestamp_file
@@ -284,7 +322,19 @@ def _update_deficiency_mining(
     columns_in_file: list[str],
     database: list[MigMan],
 ) -> None:
+    """
+    Updates deficiency mining reports and rules for a project.
 
+    This function generates column-specific and global deficiency mining reports
+    based on the data file and MigMan database definitions.
+
+    Args:
+        config (Config): Configuration object.
+        project_name (str): Name of the project.
+        postfix (str): Postfix for the project.
+        columns_in_file (list[str]): List of columns in the data file.
+        database (list[MigMan]): List of MigMan database entries.
+    """
     logging.info(
         f"Update deficiency mining reports and rules for project {project_name}"
     )
@@ -535,7 +585,23 @@ def _create_dm_rule_global(
     sorted_columns: list[str],
     joins: dict[str, dict[str, str]],
 ) -> (str, str):  # type: ignore
+    """
+    Creates a global deficiency mining rule and report for a project.
 
+    Args:
+        config (Config): Configuration object.
+        project_name (str): Name of the project.
+        postfix (str): Postfix for the project.
+        columns_in_file (list[str]): List of columns in the data file.
+        database (list[MigMan]): List of MigMan database entries.
+        frags_checked (list[str]): List of condition fragments for checks.
+        frags_msg (list[str]): List of messages corresponding to checks.
+        sorted_columns (list[str]): List of sorted columns for the report.
+        joins (dict[str, dict[str, str]]): Join conditions for the report.
+
+    Returns:
+        tuple: Case statement and status conditions for the global rule.
+    """
     # case statements for messages and dm report
     case_statement_specific = " ||\n\t".join(
         [
@@ -617,6 +683,19 @@ def _create_report_for_migman(
     status_conditions: str,
     joins: dict[str, dict[str, str]],
 ) -> None:
+    """
+    Creates a report for MigMan containing valid data.
+
+    Args:
+        config (Config): Configuration object.
+        project_name (str): Name of the project.
+        postfix (str): Postfix for the project.
+        columns_in_file (list[str]): List of columns in the data file.
+        database (list[MigMan]): List of MigMan database entries.
+        case_statement_specific (str): Case statement for deficiency messages.
+        status_conditions (str): Conditions for status checks.
+        joins (dict[str, dict[str, str]]): Join conditions for the report.
+    """
     sql_statement = f"""WITH CTEDefMining AS (
     SELECT
         {',\n\t\t'.join([x.nemo_internal_name for x in database if x.project == project_name and x.postfix == postfix and x.nemo_display_name in columns_in_file])}
@@ -674,6 +753,19 @@ def _create_report_for_customer(
     status_conditions: str,
     joins: dict[str, dict[str, str]],
 ) -> None:
+    """
+    Creates a report for customers containing invalid data.
+
+    Args:
+        config (Config): Configuration object.
+        project_name (str): Name of the project.
+        postfix (str): Postfix for the project.
+        columns_in_file (list[str]): List of columns in the data file.
+        database (list[MigMan]): List of MigMan database entries.
+        case_statement_specific (str): Case statement for deficiency messages.
+        status_conditions (str): Conditions for status checks.
+        joins (dict[str, dict[str, str]]): Join conditions for the report.
+    """
     sql_statement = f"""WITH CTEDefMining AS (
     SELECT
         {',\n\t\t'.join([x.nemo_internal_name for x in database if x.project == project_name and x.postfix == postfix and x.nemo_display_name in columns_in_file])}

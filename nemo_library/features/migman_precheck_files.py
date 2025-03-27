@@ -18,8 +18,22 @@ from nemo_library.utils.migmanutils import (
 __all__ = ["MigManPrecheckFiles"]
 
 
-def MigManPrecheckFiles(config: Config) -> dict[str: str]:
+def MigManPrecheckFiles(config: Config) -> dict[str, str]:
+    """
+    Perform pre-checks on MigMan project files.
 
+    This function validates the existence and structure of project files
+    based on the configuration and database definitions. It checks if the
+    projects exist in the database, verifies the file structure, and ensures
+    mandatory fields are present.
+
+    Args:
+        config (Config): Configuration object containing MigMan settings.
+
+    Returns:
+        dict[str, str]: A dictionary with project names as keys and their
+        status ("ok" or error message) as values.
+    """
     # get configuration
     local_project_directory = config.get_migman_local_project_directory()
     multi_projects = config.get_migman_multi_projects()
@@ -30,13 +44,13 @@ def MigManPrecheckFiles(config: Config) -> dict[str: str]:
     for project in projects:
 
         try:
-            
+
             # check for project in database
-            if not is_migman_project_existing(database,project):
+            if not is_migman_project_existing(database, project):
                 raise ValueError(f"project '{project}' not found in database")
 
             # get list of postfixes
-            postfixes = get_migman_postfixes(database,project)
+            postfixes = get_migman_postfixes(database, project)
 
             # init project
             multi_projects_list = (
@@ -58,13 +72,18 @@ def MigManPrecheckFiles(config: Config) -> dict[str: str]:
             else:
                 for postfix in postfixes:
                     _check_data(
-                        config, database, local_project_directory, project, None, postfix
+                        config,
+                        database,
+                        local_project_directory,
+                        project,
+                        None,
+                        postfix,
                     )
 
             status[project] = "ok"
 
         except Exception as e:
-            status[project] = str(e) #traceback.format_exc()
+            status[project] = str(e)  # traceback.format_exc()
             continue
 
     for project in projects:
@@ -72,6 +91,7 @@ def MigManPrecheckFiles(config: Config) -> dict[str: str]:
             f"status of project {project}: {json.dumps(status[project],indent=4)}"
         )
     return status
+
 
 def _check_data(
     config: Config,
@@ -81,7 +101,25 @@ def _check_data(
     addon: str,
     postfix: str,
 ) -> None:
+    """
+    Validate the data file for a specific project, addon, and postfix.
 
+    This function checks if the data file exists, verifies that all columns
+    in the file are defined in the MigMan template, and ensures that all
+    mandatory fields are present.
+
+    Args:
+        config (Config): Configuration object containing MigMan settings.
+        database (list[MigMan]): List of MigMan objects loaded from the database.
+        local_project_directory (str): Path to the local project directory.
+        project (str): Name of the project.
+        addon (str): Addon name for the project (if any).
+        postfix (str): Postfix for the project.
+
+    Raises:
+        ValueError: If the file contains undefined columns or is missing
+        mandatory fields.
+    """
     # check for file first
     project_name = getProjectName(project, addon, postfix)
     file_name = os.path.join(
@@ -104,7 +142,7 @@ def _check_data(
         datadf_cleaned = datadf.drop(columns=columns_to_drop)
 
         # check if all columns are defined in MigMan
-        columns_migman = get_migman_fields(database,project,postfix)
+        columns_migman = get_migman_fields(database, project, postfix)
         for col in datadf_cleaned.columns:
             if not col in columns_migman:
                 raise ValueError(
@@ -112,10 +150,9 @@ def _check_data(
                 )
 
         # check mandatory fields
-        mandatoryfields = get_migman_mandatory_fields(database,project,postfix)
+        mandatoryfields = get_migman_mandatory_fields(database, project, postfix)
         for field in mandatoryfields:
             if not field in datadf_cleaned.columns:
                 raise ValueError(
                     f"file {file_name} is missing mandatory field '{field}'"
                 )
-

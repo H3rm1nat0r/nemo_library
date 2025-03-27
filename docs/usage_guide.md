@@ -31,10 +31,10 @@ nemo = NemoLibrary()
 
 ## Method Overview
 
-### Projects
+### Project Management
 
 - **`getProjects()`**
-  - **Description:** Returns a list of all projects as a Pandas DataFrame.
+  - **Description:** Fetches a list of all projects.
   - **Example:**
     ```python
     projects = nemo.getProjects()
@@ -49,71 +49,87 @@ nemo = NemoLibrary()
     print(project_id)
     ```
 
+- **`createProjects(projects: list[Project])`**
+  - **Description:** Creates or updates a list of projects.
+  - **Example:**
+    ```python
+    nemo.createProjects([Project(name="New Project", description="Description")])
+    ```
+
+- **`deleteProjects(projects: list[str])`**
+  - **Description:** Deletes a list of projects by their IDs.
+  - **Example:**
+    ```python
+    nemo.deleteProjects(["ProjectID1", "ProjectID2"])
+    ```
+
 - **`getProjectProperty(projectname: str, propertyname: str)`**
-  - **Description:** Retrieves a specific property value of a given project from the server.
+  - **Description:** Retrieves a specific property value of a given project.
   - **Example:**
     ```python
     property_value = nemo.getProjectProperty("ExampleProject", "propertyName")
     print(property_value)
     ```
 
-- **`createProject(projectname: str, description: str)`**
-  - **Description:** Creates a new project.
+- **`setProjectMetaData(projectname: str, processid_column: str, processdate_column: str, corpcurr_value: str)`**
+  - **Description:** Updates metadata for a specific project.
   - **Example:**
     ```python
-    nemo.createProject("New Project", "Project Description")
+    nemo.setProjectMetaData("ExampleProject", "ProcessID", "ProcessDate", "USD")
     ```
 
-- **`deleteProject(projectname: str)`**
-  - **Description:** Deletes a project.
+---
+
+### Data Management
+
+- **`ReUploadFile(projectname: str, filename: str)`**
+  - **Description:** Re-uploads a file to a specified project and triggers data ingestion.
   - **Example:**
     ```python
-    nemo.deleteProject("ExampleProject")
+    nemo.ReUploadFile("ExampleProject", "data.csv")
     ```
 
-### Reports
+- **`ReUploadDataFrame(projectname: str, df: pd.DataFrame)`**
+  - **Description:** Re-uploads a DataFrame to a specified project and triggers data ingestion.
+  - **Example:**
+    ```python
+    nemo.ReUploadDataFrame("ExampleProject", dataframe)
+    ```
+
+- **`synchronizeCsvColsAndImportedColumns(projectname: str, filename: str)`**
+  - **Description:** Synchronizes the columns from a CSV file with the imported columns in a project.
+  - **Example:**
+    ```python
+    nemo.synchronizeCsvColsAndImportedColumns("ExampleProject", "data.csv")
+    ```
+
+---
+
+### Reporting
 
 - **`LoadReport(projectname: str, report_guid: str = None, report_name: str = None)`**
-  - **Description:** Loads a report from a specified project and returns the data as a Pandas DataFrame.
+  - **Description:** Loads a report from a project and returns the data as a Pandas DataFrame.
   - **Example:**
     ```python
     report = nemo.LoadReport("ExampleProject", report_name="ExampleReport")
     print(report)
     ```
 
-- **`createOrUpdateReport(projectname: str, displayName: str, querySyntax: str)`**
-  - **Description:** Creates or updates a report in the specified project within the NEMO system.
+- **`createReports(projectname: str, reports: list[Report])`**
+  - **Description:** Creates or updates a list of reports.
   - **Example:**
     ```python
-    nemo.createOrUpdateReport(
-        "ExampleProject", "New Report", "SELECT * FROM Table"
-    )
+    nemo.createReports("ExampleProject", [Report(name="New Report", query="SELECT * FROM Table")])
     ```
 
-### Data Management
-
-- **`ReUploadFile(projectname: str, filename: str)`**
-  - **Description:** Re-uploads a file to a specified project in the NEMO system and triggers data ingestion.
+- **`deleteReports(reports: list[str])`**
+  - **Description:** Deletes a list of reports by their IDs.
   - **Example:**
     ```python
-    nemo.ReUploadFile("ExampleProject", "data.csv")
+    nemo.deleteReports(["ReportID1", "ReportID2"])
     ```
 
-- **`synchronizeCsvColsAndImportedColumns(projectname: str, filename: str)`**
-  - **Description:** Synchronizes the columns from a CSV file with the imported columns in a specified project.
-  - **Example:**
-    ```python
-    nemo.synchronizeCsvColsAndImportedColumns("ExampleProject", "data.csv")
-    ```
-
-### HubSpot Integration
-
-- **`FetchDealFromHubSpotAndUploadToNEMO(projectname: str)`**
-  - **Description:** Fetches deal data from HubSpot, processes it, and uploads the combined information to a specified NEMO project.
-  - **Example:**
-    ```python
-    nemo.FetchDealFromHubSpotAndUploadToNEMO("ExampleProject")
-    ```
+---
 
 ### Metadata Management
 
@@ -138,21 +154,25 @@ nemo = NemoLibrary()
     nemo.MetaDataDelete("ExampleProject", "prefix")
     ```
 
+---
+
 ### Focus Management
 
-- **`focusMoveAttributeBefore(projectname: str, sourceDisplayName: str, targetDisplayName: str = None, groupInternalName: str = None)`**
-  - **Description:** Moves an attribute in the focus tree of a specified project, positioning it before a target attribute.
+- **`focusMoveAttributeBefore(projectname: str, sourceDisplayName: str, targetDisplayName: str)`**
+  - **Description:** Moves an attribute in the focus tree of a project, positioning it before a target attribute.
   - **Example:**
     ```python
     nemo.focusMoveAttributeBefore("ExampleProject", "SourceAttribute", "TargetAttribute")
     ```
 
 - **`focusCoupleAttributes(projectname: str, attributenames: list[str], previous_attribute: str)`**
-  - **Description:** Couples attributes in the focus tree of a specified project.
+  - **Description:** Couples attributes in the focus tree of a project.
   - **Example:**
     ```python
     nemo.focusCoupleAttributes("ExampleProject", ["Attribute1", "Attribute2"], "PreviousAttribute")
     ```
+
+---
 
 ### Migration Management
 
@@ -212,10 +232,23 @@ nemo = NemoLibrary()
     nemo.MigManExportData()
     ```
 
+---
+
+### HubSpot Integration
+
+- **`FetchDealFromHubSpotAndUploadToNEMO(projectname: str)`**
+  - **Description:** Fetches deal data from HubSpot, processes it, and uploads the combined information to a specified NEMO project.
+  - **Example:**
+    ```python
+    nemo.FetchDealFromHubSpotAndUploadToNEMO("ExampleProject")
+    ```
+
+---
+
 ### Attribute Groups
 
-- **`getAttributeGroups(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches AttributeGroups metadata with the given filters.
+- **`getAttributeGroups(projectname: str)`**
+  - **Description:** Fetches AttributeGroups metadata.
   - **Example:**
     ```python
     attribute_groups = nemo.getAttributeGroups("ExampleProject")
@@ -236,10 +269,12 @@ nemo = NemoLibrary()
     nemo.deleteAttributeGroups(["AttributeGroup1", "AttributeGroup2"])
     ```
 
+---
+
 ### Metrics
 
-- **`getMetrics(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches Metrics metadata with the given filters.
+- **`getMetrics(projectname: str)`**
+  - **Description:** Fetches Metrics metadata.
   - **Example:**
     ```python
     metrics = nemo.getMetrics("ExampleProject")
@@ -260,10 +295,12 @@ nemo = NemoLibrary()
     nemo.deleteMetrics(["Metric1", "Metric2"])
     ```
 
+---
+
 ### Tiles
 
-- **`getTiles(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches Tiles metadata with the given filters.
+- **`getTiles(projectname: str)`**
+  - **Description:** Fetches Tiles metadata.
   - **Example:**
     ```python
     tiles = nemo.getTiles("ExampleProject")
@@ -284,141 +321,13 @@ nemo = NemoLibrary()
     nemo.deleteTiles(["Tile1", "Tile2"])
     ```
 
-### Pages
-
-- **`getPages(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches Pages metadata with the given filters.
-  - **Example:**
-    ```python
-    pages = nemo.getPages("ExampleProject")
-    print(pages)
-    ```
-
-- **`createPages(projectname: str, pages: list[Page])`**
-  - **Description:** Creates or updates a list of Pages.
-  - **Example:**
-    ```python
-    nemo.createPages("ExampleProject", pages)
-    ```
-
-- **`deletePages(pages: list[str])`**
-  - **Description:** Deletes a list of Pages by their IDs.
-  - **Example:**
-    ```python
-    nemo.deletePages(["Page1", "Page2"])
-    ```
-
-### Applications
-
-- **`getApplications(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches Applications metadata with the given filters.
-  - **Example:**
-    ```python
-    applications = nemo.getApplications("ExampleProject")
-    print(applications)
-    ```
-
-- **`createApplications(projectname: str, applications: list[Application])`**
-  - **Description:** Creates or updates a list of Applications.
-  - **Example:**
-    ```python
-    nemo.createApplications("ExampleProject", applications)
-    ```
-
-- **`deleteApplications(applications: list[str])`**
-  - **Description:** Deletes a list of Applications by their IDs.
-  - **Example:**
-    ```python
-    nemo.deleteApplications(["Application1", "Application2"])
-    ```
-
-### Diagrams
-
-- **`getDiagrams(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches Diagrams metadata with the given filters.
-  - **Example:**
-    ```python
-    diagrams = nemo.getDiagrams("ExampleProject")
-    print(diagrams)
-    ```
-
-- **`createDiagrams(projectname: str, diagrams: list[Diagram])`**
-  - **Description:** Creates or updates a list of Diagrams.
-  - **Example:**
-    ```python
-    nemo.createDiagrams("ExampleProject", diagrams)
-    ```
-
-- **`deleteDiagrams(diagrams: list[str])`**
-  - **Description:** Deletes a list of Diagrams by their IDs.
-  - **Example:**
-    ```python
-    nemo.deleteDiagrams(["Diagram1", "Diagram2"])
-    ```
-
-### Defined Columns
-
-- **`getDefinedColumns(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches DefinedColumns metadata with the given filters.
-  - **Example:**
-    ```python
-    defined_columns = nemo.getDefinedColumns("ExampleProject")
-    print(defined_columns)
-    ```
-
-- **`createDefinedColumns(projectname: str, definedcolumns: list[DefinedColumn])`**
-  - **Description:** Creates or updates a list of DefinedColumns.
-  - **Example:**
-    ```python
-    nemo.createDefinedColumns("ExampleProject", definedcolumns)
-    ```
-
-- **`deleteDefinedColumns(definedcolumns: list[str])`**
-  - **Description:** Deletes a list of DefinedColumns by their IDs.
-  - **Example:**
-    ```python
-    nemo.deleteDefinedColumns(["DefinedColumn1", "DefinedColumn2"])
-    ```
-
-### Imported Columns
-
-- **`getImportedColumns(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches ImportedColumns metadata with the given filters.
-  - **Example:**
-    ```python
-    imported_columns = nemo.getImportedColumns("ExampleProject")
-    print(imported_columns)
-    ```
-
-- **`createImportedColumns(projectname: str, importedcolumns: list[ImportedColumn])`**
-  - **Description:** Creates or updates a list of ImportedColumns.
-  - **Example:**
-    ```python
-    nemo.createImportedColumns("ExampleProject", importedcolumns)
-    ```
-
-- **`deleteImportedColumns(importedcolumns: list[str])`**
-  - **Description:** Deletes a list of ImportedColumns by their IDs.
-  - **Example:**
-    ```python
-    nemo.deleteImportedColumns(["ImportedColumn1", "ImportedColumn2"])
-    ```
-
-### SubProcesses
-
-- **`getSubProcesses(projectname: str, filter: str = "*", filter_type: FilterType = FilterType.STARTSWITH, filter_value: FilterValue = FilterValue.DISPLAYNAME)`**
-  - **Description:** Fetches SubProcesses metadata with the given filters.
-  - **Example:**
-    ```python
-    subprocesses = nemo.getSubProcesses("ExampleProject")
-    print(subprocesses)
-    ```
+---
 
 ### Example Use Cases
 
 - **Creating a New Project and Uploading Data**
   ```python
-  nemo.createProject("Project A", "Description")
+  nemo.createProjects([Project(name="Project A", description="Description")])
   nemo.ReUploadFile("Project A", "data.csv")
   ```
 
@@ -439,12 +348,3 @@ nemo = NemoLibrary()
 
 Answers to common questions about using the library.
 
----
-
-## Next Steps
-
-Further use cases and best practices.
-
----
-
-This guide covers the main methods and can be expanded with specific details as more requirements or examples become available.

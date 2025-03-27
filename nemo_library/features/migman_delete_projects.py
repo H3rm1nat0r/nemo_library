@@ -7,11 +7,18 @@ __all__ = ["MigManDeleteProjects"]
 
 
 def MigManDeleteProjects(config: Config) -> None:
+    """
+    Deletes projects from the system that match the MigMan project list.
+
+    Args:
+        config (Config): The configuration object containing necessary settings.
+
+    This function retrieves all projects and filters them based on their display names
+    to match the MigMan project list. It then deletes the matching projects.
+    """
     projects = getProjects(config)
     migmanprojects = get_migman_project_list(config)
     to_delete = [
-        project.id
-        for project in projects
-        if project.displayName in migmanprojects
+        project.id for project in projects if project.displayName in migmanprojects
     ]
     deleteProjects(config, to_delete)

@@ -24,6 +24,15 @@ __all__ = ["MigManApplyMapping"]
 
 
 def MigManApplyMapping(config: Config) -> None:
+    """
+    Applies mapping configurations to projects based on the provided configuration.
+
+    Args:
+        config (Config): The configuration object containing mapping fields and other settings.
+
+    Returns:
+        None
+    """
 
     mapping_fields = config.get_migman_mapping_fields()
     if not mapping_fields:
@@ -52,6 +61,18 @@ def _process_project(
     project: str,
     mappingrelationsdf: pd.DataFrame,
 ) -> None:
+    """
+    Processes a single project by creating new columns, applying mappings,
+    and coupling attributes.
+
+    Args:
+        config (Config): The configuration object.
+        project (str): The name of the project to process.
+        mappingrelationsdf (pd.DataFrame): DataFrame containing mapping relations for the project.
+
+    Returns:
+        None
+    """
 
     # create "original" columns first (if not already existing)
 
@@ -104,6 +125,18 @@ def _apply_mapping(
     importedcolumns: list[ImportedColumn],
     mappingrelationsdf: pd.DataFrame,
 ) -> None:
+    """
+    Applies mapping logic to the project by creating reports and re-uploading data.
+
+    Args:
+        config (Config): The configuration object.
+        project (str): The name of the project.
+        importedcolumns (list[ImportedColumn]): List of imported columns for the project.
+        mappingrelationsdf (pd.DataFrame): DataFrame containing mapping relations for the project.
+
+    Returns:
+        None
+    """
     select_statement = _select_statement(
         config=config,
         importedcolumns=importedcolumns,
@@ -144,6 +177,17 @@ def _focus_couple_attributes(
     project: str,
     mappingrelationsdf: pd.DataFrame,
 ) -> None:
+    """
+    Couples attributes for the project based on mapping relations.
+
+    Args:
+        config (Config): The configuration object.
+        project (str): The name of the project.
+        mappingrelationsdf (pd.DataFrame): DataFrame containing mapping relations for the project.
+
+    Returns:
+        None
+    """
 
     for idx, row in mappingrelationsdf.iterrows():
         focusCoupleAttributes(
@@ -162,6 +206,17 @@ def _select_statement(
     importedcolumns: list[ImportedColumn],
     mappingrelationsdf: pd.DataFrame,
 ) -> str:
+    """
+    Constructs a SQL SELECT statement for mapping data.
+
+    Args:
+        config (Config): The configuration object.
+        importedcolumns (list[ImportedColumn]): List of imported columns for the project.
+        mappingrelationsdf (pd.DataFrame): DataFrame containing mapping relations for the project.
+
+    Returns:
+        str: The constructed SQL SELECT statement.
+    """
 
     # filter original-values, they will be re-created again
     importedcolumns = [

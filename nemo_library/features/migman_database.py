@@ -21,6 +21,12 @@ __all__ = [
 
 
 def MigManDatabaseInit() -> None:
+    """
+    Initialize the MigMan database by processing template files and saving the data.
+
+    This function reads all template files from the specified directory, processes
+    them to extract relevant information, and saves the resulting database to a JSON file.
+    """
     database = []
     dfs = []
     for resource in importlib.resources.contents(
@@ -45,16 +51,16 @@ def MigManDatabaseInit() -> None:
                     nemo_import_name=row["import_name"],
                 )
             )
-    
+
     MigManDatabaseSave(database)
 
 
 def MigManDatabaseLoad() -> list[MigMan]:
     """
-    Load the database from a pickle file.
+    Load the MigMan database from a JSON file.
 
     Returns:
-        pd.DataFrame: The loaded database as a DataFrame.
+        list[MigMan]: A list of MigMan objects loaded from the database.
     """
     with importlib.resources.open_text(
         "nemo_library.templates", "migmantemplates.json"
@@ -63,7 +69,14 @@ def MigManDatabaseLoad() -> list[MigMan]:
 
     return [MigMan(**element) for element in data]
 
+
 def MigManDatabaseSave(database: list[MigMan]) -> None:
+    """
+    Save the MigMan database to a JSON file.
+
+    Args:
+        database (list[MigMan]): The database to save, represented as a list of MigMan objects.
+    """
     with open(
         "./nemo_library/templates/migmantemplates.json", "w", encoding="utf-8"
     ) as file:
@@ -73,7 +86,15 @@ def MigManDatabaseSave(database: list[MigMan]) -> None:
             indent=4,
             ensure_ascii=True,
         )
+
+
 def MigManDatabaseAddWebInformation() -> None:
+    """
+    Add web information to the MigMan database by scraping data.
+
+    This function loads the existing database, uses the SNOWScraper to scrape
+    additional information, and saves the updated database.
+    """
     database = MigManDatabaseLoad()
     scraper = SNOWScraper(database)
     scraper.scrape()
@@ -81,7 +102,15 @@ def MigManDatabaseAddWebInformation() -> None:
 
 
 def _process_file(resource: str) -> pd.DataFrame:
+    """
+    Process a single template file to extract and structure its data.
 
+    Args:
+        resource (str): The name of the template file to process.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the processed data from the file.
+    """
     # strip project name and postfix from file name
     project, postfix = _extract_project_and_postfix(resource)
     logging.info(
@@ -97,13 +126,14 @@ def _process_file(resource: str) -> pd.DataFrame:
 
 def _extract_project_and_postfix(resource: str) -> Tuple[str, str]:
     """
-    Extracts the project name and postfix from the given resource string.
+    Extract the project name and postfix from the given resource string.
 
     Args:
         resource (str): The resource string (e.g., filename).
 
     Returns:
-        tuple: A tuple containing the project name and postfix, or None if the pattern does not match.
+        Tuple[str, str]: A tuple containing the project name and postfix.
+                         Returns (None, None) if the pattern does not match.
     """
     pattern = re.compile(
         r"^Template (?P<project>.*?) (?P<postfix>MAIN|Add\d+)\.csv$", re.IGNORECASE
@@ -117,6 +147,15 @@ def _extract_project_and_postfix(resource: str) -> Tuple[str, str]:
 
 
 def _import_dummy_header(resource: str) -> pd.DataFrame:
+    """
+    Import the dummy header from the first line of the template file.
+
+    Args:
+        resource (str): The name of the template file.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the dummy header.
+    """
     with importlib.resources.open_binary(
         "nemo_library.templates.migmantemplates", resource
     ) as file:
@@ -133,6 +172,16 @@ def _import_dummy_header(resource: str) -> pd.DataFrame:
 
 
 def _import_datadescription(resource: str, dummyheaders: pd.DataFrame) -> pd.DataFrame:
+    """
+    Import the data description from the template file and map it to the dummy headers.
+
+    Args:
+        resource (str): The name of the template file.
+        dummyheaders (pd.DataFrame): The dummy headers extracted from the file.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the data description with mapped headers.
+    """
     with importlib.resources.open_binary(
         "nemo_library.templates.migmantemplates", resource
     ) as file:
@@ -161,6 +210,17 @@ def _import_datadescription(resource: str, dummyheaders: pd.DataFrame) -> pd.Dat
 def _add_calculated_fields(
     dfdesc: pd.DataFrame, project: str, postfix: str
 ) -> pd.DataFrame:
+    """
+    Add calculated fields to the data description DataFrame.
+
+    Args:
+        dfdesc (pd.DataFrame): The data description DataFrame.
+        project (str): The project name.
+        postfix (str): The postfix (e.g., "MAIN" or "Add1").
+
+    Returns:
+        pd.DataFrame: The updated DataFrame with calculated fields.
+    """
     dfdesc["project_name"] = project
     dfdesc["postfix"] = postfix if postfix != "MAIN" else ""
     dfdesc["display_name"] = dfdesc.apply(

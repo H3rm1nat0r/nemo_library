@@ -11,6 +11,10 @@ COGNITO_URLS = {
     "prod": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_1oayObkcF",
     "challenge": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_U2V9y0lzx",
 }
+"""
+Dictionary mapping environments to their respective Cognito URLs.
+"""
+
 COGNITO_APPCLIENT_IDS = {
     "demo": "7tvfugcnunac7id3ebgns6n66u",
     "dev": "4lr89aas81m844o0admv3pfcrp",
@@ -18,6 +22,10 @@ COGNITO_APPCLIENT_IDS = {
     "prod": "8t32vcmmdvmva4qvb79gpfhdn",
     "challenge": "43lq8ej98uuo8hvnoi1g880onp",
 }
+"""
+Dictionary mapping environments to their respective Cognito App Client IDs.
+"""
+
 NEMO_URLS = {
     "demo": "https://demo.enter.nemo-ai.com",
     "dev": "http://development.enter.nemo-ai.com",
@@ -25,9 +33,19 @@ NEMO_URLS = {
     "prod": "https://enter.nemo-ai.com",
     "challenge": "https://challenge.enter.nemo-ai.com",
 }
+"""
+Dictionary mapping environments to their respective NEMO URLs.
+"""
 
 
 class Config:
+    """
+    Configuration class for managing application settings and credentials.
+
+    This class reads configuration values from a file or accepts them as arguments.
+    It also provides methods to retrieve environment-specific URLs, tokens, and other settings.
+    """
+
     def __init__(
         self,
         config_file: str = "config.ini",
@@ -46,7 +64,7 @@ class Config:
         metadata: str = None,
     ):
         """
-        Initializes the Config class.
+        Initializes the Config class with optional parameters or values from a configuration file.
 
         Args:
             config_file (str): Path to the configuration file. Default is "config.ini".
@@ -103,7 +121,7 @@ class Config:
                 self.config.get("nemo_library", "migman_projects", fallback="null")
             )
             if self.config.has_option("nemo_library", "migman_projects")
-            else None
+            else []
         )
 
         self.migman_mapping_fields = migman_mapping_fields or (
@@ -113,7 +131,7 @@ class Config:
                 )
             )
             if self.config.has_option("nemo_library", "migman_mapping_fields")
-            else None
+            else []
         )
 
         self.migman_additional_fields = migman_additional_fields or (
@@ -123,7 +141,7 @@ class Config:
                 )
             )
             if self.config.has_option("nemo_library", "migman_additional_fields")
-            else None
+            else {}
         )
 
         self.migman_synonym_fields = migman_synonym_fields or (
@@ -133,7 +151,7 @@ class Config:
                 )
             )
             if self.config.has_option("nemo_library", "migman_synonym_fields")
-            else None
+            else {}
         )
 
         self.migman_multi_projects = migman_multi_projects or (
@@ -143,14 +161,14 @@ class Config:
                 )
             )
             if self.config.has_option("nemo_library", "migman_multi_projects")
-            else None
+            else {}
         )
 
         self.metadata = metadata or self.config.get(
             "nemo_library", "metadata", fallback="./metadata"
         )
 
-    def get_config_nemo_url(self):
+    def get_config_nemo_url(self) -> str:
         """
         Retrieves the NEMO URL based on the current environment.
 
@@ -166,7 +184,7 @@ class Config:
         except KeyError:
             raise Exception(f"unknown environment '{env}' provided")
 
-    def get_tenant(self):
+    def get_tenant(self) -> str:
         """
         Retrieves the tenant name.
 
@@ -175,7 +193,7 @@ class Config:
         """
         return self.tenant
 
-    def get_userid(self):
+    def get_userid(self) -> str:
         """
         Retrieves the user ID.
 
@@ -184,7 +202,7 @@ class Config:
         """
         return self.userid
 
-    def get_password(self):
+    def get_password(self) -> str:
         """
         Retrieves the password.
 
@@ -193,7 +211,7 @@ class Config:
         """
         return self.password
 
-    def get_environment(self):
+    def get_environment(self) -> str:
         """
         Retrieves the environment.
 
@@ -202,7 +220,7 @@ class Config:
         """
         return self.environment
 
-    def get_hubspot_api_token(self):
+    def get_hubspot_api_token(self) -> str:
         """
         Retrieves the HubSpot API token.
 
@@ -211,7 +229,7 @@ class Config:
         """
         return self.hubspot_api_token
 
-    def get_migman_local_project_directory(self):
+    def get_migman_local_project_directory(self) -> str:
         """
         Retrieves the local project directory for MigMan.
 
@@ -220,7 +238,7 @@ class Config:
         """
         return self.migman_local_project_directory
 
-    def get_migman_proALPHA_project_status_file(self):
+    def get_migman_proALPHA_project_status_file(self) -> str:
         """
         Retrieves the status file for proALPHA projects.
 
@@ -229,57 +247,57 @@ class Config:
         """
         return self.migman_proALPHA_project_status_file
 
-    def get_migman_projects(self):
+    def get_migman_projects(self) -> list[str] | None:
         """
         Retrieves the list of MigMan projects.
 
         Returns:
-            list[str]: The list of MigMan projects.
+            list[str] | None: The list of MigMan projects or None if not set.
         """
         return self.migman_projects
 
-    def get_migman_mapping_fields(self):
+    def get_migman_mapping_fields(self) -> list[str] | None:
         """
         Retrieves the list of mapping fields for MigMan.
 
         Returns:
-            list[str]: The list of mapping fields for MigMan.
+            list[str] | None: The list of mapping fields for MigMan or None if not set.
         """
         return self.migman_mapping_fields
 
-    def get_migman_additional_fields(self):
+    def get_migman_additional_fields(self) -> dict[str, list[str]] | None:
         """
         Retrieves the additional fields for MigMan.
 
         Returns:
-            dict[str, list[str]]: The additional fields for MigMan.
+            dict[str, list[str]] | None: The additional fields for MigMan or None if not set.
         """
         return self.migman_additional_fields
 
-    def get_migman_synonym_fields(self):
+    def get_migman_synonym_fields(self) -> dict[str, list[str]] | None:
         """
         Retrieves the synonym fields for MigMan.
 
         Returns:
-            dict[str, list[str]]: The synonym fields for MigMan.
+            dict[str, list[str]] | None: The synonym fields for MigMan or None if not set.
         """
         return self.migman_synonym_fields
 
-    def get_migman_multi_projects(self):
+    def get_migman_multi_projects(self) -> dict[str, list[str]] | None:
         """
         Retrieves the multi-projects for MigMan.
 
         Returns:
-            dict[str, list[str]]: The multi-projects for MigMan.
+            dict[str, list[str]] | None: The multi-projects for MigMan or None if not set.
         """
         return self.migman_multi_projects
 
-    def connection_get_headers(self):
+    def connection_get_headers(self) -> dict[str, str]:
         """
         Retrieves the headers for the connection.
 
         Returns:
-            dict: The headers for the connection.
+            dict[str, str]: The headers for the connection.
         """
         tokens = self.connection_get_tokens()
         headers = {
@@ -291,7 +309,7 @@ class Config:
         }
         return headers
 
-    def connection_get_cognito_authflow(self):
+    def connection_get_cognito_authflow(self) -> str:
         """
         Retrieves the Cognito authentication flow.
 
@@ -300,7 +318,7 @@ class Config:
         """
         return "USER_PASSWORD_AUTH"
 
-    def connection_get_cognito_url(self):
+    def connection_get_cognito_url(self) -> str:
         """
         Retrieves the Cognito URL based on the current environment.
 
@@ -316,7 +334,7 @@ class Config:
         except KeyError:
             raise Exception(f"unknown environment '{env}' provided")
 
-    def connection_get_cognito_appclientid(self):
+    def connection_get_cognito_appclientid(self) -> str:
         """
         Retrieves the Cognito app client ID based on the current environment.
 
@@ -332,12 +350,12 @@ class Config:
         except KeyError:
             raise Exception(f"unknown environment '{env}' provided")
 
-    def connection_get_tokens(self):
+    def connection_get_tokens(self) -> tuple[str, str, str]:
         """
         Retrieves the tokens for the connection.
 
         Returns:
-            tuple: The ID token, access token, and refresh token.
+            tuple[str, str, str]: The ID token, access token, and refresh token.
 
         Raises:
             Exception: If the request fails.
@@ -377,7 +395,7 @@ class Config:
 
         return id_token, access_token, refresh_token
 
-    def get_metadata(self):
+    def get_metadata(self) -> str:
         """
         Retrieves the metadata path.
 

@@ -222,11 +222,6 @@ FROM
     )
 
 
-def test_createOrUpdateRule():
-    nl = getNL()
-    # ml.createOrUpdateRule()
-
-
 def test_LoadReport():
     nl = getNL()
     df = nl.LoadReport(

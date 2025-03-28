@@ -1,114 +1,159 @@
-import os
+import logging
 import shutil
 import pytest
+import pandas as pd
+
+from pathlib import Path
+from tests.testutils import getNL
 
 
-from nemo_library import NemoLibrary
-
-
-def getNL():
-    return NemoLibrary(
-        config_file="tests/config.ini",
-    )
-
-def test_full():
-    _test_clean()
-    _test_MigManCreateProjectTemplates()
-    _test_MigManPrecheckFiles()
-    _test_MigManLoadData()
-    _test_MigManCreateMapping()
-    _test_MigManLoadMapping()
-    _test_MigManApplyMapping()
-    _test_MigManExportData()
-    _test_final()
-    
-def _test_clean():
+def test_clean():
     nl = getNL()
-    projects = nl.getProjects()
-    project_map = {project.displayName: project.id for project in projects}
-    delete = []
-    
-    for project in nl.config.get_migman_projects():
-        if project in project_map:
-            delete.append(project_map[project])
-
-    for mapping in nl.config.get_migman_mapping_fields():
-        if f"Mapping {mapping}" in project_map:
-            delete.append(project_map[f"Mapping {mapping}"])
-
-    if delete:
-        nl.deleteProjects(delete)
-
-
-def _test_MigManCreateProjectTemplates():
-    nl = getNL()
-    test_dir = nl.config.get_migman_local_project_directory()
-    if os.path.exists(test_dir):
+    nl.MigManDeleteProjects()
+    test_dir = Path(nl.config.get_migman_local_project_directory())
+    if test_dir.exists():
         shutil.rmtree(test_dir)
 
-    assert not os.path.exists(test_dir)
+
+def test_MigManCreateProjectTemplates():
+    nl = getNL()
+    test_dir = Path(nl.config.get_migman_local_project_directory())
+    if test_dir.exists():
+        shutil.rmtree(test_dir)
+
+    assert not test_dir.exists()
 
     nl.MigManCreateProjectTemplates()
 
-    assert os.path.exists(test_dir)
+    assert test_dir.exists()
+    assert (test_dir / "templates").exists()
+    for project in nl.config.get_migman_projects():
+        assert (test_dir / "templates" / f"{project}.csv").exists()
 
 
-def _test_MigManPrecheckFiles():
+def test_MigManPrecheckFiles():
     nl = getNL()
-    nl.MigManPrecheckFiles()
+    srcdata_dir = Path(nl.config.get_migman_local_project_directory()) / "srcdata"
+    assert srcdata_dir.exists()
+
+    migmanprojects = nl.config.get_migman_projects()
+    for project in migmanprojects:
+        shutil.copy(
+            Path(f"./tests/migman_master/{project}.csv"),
+            srcdata_dir / f"{project}.csv",
+        )
+    precheckstatus = nl.MigManPrecheckFiles()
+    assert all(status == "ok" for status in precheckstatus.values())
 
 
-def _test_MigManLoadData():
+def test_MigManLoadData():
     nl = getNL()
-    shutil.copy(
-        "./tests/migman_master/CUSTOMERS.csv",
-        os.path.join(nl.config.get_migman_local_project_directory(), "srcdata"),
-    )
-    shutil.copy(
-        "./tests/migman_master/Ship-To Addresses (Customers).csv",
-        os.path.join(nl.config.get_migman_local_project_directory(), "srcdata"),
-    )
+
+    srcdata_dir = Path(nl.config.get_migman_local_project_directory()) / "srcdata"
+    assert srcdata_dir.exists()
+
+    migmanprojects = nl.config.get_migman_projects()
+    for project in migmanprojects:
+        shutil.copy(
+            Path(f"./tests/migman_master/{project}.csv"),
+            srcdata_dir / f"{project}.csv",
+        )
+
     nl.MigManLoadData()
 
+    nemo_projects = [project.displayName for project in nl.getProjects()]
+    migmanprojects = nl.config.get_migman_projects()
 
-def _test_MigManCreateMapping():
+    assert all(project in nemo_projects for project in migmanprojects)
+
+    for project in migmanprojects:
+        ic = nl.getImportedColumns(projectname=project)
+        ic = [
+            x for x in ic if not x.internalName in ["datasource_id", "timestamp_file"]
+        ]
+        df = pd.read_csv(
+            srcdata_dir / f"{project}.csv",
+            sep=";",
+            dtype=str,
+        )
+        columns_to_drop = df.columns[df.isna().all()]
+        datadf_cleaned = df.drop(columns=columns_to_drop)
+
+        assert len(datadf_cleaned.columns) == len(ic)
+
+
+def test_MigManCreateMapping():
     nl = getNL()
+
+    mapping_dir = Path(nl.config.get_migman_local_project_directory()) / "mappings"
+    assert mapping_dir.exists()
+
     nl.MigManCreateMapping()
 
+    mappings = nl.config.get_migman_mapping_fields()
+    for mapping in mappings:
+        assert (mapping_dir / f"Mapping {mapping}.csv").exists()
 
-def _test_MigManLoadMapping():
+
+def test_MigManLoadMapping():
     nl = getNL()
-    nl.MigManLoadMapping()
+    mapping_dir = Path(nl.config.get_migman_local_project_directory()) / "mappings"
+    assert mapping_dir.exists()
+    mappings = nl.config.get_migman_mapping_fields()
+    for mapping in mappings:
+        assert (mapping_dir / f"Mapping {mapping}.csv").exists()
+
+        shutil.copy(
+            Path(f"./tests/migman_master/Mapping {mapping}.csv"),
+            mapping_dir / f"Mapping {mapping}.csv",
+        )
+
+    # nl.MigManLoadMapping()
+
+    for mapping in mappings:
+        assert (mapping_dir / f"Mapping {mapping}.csv").exists()
+
+        df = pd.read_csv(
+            mapping_dir / f"Mapping {mapping}.csv",
+            sep=";",
+            dtype=str,
+        )
+
+        target_column = f"target {mapping}"
+        assert target_column in df.columns
+        assert df[target_column].notna().any()
 
 
-def _test_MigManApplyMapping():
+def test_MigManApplyMapping():
     nl = getNL()
     nl.MigManApplyMapping()
 
 
-def _test_MigManExportData():
+def test_MigManExportData():
     nl = getNL()
     nl.MigManExportData()
-    assert os.path.exists(
-        os.path.join(
-            nl.config.get_migman_local_project_directory(),
-            "to_customer",
-            "Customers_with_messages.csv",
-        )
-    )
-    assert os.path.exists(
-        os.path.join(
-            nl.config.get_migman_local_project_directory(),
-            "to_proalpha",
-            "Customers.csv",
-        )
-    )
+
+    migmanprojects = nl.config.get_migman_projects()
+    for directory in ["to_customer", "to_proalpha"]:
+        assert (
+            Path(nl.config.get_migman_local_project_directory()) / directory
+        ).exists()
+
+        for project in migmanprojects:
+            assert (
+                Path(nl.config.get_migman_local_project_directory())
+                / directory
+                / (
+                    f"{project}.csv"
+                    if directory == "to_proalpha"
+                    else f"{project}_with_messages.csv"
+                )
+            ).exists()
 
 
-def _test_final():
+def test_final():
     nl = getNL()
     nl.MigManDeleteProjects()
-    test_dir = nl.config.get_migman_local_project_directory()
-    if os.path.exists(test_dir):
+    test_dir = Path(nl.config.get_migman_local_project_directory())
+    if test_dir.exists():
         shutil.rmtree(test_dir)
-

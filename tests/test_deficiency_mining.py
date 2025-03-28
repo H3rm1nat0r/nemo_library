@@ -5,12 +5,9 @@ import pytest
 
 from nemo_library import NemoLibrary
 
+from tests.testutils import getNL
 
-def getNL():
-    return NemoLibrary(
-        config_file="tests/config.ini",
-    )
 
 def test_createOrUpdateRulesByConfigFile():
-    nl = getNL( )
+    nl = getNL()
     nl.createOrUpdateRulesByConfigFile("./tests/NEMO_RULE_CONFIGURATION.xlsx")

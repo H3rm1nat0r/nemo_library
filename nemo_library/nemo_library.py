@@ -106,7 +106,6 @@ class NemoLibrary:
         migman_projects: list[str] = None,
         migman_mapping_fields: list[str] = None,
         migman_additional_fields: dict[str, list[str]] = None,
-        migman_synonym_fields: dict[str, list[str]] = None,
         migman_multi_projects: dict[str, list[str]] = None,
         metadata: str = None,
     ):
@@ -125,7 +124,6 @@ class NemoLibrary:
             migman_projects (list[str], optional): List of project names. Defaults to None.
             migman_mapping_fields (list[str], optional): List of mapping fields. Defaults to None.
             migman_additional_fields (dict[str, list[str]], optional): Additional fields for mapping. Defaults to None.
-            migman_synonym_fields (dict[str, list[str]], optional): Synonym fields for mapping. Defaults to None.
             migman_multi_projects (dict[str, list[str]], optional): Multi-project configurations. Defaults to None.
             metadata (str, optional): Metadata configuration. Defaults to None.
         """
@@ -142,7 +140,6 @@ class NemoLibrary:
             migman_projects=migman_projects,
             migman_mapping_fields=migman_mapping_fields,
             migman_additional_fields=migman_additional_fields,
-            migman_synonym_fields=migman_synonym_fields,
             migman_multi_projects=migman_multi_projects,
             metadata=metadata,
         )

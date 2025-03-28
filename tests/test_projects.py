@@ -6,14 +6,9 @@ from nemo_library import NemoLibrary
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.project import Project
 from nemo_library.model.report import Report
+from tests.testutils import getNL
 
 IC_PROJECT_NAME = "gs_unit_test_Intercompany"
-
-
-def getNL():
-    return NemoLibrary(
-        config_file="tests/config.ini",
-    )
 
 
 def test_getProjecs():
@@ -215,7 +210,13 @@ FROM
                 querySyntax=select,
                 internalName="bi_data_21_nnn_reporting_saas_ic",
                 description="unit test",
-                columns=["Company","CUSTOMER_I_D","CUSTOMER_NAME","FirstInvoiceDate","AnnualContractValue"]
+                columns=[
+                    "Company",
+                    "CUSTOMER_I_D",
+                    "CUSTOMER_NAME",
+                    "FirstInvoiceDate",
+                    "AnnualContractValue",
+                ],
             )
         ],
     )

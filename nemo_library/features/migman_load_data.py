@@ -415,7 +415,7 @@ def _update_deficiency_mining(
                 )
 
                 frag_check.append(
-                    f"NOT {migman_field.nemo_internal_name} LIKE_REGEXPR('^[-]?(?:[0-9]+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$')"
+                    fr"NOT {migman_field.nemo_internal_name} LIKE_REGEXPR('^[-]?(?:[0-9]+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$')"
                 )
                 frag_msg.append(
                     f"{migman_field.nemo_display_name} is not a valid number"

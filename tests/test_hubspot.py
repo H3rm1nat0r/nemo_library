@@ -5,14 +5,9 @@ from datetime import datetime
 
 from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.project import Project
+from tests.testutils import getNL
 
 HS_PROJECT_NAME = "gs_unit_test_HubSpot"
-
-
-def getNL():
-    return NemoLibrary(
-        config_file="tests/config.ini",
-    )
 
 
 def test_FetchDealFromHubSpotAndUploadToNEMO():

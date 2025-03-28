@@ -59,7 +59,6 @@ class Config:
         migman_projects: list[str] = None,
         migman_mapping_fields: list[str] = None,
         migman_additional_fields: dict[str, list[str]] = None,
-        migman_synonym_fields: dict[str, list[str]] = None,
         migman_multi_projects: dict[str, list[str]] = None,
         metadata: str = None,
     ):
@@ -78,7 +77,6 @@ class Config:
             migman_projects (list[str]): List of MigMan projects. Default is None.
             migman_mapping_fields (list[str]): List of mapping fields for MigMan. Default is None.
             migman_additional_fields (dict[str, list[str]]): Additional fields for MigMan. Default is None.
-            migman_synonym_fields (dict[str, list[str]]): Synonym fields for MigMan. Default is None.
             migman_multi_projects (dict[str, list[str]]): Multi-projects for MigMan. Default is None.
             metadata (str): Path to the metadata. Default is None.
         """
@@ -141,16 +139,6 @@ class Config:
                 )
             )
             if self.config.has_option("nemo_library", "migman_additional_fields")
-            else {}
-        )
-
-        self.migman_synonym_fields = migman_synonym_fields or (
-            json.loads(
-                self.config.get(
-                    "nemo_library", "migman_synonym_fields", fallback="null"
-                )
-            )
-            if self.config.has_option("nemo_library", "migman_synonym_fields")
             else {}
         )
 
@@ -273,15 +261,6 @@ class Config:
             dict[str, list[str]] | None: The additional fields for MigMan or None if not set.
         """
         return self.migman_additional_fields
-
-    def get_migman_synonym_fields(self) -> dict[str, list[str]] | None:
-        """
-        Retrieves the synonym fields for MigMan.
-
-        Returns:
-            dict[str, list[str]] | None: The synonym fields for MigMan or None if not set.
-        """
-        return self.migman_synonym_fields
 
     def get_migman_multi_projects(self) -> dict[str, list[str]] | None:
         """

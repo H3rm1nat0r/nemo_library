@@ -16,16 +16,18 @@ def MigManDeleteProjects(config: Config) -> None:
     This function retrieves all projects and filters them based on their display names
     to match the MigMan project list. It then deletes the matching projects.
     """
-    projects = getProjects(config)
+    nemo_projects = getProjects(config)
     migmanprojects = get_migman_project_list(config)
     migmanmappingfields = config.get_migman_mapping_fields()
-    project_map = {project.displayName: project.id for project in projects}
+    project_map = {project.displayName: project.id for project in nemo_projects}
     delete = []
     for project in migmanprojects:
-        delete.append(project_map[project])
+        if project in project_map:
+            delete.append(project_map[project])
 
     for mapping in migmanmappingfields:
-        delete.append(project_map[f"Mapping {mapping}"])
+        if f"Mapping {mapping}" in project_map:
+            delete.append(project_map[f"Mapping {mapping}"])
 
     deleteProjects(config,delete)
     

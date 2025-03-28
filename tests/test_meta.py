@@ -4,14 +4,9 @@ from nemo_library import NemoLibrary
 from datetime import datetime
 
 from nemo_library.utils.utils import FilterType, FilterValue
+from tests.testutils import getNL
 
 META_PROJECT_NAME = "Business Processes"
-
-
-def getNL():
-    return NemoLibrary(
-        config_file="tests/config.ini",
-    )
 
 
 def test_create():
@@ -32,6 +27,7 @@ def test_load():
         filter_type=FilterType.STARTSWITH,
         filter_value=FilterValue.DISPLAYNAME,
     )
+
 
 def test_delete():
     nl = getNL()

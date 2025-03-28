@@ -12,6 +12,101 @@ from nemo_library.model.migman import MigMan
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import get_internal_name
 
+SYNONYM_FIELDS = {
+    "S_Mengeneinheit.Mengeneinheit": [
+        "M_LTPos.MengenEinheit",
+        "SBM_PartCustQuant.Mengeneinheit",
+        "S_ArtME.MengenEinheit",
+        "S_EAN.MengenEinheit",
+        "VS_AuftragPos.MengenEinheit",
+        "V_BELEGPOS.mengeneinheit",
+        "S_Artikel.LagerME",
+        "S_Artikel.GewichtME",
+        "S_Artikel.StkME",
+    ],
+    "S_Artikel.Artikel": [
+        "E_ArtLief.Artikel",
+        "E_ArtLiefBei.Artikel",
+        "E_ArtLiefDatum.Artikel",
+        "E_ArtLiefRabStaffel.Artikel",
+        "E_ArtLiefZeich.Artikel",
+        "E_BelegPos.Artikel",
+        "E_RA_Pos.Artikel",
+        "MC_Charge.Artikel",
+        "MD_Artikel.Artikel",
+        "MS_ProdAktePos.Artikel",
+        "MS_SNR.ArtikelAktuell",
+        "M_Aktivitaet.Artikel",
+        "M_LTPos.Artikel",
+        "M_Ressource.Artikel",
+        "P_ZeichnungArtikel.Artikel",
+        "SBM_PartCustQuant.Artikel",
+        "SBM_PartCustQuant.Artikel",
+        "S_Anlage.Artikel",
+        "S_ArtAlternativ.Artikel",
+        "S_ArtGruppe.ArtikelGruppe",
+        "S_ArtHerst.Artikel",
+        "S_ArtKunde.Artikel",
+        "S_ArtKunde.ArtikelNr",
+        "S_ArtKundeDatum.Artikel",
+        "S_ArtKundeRabDatum.Artikel",
+        "S_ArtME.Artikel",
+        "S_ArtPreiseStaffel.Artikel",
+        "S_Artikel.ArtikelArt",
+        "S_Artikel.ArtikelGruppe",
+        "S_ArtikelSpr.Artikel",
+        "S_EAN.Artikel",
+        "S_Kunde.Artikelstatistik",
+        "VS_AuftragMKT.Artikel",
+        "VS_AuftragPos.Artikel",
+        "VS_AuftragPos.ArtikelWartung",
+        "V_BELEGPOS.artikel",
+        "V_BELEGPOS.artikel",
+        "V_BELEGPOS.artikel",
+        "V_BELEGPOS.artikel",
+        "V_BelegPos.Artikel",
+        "V_BelegPos.Artikel",
+    ],
+    "S_Kunde.Kunde": [
+        "JBT_Project.Kunde",
+        "MMM_Transport.Kunde",
+        "MS_SNR.Kunde",
+        "MS_ServiceObjekt.Kunde",
+        "SBM_EDL.Kunde",
+        "SBM_PartCustQuant.Kunde",
+        "S_Abladestelle.Kunde",
+        "S_ArtKunde.Kunde",
+        "S_ArtKundeDatum.Kunde",
+        "S_ArtKundeRabDatum.Kunde",
+        "S_KunARabDatum.Kunde",
+        "S_KundeVertreter.Kunde",
+        "S_LieferAdresse.Kunde",
+        "S_RechnungsAdresse.Kunde",
+        "VC_Interessent.Kunde",
+        "VS_Auftrag.Kunde",
+        "V_BELEGKOPF.kunde",
+        "V_BelegKopf.Kunde",
+    ],
+    "S_Lieferant.Lieferant": [
+        "E_ArtLief.Lieferant",
+        "E_ArtLiefBei.Lieferant",
+        "E_ArtLiefDatum.Lieferant",
+        "E_ArtLiefRabStaffel.Lieferant",
+        "E_ArtLiefZeich.Lieferant",
+        "E_BelegKopf.Lieferant",
+        "E_RA_Kopf.Lieferant",
+        "MMM_Transport.Lieferant",
+        "M_Aktivitaet.Lieferant",
+        "M_Ressource.Lieferant",
+        "SBM_EDL.Lieferant",
+        "S_Anlage.Lieferant",
+        "S_BestellAdresse.Lieferant",
+        "S_EAN.Lieferant",
+        "S_Vertreter.Lieferant",
+        "V_BelegKopf.Lieferant",
+    ],
+}
+
 
 def get_migman_project_list(config: Config):
     proALPHA_project_status_file = config.get_migman_proALPHA_project_status_file()
@@ -144,7 +239,6 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
     # get configuration
     mapping_fields = config.get_migman_mapping_fields()
     additional_fields = config.get_migman_additional_fields()
-    synonym_fields = config.get_migman_synonym_fields()
     migman_projects = get_migman_project_list(config)
 
     # get data projects
@@ -178,7 +272,7 @@ def getMappingRelations(config: Config) -> pd.DataFrame:
             if field in ics_cleaned:
                 matching_field = field
             else:
-                for synonym in synonym_fields.get(field, []):
+                for synonym in SYNONYM_FIELDS.get(field, []):
                     if synonym in ics_cleaned:
                         matching_field = synonym
                         break

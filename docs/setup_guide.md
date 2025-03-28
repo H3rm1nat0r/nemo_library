@@ -90,7 +90,6 @@ migman_proALPHA_project_status_file = <path to the proALPHA project status file>
 migman_projects = ["project1", "project2"]
 migman_mapping_fields = ["field1", "field2"]
 migman_additional_fields = {"field_group1": ["fieldA", "fieldB"]}
-migman_synonym_fields = {"field_group2": ["synonym1", "synonym2"]}
 migman_multi_projects = {"project_group": ["projectA", "projectB"]}
 metadata = <path to metadata directory>
 ```

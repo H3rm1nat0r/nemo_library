@@ -1,6 +1,5 @@
 import os
-from setuptools import setup, find_packages, Command
-import subprocess
+from setuptools import setup, find_packages
 
 # Determine the absolute path to the requirements.txt file
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -12,21 +11,6 @@ with open(requirements_path) as f:
 
 # Import the version from nemo_library.version
 from nemo_library.version import __version__
-
-class BuildWithPyInstaller(Command):
-    """Custom build command to run PyInstaller."""
-    description = "Build the project using PyInstaller."
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        # Run the PyInstaller command
-        subprocess.check_call(["pyinstaller", "pyinstaller_bootstrapper.spec"])
 
 # Setup configuration for the Python package
 setup(
@@ -46,8 +30,5 @@ setup(
     project_urls={
         'Github': 'https://github.com/H3rm1nat0r/nemo_library',  # URL to the project's GitHub repository
         'NEMO': 'https://enter.nemo-ai.com/nemo/'  # URL to the NEMO cloud solution
-    },
-    cmdclass={
-        "build_with_pyinstaller": BuildWithPyInstaller,
     },
 )

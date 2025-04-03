@@ -9,10 +9,13 @@ requirements_path = os.path.join(base_dir, 'requirements.txt')
 with open(requirements_path) as f:
     required = f.read().splitlines()
 
+# Import the version from nemo_library.version
+from nemo_library.version import __version__
+
 # Setup configuration for the Python package
 setup(
     name='nemo_library',  # Name of the package
-    version='1.4.1',  # Version of the package
+    version=__version__,  # Version of the package imported from version.py
     packages=find_packages(),  # Automatically find and include all packages
     install_requires=required,  # List of dependencies from requirements.txt
     include_package_data=True,

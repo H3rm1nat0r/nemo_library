@@ -80,6 +80,7 @@ from nemo_library.features.projects import (
     setProjectMetaData,
 )
 from nemo_library.utils.utils import FilterType, FilterValue
+from nemo_library.version import __version__
 
 from deprecated import deprecated
 
@@ -89,9 +90,13 @@ class NemoLibrary:
     A library for interacting with the NEMO system, providing methods for managing projects,
     reports, metadata, and other entities.
 
+    Version: {__version__}
+
     Attributes:
         config (Config): Configuration object initialized with user-provided or default settings.
     """
+
+    __version__ = __version__  # Add this line to expose the version attribute
 
     def __init__(
         self,

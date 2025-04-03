@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides an introduction to using the **NEMO Library**, including its main methods and practical use cases.
+The **NEMO Library** is a versatile Python library that simplifies data management, project automation, and reporting within the NEMO cloud solution. It also supports integration with external systems like HubSpot, making it a powerful tool for streamlining workflows and enhancing productivity.
 
 ---
 

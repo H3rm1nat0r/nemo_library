@@ -1,6 +1,6 @@
 # Guide to Using the nemo_library
 
-The **nemo_library** is a powerful Python library designed to automate various tasks. To use it, you'll need an environment where you can write and execute Python code. This step-by-step guide explains how to set everything up, even if you're new to programming or Python.
+The **nemo_library** is a comprehensive Python library designed to facilitate data management, project automation, and seamless integration with the NEMO cloud solution. It provides tools for uploading data, managing projects, generating reports, and integrating with external systems like HubSpot.
 
 ---
 

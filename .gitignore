@@ -1,6 +1,5 @@
 build/
 nemo_library.egg-info/
-dist/
 .venv/
 
 config_twine.sh

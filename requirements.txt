@@ -14,10 +14,12 @@ charset-normalizer
 click
 colorama
 coverage
+cryptography
 Delorean
 Deprecated
 docutils
 et_xmlfile
+fernet
 gitdb
 GitPython
 h11
@@ -49,6 +51,7 @@ pandas
 pillow
 pluggy
 protobuf
+pyaes
 pyarrow
 pycparser
 pydeck
@@ -78,6 +81,7 @@ sniffio
 sortedcontainers
 soupsieve
 streamlit
+streamlit-option-menu
 tabulate
 tenacity
 toml

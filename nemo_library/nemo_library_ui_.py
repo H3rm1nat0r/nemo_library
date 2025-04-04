@@ -48,7 +48,6 @@ def getNL() -> NemoLibrary:
     profile_name = st.session_state.get("selected_profile", "None")
     if profile_name in profiles:
         return NemoLibrary(
-            encryption_key="UBGPjeK9i2nl_809ofmRbXsW3Ok5JFhZs9bfrLpyyVA=",
             tenant=profiles[profile_name]["tenant"],
             userid=profiles[profile_name]["userid"],
             password=profiles[profile_name]["password"],

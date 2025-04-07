@@ -7,7 +7,7 @@ import threading
 import time
 import streamlit as st
 from streamlit_option_menu import option_menu
-from nemo_library.nemo_library import NemoLibrary
+from nemo_library.core import NemoLibrary
 
 import keyring
 from cryptography.fernet import Fernet

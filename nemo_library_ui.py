@@ -245,7 +245,34 @@ with st.sidebar:
     )
     st.session_state["selected_profile"] = selected_profile
 
-if menu == "Nemo Library" and sub_menu == "Projects":
+if menu == "Nemo Library" and sub_menu == "Migration":
+    st.header("Migration")
+    st.write(f"MigMan local project directory: {profiles[st.session_state['selected_profile']]['migman_local_project_directory']}")
+    st.write(f"ProALPHA project status file: {profiles[st.session_state['selected_profile']]['migman_proALPHA_project_status_file']}")
+    tabs = st.tabs(
+        [
+            "Create Project Template",
+            "Check Files",
+            "Load Files",
+            "Create Mapping",
+            "Load Mapping",
+            "Apply Mapping",
+            "Export Data"
+        ]
+    )  # Create tabs for different functionalities
+    with tabs[0]: # create project template
+        st.subheader("Create Project Template")
+        if st.button("Create Project Template"):
+            try:
+                nl = getNL()
+                real_time_logging(
+                    streamlit_logger,
+                    nl.MigManCreateProjectTemplates(),
+                )
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
+
+elif menu == "Nemo Library" and sub_menu == "Projects":
     st.header("Projects")
     tabs = st.tabs(
         [

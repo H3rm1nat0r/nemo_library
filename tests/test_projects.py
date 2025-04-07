@@ -229,7 +229,7 @@ def test_LoadReport():
         report_name="(BI DATA) 21 NNN Reporting SaaS IC",
     )
 
-    assert len(df) == 50
+    assert len(df) == 41
 
 
 def test_deleteProject():

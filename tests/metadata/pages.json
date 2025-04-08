@@ -13,10 +13,10 @@
             {
                 "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_on_time",
+                "content": "conservative_purchasing_replenishment_deviation_too_low",
                 "contentTranslations": {},
                 "id": "",
-                "row": 1,
+                "row": 2,
                 "rowSpan": 1,
                 "type": "Tile"
             },
@@ -43,10 +43,10 @@
             {
                 "column": 2,
                 "columnSpan": 1,
-                "content": "conservative_purchasing_replenishment_deviation_too_low",
+                "content": "conservative_purchasing_replenishment_deviation_on_time",
                 "contentTranslations": {},
                 "id": "",
-                "row": 2,
+                "row": 1,
                 "rowSpan": 1,
                 "type": "Tile"
             }

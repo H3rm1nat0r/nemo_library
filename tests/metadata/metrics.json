@@ -1,14 +1,14 @@
 [
     {
-        "aggregateBy": "conservative_purchasing_replenishment_deviation_too_low",
-        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_too_low)",
+        "aggregateBy": "conservative_purchasing_replenishment_deviation_too_high",
+        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_too_high)",
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(C) Purch Replenishment Deviation Too Low Rate",
+        "displayName": "(C) Purch Replenishment Deviation Too High Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
-            "conservative_purchasing_replenishment_deviation_too_low": "mean"
+            "conservative_purchasing_replenishment_deviation_too_high": "mean"
         },
         "groupByColumn": "pur_order_doc_i_d",
         "isCrawlable": true,
@@ -19,7 +19,7 @@
         "unit": "percent",
         "defaultScopeRestrictions": [],
         "focusOrder": "",
-        "internalName": "conservative_purchasing_replenishment_deviation_too_low",
+        "internalName": "conservative_purchasing_replenishment_deviation_too_high",
         "parentAttributeGroupInternalName": "metrics",
         "id": "",
         "projectId": "",
@@ -55,15 +55,15 @@
         "tenant": ""
     },
     {
-        "aggregateBy": "conservative_purchasing_replenishment_deviation_too_high",
-        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_too_high)",
+        "aggregateBy": "conservative_purchasing_replenishment_deviation_too_low",
+        "aggregateFunction": "mean(conservative_purchasing_replenishment_deviation_too_low)",
         "dateColumn": "pur_order_doc_date",
         "description": "",
         "descriptionTranslations": {},
-        "displayName": "(C) Purch Replenishment Deviation Too High Rate",
+        "displayName": "(C) Purch Replenishment Deviation Too Low Rate",
         "displayNameTranslations": {},
         "groupByAggregations": {
-            "conservative_purchasing_replenishment_deviation_too_high": "mean"
+            "conservative_purchasing_replenishment_deviation_too_low": "mean"
         },
         "groupByColumn": "pur_order_doc_i_d",
         "isCrawlable": true,
@@ -74,7 +74,7 @@
         "unit": "percent",
         "defaultScopeRestrictions": [],
         "focusOrder": "",
-        "internalName": "conservative_purchasing_replenishment_deviation_too_high",
+        "internalName": "conservative_purchasing_replenishment_deviation_too_low",
         "parentAttributeGroupInternalName": "metrics",
         "id": "",
         "projectId": "",

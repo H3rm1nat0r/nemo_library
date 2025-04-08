@@ -27,7 +27,7 @@ while not is_port_open('127.0.0.1', 8501):
     logging.info("Waiting for Streamlit to start...")
 
 # Open Streamlit in a native window
-webview.create_window("NEMO UI", "http://localhost:8501", width=1200, height=800)
+webview.create_window("NEMO UI", "http://localhost:8501")
 webview.start()
 
 # Terminate Streamlit when the window is closed

@@ -6,6 +6,7 @@ beautifulsoup4
 blinker
 boto3
 botocore
+bottle
 bs4
 build
 cachetools
@@ -57,6 +58,7 @@ pillow
 pkgutil_resolve_name
 pluggy
 protobuf
+proxy_tools
 pyaes
 pyarrow
 pycparser
@@ -64,6 +66,11 @@ pydeck
 Pygments
 pyinstaller
 pyinstaller-hooks-contrib
+pyobjc-core
+pyobjc-framework-Cocoa
+pyobjc-framework-Quartz
+pyobjc-framework-Security
+pyobjc-framework-WebKit
 pyproject_hooks
 PySocks
 pytest
@@ -71,6 +78,7 @@ pytest-cov
 python-dateutil
 python-dotenv
 pytz
+pywebview
 pywin32-ctypes
 readme_renderer
 referencing

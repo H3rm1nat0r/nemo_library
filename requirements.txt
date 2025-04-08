@@ -14,14 +14,12 @@ certifi
 cffi
 charset-normalizer
 click
-colorama
 coverage
 cryptography
 Delorean
 Deprecated
 docutils
 et_xmlfile
-fernet
 gitdb
 GitPython
 h11
@@ -30,8 +28,7 @@ hubspot-api-client
 humanize
 id
 idna
-importlib_metadata
-importlib_resources
+importlib
 iniconfig
 jaraco.classes
 jaraco.context
@@ -53,9 +50,7 @@ openpyxl
 outcome
 packaging
 pandas
-pefile
 pillow
-pkgutil_resolve_name
 pluggy
 protobuf
 proxy_tools
@@ -79,7 +74,6 @@ python-dateutil
 python-dotenv
 pytz
 pywebview
-pywin32-ctypes
 readme_renderer
 referencing
 requests
@@ -102,7 +96,6 @@ tabulate
 tenacity
 toml
 tornado
-tqdm
 trio
 trio-websocket
 twine
@@ -110,12 +103,8 @@ typing_extensions
 tzdata
 tzlocal
 urllib3
-watchdog
 webdriver-manager
 websocket-client
 wheel
-win-inet-pton
 wrapt
 wsproto
-XlsxWriter
-zipp

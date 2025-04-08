@@ -1,4 +1,5 @@
 git pull
+conda update -n base -c defaults conda
 conda activate nemo_library
 conda update --all -y
 python --version

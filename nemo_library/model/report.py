@@ -51,4 +51,4 @@ class Report:
         if self.internalName is None:
             self.internalName = get_internal_name(self.displayName)
 
-        self.columns = [col.upper() for col in self.columns]
+        self.columns = [col.upper() for col in self.columns] if self.columns else []

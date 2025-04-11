@@ -11,14 +11,9 @@ class AttributeLink:
     order: str = ""
     parentAttributeGroupInternalName: str = ""
     displayNameTranslations: dict[str, str] = field(default_factory=dict)
-    displayName: str = ""
-    internalName: str = ""
-    changedBy: str = ""
-    changedDate: str = None
-    createdBy: str = ""
-    creationDate: str = None
+    displayName: str = None
+    internalName: str = None
     id: str = ""
-    metadataTemplateId: str = ""
     projectId: str = ""
     tenant: str = ""
     isCustom: bool = False

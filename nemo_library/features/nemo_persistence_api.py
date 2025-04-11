@@ -583,13 +583,66 @@ def createAttributeLinks(
     config: Config, projectname: str, attributelinks: list[AttributeLink]
 ) -> None:
     """Creates or updates a list of AttributeLinks."""
-    _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=attributelinks, 
-        endpoint="AttributeLink", 
-        get_existing_func=getAttributeLinks
-    )
+    
+    # cannot use the generic method since the REST-API does not support the same endpoint for create and update
+    # _generic_metadata_create_or_update(
+    #     config=config, 
+    #     projectname=projectname, 
+    #     objects=attributelinks, 
+    #     endpoint="AttributeLink", 
+    #     get_existing_func=getAttributeLinks
+    # )
+    
+    # Initialize request
+    headers = config.connection_get_headers()
+    project_id = getProjectID(config, projectname)
+    params = {"translationHandling": "UseAuxiliaryTranslationFields"}
+
+    for obj in attributelinks:
+        logging.info(f"Create/update AttributeLink '{obj.displayName}'")
+
+        obj.tenant = config.get_tenant()
+        obj.projectId = project_id
+
+        # Check if the object already exists
+        existing_object = getAttributeLinks(
+            config=config,
+            projectname=projectname,
+            filter=obj.internalName,
+            filter_type=FilterType.EQUAL,
+            filter_value=FilterValue.INTERNALNAME,
+        )
+
+        for obj in existing_object:
+            print(json.dumps(obj.to_dict(), indent=4))
+            
+        if len(existing_object) == 1:
+            # Update existing object
+            obj.id = existing_object[0].id
+            response = requests.put(
+                f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/AttributeLink/Update",
+                json=obj.to_dict(),
+                headers=headers,
+                params=params,
+            )
+            if response.status_code != 200:
+                log_error(
+                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/AttributeLink/Update"}\nStatus: {response.status_code}, error: {response.text}"
+                )
+
+        else:
+            # Create new object
+            response = requests.post(
+                f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/AttributeLink/Create",
+                json=obj.to_dict(),
+                headers=headers,
+                params=params,
+            )
+            if response.status_code != 201:
+                log_error(
+                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/AttributeLink/Create"}\nStatus: {response.status_code}, error: {response.text}"
+                )
+    
 
 
 def createPages(config: Config, projectname: str, pages: list[Page]) -> None:

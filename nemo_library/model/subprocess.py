@@ -22,6 +22,8 @@ class SubProcess:
     id: str
     projectId: UUID
     tenant: str
+    isCustom: bool = False
+    metadataClassificationInternalName: str = ""
 
     def to_dict(self):
         """

@@ -81,6 +81,8 @@ class Diagram:
     id: str
     projectId: str
     tenant: str
+    isCustom: bool = False
+    metadataClassificationInternalName: str = ""
 
     def to_dict(self):
         """

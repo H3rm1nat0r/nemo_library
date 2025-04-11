@@ -150,6 +150,8 @@ class Project:
     tableName: str = None
     tenant: str = ""
     type: str = "IndividualData"
+    isCustom: bool = False
+    metadataClassificationInternalName: str = ""
 
     def to_dict(self):
         """

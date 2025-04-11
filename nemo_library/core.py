@@ -698,6 +698,22 @@ class NemoLibrary:
             filter_value=filter_value,
         )
 
+    def getAttributeLinks(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> list[AttributeLink]:
+        """Fetches AttributeLinks metadata with the given filters."""
+        return getAttributeLinks(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
     def getMetrics(
         self,
         projectname: str,
@@ -900,6 +916,10 @@ class NemoLibrary:
         """Deletes a list of AttributeGroups by their IDs."""
         deleteAttributeGroups(config=self.config, attributegroups=attributegroups)
 
+    def deleteAttributeLinks(self, attributelinks: list[str]) -> None:
+        """Deletes a list of AttributeLinks by their IDs."""
+        deleteAttributeLinks(config=self.config, attributelinks=attributelinks)
+
     def deletePages(self, pages: list[str]) -> None:
         """Deletes a list of Pages by their IDs."""
         deletePages(config=self.config, pages=pages)
@@ -952,6 +972,14 @@ class NemoLibrary:
             config=self.config, projectname=projectname, attributegroups=attributegroups
         )
 
+    def createAttributeLinks(
+        self, projectname: str, attributelinks: list[AttributeLink]
+    ) -> None:
+        """Creates or updates a list of AttributeLinks."""
+        createAttributeLinks(
+            config=self.config, projectname=projectname, attributelinks=attributelinks
+        )
+
     def createPages(self, projectname: str, pages: list[Page]) -> None:
         """Creates or updates a list of Pages."""
         createPages(config=self.config, projectname=projectname, pages=pages)
@@ -975,31 +1003,3 @@ class NemoLibrary:
     def createProjects(self, projects: list[Project]) -> None:
         """Creates or updates a list of Projects."""
         createProjects(config=self.config, projects=projects)
-
-    def getAttributeLinks(
-        self,
-        projectname: str,
-        filter: str = "*",
-        filter_type: FilterType = FilterType.STARTSWITH,
-        filter_value: FilterValue = FilterValue.DISPLAYNAME,
-    ) -> list[AttributeLink]:
-        """Fetches AttributeLinks metadata with the given filters."""
-        return getAttributeLinks(
-            config=self.config,
-            projectname=projectname,
-            filter=filter,
-            filter_type=filter_type,
-            filter_value=filter_value,
-        )
-
-    def createAttributeLinks(
-        self, projectname: str, attributelinks: list[AttributeLink]
-    ) -> None:
-        """Creates or updates a list of AttributeLinks."""
-        createAttributeLinks(
-            config=self.config, projectname=projectname, attributelinks=attributelinks
-        )
-
-    def deleteAttributeLinks(self, attributelinks: list[str]) -> None:
-        """Deletes a list of AttributeLinks by their IDs."""
-        deleteAttributeLinks(config=self.config, attributelinks=attributelinks)

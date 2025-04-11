@@ -523,7 +523,11 @@ def createDefinedColumns(
 ) -> None:
     """Creates or updates a list of DefinedColumns."""
     _generic_metadata_create_or_update(
-        config, projectname, definedcolumns, "Columns", getDefinedColumns
+        config=config, 
+        projectname=projectname, 
+        objects=definedcolumns, 
+        endpoint="Columns", 
+        get_existing_func=getDefinedColumns
     )
 
 
@@ -532,20 +536,34 @@ def createImportedColumns(
 ) -> None:
     """Creates or updates a list of ImportedColumns."""
     _generic_metadata_create_or_update(
-        config, projectname, importedcolumns, "Columns", getImportedColumns
+        config=config, 
+        projectname=projectname, 
+        objects=importedcolumns, 
+        endpoint="Columns", 
+        get_existing_func=getImportedColumns
     )
 
 
 def createMetrics(config: Config, projectname: str, metrics: list[Metric]) -> None:
     """Creates or updates a list of Metrics."""
     _generic_metadata_create_or_update(
-        config, projectname, metrics, "Metrics", getMetrics
+        config=config, 
+        projectname=projectname, 
+        objects=metrics, 
+        endpoint="Metrics", 
+        get_existing_func=getMetrics
     )
 
 
 def createTiles(config: Config, projectname: str, tiles: list[Tile]) -> None:
     """Creates or updates a list of Tiles."""
-    _generic_metadata_create_or_update(config, projectname, tiles, "Tiles", getTiles)
+    _generic_metadata_create_or_update(
+        config=config, 
+        projectname=projectname, 
+        objects=tiles, 
+        endpoint="Tiles", 
+        get_existing_func=getTiles
+    )
 
 
 def createAttributeGroups(
@@ -553,7 +571,11 @@ def createAttributeGroups(
 ) -> None:
     """Creates or updates a list of AttributeGroups."""
     _generic_metadata_create_or_update(
-        config, projectname, attributegroups, "AttributeGroup", getAttributeGroups
+        config=config, 
+        projectname=projectname, 
+        objects=attributegroups, 
+        endpoint="AttributeGroup", 
+        get_existing_func=getAttributeGroups
     )
 
 
@@ -562,13 +584,23 @@ def createAttributeLinks(
 ) -> None:
     """Creates or updates a list of AttributeLinks."""
     _generic_metadata_create_or_update(
-        config, projectname, attributelinks, "AttributeLink", getAttributeLinks
+        config=config, 
+        projectname=projectname, 
+        objects=attributelinks, 
+        endpoint="AttributeLink", 
+        get_existing_func=getAttributeLinks
     )
 
 
 def createPages(config: Config, projectname: str, pages: list[Page]) -> None:
     """Creates or updates a list of Pages."""
-    _generic_metadata_create_or_update(config, projectname, pages, "Pages", getPages)
+    _generic_metadata_create_or_update(
+        config=config, 
+        projectname=projectname, 
+        objects=pages, 
+        endpoint="Pages", 
+        get_existing_func=getPages
+    )
 
 
 def createApplications(
@@ -576,14 +608,22 @@ def createApplications(
 ) -> None:
     """Creates or updates a list of Applications."""
     _generic_metadata_create_or_update(
-        config, projectname, applications, "Applications", getApplications
+        config=config, 
+        projectname=projectname, 
+        objects=applications, 
+        endpoint="Applications", 
+        get_existing_func=getApplications
     )
 
 
 def createDiagrams(config: Config, projectname: str, diagrams: list[Diagram]) -> None:
     """Creates or updates a list of Diagrams."""
     _generic_metadata_create_or_update(
-        config, projectname, diagrams, "Diagrams", getDiagrams
+        config=config, 
+        projectname=projectname, 
+        objects=diagrams, 
+        endpoint="Diagrams", 
+        get_existing_func=getDiagrams
     )
 
 
@@ -592,20 +632,34 @@ def createSubProcesses(
 ) -> None:
     """Creates or updates a list of SubProcesses."""
     _generic_metadata_create_or_update(
-        config, projectname, subprocesses, "SubProcess", getSubProcesses
+        config=config, 
+        projectname=projectname, 
+        objects=subprocesses, 
+        endpoint="SubProcess", 
+        get_existing_func=getSubProcesses
     )
 
 
 def createReports(config: Config, projectname: str, reports: list[Report]) -> None:
     """Creates or updates a list of Reports."""
     _generic_metadata_create_or_update(
-        config, projectname, reports, "Reports", getReports
+        config=config, 
+        projectname=projectname, 
+        objects=reports, 
+        endpoint="Reports", 
+        get_existing_func=getReports
     )
 
 
 def createRules(config: Config, projectname: str, rules: list[Rule]) -> None:
     """Creates or updates a list of Rules."""
-    _generic_metadata_create_or_update(config, projectname, rules, "Rule", getRules)
+    _generic_metadata_create_or_update(
+        config=config, 
+        projectname=projectname, 
+        objects=rules, 
+        endpoint="Rule", 
+        get_existing_func=getRules
+    )
 
 
 def getProjects(

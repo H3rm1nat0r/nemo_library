@@ -134,7 +134,7 @@ def _generic_metadata_delete(config: Config, ids: list[str], endpoint: str) -> N
         response = requests.delete(
             f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}",
             headers=headers,
-            params = {"translationHandling": "UseAuxiliaryTranslationFields"}
+            params={"translationHandling": "UseAuxiliaryTranslationFields"},
         )
 
         if response.status_code != 204:
@@ -266,6 +266,26 @@ def getAttributeGroups(
     )
 
 
+def getAttributeLinks(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> list[AttributeLink]:
+    """Fetches AttributeLinks metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "AttributeLink",
+        "",
+        AttributeLink,
+        filter,
+        filter_type,
+        filter_value,
+    )
+
+
 def getMetrics(
     config: Config,
     projectname: str,
@@ -385,6 +405,26 @@ def getImportedColumns(
     )
 
 
+def getReports(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> list[Report]:
+    """Fetches Reports metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "Reports",
+        "/reports",
+        Report,
+        filter,
+        filter_type,
+        filter_value,
+    )
+
+
 def getSubProcesses(
     config: Config,
     projectname: str,
@@ -443,6 +483,11 @@ def deleteAttributeGroups(config: Config, attributegroups: list[str]) -> None:
     _generic_metadata_delete(config, attributegroups, "AttributeGroup")
 
 
+def deleteAttributeLinks(config: Config, attributelinks: list[str]) -> None:
+    """Deletes a list of AttributeLinks by their IDs."""
+    _generic_metadata_delete(config, attributelinks, "AttributeLink")
+
+
 def deletePages(config: Config, pages: list[str]) -> None:
     """Deletes a list of Pages by their IDs."""
     _generic_metadata_delete(config, pages, "Pages")
@@ -461,6 +506,11 @@ def deleteDiagrams(config: Config, diagrams: list[str]) -> None:
 def deleteSubprocesses(config: Config, subprocesses: list[str]) -> None:
     """Deletes a list of SubProcesses by their IDs."""
     _generic_metadata_delete(config, subprocesses, "SubProcess")
+
+
+def deleteReports(config: Config, reports: list[str]) -> None:
+    """Deletes a list of Reports by their IDs."""
+    _generic_metadata_delete(config, reports, "Reports")
 
 
 def deleteRules(config: Config, rules: list[str]) -> None:
@@ -507,6 +557,15 @@ def createAttributeGroups(
     )
 
 
+def createAttributeLinks(
+    config: Config, projectname: str, attributelinks: list[AttributeLink]
+) -> None:
+    """Creates or updates a list of AttributeLinks."""
+    _generic_metadata_create_or_update(
+        config, projectname, attributelinks, "AttributeLink", getAttributeLinks
+    )
+
+
 def createPages(config: Config, projectname: str, pages: list[Page]) -> None:
     """Creates or updates a list of Pages."""
     _generic_metadata_create_or_update(config, projectname, pages, "Pages", getPages)
@@ -534,6 +593,13 @@ def createSubProcesses(
     """Creates or updates a list of SubProcesses."""
     _generic_metadata_create_or_update(
         config, projectname, subprocesses, "SubProcess", getSubProcesses
+    )
+
+
+def createReports(config: Config, projectname: str, reports: list[Report]) -> None:
+    """Creates or updates a list of Reports."""
+    _generic_metadata_create_or_update(
+        config, projectname, reports, "Reports", getReports
     )
 
 
@@ -659,67 +725,3 @@ def getDependencyTree(config: Config, id: str) -> DependencyTree:
 
     data = json.loads(response.text)
     return DependencyTree.from_dict(data)
-
-
-def getReports(
-    config: Config,
-    projectname: str,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> list[Report]:
-    """Fetches Reports metadata with the given filters."""
-    return _generic_metadata_get(
-        config,
-        projectname,
-        "Reports",
-        "/reports",
-        Report,
-        filter,
-        filter_type,
-        filter_value,
-    )
-
-
-def createReports(config: Config, projectname: str, reports: list[Report]) -> None:
-    """Creates or updates a list of Reports."""
-    _generic_metadata_create_or_update(
-        config, projectname, reports, "Reports", getReports
-    )
-
-
-def deleteReports(config: Config, reports: list[str]) -> None:
-    """Deletes a list of Reports by their IDs."""
-    _generic_metadata_delete(config, reports, "Reports")
-
-
-def getAttributeLinks(
-    config: Config,
-    projectname: str,
-    filter: str = "*",
-    filter_type: FilterType = FilterType.STARTSWITH,
-    filter_value: FilterValue = FilterValue.DISPLAYNAME,
-) -> list[AttributeLink]:
-    """Fetches AttributeLinks metadata with the given filters."""
-    return _generic_metadata_get(
-        config,
-        projectname,
-        "AttributeLink",
-        "",
-        AttributeLink,
-        filter,
-        filter_type,
-        filter_value,
-    )
-
-def createAttributeLinks(
-    config: Config, projectname: str, attributelinks: list[AttributeLink]
-) -> None:
-    """Creates or updates a list of AttributeLinks."""
-    _generic_metadata_create_or_update(
-        config, projectname, attributelinks, "AttributeLink", getAttributeLinks
-    )
-
-def deleteAttributeLinks(config: Config, attributelinks: list[str]) -> None:
-    """Deletes a list of AttributeLinks by their IDs."""
-    _generic_metadata_delete(config, attributelinks, "AttributeLink")

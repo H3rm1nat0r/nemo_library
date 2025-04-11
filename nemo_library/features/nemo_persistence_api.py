@@ -8,6 +8,7 @@ import requests
 
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
+from nemo_library.model.attribute_link import AttributeLink
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.model.diagram import Diagram
@@ -690,3 +691,35 @@ def createReports(config: Config, projectname: str, reports: list[Report]) -> No
 def deleteReports(config: Config, reports: list[str]) -> None:
     """Deletes a list of Reports by their IDs."""
     _generic_metadata_delete(config, reports, "Reports")
+
+
+def getAttributeLinks(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> list[AttributeLink]:
+    """Fetches AttributeLinks metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "AttributeLink",
+        "",
+        AttributeLink,
+        filter,
+        filter_type,
+        filter_value,
+    )
+
+def createAttributeLinks(
+    config: Config, projectname: str, attributelinks: list[AttributeLink]
+) -> None:
+    """Creates or updates a list of AttributeLinks."""
+    _generic_metadata_create_or_update(
+        config, projectname, attributelinks, "AttributeLink", getAttributeLinks
+    )
+
+def deleteAttributeLinks(config: Config, attributelinks: list[str]) -> None:
+    """Deletes a list of AttributeLinks by their IDs."""
+    _generic_metadata_delete(config, attributelinks, "AttributeLink")

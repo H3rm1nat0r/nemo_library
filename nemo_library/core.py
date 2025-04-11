@@ -6,6 +6,7 @@ from nemo_library.features.migman_precheck_files import MigManPrecheckFiles
 from nemo_library.features.nemo_persistence_api import (
     createApplications,
     createAttributeGroups,
+    createAttributeLinks,
     createDefinedColumns,
     createDiagrams,
     createImportedColumns,
@@ -16,6 +17,7 @@ from nemo_library.features.nemo_persistence_api import (
     createTiles,
     deleteApplications,
     deleteAttributeGroups,
+    deleteAttributeLinks,
     deleteDefinedColumns,
     deleteDiagrams,
     deleteImportedColumns,
@@ -27,6 +29,7 @@ from nemo_library.features.nemo_persistence_api import (
     deleteTiles,
     getApplications,
     getAttributeGroups,
+    getAttributeLinks,
     getDefinedColumns,
     getDiagrams,
     getImportedColumns,
@@ -45,6 +48,7 @@ from nemo_library.features.nemo_report_api import (
 )
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
+from nemo_library.model.attribute_link import AttributeLink
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.diagram import Diagram
 from nemo_library.model.imported_column import ImportedColumn
@@ -68,7 +72,10 @@ from nemo_library.features.import_configuration import ImportConfigurations
 from nemo_library.features.migman_delete_projects import MigManDeleteProjects
 from nemo_library.features.migman_export_data import MigManExportData
 from nemo_library.features.migman_mapping_apply import MigManApplyMapping
-from nemo_library.features.migman_database import MigManDatabaseAddWebInformation, MigManDatabaseInit
+from nemo_library.features.migman_database import (
+    MigManDatabaseAddWebInformation,
+    MigManDatabaseInit,
+)
 from nemo_library.features.migman_create_project_templates import (
     MigManCreateProjectTemplates,
 )
@@ -282,7 +289,7 @@ class NemoLibrary:
             - This method populates the database with additional web-based metadata.
         """
         MigManDatabaseAddWebInformation()
-        
+
     def MigManPrecheckFiles(self) -> dict[str:str]:
         """
         Performs a pre-check on files required for the Migration Manager (MigMan).
@@ -968,3 +975,31 @@ class NemoLibrary:
     def createProjects(self, projects: list[Project]) -> None:
         """Creates or updates a list of Projects."""
         createProjects(config=self.config, projects=projects)
+
+    def getAttributeLinks(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> list[AttributeLink]:
+        """Fetches AttributeLinks metadata with the given filters."""
+        return getAttributeLinks(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def createAttributeLinks(
+        self, projectname: str, attributelinks: list[AttributeLink]
+    ) -> None:
+        """Creates or updates a list of AttributeLinks."""
+        createAttributeLinks(
+            config=self.config, projectname=projectname, attributelinks=attributelinks
+        )
+
+    def deleteAttributeLinks(self, attributelinks: list[str]) -> None:
+        """Deletes a list of AttributeLinks by their IDs."""
+        deleteAttributeLinks(config=self.config, attributelinks=attributelinks)

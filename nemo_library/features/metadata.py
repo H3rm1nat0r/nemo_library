@@ -11,6 +11,7 @@ from nemo_library.features.nemo_persistence_api import (
     _deserializeMetaDataObject,
     createApplications,
     createAttributeGroups,
+    createAttributeLinks,
     createDefinedColumns,
     createDiagrams,
     createMetrics,
@@ -21,6 +22,7 @@ from nemo_library.features.nemo_persistence_api import (
     createTiles,
     deleteApplications,
     deleteAttributeGroups,
+    deleteAttributeLinks,
     deleteDefinedColumns,
     deleteDiagrams,
     deleteMetrics,
@@ -31,6 +33,7 @@ from nemo_library.features.nemo_persistence_api import (
     deleteTiles,
     getApplications,
     getAttributeGroups,
+    getAttributeLinks,
     getDefinedColumns,
     getDiagrams,
     getImportedColumns,
@@ -77,6 +80,7 @@ def MetaDataLoad(
     functions = {
         "applications": getApplications,
         "attributegroups": getAttributeGroups,
+        "attributelinks": getAttributeLinks,
         "definedcolumns": getDefinedColumns,
         "diagrams": getDiagrams,
         "metrics": getMetrics,
@@ -111,6 +115,7 @@ def MetaDataDelete(
     get_functions = {
         "applications": getApplications,
         "attributegroups": getAttributeGroups,
+        "attributelinks": getAttributeLinks,
         "definedcolumns": getDefinedColumns,
         "diagrams": getDiagrams,
         "metrics": getMetrics,
@@ -128,6 +133,7 @@ def MetaDataDelete(
         "tiles": deleteTiles,
         "metrics": deleteMetrics,
         "definedcolumns": deleteDefinedColumns,
+        "attributelinks": deleteAttributeLinks,
         "attributegroups": deleteAttributeGroups,
         "diagrams": deleteDiagrams,
         "reports": deleteReports,
@@ -163,6 +169,7 @@ def MetaDataCreate(
     attributegroups_model = _load_data_from_json(
         config, "attributegroups", AttributeGroup
     )
+    attributelinks_model = _load_data_from_json(config, "attributelinks", None)
     definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
     diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
     metrics_model = _load_data_from_json(config, "metrics", Metric)
@@ -190,6 +197,14 @@ def MetaDataCreate(
         config=config,
         projectname=projectname,
         func=getAttributeGroups,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    attributelinks_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getAttributeLinks,
         filter=filter,
         filter_type=filter_type,
         filter_value=filter_value,
@@ -268,6 +283,7 @@ def MetaDataCreate(
     for key, model_list, nemo_list in [
         ("applications", applications_model, applications_nemo),
         ("attributegroups", attributegroups_model, attributegroups_nemo),
+        ("attributelinks", attributelinks_model, attributelinks_nemo),
         ("definedcolumns", definedcolumns_model, definedcolumns_nemo),
         ("diagrams", diagrams_model, diagrams_nemo),
         ("metrics", metrics_model, metrics_nemo),
@@ -293,6 +309,7 @@ def MetaDataCreate(
         "metrics": deleteMetrics,
         "definedcolumns": deleteDefinedColumns,
         "attributegroups": deleteAttributeGroups,
+        "attributelinks": deleteAttributeLinks,
         "diagrams": deleteDiagrams,
         "rules": deleteRules,
         "reports": deleteReports,
@@ -311,6 +328,7 @@ def MetaDataCreate(
         "rules": createRules,
         "diagrams": createDiagrams,
         "attributegroups": createAttributeGroups,
+        "attributelinks": createAttributeLinks,
         "definedcolumns": createDefinedColumns,
         "metrics": createMetrics,
         "tiles": createTiles,
@@ -350,6 +368,14 @@ def MetaDataCreate(
         filter_type=filter_type,
         filter_value=filter_value,
     )
+    attributelinks_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getAttributeLinks,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
     ics = getImportedColumns(config, projectname)
 
     metric_lookup = {metric.internalName: metric for metric in metrics_nemo}
@@ -360,32 +386,32 @@ def MetaDataCreate(
     }
 
     # reconcile focus order now
-    logging.info(f"reconcile order in focus")
-    for metric_internal_name, values in dependency_tree.items():
-        ics_metric = [ic for ic in ics if ic.internalName in values]
-        for ic in ics_metric:
-            if (
-                ic.parentAttributeGroupInternalName
-                != metric_lookup[metric_internal_name].parentAttributeGroupInternalName
-            ):
+    # logging.info(f"reconcile order in focus")
+    # for metric_internal_name, values in dependency_tree.items():
+    #     ics_metric = [ic for ic in ics if ic.internalName in values]
+    #     for ic in ics_metric:
+    #         if (
+    #             ic.parentAttributeGroupInternalName
+    #             != metric_lookup[metric_internal_name].parentAttributeGroupInternalName
+    #         ):
 
-                # special case: we have the restriction, that we cannot have linked attributes and
-                # thus some fields might be in different groups. We don't want to move them now
-                # we
-                if ic.parentAttributeGroupInternalName not in [
-                    ag.internalName for ag in attributegroups_nemo
-                ]:
-                    logging.info(
-                        f"move: {ic.internalName} from group {ic.parentAttributeGroupInternalName} to {metric_lookup[metric_internal_name].parentAttributeGroupInternalName}"
-                    )
-                    focusMoveAttributeBefore(
-                        config=config,
-                        projectname=projectname,
-                        sourceInternalName=ic.internalName,
-                        groupInternalName=metric_lookup[
-                            metric_internal_name
-                        ].parentAttributeGroupInternalName,
-                    )
+    #             # special case: we have the restriction, that we cannot have linked attributes and
+    #             # thus some fields might be in different groups. We don't want to move them now
+    #             # we
+    #             if ic.parentAttributeGroupInternalName not in [
+    #                 ag.internalName for ag in attributegroups_nemo
+    #             ]:
+    #                 logging.info(
+    #                     f"move: {ic.internalName} from group {ic.parentAttributeGroupInternalName} to {metric_lookup[metric_internal_name].parentAttributeGroupInternalName}"
+    #                 )
+    #                 focusMoveAttributeBefore(
+    #                     config=config,
+    #                     projectname=projectname,
+    #                     sourceInternalName=ic.internalName,
+    #                     groupInternalName=metric_lookup[
+    #                         metric_internal_name
+    #                     ].parentAttributeGroupInternalName,
+    #                 )
 
 def _date_columns(
     columns: list[str], imported_columns: list[ImportedColumn]

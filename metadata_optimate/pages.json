@@ -12,58 +12,38 @@
         "hideIfColumns": [],
         "internalName": "optimate_purchasing_cockpit_otif",
         "numberOfColumns": 3,
-        "numberOfRows": 2,
+        "numberOfRows": 3,
         "showIfColumns": [],
         "visuals": [
             {
                 "column": 1,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_deliveries_deviation_on_time_rate",
+                "content": "optimate_purchasing_replenishment_deviation",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
                 "rowSpan": 1,
-                "type": "Prediction"
+                "type": "Diagram"
             },
             {
-                "column": 3,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_replenishment_deviation_days",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Prediction"
-            },
-            {
-                "column": 1,
+                "column": 2,
                 "columnSpan": 1,
                 "content": "optimate_purchasing_order_confirmation_rate",
                 "contentTranslations": {},
                 "id": "",
-                "row": 2,
+                "row": 1,
                 "rowSpan": 1,
-                "type": "Prediction"
+                "type": "Diagram"
             },
             {
-                "column": 2,
+                "column": 3,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_order_lead_time_days",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 1,
-                "type": "Prediction"
-            },
-            {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_deliveries_deviation_in_full_rate",
+                "content": "optimate_purchasing_order_preparation_time_days",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
                 "rowSpan": 1,
-                "type": "Prediction"
+                "type": "Diagram"
             }
         ],
         "id": "",
@@ -106,7 +86,7 @@
                 "id": "",
                 "row": 2,
                 "rowSpan": 1,
-                "type": "Prediction"
+                "type": "Diagram"
             },
             {
                 "column": 1,

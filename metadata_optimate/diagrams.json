@@ -37,8 +37,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "de": "Ist",
-                    "en": "Act"
+                    "en": "Act",
+                    "de": "Ist"
                 }
             },
             {
@@ -50,6 +50,68 @@
                 "legendTranslations": {
                     "en": "Pred",
                     "de": "Progn"
+                }
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": "",
+        "basedOnMetric": true,
+        "conflictState": ""
+    },
+    {
+        "alternateVisualization": false,
+        "argument": {
+            "aggregation": "month",
+            "column": "DATE",
+            "dataType": "datetime"
+        },
+        "argumentAxisTitle": "Time",
+        "argumentAxisTitleTranslations": {
+            "de": "Zeit",
+            "en": "Time"
+        },
+        "description": "The chart shows the monthly development of the DPO (Days Payable Outstanding) key figure - i.e. the average number of days a company needs to pay supplier invoices. The development of the values is shown as a line, separated into actual values and forecast values for future periods. The details of the calculation can be found in the underlying metric.",
+        "descriptionTranslations": {
+            "de": "Das Diagramm zeigt die monatliche Entwicklung der DPO-Kennzahl (Days Payable Outstanding) \u2013 also der durchschnittlichen Anzahl an Tagen, die ein Unternehmen ben\u00f6tigt, um Lieferantenrechnungen zu bezahlen. Die Entwicklung der Werte ist als Linie dargestellt, getrennt nach Ist-Werten und Prognosewerten f\u00fcr kommende Zeitr\u00e4ume. Die Details zur Berechnung finden sich an der zu grundeliegenden Metrik",
+            "en": "The chart shows the monthly development of the DPO (Days Payable Outstanding) key figure - i.e. the average number of days a company needs to pay supplier invoices. The development of the values is shown as a line, separated into actual values and forecast values for future periods. The details of the calculation can be found in the underlying metric."
+        },
+        "displayName": "Days Payables Outstanding (DPO)",
+        "displayNameTranslations": {
+            "de": "Days Payables Outstanding (DPO)",
+            "en": "Days Payables Outstanding (DPO)"
+        },
+        "internalName": "optimate_purchasing_days_payables_outstanding_dpo",
+        "report": "dummy",
+        "summary": null,
+        "valueAxisTitle": "",
+        "valueAxisTitleTranslations": {
+            "en": "Time (Days)",
+            "de": "Zeit (Tage)"
+        },
+        "values": [
+            {
+                "aggregation": "prediction",
+                "chartType": "line",
+                "column": "d_p_o",
+                "id": "",
+                "legend": "Pred",
+                "legendTranslations": {
+                    "en": "Pred",
+                    "de": "Progn"
+                }
+            },
+            {
+                "aggregation": "actuals",
+                "chartType": "line",
+                "column": "d_p_o",
+                "id": "",
+                "legend": "Act",
+                "legendTranslations": {
+                    "de": "Ist",
+                    "en": "Act"
                 }
             }
         ],
@@ -99,8 +161,8 @@
                 "id": "",
                 "legend": "Too late (act)",
                 "legendTranslations": {
-                    "en": "Too late (act)",
-                    "de": "Zu sp\u00e4t (ist)"
+                    "de": "Zu sp\u00e4t (ist)",
+                    "en": "Too late (act)"
                 }
             },
             {
@@ -110,8 +172,8 @@
                 "id": "",
                 "legend": "On-Time (pred)",
                 "legendTranslations": {
-                    "de": "P\u00fcnktlich (progn)",
-                    "en": "On-Time (pred)"
+                    "en": "On-Time (pred)",
+                    "de": "P\u00fcnktlich (progn)"
                 }
             },
             {
@@ -121,8 +183,8 @@
                 "id": "",
                 "legend": "Too early (pred)",
                 "legendTranslations": {
-                    "en": "Too early (pred)",
-                    "de": "Zu fr\u00fch (progn)"
+                    "de": "Zu fr\u00fch (progn)",
+                    "en": "Too early (pred)"
                 }
             },
             {
@@ -154,8 +216,8 @@
                 "id": "",
                 "legend": "Too early (act)",
                 "legendTranslations": {
-                    "en": "Too early (act)",
-                    "de": "Zu fr\u00fch (ist)"
+                    "de": "Zu fr\u00fch (ist)",
+                    "en": "Too early (act)"
                 }
             }
         ],

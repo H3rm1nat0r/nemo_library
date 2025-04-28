@@ -174,12 +174,12 @@
             {
                 "column": 1,
                 "columnSpan": 1,
-                "content": "d_p_o",
+                "content": "optimate_purchasing_days_payables_outstanding_dpo",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,
                 "rowSpan": 2,
-                "type": "Prediction"
+                "type": "Diagram"
             }
         ],
         "id": "",

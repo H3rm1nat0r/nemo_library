@@ -43,11 +43,42 @@ def ReUploadDataFrame(
     format_data: bool = True,
 ) -> None:
 
+    # Default ImportConfigurations
     if import_configuration is None:
         import_configuration = ImportConfigurations()
 
+    # format data? we need to import first and then use the upload dataframe api
     if format_data:
         df = _format_data(df, import_configuration)
+
+    # syncronize columns
+    nemo_columns = getImportedColumns(config, projectname)
+    # check if all columns are in the project
+    new_columns = []
+    pandas_to_nemo_type = {
+        "int64": "integer",
+        "float64": "float",
+        "object": "string",
+        "bool": "boolean",
+        "datetime64[ns]": "datetime",
+        "category": "string",
+    }    
+    for column in df.columns:
+        if column not in [ic.displayName for ic in nemo_columns]:
+            logging.info(
+                f"Column {column} not found in project {projectname} - create it"
+            )
+            # create the column
+            new_columns.append(
+                ImportedColumn(
+                    displayName=column,
+                    dataType=pandas_to_nemo_type.get(str(df[column].dtype), "string"),
+                )
+            )
+    if new_columns:
+        createImportedColumns(
+            config=config, projectname=projectname, importedcolumns=new_columns
+        )
 
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_file_path = os.path.join(temp_dir, "tempfile.csv")

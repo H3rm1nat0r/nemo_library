@@ -699,22 +699,18 @@ def beautify_deals_drop_columns(deals: pd.DataFrame) -> pd.DataFrame:
     Notes:
     ------
     The following columns are removed if they exist:
-        - "deal_associations"
         - "deal_archived"
         - "deal_archived_at"
         - "deal_properties_with_history"
         - "deal_created_at"
         - "deal_updated_at"
-        - "deal_pipeline"
     """
     columns_to_drop = [
-        "deal_associations",
         "deal_archived",
         "deal_archived_at",
         "deal_properties_with_history",
         "deal_created_at",
         "deal_updated_at",
-        "deal_pipeline",
     ]
     deals = deals.drop(columns=columns_to_drop, errors="ignore")
     return deals

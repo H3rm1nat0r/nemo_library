@@ -51,6 +51,7 @@ from nemo_library.features.nemo_persistence_api import (
 )
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
+from nemo_library.model.attribute_link import AttributeLink
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.model.diagram import Diagram
@@ -87,7 +88,7 @@ def MetaDataLoad(
         "pages": getPages,
         "reports": getReports,
         "rules": getRules,
-        "tiles": getTiles, 
+        "tiles": getTiles,
         "subprocesses": getSubProcesses,
     }
 
@@ -123,7 +124,7 @@ def MetaDataDelete(
         "reports": getReports,
         "rules": getRules,
         "subprocesses": getSubProcesses,
-        "tiles": getTiles, 
+        "tiles": getTiles,
     }
 
     delete_functions = {
@@ -178,7 +179,13 @@ def MetaDataCreate(
     rules_model = _load_data_from_json(config, "rules", Rule)
     subprocesses_model = _load_data_from_json(config, "subprocesses", SubProcess)
     tiles_model = _load_data_from_json(config, "tiles", Tile)
-    
+
+    for definedcolumn in definedcolumns_model:
+        definedcolumn.parentAttributeGroupInternalName = None
+        
+    for metric in metrics_model:
+        metric.parentAttributeGroupInternalName = None
+        
     # sort attribute groups
     hierarchy, _ = _attribute_groups_build_hierarchy(attributegroups_model)
     attributegroups_model = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
@@ -324,10 +331,10 @@ def MetaDataCreate(
     # Now do updates and creates in a reverse  order
     logging.info(f"start creates and updates")
     create_functions = {
+        "attributegroups": createAttributeGroups,
         "reports": createReports,
         "rules": createRules,
         "diagrams": createDiagrams,
-        "attributegroups": createAttributeGroups,
         "attributelinks": createAttributeLinks,
         "definedcolumns": createDefinedColumns,
         "metrics": createMetrics,
@@ -348,6 +355,9 @@ def MetaDataCreate(
             create_function(
                 config=config, projectname=projectname, **{key: updates[key]}
             )
+
+    # reconcile of order in focus not possible at the moment
+    return
 
     # sub processes and focus order depends on dependency tree for objects
     # refresh data from server
@@ -376,42 +386,63 @@ def MetaDataCreate(
         filter_type=filter_type,
         filter_value=filter_value,
     )
-    ics = getImportedColumns(config, projectname)
 
-    metric_lookup = {metric.internalName: metric for metric in metrics_nemo}
     dependency_tree = {
-        metric.internalName: list(set(_collect_node_internal_names(d)))
+        metric.internalName: _collect_node_objects(d)
         for metric in metrics_nemo
         if (d := getDependencyTree(config=config, id=metric.id)) is not None
     }
 
     # reconcile focus order now
-    # logging.info(f"reconcile order in focus")
-    # for metric_internal_name, values in dependency_tree.items():
-    #     ics_metric = [ic for ic in ics if ic.internalName in values]
-    #     for ic in ics_metric:
-    #         if (
-    #             ic.parentAttributeGroupInternalName
-    #             != metric_lookup[metric_internal_name].parentAttributeGroupInternalName
-    #         ):
+    logging.info(f"reconcile order in focus")
+    for metric_internal_name, values in dependency_tree.items():
 
-    #             # special case: we have the restriction, that we cannot have linked attributes and
-    #             # thus some fields might be in different groups. We don't want to move them now
-    #             # we
-    #             if ic.parentAttributeGroupInternalName not in [
-    #                 ag.internalName for ag in attributegroups_nemo
-    #             ]:
-    #                 logging.info(
-    #                     f"move: {ic.internalName} from group {ic.parentAttributeGroupInternalName} to {metric_lookup[metric_internal_name].parentAttributeGroupInternalName}"
-    #                 )
-    #                 focusMoveAttributeBefore(
-    #                     config=config,
-    #                     projectname=projectname,
-    #                     sourceInternalName=ic.internalName,
-    #                     groupInternalName=metric_lookup[
-    #                         metric_internal_name
-    #                     ].parentAttributeGroupInternalName,
-    #                 )
+        # find metric in model
+        metric = None
+        for metric_search in metrics_model:
+            if metric_search.internalName == metric_internal_name:
+                metric = metric_search
+                break
+        if not metric:
+            logging.error(f"metric {metric_internal_name} not found in model")
+            continue
+
+        # check whether we need some new links
+        new_links = []
+        for element in values:
+
+            # linked attribute are support for imported columns only
+            if element.nodeType == "ExportedColumn":
+                # check whether we have this linked attribute already
+                link_found = False
+                for link in attributelinks_nemo:
+                    if (
+                        link.sourceAttributeId == element.nodeId
+                        and link.parentAttributeGroupInternalName
+                        == metric.parentAttributeGroupInternalName
+                    ):
+                        link_found = True
+                        break
+                if not link_found:
+                    logging.info(
+                        f"create linked attribute {metric.internalName} - {element.nodeInternalName}"
+                    )
+                    new_link = AttributeLink(
+                        sourceAttributeId=element.nodeId,
+                        parentAttributeGroupInternalName=metric.parentAttributeGroupInternalName,
+                        displayName=f"{metric.internalName} - {element.nodeInternalName}",
+                    )
+                    new_links.append(new_link)
+                    attributelinks_nemo.append(
+                        new_link
+                    )  # add link here, we don't want to create it twice
+
+        # createAttributeLinks(
+        #     config=config,
+        #     projectname=projectname,
+        #     attributeLinks=new_links,
+        # )
+
 
 def _date_columns(
     columns: list[str], imported_columns: list[ImportedColumn]
@@ -429,11 +460,11 @@ def _date_columns(
     return date_cols
 
 
-def _collect_node_internal_names(tree: DependencyTree) -> list[str]:
-    names = [tree.nodeInternalName]
+def _collect_node_objects(tree: DependencyTree) -> list[str]:
+    elements = [tree]
     for dep in tree.dependencies:
-        names.extend(_collect_node_internal_names(dep))
-    return names
+        elements.extend(_collect_node_objects(dep))
+    return elements
 
 
 def _attribute_groups_build_hierarchy(attribute_groups):

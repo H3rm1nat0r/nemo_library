@@ -37,6 +37,8 @@
         "scopeName": "",
         "id": "",
         "projectId": "",
-        "tenant": ""
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
     }
 ]

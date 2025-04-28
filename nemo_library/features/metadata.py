@@ -180,12 +180,6 @@ def MetaDataCreate(
     subprocesses_model = _load_data_from_json(config, "subprocesses", SubProcess)
     tiles_model = _load_data_from_json(config, "tiles", Tile)
 
-    for definedcolumn in definedcolumns_model:
-        definedcolumn.parentAttributeGroupInternalName = None
-        
-    for metric in metrics_model:
-        metric.parentAttributeGroupInternalName = None
-        
     # sort attribute groups
     hierarchy, _ = _attribute_groups_build_hierarchy(attributegroups_model)
     attributegroups_model = attribute_groups_sort_hierarchy(hierarchy, root_key=None)

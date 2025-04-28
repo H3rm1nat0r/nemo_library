@@ -1,4 +1,5 @@
 from dataclasses import dataclass, asdict
+from datetime import datetime
 
 
 @dataclass
@@ -62,6 +63,10 @@ class Diagram:
         id (str): The unique identifier for the diagram.
         projectId (str): The project identifier.
         tenant (str): The tenant identifier.
+        isCustom (bool): Indicates if the diagram is custom.
+        metadataClassificationInternalName (str): The internal name for metadata classification.
+        basedOnMetric (bool): Indicates if the diagram is based on a metric.
+        conflictState (str): The conflict state of the diagram.
     """
 
     alternateVisualization: bool
@@ -83,6 +88,8 @@ class Diagram:
     tenant: str
     isCustom: bool = False
     metadataClassificationInternalName: str = ""
+    basedOnMetric: bool = False
+    conflictState: str = ""
 
     def to_dict(self):
         """

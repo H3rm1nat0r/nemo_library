@@ -1,1 +1,108 @@
-[]
+[
+    {
+        "alternateVisualization": false,
+        "argument": {
+            "aggregation": "month",
+            "column": "DATE",
+            "dataType": "datetime"
+        },
+        "argumentAxisTitle": "Time",
+        "argumentAxisTitleTranslations": {
+            "en": "Time",
+            "de": "Zeit"
+        },
+        "description": "The chart shows the monthly distribution of supplier payments based on payment timing \u2013 categorized into early, on-time, and late payments. The data is presented as stacked bars for each month, with each bar illustrating the relative share of the three payment categories. Additionally, forecast values for upcoming months are included. The details of the calculation can be found in the underlying metric.",
+        "descriptionTranslations": {
+            "de": "Das Diagramm zeigt die monatliche Verteilung der Lieferantenzahlungen nach Zahlungstermin \u2013 unterteilt in verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Zahlungen. Die Daten werden als gestapelte Balken pro Monat dargestellt, wobei jeder Balken die relative Verteilung der drei Zahlungskategorien abbildet. Zus\u00e4tzlich werden Prognosewerte f\u00fcr kommende Monate dargestellt. Die Details zur Berechnung finden sich an der zu grundeliegenden Metrik",
+            "en": "The chart shows the monthly distribution of supplier payments based on payment timing \u2013 categorized into early, on-time, and late payments. The data is presented as stacked bars for each month, with each bar illustrating the relative share of the three payment categories. Additionally, forecast values for upcoming months are included. The details of the calculation can be found in the underlying metric."
+        },
+        "displayName": "Share of early, on-time and late supplier payments",
+        "displayNameTranslations": {
+            "en": "Share of early, on-time and late supplier payments",
+            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Lieferantenzahlungen"
+        },
+        "internalName": "optimate_purchasing_supplier_payments",
+        "report": "dummy",
+        "summary": null,
+        "valueAxisTitle": "Share (%)",
+        "valueAxisTitleTranslations": {
+            "de": "Anteil (%)",
+            "en": "Share (%)"
+        },
+        "values": [
+            {
+                "aggregation": "prediction",
+                "chartType": "stackedbar",
+                "column": "optimate_purchasing_payments_deviation_too_early_rate",
+                "id": "",
+                "legend": "Too early (pred)",
+                "legendTranslations": {
+                    "de": "Zu fr\u00fch (progn)",
+                    "en": "Too early (pred)"
+                }
+            },
+            {
+                "aggregation": "actuals",
+                "chartType": "stackedbar",
+                "column": "optimate_purchasing_payments_deviation_too_early_rate",
+                "id": "",
+                "legend": "Too early (act)",
+                "legendTranslations": {
+                    "de": "Zu fr\u00fch (akt)",
+                    "en": "Too early (act)"
+                }
+            },
+            {
+                "aggregation": "actuals",
+                "chartType": "stackedbar",
+                "column": "optimate_purchasing_payments_deviation_on_time_rate",
+                "id": "",
+                "legend": "On-Time (act)",
+                "legendTranslations": {
+                    "de": "P\u00fcnktlich (akt)",
+                    "en": "On-Time (act)"
+                }
+            },
+            {
+                "aggregation": "actuals",
+                "chartType": "stackedbar",
+                "column": "optimate_purchasing_payments_deviation_too_late_rate",
+                "id": "",
+                "legend": "Too late (act)",
+                "legendTranslations": {
+                    "en": "Too late (act)",
+                    "de": "Zu sp\u00e4t (akt)"
+                }
+            },
+            {
+                "aggregation": "prediction",
+                "chartType": "stackedbar",
+                "column": "optimate_purchasing_payments_deviation_too_late_rate",
+                "id": "",
+                "legend": "Too late (pred)",
+                "legendTranslations": {
+                    "en": "Too late (pred)",
+                    "de": "Zu sp\u00e4t (progn)"
+                }
+            },
+            {
+                "aggregation": "prediction",
+                "chartType": "stackedbar",
+                "column": "optimate_purchasing_payments_deviation_on_time_rate",
+                "id": "",
+                "legend": "On-Time (pred)",
+                "legendTranslations": {
+                    "de": "P\u00fcnktlich (progn)",
+                    "en": "On-Time (pred)"
+                }
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": "",
+        "basedOnMetric": true,
+        "conflictState": ""
+    }
+]

@@ -144,12 +144,12 @@
             {
                 "column": 2,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_otif_rate",
+                "content": "optimate_purchasing_on_time_in_full_otif",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,
                 "rowSpan": 2,
-                "type": "Prediction"
+                "type": "Diagram"
             },
             {
                 "column": 2,

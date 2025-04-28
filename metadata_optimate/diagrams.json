@@ -37,8 +37,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "en": "Act",
-                    "de": "Ist"
+                    "de": "Ist",
+                    "en": "Act"
                 }
             },
             {
@@ -70,8 +70,61 @@
         },
         "argumentAxisTitle": "Time",
         "argumentAxisTitleTranslations": {
-            "de": "Zeit",
-            "en": "Time"
+            "en": "Time",
+            "de": "Zeit"
+        },
+        "description": "The diagram shows the monthly development of purchasing delivery reliability, i.e. how reliably suppliers deliver ordered goods on time.  This key figure records the extent to which a delivery reaches the recipient both on time and in full. The development of the values is shown as a line, separated into actual values and forecast values for future periods.  The details of the calculation can be found in the underlying metric.",
+        "descriptionTranslations": {
+            "en": "The diagram shows the monthly development of purchasing delivery reliability, i.e. how reliably suppliers deliver ordered goods on time.  This key figure records the extent to which a delivery reaches the recipient both on time and in full. The development of the values is shown as a line, separated into actual values and forecast values for future periods.  The details of the calculation can be found in the underlying metric.",
+            "de": "Das Diagramm zeigt die monatliche Entwicklung der Einkausfliefertreue, also wie zuverl\u00e4ssig Lieferanten bestellte Waren termingerecht liefern.  Diese Kennzahl erfasst, inwieweit eine Lieferung sowohl p\u00fcnktlich (\u201eOn-Time\u201c) als auch vollst\u00e4ndig (\u201eIn-Full\u201c) beim Empf\u00e4nger eintrifft. Die Entwicklung der Werte ist als Linie dargestellt, getrennt nach Ist-Werten und Prognosewerten f\u00fcr kommende Zeitr\u00e4ume. Die Details zur Berechnung finden sich an der zu grundeliegenden Metrik"
+        },
+        "displayName": "On Time  in Full (OTIF)",
+        "displayNameTranslations": {
+            "en": "On Time  in Full (OTIF)",
+            "de": "Einkaufsliefertreue"
+        },
+        "internalName": "optimate_purchasing_on_time_in_full_otif",
+        "report": "dummy",
+        "summary": null,
+        "valueAxisTitle": "Rate (%)",
+        "valueAxisTitleTranslations": {},
+        "values": [
+            {
+                "aggregation": "actuals",
+                "chartType": "line",
+                "column": "optimate_purchasing_otif_rate",
+                "id": "",
+                "legend": "Act",
+                "legendTranslations": {}
+            },
+            {
+                "aggregation": "prediction",
+                "chartType": "line",
+                "column": "optimate_purchasing_otif_rate",
+                "id": "",
+                "legend": "Pred",
+                "legendTranslations": {}
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": "",
+        "basedOnMetric": true,
+        "conflictState": ""
+    },
+    {
+        "alternateVisualization": false,
+        "argument": {
+            "aggregation": "month",
+            "column": "DATE",
+            "dataType": "datetime"
+        },
+        "argumentAxisTitle": "Time",
+        "argumentAxisTitleTranslations": {
+            "en": "Time",
+            "de": "Zeit"
         },
         "description": "The chart shows the monthly development of the DPO (Days Payable Outstanding) key figure - i.e. the average number of days a company needs to pay supplier invoices. The development of the values is shown as a line, separated into actual values and forecast values for future periods. The details of the calculation can be found in the underlying metric.",
         "descriptionTranslations": {
@@ -80,8 +133,8 @@
         },
         "displayName": "Days Payables Outstanding (DPO)",
         "displayNameTranslations": {
-            "de": "Days Payables Outstanding (DPO)",
-            "en": "Days Payables Outstanding (DPO)"
+            "en": "Days Payables Outstanding (DPO)",
+            "de": "Im Einkauf zur\u00fcckgehaltens Kapital (DPO)"
         },
         "internalName": "optimate_purchasing_days_payables_outstanding_dpo",
         "report": "dummy",
@@ -99,8 +152,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "en": "Pred",
-                    "de": "Progn"
+                    "de": "Progn",
+                    "en": "Pred"
                 }
             },
             {
@@ -110,8 +163,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "de": "Ist",
-                    "en": "Act"
+                    "en": "Act",
+                    "de": "Ist"
                 }
             }
         ],
@@ -172,8 +225,8 @@
                 "id": "",
                 "legend": "On-Time (pred)",
                 "legendTranslations": {
-                    "en": "On-Time (pred)",
-                    "de": "P\u00fcnktlich (progn)"
+                    "de": "P\u00fcnktlich (progn)",
+                    "en": "On-Time (pred)"
                 }
             },
             {
@@ -183,8 +236,8 @@
                 "id": "",
                 "legend": "Too early (pred)",
                 "legendTranslations": {
-                    "de": "Zu fr\u00fch (progn)",
-                    "en": "Too early (pred)"
+                    "en": "Too early (pred)",
+                    "de": "Zu fr\u00fch (progn)"
                 }
             },
             {
@@ -194,8 +247,8 @@
                 "id": "",
                 "legend": "On-Time (act)",
                 "legendTranslations": {
-                    "de": "P\u00fcnktlich (ist)",
-                    "en": "On-Time (act)"
+                    "en": "On-Time (act)",
+                    "de": "P\u00fcnktlich (ist)"
                 }
             },
             {
@@ -205,8 +258,8 @@
                 "id": "",
                 "legend": "Too late (pred)",
                 "legendTranslations": {
-                    "en": "Too late (pred)",
-                    "de": "Zu sp\u00e4t (progn)"
+                    "de": "Zu sp\u00e4t (progn)",
+                    "en": "Too late (pred)"
                 }
             },
             {
@@ -216,8 +269,8 @@
                 "id": "",
                 "legend": "Too early (act)",
                 "legendTranslations": {
-                    "de": "Zu fr\u00fch (ist)",
-                    "en": "Too early (act)"
+                    "en": "Too early (act)",
+                    "de": "Zu fr\u00fch (ist)"
                 }
             }
         ],

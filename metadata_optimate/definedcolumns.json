@@ -8,37 +8,10 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "(Parking Lot) Purchasing Replenishment Deviation On Time",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Replenishment Deviation On Time"
-        },
-        "formula": "optimate_purchasing_replenishment_deviation_days == 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_replenishment_deviation_on_time",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
         "displayName": "On-Time Sourcing (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufstermintreue (boolean)",
-            "en": "On-Time Sourcing (boolean)"
+            "en": "On-Time Sourcing (boolean)",
+            "de": "Einkaufstermintreue (boolean)"
         },
         "formula": "optimate_purchasing_deliveries_deviation_days >= 0",
         "groupByColumnInternalName": null,
@@ -63,64 +36,10 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "(Parking Lot) Purchasing Replenishment Deviation Too HIGH",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Replenishment Deviation Too HIGH"
-        },
-        "formula": "optimate_purchasing_replenishment_deviation_days > 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_replenishment_deviation_too_high",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(Parking Lot) Purchasing Order Preparation Time too low (boolean)",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Order Preparation Time too low (boolean)"
-        },
-        "formula": "optimate_purchasing_parking_lot_order_preparation_time_days < 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": 128,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_order_preparation_time_too_low_boolean",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
         "displayName": "On-Time In-Full Sourcing (OTIF) (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufstermintreue und Mengentreue (OTIF) (boolean)",
-            "en": "On-Time In-Full Sourcing (OTIF) (boolean)"
+            "en": "On-Time In-Full Sourcing (OTIF) (boolean)",
+            "de": "Einkaufstermintreue und Mengentreue (OTIF) (boolean)"
         },
         "formula": "if(pur_order_line_delivery_date<=pur_order_line_requested_date,if(pur_order_line_qty==pur_stock_rec_line_qty,1,0),0)",
         "groupByColumnInternalName": null,
@@ -155,60 +74,6 @@
         "unit": "",
         "focusOrder": "",
         "internalName": "optimate_purchasing_deliveries_deviation_in_full_boolean",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(Parking Lot) Purchasing Deliveries Deviation Too Early (boolean)",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Deliveries Deviation Too Early (boolean)"
-        },
-        "formula": "optimate_purchasing_deliveries_deviation_days > 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_deliveries_deviation_too_early_boolean",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "Purchasing under delivery (true/false)",
-        "descriptionTranslations": {
-            "en": "Purchasing under delivery (true/false)"
-        },
-        "displayName": "(Parking Lot) Purchasing Deliveries Deviation Underdelivered (boolean)",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Deliveries Deviation Underdelivered (boolean)"
-        },
-        "formula": "optimate_purchasing_deliveries_deviation_amount > 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_deliveries_deviation_underdelivered_boolean",
         "parentAttributeGroupInternalName": null,
         "id": "",
         "projectId": "",
@@ -308,8 +173,8 @@
         "descriptionTranslations": {},
         "displayName": "In-Full Sourcing Deviation (amount)",
         "displayNameTranslations": {
-            "en": "In-Full Sourcing Deviation (amount)",
-            "de": "Einkaufsmengentreue Abweichung (Menge)"
+            "de": "Einkaufsmengentreue Abweichung (Menge)",
+            "en": "In-Full Sourcing Deviation (amount)"
         },
         "formula": "pur_order_line_qty-pur_stock_rec_line_qty",
         "groupByColumnInternalName": null,
@@ -356,33 +221,6 @@
         "categorialType": false,
         "columnType": "DefinedColumn",
         "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(Parking Lot) Purchasing Replenishment Deviation Too LOW",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Replenishment Deviation Too LOW"
-        },
-        "formula": "optimate_purchasing_replenishment_deviation_days < 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_replenishment_deviation_too_low",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
         "dataType": "integer",
         "description": "",
         "descriptionTranslations": {
@@ -400,33 +238,6 @@
         "unit": "",
         "focusOrder": "",
         "internalName": "optimate_purchasing_invoice_processing_time_days",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(Parking Lot) Purchasing Deliveries Deviation Too Late (boolean)",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Deliveries Deviation Too Late (boolean)"
-        },
-        "formula": "optimate_purchasing_deliveries_deviation_days < 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_deliveries_deviation_too_late_boolean",
         "parentAttributeGroupInternalName": null,
         "id": "",
         "projectId": "",
@@ -494,87 +305,6 @@
         "categorialType": false,
         "columnType": "DefinedColumn",
         "containsSensitiveData": false,
-        "dataType": "integer",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(Parking Lot) Purchasing Order Preparation Time (days)",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Order Preparation Time (days)"
-        },
-        "formula": "pur_order_line_requested_date-pur_order_line_creation_date-part_replenishment_time",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": 128,
-        "unit": "days",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_order_preparation_time_days",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(Parking Lot) Purchasing Order Preparation Time too high (boolean)",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Order Preparation Time too high (boolean)"
-        },
-        "formula": "optimate_purchasing_parking_lot_order_preparation_time_days > 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": 128,
-        "unit": "days",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_order_preparation_time_too_high_boolean",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(Parking Lot) Purchasing Order Preparation Time on Time (boolean)",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Order Preparation Time on Time (boolean)"
-        },
-        "formula": "optimate_purchasing_parking_lot_order_preparation_time_days == 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": 128,
-        "unit": "days",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_order_preparation_time_on_time_boolean",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
         "dataType": "boolean",
         "description": "",
         "descriptionTranslations": {
@@ -609,8 +339,8 @@
         },
         "displayName": "Goods Receipt Processing Time (days)",
         "displayNameTranslations": {
-            "de": "Prozessdauer Wareneingang (Tage)",
-            "en": "Goods Receipt Processing Time (days)"
+            "en": "Goods Receipt Processing Time (days)",
+            "de": "Prozessdauer Wareneingang (Tage)"
         },
         "formula": "pur_stock_rec_line_creation_date-pur_stock_rec_doc_date",
         "groupByColumnInternalName": null,
@@ -619,33 +349,6 @@
         "unit": "",
         "focusOrder": "",
         "internalName": "optimate_purchasing_goods_receipt_processing_time_days",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "Purchasing over delivery (true/false)",
-        "descriptionTranslations": {
-            "en": "Purchasing over delivery (true/false)"
-        },
-        "displayName": "(Parking Lot) Purchasing Deliveries Deviation Overdelivered (boolean)",
-        "displayNameTranslations": {
-            "en": "(Parking Lot) Purchasing Deliveries Deviation Overdelivered (boolean)"
-        },
-        "formula": "optimate_purchasing_deliveries_deviation_amount < 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_parking_lot_deliveries_deviation_overdelivered_boolean",
         "parentAttributeGroupInternalName": null,
         "id": "",
         "projectId": "",
@@ -689,8 +392,8 @@
         "descriptionTranslations": {},
         "displayName": "Order Confirmation (boolean)",
         "displayNameTranslations": {
-            "en": "Order Confirmation (boolean)",
-            "de": "Auftragsbest\u00e4tigung (boolean)"
+            "de": "Auftragsbest\u00e4tigung (boolean)",
+            "en": "Order Confirmation (boolean)"
         },
         "formula": "pur_order_line_amount_conf > 0",
         "groupByColumnInternalName": null,

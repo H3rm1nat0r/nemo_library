@@ -37,8 +37,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "de": "Ist",
-                    "en": "Act"
+                    "en": "Act",
+                    "de": "Ist"
                 }
             },
             {
@@ -158,8 +158,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "de": "Progn",
-                    "en": "Pred"
+                    "en": "Pred",
+                    "de": "Progn"
                 }
             },
             {
@@ -208,8 +208,20 @@
         "report": "dummy",
         "summary": null,
         "valueAxisTitle": "Time (Days)",
-        "valueAxisTitleTranslations": {},
+        "valueAxisTitleTranslations": {
+            "en": "Time (Days)"
+        },
         "values": [
+            {
+                "aggregation": "prediction",
+                "chartType": "line",
+                "column": "optimate_purchasing_order_lead_time_days",
+                "id": "",
+                "legend": "Pred",
+                "legendTranslations": {
+                    "en": "Pred"
+                }
+            },
             {
                 "aggregation": "actuals",
                 "chartType": "line",
@@ -217,8 +229,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "de": "Ist",
-                    "en": "Act"
+                    "en": "Act",
+                    "de": "Ist"
                 }
             }
         ],
@@ -268,8 +280,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "de": "Progn",
-                    "en": "Pred"
+                    "en": "Pred",
+                    "de": "Progn"
                 }
             },
             {
@@ -330,8 +342,8 @@
                 "id": "",
                 "legend": "Too late (act)",
                 "legendTranslations": {
-                    "en": "Too late (act)",
-                    "de": "Zu sp\u00e4t (ist)"
+                    "de": "Zu sp\u00e4t (ist)",
+                    "en": "Too late (act)"
                 }
             },
             {
@@ -385,8 +397,8 @@
                 "id": "",
                 "legend": "Too early (act)",
                 "legendTranslations": {
-                    "en": "Too early (act)",
-                    "de": "Zu fr\u00fch (ist)"
+                    "de": "Zu fr\u00fch (ist)",
+                    "en": "Too early (act)"
                 }
             }
         ],
@@ -433,8 +445,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "en": "Pred",
-                    "de": "Progn"
+                    "de": "Progn",
+                    "en": "Pred"
                 }
             },
             {
@@ -495,8 +507,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "de": "Progn",
-                    "en": "Pred"
+                    "en": "Pred",
+                    "de": "Progn"
                 }
             },
             {

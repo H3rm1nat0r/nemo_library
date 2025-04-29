@@ -38,6 +38,7 @@ class Application:
 
     Attributes:
         active (bool): Indicates if the application is active.
+        conflictState (str): The conflict state of the application.
         description (str): The description of the application.
         descriptionTranslations (dict[str, str]): Translations for the description.
         displayName (str): The display name of the application.
@@ -53,9 +54,12 @@ class Application:
         id (str): The unique identifier of the application.
         projectId (str): The project identifier.
         tenant (str): The tenant identifier.
+        isCustom (bool): Indicates if the application is custom.
+        metadataClassificationInternalName (str): The internal name for metadata classification.
     """
 
     active: bool = True
+    conflictState: str = "NoConflict"
     description: str = ""
     descriptionTranslations: dict[str, str] = field(default_factory=dict)
     displayName: str = None

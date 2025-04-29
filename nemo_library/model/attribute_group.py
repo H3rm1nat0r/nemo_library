@@ -23,6 +23,8 @@ class AttributeGroup:
     tenant: str = ""
     isCustom: bool = False
     metadataClassificationInternalName: str = ""
+    order: str = ""
+    conflictState: str = "NoConflict"
 
     def to_dict(self):
         """

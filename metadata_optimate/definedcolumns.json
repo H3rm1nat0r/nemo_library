@@ -13,7 +13,7 @@
             "de": "Einkaufstermintreue (boolean)",
             "en": "On-Time Sourcing (boolean)"
         },
-        "formula": "optimate_purchasing_on_time_sourcing_days >= 0",
+        "formula": "optimate_purchasing_on_time_sourcing_days == 0",
         "groupByColumnInternalName": null,
         "importName": "",
         "stringSize": null,
@@ -36,10 +36,38 @@
         "descriptionTranslations": {
             "en": ""
         },
+        "displayName": "In-Full Sourcing Overdelivered (boolean)",
+        "displayNameTranslations": {
+            "en": "In-Full Sourcing Overdelivered (boolean)",
+            "de": "Einkaufsmengentreue \u00fcberliefert (boolean)"
+        },
+        "formula": "optimate_purchasing_in_full_sourcing_amount < 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": null,
+        "unit": "",
+        "focusOrder": "",
+        "internalName": "optimate_purchasing_in_full_sourcing_overdelivered_boolean",
+        "parentAttributeGroupInternalName": null,
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
         "displayName": "On-Time In-Full Sourcing (OTIF) (boolean)",
         "displayNameTranslations": {
-            "en": "On-Time In-Full Sourcing (OTIF) (boolean)",
-            "de": "Einkaufstermintreue und Mengentreue (OTIF) (boolean)"
+            "de": "Einkaufstermintreue und Mengentreue (OTIF) (boolean)",
+            "en": "On-Time In-Full Sourcing (OTIF) (boolean)"
         },
         "formula": "if(pur_order_line_delivery_date<=pur_order_line_requested_date,if(pur_order_line_qty==pur_stock_rec_line_qty,1,0),0)",
         "groupByColumnInternalName": null,
@@ -64,9 +92,10 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "(O) Global Payments Deviation (days)",
+        "displayName": "Payments Deviation (days)",
         "displayNameTranslations": {
-            "en": "Payments Deviation (days)"
+            "en": "Payments Deviation (days)",
+            "de": "Zahlungsabweichung (Tage)"
         },
         "formula": "payment_netto_due_date-payment_last_pay_date",
         "groupByColumnInternalName": null,
@@ -91,36 +120,9 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "Goods Receipt Processing Time On-Time (boolean)",
+        "displayName": "Payments Deviation Too Late (boolean)",
         "displayNameTranslations": {
-            "de": "Prozessdauer Wareneingang p\u00fcnktlich (boolean)",
-            "en": "Goods Receipt Processing Time On-Time (boolean)"
-        },
-        "formula": "optimate_purchasing_goods_receipt_processing_time_days == 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_goods_receipt_processing_time_ontimeboolean",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(O) Global Payments Deviation Too Late (boolean)",
-        "displayNameTranslations": {
+            "de": "Zahlungsabweichung zu sp\u00e4t (boolean)",
             "en": "Payments Deviation Too Late (boolean)"
         },
         "formula": "optimate_global_payments_deviation_days < 0",
@@ -146,8 +148,9 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "(Parking Lot) Purchasing Deliveries Deviation Too Early (boolean)",
+        "displayName": "On-Time Sourcing Too Early (boolean)",
         "displayNameTranslations": {
+            "de": "Einkaufstermintreue zu fr\u00fch (boolean)",
             "en": "On-Time Sourcing Too Early (boolean)"
         },
         "formula": "optimate_purchasing_on_time_sourcing_days > 0",
@@ -168,68 +171,14 @@
         "categorialType": false,
         "columnType": "DefinedColumn",
         "containsSensitiveData": false,
-        "dataType": "integer",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "Invoice Verification Processing Time (days)",
-        "displayNameTranslations": {
-            "de": "Prozessdauer Rechnungskontrolle (Tage)",
-            "en": "Invoice Verification Processing Time (days)"
-        },
-        "formula": "pur_inv_change_date-pur_inv_ext_doc_date",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_invoice_processing_time_days",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
         "dataType": "boolean",
         "description": "",
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "On-Time Sourcing (boolean)",
+        "displayName": "On-Time Sourcing Too Late (boolean)",
         "displayNameTranslations": {
-            "en": "On-Time Sourcing Exact (boolean)"
-        },
-        "formula": "optimate_purchasing_on_time_sourcing_days >= 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_on_time_sourcing_exact_boolean",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(Parking Lot) Purchasing Deliveries Deviation Too Late (boolean)",
-        "displayNameTranslations": {
+            "de": "Einkaufstermintreue zu sp\u00e4t (boolean)",
             "en": "On-Time Sourcing Too Late (boolean)"
         },
         "formula": "optimate_purchasing_on_time_sourcing_days < 0",
@@ -250,6 +199,34 @@
         "categorialType": false,
         "columnType": "DefinedColumn",
         "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "In-Full Sourcing Underdelivered (boolean)",
+        "displayNameTranslations": {
+            "de": "Einkaufsmengentreue unterliefert (boolean)",
+            "en": "In-Full Sourcing Underdelivered (boolean)"
+        },
+        "formula": "optimate_purchasing_in_full_sourcing_amount > 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": null,
+        "unit": "",
+        "focusOrder": "",
+        "internalName": "optimate_purchasing_in_full_sourcing_underdelivered_boolean",
+        "parentAttributeGroupInternalName": null,
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
         "dataType": "integer",
         "description": "",
         "descriptionTranslations": {
@@ -257,8 +234,8 @@
         },
         "displayName": "Procurement Lead Time (PLT) (days)",
         "displayNameTranslations": {
-            "en": "Procurement Lead Time (PLT) (days)",
-            "de": "Bestellvorlaufzeit (Tage)"
+            "de": "Bestellvorlaufzeit (Tage)",
+            "en": "Procurement Lead Time (PLT) (days)"
         },
         "formula": "pur_order_line_requested_date-pur_order_line_creation_date",
         "groupByColumnInternalName": null,
@@ -266,7 +243,7 @@
         "stringSize": 128,
         "unit": "days",
         "focusOrder": "",
-        "internalName": "optimate_purchasing_order_lead_time_days",
+        "internalName": "optimate_purchasing_procurement_lead_time_days",
         "parentAttributeGroupInternalName": null,
         "id": "",
         "projectId": "",
@@ -283,36 +260,9 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "Invoice Verification Processing Time On-Time (boolean)",
+        "displayName": "Payments Deviation On Time (boolean)",
         "displayNameTranslations": {
-            "en": "Invoice Verification Processing Time On-Time (boolean)",
-            "de": "Prozessdauer Rechnungskontrolle p\u00fcnktlich (boolean)"
-        },
-        "formula": "optimate_purchasing_invoice_processing_time_days == 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "focusOrder": "",
-        "internalName": "optimate_purchasing_invoice_processing_time_ontimeboolean",
-        "parentAttributeGroupInternalName": null,
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "(O) Global Payments Deviation On Time (boolean)",
-        "displayNameTranslations": {
+            "de": "Zahlungsabweichung p\u00fcnktlich (boolean)",
             "en": "Payments Deviation On Time (boolean)"
         },
         "formula": "optimate_global_payments_deviation_days == 0",
@@ -366,10 +316,10 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "In-Full Sourcing Deviation (amount)",
+        "displayName": "In-Full Sourcing (amount)",
         "displayNameTranslations": {
-            "de": "Einkaufsmengentreue Abweichung (Menge)",
-            "en": "In-Full Sourcing (amount)"
+            "en": "In-Full Sourcing (amount)",
+            "de": "Einkaufsmengentreue Abweichung (Menge)"
         },
         "formula": "pur_order_line_qty-pur_stock_rec_line_qty",
         "groupByColumnInternalName": null,
@@ -396,8 +346,8 @@
         },
         "displayName": "On-Time Sourcing (days)",
         "displayNameTranslations": {
-            "en": "On-Time Sourcing (days)",
-            "de": "Einkaufstermintreue (Tage)"
+            "de": "Einkaufstermintreue (Tage)",
+            "en": "On-Time Sourcing (days)"
         },
         "formula": "pur_order_line_requested_date-pur_order_line_delivery_date",
         "groupByColumnInternalName": null,
@@ -417,13 +367,42 @@
         "categorialType": false,
         "columnType": "DefinedColumn",
         "containsSensitiveData": false,
+        "dataType": "integer",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "Invoice Verification Processing Time (days)",
+        "displayNameTranslations": {
+            "en": "Invoice Verification Processing Time (days)",
+            "de": "Prozessdauer Rechnungskontrolle (Tage)"
+        },
+        "formula": "pur_inv_change_date-pur_inv_ext_doc_date",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": null,
+        "unit": "",
+        "focusOrder": "",
+        "internalName": "optimate_purchasing_invoice_verification_processing_time_days",
+        "parentAttributeGroupInternalName": null,
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
         "dataType": "boolean",
         "description": "",
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "(O) Global Payments Deviation Too Early (boolean)",
+        "displayName": "Payments Deviation Too Early (boolean)",
         "displayNameTranslations": {
+            "de": "Zahlungsabweichung zu fr\u00fch (boolean)",
             "en": "Payments Deviation Too Early (boolean)"
         },
         "formula": "optimate_global_payments_deviation_days > 0",
@@ -475,7 +454,7 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "In-Full Sourcing (IF) (boolean)",
+        "displayName": "In-Full Sourcing (boolean)",
         "displayNameTranslations": {
             "en": "In-Full Sourcing (boolean)",
             "de": "Einkaufsmengentreue (boolean)"
@@ -503,8 +482,8 @@
         "descriptionTranslations": {},
         "displayName": "Replenishment Time Deviation (days)",
         "displayNameTranslations": {
-            "de": "Wiederbeschaffungszeitenabweichung (Tage)",
-            "en": "Replenishment Time Deviation (days)"
+            "en": "Replenishment Time Deviation (days)",
+            "de": "Wiederbeschaffungszeitenabweichung (Tage)"
         },
         "formula": "part_replenishment_time - (pur_stock_rec_line_creation_date - pur_order_line_creation_date)",
         "groupByColumnInternalName": null,

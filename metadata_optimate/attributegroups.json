@@ -10,13 +10,13 @@
         "isCoupled": false,
         "focusOrder": "",
         "internalName": "optimate_purchasing_otif",
-        "parentAttributeGroupInternalName": null,
+        "parentAttributeGroupInternalName": "optimate_purchasing",
         "id": "",
         "projectId": "",
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": null,
+        "order": "1",
         "conflictState": "NoConflict"
     },
     {
@@ -75,6 +75,26 @@
         "isCustom": true,
         "metadataClassificationInternalName": "",
         "order": "0",
+        "conflictState": "NoConflict"
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "Optimate Purchasing Overview",
+        "displayNameTranslations": {
+            "en": "Overview"
+        },
+        "isCoupled": false,
+        "focusOrder": "",
+        "internalName": "optimate_purchasing_overview",
+        "parentAttributeGroupInternalName": null,
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": "",
+        "order": null,
         "conflictState": "NoConflict"
     }
 ]

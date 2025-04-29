@@ -16,7 +16,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "1",
+        "order": "2",
         "conflictState": "NoConflict"
     },
     {
@@ -74,7 +74,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "0",
+        "order": "1",
         "conflictState": "NoConflict"
     },
     {
@@ -88,13 +88,13 @@
         "isCoupled": false,
         "focusOrder": "",
         "internalName": "optimate_purchasing_overview",
-        "parentAttributeGroupInternalName": null,
+        "parentAttributeGroupInternalName": "optimate_purchasing",
         "id": "",
         "projectId": "",
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": null,
+        "order": "0",
         "conflictState": "NoConflict"
     }
 ]

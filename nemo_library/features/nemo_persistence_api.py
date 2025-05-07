@@ -9,6 +9,7 @@ import requests
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.attribute_link import AttributeLink
+from nemo_library.model.attributetreeelement import AttributeTreeElement
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.model.diagram import Diagram
@@ -114,7 +115,6 @@ def _generic_metadata_create_or_update(
                 log_error(
                     f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
                 )
-
 
 def _generic_metadata_delete(config: Config, ids: list[str], endpoint: str) -> None:
     """
@@ -457,6 +457,26 @@ def getRules(
         config, projectname, "Rule", "/rules", Rule, filter, filter_type, filter_value
     )
 
+def getAttributeTreeElements(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> list[AttributeTreeElement]:
+    """Fetches AttributeGroups metadata with the given filters."""
+    return _generic_metadata_get(
+        config,
+        projectname,
+        "AttributeTreeElements",
+        "/elements",
+        AttributeTreeElement,
+        filter,
+        filter_type,
+        filter_value,
+    )
+
+
 
 def deleteDefinedColumns(config: Config, definedcolumns: list[str]) -> None:
     """Deletes a list of Defined Columns by their IDs."""
@@ -517,17 +537,20 @@ def deleteRules(config: Config, rules: list[str]) -> None:
     """Deletes a list of Rules by their IDs."""
     _generic_metadata_delete(config, rules, "Rule")
 
+def deleteAttributeTreeElements(config: Config, attributetreeelements: list[str]) -> None:
+    """Deletes a list of Rules by their IDs."""
+    _generic_metadata_delete(config, attributetreeelements, "AttributeTreeElements")
 
 def createDefinedColumns(
     config: Config, projectname: str, definedcolumns: list[DefinedColumn]
 ) -> None:
     """Creates or updates a list of DefinedColumns."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=definedcolumns, 
-        endpoint="Columns", 
-        get_existing_func=getDefinedColumns
+        config=config,
+        projectname=projectname,
+        objects=definedcolumns,
+        endpoint="Columns",
+        get_existing_func=getDefinedColumns,
     )
 
 
@@ -536,33 +559,33 @@ def createImportedColumns(
 ) -> None:
     """Creates or updates a list of ImportedColumns."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=importedcolumns, 
-        endpoint="Columns", 
-        get_existing_func=getImportedColumns
+        config=config,
+        projectname=projectname,
+        objects=importedcolumns,
+        endpoint="Columns",
+        get_existing_func=getImportedColumns,
     )
 
 
 def createMetrics(config: Config, projectname: str, metrics: list[Metric]) -> None:
     """Creates or updates a list of Metrics."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=metrics, 
-        endpoint="Metrics", 
-        get_existing_func=getMetrics
+        config=config,
+        projectname=projectname,
+        objects=metrics,
+        endpoint="Metrics",
+        get_existing_func=getMetrics,
     )
 
 
 def createTiles(config: Config, projectname: str, tiles: list[Tile]) -> None:
     """Creates or updates a list of Tiles."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=tiles, 
-        endpoint="Tiles", 
-        get_existing_func=getTiles
+        config=config,
+        projectname=projectname,
+        objects=tiles,
+        endpoint="Tiles",
+        get_existing_func=getTiles,
     )
 
 
@@ -571,11 +594,23 @@ def createAttributeGroups(
 ) -> None:
     """Creates or updates a list of AttributeGroups."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=attributegroups, 
-        endpoint="AttributeGroup", 
-        get_existing_func=getAttributeGroups
+        config=config,
+        projectname=projectname,
+        objects=attributegroups,
+        endpoint="AttributeGroup",
+        get_existing_func=getAttributeGroups,
+    )
+
+def createAttributeTreeElements(
+    config: Config, projectname: str, attributetreeelements: list[AttributeTreeElement]
+) -> None:
+    """Creates or updates a list of AttributeGroups."""
+    _generic_metadata_create_or_update(
+        config=config,
+        projectname=projectname,
+        objects=attributetreeelements,
+        endpoint="AttributeTreeElements",
+        get_existing_func=getAttributeTreeElements,
     )
 
 
@@ -583,16 +618,16 @@ def createAttributeLinks(
     config: Config, projectname: str, attributelinks: list[AttributeLink]
 ) -> None:
     """Creates or updates a list of AttributeLinks."""
-    
+
     # cannot use the generic method since the REST-API does not support the same endpoint for create and update
     # _generic_metadata_create_or_update(
-    #     config=config, 
-    #     projectname=projectname, 
-    #     objects=attributelinks, 
-    #     endpoint="AttributeLink", 
+    #     config=config,
+    #     projectname=projectname,
+    #     objects=attributelinks,
+    #     endpoint="AttributeLink",
     #     get_existing_func=getAttributeLinks
     # )
-    
+
     # Initialize request
     headers = config.connection_get_headers()
     project_id = getProjectID(config, projectname)
@@ -615,7 +650,7 @@ def createAttributeLinks(
 
         for obj in existing_object:
             print(json.dumps(obj.to_dict(), indent=4))
-            
+
         if len(existing_object) == 1:
             # Update existing object
             obj.id = existing_object[0].id
@@ -642,17 +677,16 @@ def createAttributeLinks(
                 log_error(
                     f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/AttributeLink/Create"}\nStatus: {response.status_code}, error: {response.text}"
                 )
-    
 
 
 def createPages(config: Config, projectname: str, pages: list[Page]) -> None:
     """Creates or updates a list of Pages."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=pages, 
-        endpoint="Pages", 
-        get_existing_func=getPages
+        config=config,
+        projectname=projectname,
+        objects=pages,
+        endpoint="Pages",
+        get_existing_func=getPages,
     )
 
 
@@ -661,22 +695,22 @@ def createApplications(
 ) -> None:
     """Creates or updates a list of Applications."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=applications, 
-        endpoint="Applications", 
-        get_existing_func=getApplications
+        config=config,
+        projectname=projectname,
+        objects=applications,
+        endpoint="Applications",
+        get_existing_func=getApplications,
     )
 
 
 def createDiagrams(config: Config, projectname: str, diagrams: list[Diagram]) -> None:
     """Creates or updates a list of Diagrams."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=diagrams, 
-        endpoint="Diagrams", 
-        get_existing_func=getDiagrams
+        config=config,
+        projectname=projectname,
+        objects=diagrams,
+        endpoint="Diagrams",
+        get_existing_func=getDiagrams,
     )
 
 
@@ -685,33 +719,33 @@ def createSubProcesses(
 ) -> None:
     """Creates or updates a list of SubProcesses."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=subprocesses, 
-        endpoint="SubProcess", 
-        get_existing_func=getSubProcesses
+        config=config,
+        projectname=projectname,
+        objects=subprocesses,
+        endpoint="SubProcess",
+        get_existing_func=getSubProcesses,
     )
 
 
 def createReports(config: Config, projectname: str, reports: list[Report]) -> None:
     """Creates or updates a list of Reports."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=reports, 
-        endpoint="Reports", 
-        get_existing_func=getReports
+        config=config,
+        projectname=projectname,
+        objects=reports,
+        endpoint="Reports",
+        get_existing_func=getReports,
     )
 
 
 def createRules(config: Config, projectname: str, rules: list[Rule]) -> None:
     """Creates or updates a list of Rules."""
     _generic_metadata_create_or_update(
-        config=config, 
-        projectname=projectname, 
-        objects=rules, 
-        endpoint="Rule", 
-        get_existing_func=getRules
+        config=config,
+        projectname=projectname,
+        objects=rules,
+        endpoint="Rule",
+        get_existing_func=getRules,
     )
 
 

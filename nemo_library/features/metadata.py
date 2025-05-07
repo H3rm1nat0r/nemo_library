@@ -1,9 +1,11 @@
+from collections import defaultdict
 import copy
 from dataclasses import fields, is_dataclass
 import json
 import logging
 from pathlib import Path
 from typing import Type, TypeVar
+from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.nemo_persistence_api import (
     _deserializeMetaDataObject,
     createApplications,
@@ -173,12 +175,11 @@ def MetaDataCreate(
     tiles_model = _load_data_from_json(config, "tiles", Tile)
 
     # generate attribute groups tree by combining applications, pages, and diagrams
-    attributegroups_model = (
-        _build_attribute_tree(
-            applications_model,
-            pages_model,
-            diagrams_model,
-        )
+    attributegroups_model, attribute_groups_metrics = _build_attribute_tree(
+        applications_model,
+        pages_model,
+        diagrams_model,
+        metrics_model,
     )
 
     # load data from NEMO
@@ -347,11 +348,7 @@ def MetaDataCreate(
                 config=config, projectname=projectname, **{key: updates[key]}
             )
 
-    # reconcile of order in focus not possible at the moment
-    return
-
-    # sub processes and focus order depends on dependency tree for objects
-    # refresh data from server
+    # all objects are created, now we can ask the server for the dependency tree
     logging.info(f"get dependency tree for metrics")
     metrics_nemo = _fetch_data_from_nemo(
         config=config,
@@ -383,6 +380,24 @@ def MetaDataCreate(
         for metric in metrics_nemo
         if (d := getDependencyTree(config=config, id=metric.id)) is not None
     }
+
+    # reconcile attribute groups
+    for metric in metrics_nemo:
+        # find metric in attribute groups
+        attribute_group = None
+        for key, value in attribute_groups_metrics.items():
+            if metric.internalName in value:
+                attribute_group = key
+                break
+        if attribute_group:
+            logging.info(f"move {metric.internalName} to {attribute_group}")
+            focusMoveAttributeBefore(
+                config=config,
+                projectname=projectname,
+                sourceInternalName=metric.internalName,
+                groupInternalName=attribute_group,
+            )
+    return
 
     # reconcile focus order now
     logging.info(f"reconcile order in focus")
@@ -439,6 +454,7 @@ def _build_attribute_tree(
     applications_model: list[Application],
     pages_model: list[Page],
     diagrams_model: list[Diagram],
+    metrics_model: list[Metric],
 ) -> list[AttributeGroup]:
     """
     Build the attribute groups model by combining the models of applications, pages,
@@ -446,6 +462,7 @@ def _build_attribute_tree(
     """
     # Create a dictionary to hold the attribute groups
     attribute_groups = []
+    attribute_groups_metrics = defaultdict(set)
 
     # start with root node
     attribute_groups.append(
@@ -453,6 +470,7 @@ def _build_attribute_tree(
             internalName="optimate",
             displayName="Optimate",
             displayNameTranslations={"de": "Optimate", "en": "Optimate"},
+            parentAttributeGroupInternalName=None,
         )
     )
 
@@ -502,9 +520,16 @@ def _build_attribute_tree(
                                     parentAttributeGroupInternalName=page_ref.internalName,
                                 )
                             )
+                            for value in diagram_ref.values:
+                                attribute_groups_metrics[diagram_ref.internalName].add(
+                                    value.column
+                                )
+                    elif visual.type == "Metric":
+                        attribute_groups_metrics[page_ref.internalName].add(
+                            visual.content
+                        )
 
-    return attribute_groups
-
+    return attribute_groups, {k: list(v) for k, v in attribute_groups_metrics.items()}
 
 def _collect_node_objects(tree: DependencyTree) -> list[str]:
     elements = [tree]
@@ -593,6 +618,9 @@ def _clean_fields(data):
         element.projectId = ""
         element.tileSourceID = ""
         element.focusOrder = ""
+        element.isCustom = None
+        element.order = None
+        element.parentAttributeGroupInternalName = None
 
         if isinstance(element, Diagram):
             for value in element.values:

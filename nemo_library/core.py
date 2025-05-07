@@ -7,6 +7,7 @@ from nemo_library.features.nemo_persistence_api import (
     createApplications,
     createAttributeGroups,
     createAttributeLinks,
+    createAttributeTreeElements,
     createDefinedColumns,
     createDiagrams,
     createImportedColumns,
@@ -18,6 +19,7 @@ from nemo_library.features.nemo_persistence_api import (
     deleteApplications,
     deleteAttributeGroups,
     deleteAttributeLinks,
+    deleteAttributeTreeElements,
     deleteDefinedColumns,
     deleteDiagrams,
     deleteImportedColumns,
@@ -30,6 +32,7 @@ from nemo_library.features.nemo_persistence_api import (
     getApplications,
     getAttributeGroups,
     getAttributeLinks,
+    getAttributeTreeElements,
     getDefinedColumns,
     getDiagrams,
     getImportedColumns,
@@ -49,6 +52,7 @@ from nemo_library.features.nemo_report_api import (
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.attribute_link import AttributeLink
+from nemo_library.model.attributetreeelement import AttributeTreeElement
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.diagram import Diagram
 from nemo_library.model.imported_column import ImportedColumn
@@ -888,6 +892,22 @@ class NemoLibrary:
             filter_value=filter_value,
         )
 
+    def getAttributeTreeElements(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> list[Rule]:
+        """Fetches AttributeTreeElement metadata with the given filters."""
+        return getAttributeTreeElements(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+        
     def createRules(self, projectname: str, rules: list[Rule]) -> None:
         """Creates or updates a list of Rules."""
         createRules(config=self.config, projectname=projectname, rules=rules)
@@ -939,6 +959,10 @@ class NemoLibrary:
     def deleteProjects(self, projects: list[str]) -> None:
         """Deletes a list of Projects by their IDs."""
         deleteProjects(config=self.config, projects=projects)
+
+    def deleteAttributeTreeElements(self, attributetreeelements: list[str]) -> None:
+        """Deletes a list of AttributeTreeElements by their IDs."""
+        deleteAttributeTreeElements(config=self.config, attributetreeelements=attributetreeelements)
 
     def createDefinedColumns(
         self, projectname: str, definedcolumns: list[DefinedColumn]
@@ -1003,3 +1027,13 @@ class NemoLibrary:
     def createProjects(self, projects: list[Project]) -> None:
         """Creates or updates a list of Projects."""
         createProjects(config=self.config, projects=projects)
+
+    def createAttributeTreeElements(
+        self, projectname: str, attributetreeelements: list[AttributeTreeElement]
+    ) -> None:
+        """Creates or updates a list of AttributeTreeElements."""
+        createAttributeTreeElements(
+            config=self.config,
+            projectname=projectname,
+            attributetreeelements=attributetreeelements,
+        )

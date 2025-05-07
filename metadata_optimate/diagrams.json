@@ -21,7 +21,7 @@
             "de": "Prozessdauer Wareneingang",
             "en": "Goods Receipt Processing Time"
         },
-        "internalName": "optimate_purchasing_goods_receipt_processing_time",
+        "internalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "report": "dummy",
         "summary": null,
         "valueAxisTitle": "Time (Days)",
@@ -645,7 +645,7 @@
             "en": "Invoice Processing Time",
             "de": "Prozessdauer Rechnungskontrolle"
         },
-        "internalName": "optimate_purchasing_invoice_processing_time",
+        "internalName": "optimate_purchasing_invoice_processing_time_diagram",
         "report": "dummy",
         "summary": null,
         "valueAxisTitle": "Time (Days)",
@@ -704,7 +704,7 @@
             "de": "Auftragsbest\u00e4tigungsquote",
             "en": "Order Confirmation Rate"
         },
-        "internalName": "optimate_purchasing_order_confirmation_rate",
+        "internalName": "optimate_purchasing_order_confirmation_rate_diagramm",
         "report": "dummy",
         "summary": null,
         "valueAxisTitle": "Rate (%)",

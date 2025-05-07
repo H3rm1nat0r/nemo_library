@@ -39,7 +39,7 @@
             {
                 "column": 2,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_order_confirmation_rate",
+                "content": "optimate_purchasing_order_confirmation_rate_diagramm",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
@@ -93,7 +93,7 @@
             {
                 "column": 1,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_goods_receipt_processing_time",
+                "content": "optimate_purchasing_goods_receipt_processing_time_diagram",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,
@@ -103,7 +103,7 @@
             {
                 "column": 2,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_invoice_processing_time",
+                "content": "optimate_purchasing_invoice_processing_time_diagram",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,

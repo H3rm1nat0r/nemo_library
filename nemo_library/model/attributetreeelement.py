@@ -7,7 +7,7 @@ class AttributeTreeElement:
     internalName: Optional[str] = ""
     order: Optional[str] = ""
     parentAttributeGroupInternalName: Optional[str] = ""
-    # metadataType: Optional[str] = ""
+    metadataType: Optional[str] = ""
     id: Optional[str] = ""
     projectId: Optional[str] = ""
     tenant: Optional[str] = ""

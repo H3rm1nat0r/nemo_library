@@ -179,7 +179,6 @@ def MetaDataCreate(
         applications_model,
         pages_model,
         diagrams_model,
-        metrics_model,
     )
 
     # load data from NEMO
@@ -348,6 +347,8 @@ def MetaDataCreate(
                 config=config, projectname=projectname, **{key: updates[key]}
             )
 
+    return
+
     # all objects are created, now we can ask the server for the dependency tree
     logging.info(f"get dependency tree for metrics")
     metrics_nemo = _fetch_data_from_nemo(
@@ -454,7 +455,6 @@ def _build_attribute_tree(
     applications_model: list[Application],
     pages_model: list[Page],
     diagrams_model: list[Diagram],
-    metrics_model: list[Metric],
 ) -> list[AttributeGroup]:
     """
     Build the attribute groups model by combining the models of applications, pages,
@@ -465,14 +465,14 @@ def _build_attribute_tree(
     attribute_groups_metrics = defaultdict(set)
 
     # start with root node
-    attribute_groups.append(
-        AttributeGroup(
-            internalName="optimate",
-            displayName="Optimate",
-            displayNameTranslations={"de": "Optimate", "en": "Optimate"},
-            parentAttributeGroupInternalName=None,
-        )
+    root = AttributeGroup(
+        internalName="optimate",
+        displayName="Optimate",
+        displayNameTranslations={"de": "Optimate", "en": "Optimate"},
+        parentAttributeGroupInternalName=None,
+        order=0,
     )
+    attribute_groups.append(root)
 
     # add a group for each application
     for app in applications_model:
@@ -529,7 +529,18 @@ def _build_attribute_tree(
                             visual.content
                         )
 
+    def assignOrder(parent: AttributeGroup):
+        index = 0
+        for attribute_group in attribute_groups:
+            if attribute_group.parentAttributeGroupInternalName == parent.internalName:
+                attribute_group.order = index
+                index += 1
+                assignOrder(attribute_group)
+                
+    assignOrder(root)
+    
     return attribute_groups, {k: list(v) for k, v in attribute_groups_metrics.items()}
+
 
 def _collect_node_objects(tree: DependencyTree) -> list[str]:
     elements = [tree]

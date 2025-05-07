@@ -15,7 +15,6 @@ class AttributeGroup:
     displayName: str = None
     displayNameTranslations: dict[str, str] = field(default_factory=dict)
     isCoupled: bool = False
-    focusOrder: str = ""
     internalName: str = None
     parentAttributeGroupInternalName: str = ""
     id: str = ""

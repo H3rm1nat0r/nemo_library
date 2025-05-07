@@ -75,7 +75,9 @@ def _generic_metadata_create_or_update(
     params = {"translationHandling": "UseAuxiliaryTranslationFields"}
 
     for obj in objects:
-        logging.info(f"Create/update {endpoint} '{obj.displayName}'")
+        logging.info(
+            f"Create/update {endpoint} '{obj.displayName if hasattr(obj, 'displayName') else obj.internalName}'"
+        )
 
         obj.tenant = config.get_tenant()
         obj.projectId = project_id
@@ -116,6 +118,30 @@ def _generic_metadata_create_or_update(
                     f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
+            if endpoint != "AttributeTreeElements" and (
+                (
+                    hasattr(obj, "parentAttributeGroupInternalName")
+                    and obj.parentAttributeGroupInternalName
+                )
+                or (hasattr(obj, "order") and obj.order)
+            ):
+                ate = AttributeTreeElement(
+                    internalName=obj.internalName,
+                    parentAttributeGroupInternalName=(
+                        obj.parentAttributeGroupInternalName
+                        if hasattr(obj, "parentAttributeGroupInternalName")
+                        else None
+                    ),
+                    metadataType=endpoint[:-1] if endpoint.endswith("s") else endpoint,
+                    projectId=project_id,
+                    tenant=config.get_tenant(),
+                    order=obj.order if hasattr(obj, "order") else 0,
+                )
+                createAttributeTreeElements(
+                    config=config, projectname=projectname, attributetreeelements=[ate]
+                )
+
+
 def _generic_metadata_delete(config: Config, ids: list[str], endpoint: str) -> None:
     """
     Generic function to delete metadata entries.
@@ -129,7 +155,9 @@ def _generic_metadata_delete(config: Config, ids: list[str], endpoint: str) -> N
     headers = config.connection_get_headers()
 
     for obj_id in ids:
-        logging.info(f"Deleting {endpoint[:-1]} with ID {obj_id}")
+        logging.info(
+            f"Deleting {endpoint[:-1] if endpoint.endswith("s") else endpoint} with ID {obj_id}"
+        )
 
         response = requests.delete(
             f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}",
@@ -457,6 +485,7 @@ def getRules(
         config, projectname, "Rule", "/rules", Rule, filter, filter_type, filter_value
     )
 
+
 def getAttributeTreeElements(
     config: Config,
     projectname: str,
@@ -475,7 +504,6 @@ def getAttributeTreeElements(
         filter_type,
         filter_value,
     )
-
 
 
 def deleteDefinedColumns(config: Config, definedcolumns: list[str]) -> None:
@@ -537,9 +565,13 @@ def deleteRules(config: Config, rules: list[str]) -> None:
     """Deletes a list of Rules by their IDs."""
     _generic_metadata_delete(config, rules, "Rule")
 
-def deleteAttributeTreeElements(config: Config, attributetreeelements: list[str]) -> None:
+
+def deleteAttributeTreeElements(
+    config: Config, attributetreeelements: list[str]
+) -> None:
     """Deletes a list of Rules by their IDs."""
     _generic_metadata_delete(config, attributetreeelements, "AttributeTreeElements")
+
 
 def createDefinedColumns(
     config: Config, projectname: str, definedcolumns: list[DefinedColumn]
@@ -600,6 +632,7 @@ def createAttributeGroups(
         endpoint="AttributeGroup",
         get_existing_func=getAttributeGroups,
     )
+
 
 def createAttributeTreeElements(
     config: Config, projectname: str, attributetreeelements: list[AttributeTreeElement]

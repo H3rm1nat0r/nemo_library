@@ -1,12 +1,9 @@
-from collections import defaultdict
 import copy
 from dataclasses import fields, is_dataclass
 import json
 import logging
 from pathlib import Path
-import re
 from typing import Type, TypeVar
-from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.nemo_persistence_api import (
     _deserializeMetaDataObject,
     createApplications,
@@ -36,7 +33,6 @@ from nemo_library.features.nemo_persistence_api import (
     getAttributeLinks,
     getDefinedColumns,
     getDiagrams,
-    getImportedColumns,
     getMetrics,
     getPages,
     getRules,
@@ -55,7 +51,6 @@ from nemo_library.model.attribute_link import AttributeLink
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.dependency_tree import DependencyTree
 from nemo_library.model.diagram import Diagram
-from nemo_library.model.imported_column import ImportedColumn
 from nemo_library.model.metric import Metric
 from nemo_library.model.pages import Page
 from nemo_library.model.report import Report
@@ -178,10 +173,12 @@ def MetaDataCreate(
     tiles_model = _load_data_from_json(config, "tiles", Tile)
 
     # generate attribute groups tree by combining applications, pages, and diagrams
-    attributegroups_model, attributelinks_model = _build_attributegroups_model(
-        applications_model,
-        pages_model,
-        diagrams_model,
+    attributegroups_model = (
+        _build_attribute_tree(
+            applications_model,
+            pages_model,
+            diagrams_model,
+        )
     )
 
     # load data from NEMO
@@ -438,7 +435,7 @@ def MetaDataCreate(
         # )
 
 
-def _build_attributegroups_model(
+def _build_attribute_tree(
     applications_model: list[Application],
     pages_model: list[Page],
     diagrams_model: list[Diagram],
@@ -507,22 +504,6 @@ def _build_attributegroups_model(
                             )
 
     return attribute_groups
-
-
-def _date_columns(
-    columns: list[str], imported_columns: list[ImportedColumn]
-) -> list[str]:
-    date_cols = []
-    for col in columns:
-        ic = None
-        for ic_search in imported_columns:
-            if ic_search.internalName == col:
-                ic = ic_search
-
-        if ic and ic.dataType == "date":
-            date_cols.append(col)
-
-    return date_cols
 
 
 def _collect_node_objects(tree: DependencyTree) -> list[str]:
@@ -622,18 +603,3 @@ def _clean_fields(data):
                 visual.id = ""
 
     return data
-
-
-def _extract_fields(formulas_dict):
-    field_pattern = re.compile(r"\b[a-zA-Z_][a-zA-Z0-9_]*\b")
-
-    extracted_fields = {}
-
-    for key, formulas in formulas_dict.items():
-        extracted_fields[key] = set()
-        for formula in formulas:
-            if isinstance(formula, str) and formula.strip():
-                fields = field_pattern.findall(formula)
-                extracted_fields[key].update(fields)
-
-    return {k: sorted(v) for k, v in extracted_fields.items()}

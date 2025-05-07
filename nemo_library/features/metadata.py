@@ -167,9 +167,6 @@ def MetaDataCreate(
     # load data from model (JSON)
     logging.info(f"load model from JSON files in folder {config.get_metadata()}")
     applications_model = _load_data_from_json(config, "applications", Application)
-    attributegroups_model = _load_data_from_json(
-        config, "attributegroups", AttributeGroup
-    )
     attributelinks_model = _load_data_from_json(config, "attributelinks", None)
     definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
     diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
@@ -180,9 +177,12 @@ def MetaDataCreate(
     subprocesses_model = _load_data_from_json(config, "subprocesses", SubProcess)
     tiles_model = _load_data_from_json(config, "tiles", Tile)
 
-    # sort attribute groups
-    hierarchy, _ = _attribute_groups_build_hierarchy(attributegroups_model)
-    attributegroups_model = attribute_groups_sort_hierarchy(hierarchy, root_key=None)
+    # generate attribute groups tree by combining applications, pages, and diagrams
+    attributegroups_model, attributelinks_model = _build_attributegroups_model(
+        applications_model,
+        pages_model,
+        diagrams_model,
+    )
 
     # load data from NEMO
     logging.info(f"load model from NEMO files from project {projectname}")
@@ -438,6 +438,77 @@ def MetaDataCreate(
         # )
 
 
+def _build_attributegroups_model(
+    applications_model: list[Application],
+    pages_model: list[Page],
+    diagrams_model: list[Diagram],
+) -> list[AttributeGroup]:
+    """
+    Build the attribute groups model by combining the models of applications, pages,
+    diagrams, metrics, and defined columns.
+    """
+    # Create a dictionary to hold the attribute groups
+    attribute_groups = []
+
+    # start with root node
+    attribute_groups.append(
+        AttributeGroup(
+            internalName="optimate",
+            displayName="Optimate",
+            displayNameTranslations={"de": "Optimate", "en": "Optimate"},
+        )
+    )
+
+    # add a group for each application
+    for app in applications_model:
+        attribute_groups.append(
+            AttributeGroup(
+                internalName=app.internalName,
+                displayName=app.displayName,
+                displayNameTranslations=app.displayNameTranslations,
+                parentAttributeGroupInternalName="optimate",
+            )
+        )
+
+        # add a group for each page
+        for page in app.pages:
+
+            page_ref = None
+            for page_search in pages_model:
+                if page_search.internalName == page.page:
+                    page_ref = page_search
+                    break
+            if page_ref:
+                attribute_groups.append(
+                    AttributeGroup(
+                        internalName=page_ref.internalName,
+                        displayName=page_ref.displayName,
+                        displayNameTranslations=page_ref.displayNameTranslations,
+                        parentAttributeGroupInternalName=app.internalName,
+                    )
+                )
+
+                # add a group for each diagram
+                for visual in page_ref.visuals:
+                    if visual.type == "Diagram":
+                        diagram_ref = None
+                        for diagram_search in diagrams_model:
+                            if diagram_search.internalName == visual.content:
+                                diagram_ref = diagram_search
+                                break
+                        if diagram_ref:
+                            attribute_groups.append(
+                                AttributeGroup(
+                                    internalName=diagram_ref.internalName,
+                                    displayName=diagram_ref.displayName,
+                                    displayNameTranslations=diagram_ref.displayNameTranslations,
+                                    parentAttributeGroupInternalName=page_ref.internalName,
+                                )
+                            )
+
+    return attribute_groups
+
+
 def _date_columns(
     columns: list[str], imported_columns: list[ImportedColumn]
 ) -> list[str]:
@@ -459,29 +530,6 @@ def _collect_node_objects(tree: DependencyTree) -> list[str]:
     for dep in tree.dependencies:
         elements.extend(_collect_node_objects(dep))
     return elements
-
-
-def _attribute_groups_build_hierarchy(attribute_groups):
-    hierarchy = defaultdict(list)
-    group_dict = {group.internalName: group for group in attribute_groups}
-
-    for group in attribute_groups:
-        parent_name = group.parentAttributeGroupInternalName
-        hierarchy[parent_name].append(group)
-
-    return hierarchy, group_dict
-
-
-def attribute_groups_sort_hierarchy(hierarchy, root_key=None):
-    sorted_list = []
-
-    def add_children(parent):
-        for child in sorted(hierarchy.get(parent, []), key=lambda x: x.displayName):
-            sorted_list.append(child)
-            add_children(child.internalName)
-
-    add_children(root_key)
-    return sorted_list
 
 
 def _fetch_data_from_nemo(

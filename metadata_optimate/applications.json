@@ -6,29 +6,29 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "OptiMate Purchasing Cockpit",
+        "displayName": "Purchasing Finder",
         "displayNameTranslations": {
-            "de": "OptiMate Einkaufscockpit",
-            "en": "OptiMate Purchasing Cockpit"
+            "de": "Purchasing Finder",
+            "en": "Purchasing Finder"
         },
         "download": "",
         "forecasts": [],
         "formatCompact": false,
-        "internalName": "optimate_purchasing_cockpit",
+        "internalName": "optimate_purchasing_finder",
         "links": [],
         "models": [],
         "pages": [
             {
                 "order": 0,
-                "page": "optimate_purchasing_cockpit_overview"
+                "page": "optimate_purchasing_finder_overview"
             },
             {
                 "order": 1,
-                "page": "optimate_purchasing_cockpit_dpo"
+                "page": "optimate_purchasing_finder_dpo"
             },
             {
                 "order": 2,
-                "page": "optimate_purchasing_cockpit_otif"
+                "page": "optimate_purchasing_finder_otif"
             }
         ],
         "scopeName": "",

@@ -164,6 +164,9 @@ def MetaDataCreate(
     # load data from model (JSON)
     logging.info(f"load model from JSON files in folder {config.get_metadata()}")
     applications_model = _load_data_from_json(config, "applications", Application)
+    attributegroups_model = _load_data_from_json(
+        config, "attributegroups", AttributeGroup
+    )
     attributelinks_model = _load_data_from_json(config, "attributelinks", None)
     definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
     diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
@@ -173,13 +176,6 @@ def MetaDataCreate(
     rules_model = _load_data_from_json(config, "rules", Rule)
     subprocesses_model = _load_data_from_json(config, "subprocesses", SubProcess)
     tiles_model = _load_data_from_json(config, "tiles", Tile)
-
-    # generate attribute groups tree by combining applications, pages, and diagrams
-    attributegroups_model, attribute_groups_metrics = _build_attribute_tree(
-        applications_model,
-        pages_model,
-        diagrams_model,
-    )
 
     # load data from NEMO
     logging.info(f"load model from NEMO files from project {projectname}")
@@ -347,6 +343,140 @@ def MetaDataCreate(
                 config=config, projectname=projectname, **{key: updates[key]}
             )
 
+
+def MetaDataAutoResolveApplications(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+):
+    """
+    Build the attribute groups model by combining the models of applications, pages,
+    diagrams, metrics, and defined columns.
+
+    ASSUMPTION: model and NEMO are in sync (no deletions or updates)
+    """
+    
+    attributegroups_model = [] # empty dictionary to hold the attribute groups to be created
+    applications_model = _load_data_from_json(config, "applications", Application)
+    pages_model = _load_data_from_json(config, "pages", Page)
+    metrics_model = _load_data_from_json(config, "metrics", Metric)
+    diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
+    attribute_groups_metrics = defaultdict(set)
+
+    # build attribute groups tree first
+    
+    # start with root node
+    root = AttributeGroup(
+        internalName="optimate",
+        displayName="Optimate",
+        displayNameTranslations={"de": "Optimate", "en": "Optimate"},
+        parentAttributeGroupInternalName=None,
+        order=0,
+    )
+    attributegroups_model.append(root)
+
+    # add a group for each application
+    for app in applications_model:
+        attributegroups_model.append(
+            AttributeGroup(
+                internalName=app.internalName,
+                displayName=app.displayName,
+                displayNameTranslations=app.displayNameTranslations,
+                parentAttributeGroupInternalName="optimate",
+            )
+        )
+
+        # add a group for each page
+        for page in app.pages:
+
+            page_ref = None
+            for page_search in pages_model:
+                if page_search.internalName == page.page:
+                    page_ref = page_search
+                    break
+            if page_ref:
+                attributegroups_model.append(
+                    AttributeGroup(
+                        internalName=page_ref.internalName,
+                        displayName=page_ref.displayName,
+                        displayNameTranslations=page_ref.displayNameTranslations,
+                        parentAttributeGroupInternalName=app.internalName,
+                    )
+                )
+
+                # add a group for each diagram
+                for visual in page_ref.visuals:
+                    if visual.type == "Diagram":
+                        diagram_ref = None
+                        for diagram_search in diagrams_model:
+                            if diagram_search.internalName == visual.content:
+                                diagram_ref = diagram_search
+                                break
+                        if diagram_ref:
+                            attributegroups_model.append(
+                                AttributeGroup(
+                                    internalName=diagram_ref.internalName,
+                                    displayName=diagram_ref.displayName,
+                                    displayNameTranslations=diagram_ref.displayNameTranslations,
+                                    parentAttributeGroupInternalName=page_ref.internalName,
+                                )
+                            )
+                            for value in diagram_ref.values:
+                                attribute_groups_metrics[diagram_ref.internalName].add(
+                                    value.column
+                                )
+                    elif visual.type == "Metric":
+                        attribute_groups_metrics[page_ref.internalName].add(
+                            visual.content
+                        )
+
+    def assignOrder(parent: AttributeGroup):
+        index = 0
+        for attribute_group in attributegroups_model:
+            if attribute_group.parentAttributeGroupInternalName == parent.internalName:
+                attribute_group.order = index
+                index += 1
+                assignOrder(attribute_group)
+
+    assignOrder(root)
+    attribute_groups_metrics = {k: list(v) for k, v in attribute_groups_metrics.items()}
+
+    # move metrics to the right attribute group
+    for metric in metrics_model:
+        # find metric in attribute groups
+        attribute_group = None
+        for key, value in attribute_groups_metrics.items():
+            if metric.internalName in value:
+                attribute_group = key
+                break
+        if attribute_group:
+            metric.parentAttributeGroupInternalName = attribute_group
+
+    # now we use the dependency tree to find the right attribute group for the defined columns            
+    # metrics_nemo = _fetch_data_from_nemo(
+    #     config=config,
+    #     projectname=projectname,
+    #     func=getMetrics,
+    #     filter=filter,
+    #     filter_type=filter_type,
+    #     filter_value=filter_value,
+    # )
+
+    # dependency_tree = {
+    #     metric.internalName: _collect_node_objects(d)
+    #     for metric in metrics_nemo
+    #     if (d := getDependencyTree(config=config, id=metric.id)) is not None
+    # }
+
+    export = {
+        "attributegroups": attributegroups_model,
+        "metrics": metrics_model,
+    }
+    for name, data in export.items():
+        _export_data_to_json(config, name, data)
+
     return
 
     # all objects are created, now we can ask the server for the dependency tree
@@ -450,98 +580,6 @@ def MetaDataCreate(
         #     attributeLinks=new_links,
         # )
 
-
-def _build_attribute_tree(
-    applications_model: list[Application],
-    pages_model: list[Page],
-    diagrams_model: list[Diagram],
-) -> list[AttributeGroup]:
-    """
-    Build the attribute groups model by combining the models of applications, pages,
-    diagrams, metrics, and defined columns.
-    """
-    # Create a dictionary to hold the attribute groups
-    attribute_groups = []
-    attribute_groups_metrics = defaultdict(set)
-
-    # start with root node
-    root = AttributeGroup(
-        internalName="optimate",
-        displayName="Optimate",
-        displayNameTranslations={"de": "Optimate", "en": "Optimate"},
-        parentAttributeGroupInternalName=None,
-        order=0,
-    )
-    attribute_groups.append(root)
-
-    # add a group for each application
-    for app in applications_model:
-        attribute_groups.append(
-            AttributeGroup(
-                internalName=app.internalName,
-                displayName=app.displayName,
-                displayNameTranslations=app.displayNameTranslations,
-                parentAttributeGroupInternalName="optimate",
-            )
-        )
-
-        # add a group for each page
-        for page in app.pages:
-
-            page_ref = None
-            for page_search in pages_model:
-                if page_search.internalName == page.page:
-                    page_ref = page_search
-                    break
-            if page_ref:
-                attribute_groups.append(
-                    AttributeGroup(
-                        internalName=page_ref.internalName,
-                        displayName=page_ref.displayName,
-                        displayNameTranslations=page_ref.displayNameTranslations,
-                        parentAttributeGroupInternalName=app.internalName,
-                    )
-                )
-
-                # add a group for each diagram
-                for visual in page_ref.visuals:
-                    if visual.type == "Diagram":
-                        diagram_ref = None
-                        for diagram_search in diagrams_model:
-                            if diagram_search.internalName == visual.content:
-                                diagram_ref = diagram_search
-                                break
-                        if diagram_ref:
-                            attribute_groups.append(
-                                AttributeGroup(
-                                    internalName=diagram_ref.internalName,
-                                    displayName=diagram_ref.displayName,
-                                    displayNameTranslations=diagram_ref.displayNameTranslations,
-                                    parentAttributeGroupInternalName=page_ref.internalName,
-                                )
-                            )
-                            for value in diagram_ref.values:
-                                attribute_groups_metrics[diagram_ref.internalName].add(
-                                    value.column
-                                )
-                    elif visual.type == "Metric":
-                        attribute_groups_metrics[page_ref.internalName].add(
-                            visual.content
-                        )
-
-    def assignOrder(parent: AttributeGroup):
-        index = 0
-        for attribute_group in attribute_groups:
-            if attribute_group.parentAttributeGroupInternalName == parent.internalName:
-                attribute_group.order = index
-                index += 1
-                assignOrder(attribute_group)
-                
-    assignOrder(root)
-    
-    return attribute_groups, {k: list(v) for k, v in attribute_groups_metrics.items()}
-
-
 def _collect_node_objects(tree: DependencyTree) -> list[str]:
     elements = [tree]
     for dep in tree.dependencies:
@@ -628,9 +666,6 @@ def _clean_fields(data):
         element.tenant = ""
         element.projectId = ""
         element.tileSourceID = ""
-        element.isCustom = None
-        element.order = None
-        element.parentAttributeGroupInternalName = None
 
         if isinstance(element, Diagram):
             for value in element.values:

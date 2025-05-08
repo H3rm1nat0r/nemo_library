@@ -440,7 +440,7 @@ def MetaDataAutoResolveApplications(
         index = 0
         for attribute_group in attributegroups_model:
             if attribute_group.parentAttributeGroupInternalName == parent.internalName:
-                attribute_group.order = index
+                attribute_group.order = f"{index:03}"
                 index += 1
                 assignOrder(attribute_group)
 

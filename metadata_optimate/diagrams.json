@@ -95,7 +95,7 @@
             {
                 "aggregation": "prediction",
                 "chartType": "line",
-                "column": "optimate_purchasing_replenishment_deviation_days",
+                "column": "optimate_purchasing_replenishment_deviation_days_metric",
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
@@ -106,7 +106,7 @@
             {
                 "aggregation": "actuals",
                 "chartType": "line",
-                "column": "optimate_purchasing_replenishment_deviation_days",
+                "column": "optimate_purchasing_replenishment_deviation_days_metric",
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
@@ -321,7 +321,7 @@
             {
                 "aggregation": "prediction",
                 "chartType": "line",
-                "column": "optimate_purchasing_procurement_lead_time_days",
+                "column": "optimate_purchasing_procurement_lead_time_days_metric",
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
@@ -332,7 +332,7 @@
             {
                 "aggregation": "actuals",
                 "chartType": "line",
-                "column": "optimate_purchasing_procurement_lead_time_days",
+                "column": "optimate_purchasing_procurement_lead_time_days_metric",
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {

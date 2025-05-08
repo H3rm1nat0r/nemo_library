@@ -357,16 +357,20 @@ def MetaDataAutoResolveApplications(
 
     ASSUMPTION: model and NEMO are in sync (no deletions or updates)
     """
-    
+
+    logging.info(f"load model from JSON files in folder {config.get_metadata()}")
     attributegroups_model = [] # empty dictionary to hold the attribute groups to be created
     applications_model = _load_data_from_json(config, "applications", Application)
     pages_model = _load_data_from_json(config, "pages", Page)
     metrics_model = _load_data_from_json(config, "metrics", Metric)
+    definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
     diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
     attribute_groups_metrics = defaultdict(set)
+    attributelinks_model = [] # empty dictionary to hold the attribute links to be created
 
     # build attribute groups tree first
-    
+    logging.info(f"build attribute groups tree")
+
     # start with root node
     root = AttributeGroup(
         internalName="optimate",
@@ -444,6 +448,7 @@ def MetaDataAutoResolveApplications(
     attribute_groups_metrics = {k: list(v) for k, v in attribute_groups_metrics.items()}
 
     # move metrics to the right attribute group
+    logging.info(f"move metrics to the right attribute group")
     for metric in metrics_model:
         # find metric in attribute groups
         attribute_group = None
@@ -454,32 +459,8 @@ def MetaDataAutoResolveApplications(
         if attribute_group:
             metric.parentAttributeGroupInternalName = attribute_group
 
-    # now we use the dependency tree to find the right attribute group for the defined columns            
-    # metrics_nemo = _fetch_data_from_nemo(
-    #     config=config,
-    #     projectname=projectname,
-    #     func=getMetrics,
-    #     filter=filter,
-    #     filter_type=filter_type,
-    #     filter_value=filter_value,
-    # )
-
-    # dependency_tree = {
-    #     metric.internalName: _collect_node_objects(d)
-    #     for metric in metrics_nemo
-    #     if (d := getDependencyTree(config=config, id=metric.id)) is not None
-    # }
-
-    export = {
-        "attributegroups": attributegroups_model,
-        "metrics": metrics_model,
-    }
-    for name, data in export.items():
-        _export_data_to_json(config, name, data)
-
-    return
-
-    # all objects are created, now we can ask the server for the dependency tree
+    # now we use the dependency tree to find the right attribute group for the defined and exported columns
+    # load metrics from NEMO to get the id of them. This is needed to get the dependency tree
     logging.info(f"get dependency tree for metrics")
     metrics_nemo = _fetch_data_from_nemo(
         config=config,
@@ -489,49 +470,14 @@ def MetaDataAutoResolveApplications(
         filter_type=filter_type,
         filter_value=filter_value,
     )
-    attributegroups_nemo = _fetch_data_from_nemo(
-        config=config,
-        projectname=projectname,
-        func=getAttributeGroups,
-        filter=filter,
-        filter_type=filter_type,
-        filter_value=filter_value,
-    )
-    attributelinks_nemo = _fetch_data_from_nemo(
-        config=config,
-        projectname=projectname,
-        func=getAttributeLinks,
-        filter=filter,
-        filter_type=filter_type,
-        filter_value=filter_value,
-    )
-
     dependency_tree = {
         metric.internalName: _collect_node_objects(d)
         for metric in metrics_nemo
         if (d := getDependencyTree(config=config, id=metric.id)) is not None
     }
 
-    # reconcile attribute groups
-    for metric in metrics_nemo:
-        # find metric in attribute groups
-        attribute_group = None
-        for key, value in attribute_groups_metrics.items():
-            if metric.internalName in value:
-                attribute_group = key
-                break
-        if attribute_group:
-            logging.info(f"move {metric.internalName} to {attribute_group}")
-            focusMoveAttributeBefore(
-                config=config,
-                projectname=projectname,
-                sourceInternalName=metric.internalName,
-                groupInternalName=attribute_group,
-            )
-    return
-
-    # reconcile focus order now
-    logging.info(f"reconcile order in focus")
+    # move defined columns to the right attribute group
+    logging.info(f"move defined columns to the right attribute group")
     for metric_internal_name, values in dependency_tree.items():
 
         # find metric in model
@@ -544,41 +490,39 @@ def MetaDataAutoResolveApplications(
             logging.error(f"metric {metric_internal_name} not found in model")
             continue
 
-        # check whether we need some new links
-        new_links = []
+        # move defined columns to the right attribute group
         for element in values:
-
-            # linked attribute are support for imported columns only
-            if element.nodeType == "ExportedColumn":
-                # check whether we have this linked attribute already
-                link_found = False
-                for link in attributelinks_nemo:
-                    if (
-                        link.sourceAttributeId == element.nodeId
-                        and link.parentAttributeGroupInternalName
-                        == metric.parentAttributeGroupInternalName
-                    ):
-                        link_found = True
+            if element.nodeType == "DefinedColumn":
+                # find defined column in model
+                defined_column = None
+                for defined_column_search in definedcolumns_model:
+                    if defined_column_search.internalName == element.nodeInternalName:
+                        defined_column = defined_column_search
                         break
-                if not link_found:
-                    logging.info(
-                        f"create linked attribute {metric.internalName} - {element.nodeInternalName}"
+                if not defined_column:
+                    logging.error(
+                        f"defined column {element.nodeInternalName} not found in model"
                     )
-                    new_link = AttributeLink(
-                        sourceAttributeId=element.nodeId,
-                        parentAttributeGroupInternalName=metric.parentAttributeGroupInternalName,
-                        displayName=f"{metric.internalName} - {element.nodeInternalName}",
-                    )
-                    new_links.append(new_link)
-                    attributelinks_nemo.append(
-                        new_link
-                    )  # add link here, we don't want to create it twice
+                    continue
 
-        # createAttributeLinks(
-        #     config=config,
-        #     projectname=projectname,
-        #     attributeLinks=new_links,
-        # )
+                defined_column.parentAttributeGroupInternalName = (
+                    metric.parentAttributeGroupInternalName
+                )
+            elif element.nodeType == "ExportedColumn":
+                # find exported column in model
+                pass
+
+    # export the data to JSON finally
+    export = {
+        "attributegroups": attributegroups_model,
+        "metrics": metrics_model,
+        "definedcolumns": definedcolumns_model,
+        "attributelinks": attributelinks_model,
+    }
+    for name, data in export.items():
+        _export_data_to_json(config, name, data)
+
+
 
 def _collect_node_objects(tree: DependencyTree) -> list[str]:
     elements = [tree]

@@ -43,8 +43,6 @@ class Metric:
         The unit of the metric.
     defaultScopeRestrictions : list[Any]
         Default restrictions for the scope.
-    focusOrder : str
-        The order of focus.
     internalName : str
         The internal name of the metric.
     parentAttributeGroupInternalName : str
@@ -73,7 +71,6 @@ class Metric:
     scopeName: Optional[str] = ""
     unit: str = ""
     defaultScopeRestrictions: list[Any] = field(default_factory=list)
-    focusOrder: str = ""
     internalName: str = ""
     parentAttributeGroupInternalName: str = ""
     id: str = ""

@@ -628,7 +628,6 @@ def _clean_fields(data):
         element.tenant = ""
         element.projectId = ""
         element.tileSourceID = ""
-        element.focusOrder = ""
         element.isCustom = None
         element.order = None
         element.parentAttributeGroupInternalName = None

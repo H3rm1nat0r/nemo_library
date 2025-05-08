@@ -164,7 +164,7 @@ def createMappingImportedColumnns(
                 ImportedColumn(
                     displayName=fld,
                     dataType="string",
-                    focusOrder=f"{idx:03}",
+                    order=f"{idx:03}",
                 )
             )
 

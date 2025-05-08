@@ -236,7 +236,7 @@ def _load_data(
                         internalName=col_migman.nemo_internal_name,
                         description=description,
                         dataType="string",
-                        focusOrder=f"{(columns_migman.index(col) + 1):03}",
+                        order=f"{(columns_migman.index(col) + 1):03}",
                     )
                 )
 

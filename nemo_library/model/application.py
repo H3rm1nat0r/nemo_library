@@ -1,5 +1,4 @@
 from dataclasses import dataclass, asdict, field
-
 from nemo_library.utils.utils import get_internal_name
 
 
@@ -44,14 +43,14 @@ class Application:
         displayName (str): The display name of the application.
         displayNameTranslations (dict[str, str]): Translations for the display name.
         download (str): The download link for the application.
-        forecasts (list[Forecast]): List of forecast configurations.
         formatCompact (bool): Indicates if the format is compact.
         internalName (str): The internal name of the application.
-        links (list[str]): List of related links.
-        models (list[str]): List of associated models.
         pages (list[PageReference]): List of page references.
         scopeName (str): The scope name of the application.
+        changedBy (str): The user who last changed the application.
+        changedDate (datetime): The date when the application was last changed.
         id (str): The unique identifier of the application.
+        metadataTemplateId (str): The metadata template identifier.
         projectId (str): The project identifier.
         tenant (str): The tenant identifier.
         isCustom (bool): Indicates if the application is custom.
@@ -65,11 +64,8 @@ class Application:
     displayName: str = None
     displayNameTranslations: dict[str, str] = field(default_factory=dict)
     download: str = ""
-    forecasts: list[Forecast] = field(default_factory=list)
     formatCompact: bool = False
     internalName: str = None
-    links: list[str] = field(default_factory=list)
-    models: list[str] = field(default_factory=list)
     pages: list[PageReference] = field(default_factory=list)
     scopeName: str = ""
     id: str = ""

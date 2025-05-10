@@ -35,6 +35,7 @@ from nemo_library.features.nemo_persistence_api import (
     getAttributeLinks,
     getDefinedColumns,
     getDiagrams,
+    getImportedColumns,
     getMetrics,
     getPages,
     getRules,
@@ -167,7 +168,7 @@ def MetaDataCreate(
     attributegroups_model = _load_data_from_json(
         config, "attributegroups", AttributeGroup
     )
-    attributelinks_model = _load_data_from_json(config, "attributelinks", None)
+    attributelinks_model = _load_data_from_json(config, "attributelinks", AttributeLink)
     definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
     diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
     metrics_model = _load_data_from_json(config, "metrics", Metric)
@@ -377,7 +378,7 @@ def MetaDataAutoResolveApplications(
         displayName="Optimate",
         displayNameTranslations={"de": "Optimate", "en": "Optimate"},
         parentAttributeGroupInternalName=None,
-        order=0,
+        order="00",
     )
     attributegroups_model.append(root)
 
@@ -440,7 +441,7 @@ def MetaDataAutoResolveApplications(
         index = 0
         for attribute_group in attributegroups_model:
             if attribute_group.parentAttributeGroupInternalName == parent.internalName:
-                attribute_group.order = f"{index:03}"
+                attribute_group.order = f"{index:02}"
                 index += 1
                 assignOrder(attribute_group)
 
@@ -475,6 +476,14 @@ def MetaDataAutoResolveApplications(
         for metric in metrics_nemo
         if (d := getDependencyTree(config=config, id=metric.id)) is not None
     }
+    importedcolumns_nemo = _fetch_data_from_nemo(
+        config=config,
+        projectname=projectname,
+        func=getImportedColumns,
+        filter="*",
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
 
     # move defined columns to the right attribute group
     logging.info(f"move defined columns to the right attribute group")
@@ -510,19 +519,42 @@ def MetaDataAutoResolveApplications(
                 )
             elif element.nodeType == "ExportedColumn":
                 # find exported column in model
-                pass
-
+                imported_column = None
+                for imported_column_search in importedcolumns_nemo:
+                    if imported_column_search.internalName == element.nodeInternalName:
+                        imported_column = imported_column_search
+                        break
+                if not imported_column:
+                    logging.error(
+                        f"exported column {element.nodeInternalName} not found in model"
+                    )
+                    continue
+                attributelinks_model.append(
+                    AttributeLink(
+                        sourceAttributeId=imported_column.id,
+                        parentAttributeGroupInternalName=metric.parentAttributeGroupInternalName,
+                        displayNameTranslations={
+                            "de": imported_column.displayNameTranslations.get("de",""),
+                            "en": imported_column.displayNameTranslations.get("en",""),
+                        },
+                        displayName=imported_column.displayName,
+                        internalName=filter + "_" + imported_column.internalName,
+                    )
+                )
     # export the data to JSON finally
     export = {
         "attributegroups": attributegroups_model,
         "metrics": metrics_model,
         "definedcolumns": definedcolumns_model,
-        "attributelinks": attributelinks_model,
     }
     for name, data in export.items():
         _export_data_to_json(config, name, data)
 
-
+    # it does not make sense to save the attribute links to JSON, because they 
+    # contain the id of the imported columns. 
+    # So we create them directly in NEMO
+    
+    createAttributeLinks(config=config, projectname=projectname, attributelinks=attributelinks_model)
 
 def _collect_node_objects(tree: DependencyTree) -> list[str]:
     elements = [tree]

@@ -2,82 +2,8 @@
     {
         "description": "",
         "descriptionTranslations": {
-            "de": "",
-            "en": ""
-        },
-        "displayName": "On Time in Full",
-        "displayNameTranslations": {
-            "en": "On Time in Full",
-            "de": "P\u00fcnktlich und vollst\u00e4ndig (OTIF)"
-        },
-        "hideIfColumns": [],
-        "internalName": "optimate_purchasing_finder_otif",
-        "numberOfColumns": 3,
-        "numberOfRows": 3,
-        "showIfColumns": [],
-        "visuals": [
-            {
-                "column": 1,
-                "columnSpan": 3,
-                "content": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
-                "contentTranslations": {},
-                "id": "",
-                "row": 3,
-                "rowSpan": 1,
-                "type": "Diagram"
-            },
-            {
-                "column": 1,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_replenishment_deviation",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Diagram"
-            },
-            {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_order_confirmation_rate_diagramm",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Diagram"
-            },
-            {
-                "column": 3,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_order_preparation_time_days",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Diagram"
-            },
-            {
-                "column": 1,
-                "columnSpan": 3,
-                "content": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 1,
-                "type": "Diagram"
-            }
-        ],
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "description": "",
-        "descriptionTranslations": {
-            "de": "",
-            "en": ""
+            "en": "",
+            "de": ""
         },
         "displayName": "DPO",
         "displayNameTranslations": {
@@ -91,12 +17,12 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 1,
-                "columnSpan": 2,
-                "content": "optimate_purchasing_supplier_payments",
+                "column": 2,
+                "columnSpan": 1,
+                "content": "optimate_purchasing_invoice_processing_time_diagram",
                 "contentTranslations": {},
                 "id": "",
-                "row": 1,
+                "row": 2,
                 "rowSpan": 1,
                 "type": "Diagram"
             },
@@ -111,12 +37,12 @@
                 "type": "Diagram"
             },
             {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_invoice_processing_time_diagram",
+                "column": 1,
+                "columnSpan": 2,
+                "content": "optimate_purchasing_supplier_payments",
                 "contentTranslations": {},
                 "id": "",
-                "row": 2,
+                "row": 1,
                 "rowSpan": 1,
                 "type": "Diagram"
             }
@@ -144,16 +70,6 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 1,
-                "columnSpan": 1,
-                "content": "d_p_o",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Metric"
-            },
-            {
                 "column": 2,
                 "columnSpan": 1,
                 "content": "optimate_purchasing_on_time_in_full_otif",
@@ -174,6 +90,16 @@
                 "type": "Diagram"
             },
             {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "d_p_o",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Metric"
+            },
+            {
                 "column": 2,
                 "columnSpan": 1,
                 "content": "optimate_purchasing_otif_rate",
@@ -182,6 +108,80 @@
                 "row": 1,
                 "rowSpan": 1,
                 "type": "Metric"
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "description": "",
+        "descriptionTranslations": {
+            "en": "",
+            "de": ""
+        },
+        "displayName": "On Time in Full",
+        "displayNameTranslations": {
+            "en": "On Time in Full",
+            "de": "P\u00fcnktlich und vollst\u00e4ndig (OTIF)"
+        },
+        "hideIfColumns": [],
+        "internalName": "optimate_purchasing_finder_otif",
+        "numberOfColumns": 3,
+        "numberOfRows": 3,
+        "showIfColumns": [],
+        "visuals": [
+            {
+                "column": 1,
+                "columnSpan": 3,
+                "content": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Diagram"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "optimate_purchasing_replenishment_deviation",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Diagram"
+            },
+            {
+                "column": 3,
+                "columnSpan": 1,
+                "content": "optimate_purchasing_order_preparation_time_days",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Diagram"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "optimate_purchasing_order_confirmation_rate_diagramm",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Diagram"
+            },
+            {
+                "column": 1,
+                "columnSpan": 3,
+                "content": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
+                "contentTranslations": {},
+                "id": "",
+                "row": 3,
+                "rowSpan": 1,
+                "type": "Diagram"
             }
         ],
         "id": "",

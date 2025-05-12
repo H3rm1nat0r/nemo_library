@@ -16,3 +16,4 @@ Log.txt
 migmantest/
 metadatatest/
 tests/migman/
+dist/*

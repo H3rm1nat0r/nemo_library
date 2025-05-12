@@ -1,0 +1,38 @@
+[
+    {
+        "active": true,
+        "conflictState": "NoConflict",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "Purchasing Finder",
+        "displayNameTranslations": {
+            "en": "Purchasing Finder",
+            "de": "Purchasing Finder"
+        },
+        "download": "",
+        "formatCompact": false,
+        "internalName": "optimate_purchasing_finder",
+        "pages": [
+            {
+                "order": 0,
+                "page": "optimate_purchasing_finder_overview"
+            },
+            {
+                "order": 1,
+                "page": "optimate_purchasing_finder_dpo"
+            },
+            {
+                "order": 2,
+                "page": "optimate_purchasing_finder_otif"
+            }
+        ],
+        "scopeName": "",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    }
+]

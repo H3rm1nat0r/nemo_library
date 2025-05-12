@@ -23,6 +23,7 @@ class ImportedColumn:
     importName: str = None
     stringSize: int = 0
     unit: str = ""
+    order: str = ""
     internalName: str = None
     parentAttributeGroupInternalName: str = None
     id: str = ""

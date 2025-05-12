@@ -62,6 +62,7 @@ from nemo_library.model.tile import Tile
 from nemo_library.model.subprocess import SubProcess
 from nemo_library.utils.config import Config
 from nemo_library.utils.utils import FilterType, FilterValue
+import uuid
 
 __all__ = ["MetaDataLoad", "MetaDataDelete", "MetaDataCreate"]
 
@@ -534,11 +535,11 @@ def MetaDataAutoResolveApplications(
                         sourceAttributeId=imported_column.id,
                         parentAttributeGroupInternalName=metric.parentAttributeGroupInternalName,
                         displayNameTranslations={
-                            "de": imported_column.displayNameTranslations.get("de",""),
-                            "en": imported_column.displayNameTranslations.get("en",""),
+                            "de": imported_column.displayNameTranslations.get("de", ""),
+                            "en": imported_column.displayNameTranslations.get("en", ""),
                         },
                         displayName=imported_column.displayName,
-                        internalName=filter + "_" + imported_column.internalName,
+                        internalName=f"{filter}_{imported_column.internalName}_{uuid.uuid4()}".replace("-", "_"),
                     )
                 )
     # export the data to JSON finally
@@ -554,6 +555,14 @@ def MetaDataAutoResolveApplications(
     # contain the id of the imported columns. 
     # So we create them directly in NEMO
     
+    # Remove duplicates from attributelinks_model
+    unique_links = {}
+    for link in attributelinks_model:
+        key = (link.sourceAttributeId, link.parentAttributeGroupInternalName)
+        if key not in unique_links:
+            unique_links[key] = link
+    attributelinks_model = list(unique_links.values())
+
     createAttributeLinks(config=config, projectname=projectname, attributelinks=attributelinks_model)
 
 def _collect_node_objects(tree: DependencyTree) -> list[str]:

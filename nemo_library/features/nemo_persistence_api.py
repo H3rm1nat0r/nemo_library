@@ -140,7 +140,6 @@ def _generic_metadata_create_or_update(
                     tenant=config.get_tenant(),
                     order=obj.order if hasattr(obj, "order") else 0,
                 )
-                print(json.dumps(ate.to_dict(), indent=4))
                 createAttributeTreeElements(
                     config=config, projectname=projectname, attributetreeelements=[ate]
                 )

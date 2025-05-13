@@ -73,7 +73,7 @@ ACTIVITY_TYPE_DETAILS = {
 
 DEALSTAGE_MAPPING = {
     "appointmentscheduled": "Unqualified lead​",
-    "17193482": "Qualified lead​",
+    "17193482": "Qualified lead",
     "16072556": "Presentation",
     "presentationscheduled": "Test phase",
     "decisionmakerboughtin": "Negotiation",

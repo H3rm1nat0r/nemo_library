@@ -4,6 +4,7 @@ from dataclasses import fields, is_dataclass
 import json
 import logging
 from pathlib import Path
+import re
 from typing import Type, TypeVar
 from nemo_library.features.focus import focusMoveAttributeBefore
 from nemo_library.features.nemo_persistence_api import (
@@ -165,19 +166,94 @@ def MetaDataCreate(
 
     # load data from model (JSON)
     logging.info(f"load model from JSON files in folder {config.get_metadata()}")
-    applications_model = _load_data_from_json(config, "applications", Application)
-    attributegroups_model = _load_data_from_json(
-        config, "attributegroups", AttributeGroup
+    applications_model = _load_data_from_json(
+        config,
+        "applications",
+        Application,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
     )
-    attributelinks_model = _load_data_from_json(config, "attributelinks", AttributeLink)
-    definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
-    diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
-    metrics_model = _load_data_from_json(config, "metrics", Metric)
-    pages_model = _load_data_from_json(config, "pages", Page)
-    reports_model = _load_data_from_json(config, "reports", Report)
-    rules_model = _load_data_from_json(config, "rules", Rule)
-    subprocesses_model = _load_data_from_json(config, "subprocesses", SubProcess)
-    tiles_model = _load_data_from_json(config, "tiles", Tile)
+    attributegroups_model = _load_data_from_json(
+        config,
+        "attributegroups",
+        AttributeGroup,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    attributelinks_model = _load_data_from_json(
+        config,
+        "attributelinks",
+        AttributeLink,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    definedcolumns_model = _load_data_from_json(
+        config,
+        "definedcolumns",
+        DefinedColumn,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    diagrams_model = _load_data_from_json(
+        config,
+        "diagrams",
+        Diagram,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    metrics_model = _load_data_from_json(
+        config,
+        "metrics",
+        Metric,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    pages_model = _load_data_from_json(
+        config,
+        "pages",
+        Page,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    reports_model = _load_data_from_json(
+        config,
+        "reports",
+        Report,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    rules_model = _load_data_from_json(
+        config,
+        "rules",
+        Rule,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    subprocesses_model = _load_data_from_json(
+        config,
+        "subprocesses",
+        SubProcess,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    tiles_model = _load_data_from_json(
+        config,
+        "tiles",
+        Tile,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
 
     # load data from NEMO
     logging.info(f"load model from NEMO files from project {projectname}")
@@ -361,14 +437,18 @@ def MetaDataAutoResolveApplications(
     """
 
     logging.info(f"load model from JSON files in folder {config.get_metadata()}")
-    attributegroups_model = [] # empty dictionary to hold the attribute groups to be created
+    attributegroups_model = (
+        []
+    )  # empty dictionary to hold the attribute groups to be created
     applications_model = _load_data_from_json(config, "applications", Application)
     pages_model = _load_data_from_json(config, "pages", Page)
     metrics_model = _load_data_from_json(config, "metrics", Metric)
     definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
     diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
     attribute_groups_metrics = defaultdict(set)
-    attributelinks_model = [] # empty dictionary to hold the attribute links to be created
+    attributelinks_model = (
+        []
+    )  # empty dictionary to hold the attribute links to be created
 
     # build attribute groups tree first
     logging.info(f"build attribute groups tree")
@@ -539,7 +619,9 @@ def MetaDataAutoResolveApplications(
                             "en": imported_column.displayNameTranslations.get("en", ""),
                         },
                         displayName=imported_column.displayName,
-                        internalName=f"{filter}_{imported_column.internalName}_{uuid.uuid4()}".replace("-", "_"),
+                        internalName=f"{filter}_{imported_column.internalName}_{uuid.uuid4()}".replace(
+                            "-", "_"
+                        ),
                     )
                 )
     # export the data to JSON finally
@@ -551,10 +633,10 @@ def MetaDataAutoResolveApplications(
     for name, data in export.items():
         _export_data_to_json(config, name, data)
 
-    # it does not make sense to save the attribute links to JSON, because they 
-    # contain the id of the imported columns. 
+    # it does not make sense to save the attribute links to JSON, because they
+    # contain the id of the imported columns.
     # So we create them directly in NEMO
-    
+
     # Remove duplicates from attributelinks_model
     unique_links = {}
     for link in attributelinks_model:
@@ -563,7 +645,10 @@ def MetaDataAutoResolveApplications(
             unique_links[key] = link
     attributelinks_model = list(unique_links.values())
 
-    createAttributeLinks(config=config, projectname=projectname, attributelinks=attributelinks_model)
+    createAttributeLinks(
+        config=config, projectname=projectname, attributelinks=attributelinks_model
+    )
+
 
 def _collect_node_objects(tree: DependencyTree) -> list[str]:
     elements = [tree]
@@ -589,7 +674,14 @@ def _fetch_data_from_nemo(
     )
 
 
-def _load_data_from_json(config, file: str, cls: Type[T]) -> list[T]:
+def _load_data_from_json(
+    config,
+    file: str,
+    cls: Type[T],
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> list[T]:
     """
     Loads JSON data from a file and converts it into a list of DataClass instances,
     handling nested structures recursively.
@@ -598,7 +690,30 @@ def _load_data_from_json(config, file: str, cls: Type[T]) -> list[T]:
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    return [_deserializeMetaDataObject(item, cls) for item in data]
+    def match_filter(value: str, filter: str, filter_type: FilterType) -> bool:
+        """Applies the given filter to the value."""
+        if filter == "*":
+            return True
+        elif filter_type == FilterType.EQUAL:
+            return value == filter
+        elif filter_type == FilterType.STARTSWITH:
+            return value.startswith(filter)
+        elif filter_type == FilterType.ENDSWITH:
+            return value.endswith(filter)
+        elif filter_type == FilterType.CONTAINS:
+            return filter in value
+        elif filter_type == FilterType.REGEX:
+            return re.search(filter, value) is not None
+        return False
+
+    # Apply filter to the data
+    filtered_data = [
+        item
+        for item in data
+        if match_filter(item.get(filter_value.value, ""), filter, filter_type)
+    ]
+
+    return [_deserializeMetaDataObject(item, cls) for item in filtered_data]
 
 
 def _find_deletions(model_list: list[T], nemo_list: list[T]) -> list[T]:

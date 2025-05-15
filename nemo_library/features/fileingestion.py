@@ -51,8 +51,14 @@ def ReUploadDataFrame(
     if format_data:
         df = _format_data(df, import_configuration)
 
+    # check if project exists
+    if not getProjectID(config, projectname):
+        logging.info(f"Project {projectname} not found - create it")
+        createProjects(config=config, projects=[Project(displayName=projectname)])
+
     # syncronize columns
     nemo_columns = getImportedColumns(config, projectname)
+    
     # check if all columns are in the project
     new_columns = []
     pandas_to_nemo_type = {

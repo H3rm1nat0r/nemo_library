@@ -19,6 +19,9 @@ setup(
     packages=find_packages(),  # Automatically find and include all packages
     install_requires=required,  # List of dependencies from requirements.txt
     include_package_data=True,
+    package_data={
+        'nemo_library': ['templates/migmantemplates.json'],
+    },    
     author='Gunnar Schug',  # Author of the package
     author_email='GunnarSchug81@gmail.com',  # Author's email address
     description='A Python library for data management, project automation, and integration with the NEMO cloud solution',  # Updated short description

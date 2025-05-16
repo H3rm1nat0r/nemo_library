@@ -2,7 +2,7 @@ build/
 nemo_library.egg-info/
 .venv/
 
-config_twine.sh
+config_twine*.sh
 README.rst
 config.ini
 test.py
@@ -17,3 +17,4 @@ migmantest/
 metadatatest/
 tests/migman/
 dist/*
+unit-test-project/*

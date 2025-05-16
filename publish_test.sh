@@ -12,5 +12,5 @@ pandoc -f markdown -t rst -o README.rst README.md
 python -m build
 
 # Configure Twine and upload the package
-source config_twine.sh
-twine upload dist/* -u "$USER" -p "$PWD" --verbose
+source config_twine_test.sh
+twine upload --repository testpypi dist/* -u "$USER" -p "$PWD" --verbose

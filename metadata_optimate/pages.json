@@ -70,15 +70,26 @@
         },
         "displayName": "Fulfillment On Time (FOT)",
         "displayNameTranslations": {
-            "en": "Fulfillment On Time (FOT)",
-            "de": "P\u00fcnktliche Erledigung (FOT)"
+            "de": "P\u00fcnktliche Erledigung (FOT)",
+            "en": "Fulfillment On Time (FOT)"
         },
         "hideIfColumns": [],
         "internalName": "optimate_sales_finder_fot",
         "numberOfColumns": 3,
         "numberOfRows": 3,
         "showIfColumns": [],
-        "visuals": [],
+        "visuals": [
+            {
+                "column": 1,
+                "columnSpan": 3,
+                "content": "optimate_sales_share_of_early_on_time_and_late_deliveries",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Diagram"
+            }
+        ],
         "id": "",
         "projectId": "",
         "tenant": "",

@@ -4,7 +4,6 @@
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "displayNameTranslations": {
-            "de": "Menge (Position (Wareneingang))",
             "en": "PurStockRecLineQty"
         },
         "displayName": "PurStockRecLineQty",
@@ -20,7 +19,6 @@
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -36,7 +34,6 @@
         "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "displayNameTranslations": {
-            "de": "Netto-F\u00e4lligkeitsdatum (Zahlung)",
             "en": "PaymentNettoDueDate"
         },
         "displayName": "PaymentNettoDueDate",
@@ -48,43 +45,10 @@
         "metadataClassificationInternalName": ""
     },
     {
-        "sourceAttributeId": "a3c2350d-5869-4842-b0fc-f39fe7b94977",
-        "order": "4",
-        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
-        "displayNameTranslations": {
-            "de": "Wareneingangsnummer (Wareneingang)",
-            "en": "PurStockRecDocNo"
-        },
-        "displayName": "PurStockRecDocNo",
-        "internalName": "pur_stock_rec_doc_no_3fd8fc15_38e1_4eb1_9098_b849f90f557b",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "sourceAttributeId": "323be909-daff-43a3-ae90-1b740a69956f",
-        "order": "0",
-        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
-        "displayNameTranslations": {
-            "de": "Lieferantennummer (Lieferant)",
-            "en": "SupplierID"
-        },
-        "displayName": "SupplierID",
-        "internalName": "supplier_i_d_3536b461_f93d_4c23_9e60_11eeee9fdc00",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
         "sourceAttributeId": "8cf911a1-188e-49af-854b-dc3565907382",
         "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {
-            "de": "Anlagedatum (Position (Wareneingang))",
             "en": "PurStockRecLineCreationDate"
         },
         "displayName": "PurStockRecLineCreationDate",
@@ -100,7 +64,6 @@
         "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "displayNameTranslations": {
-            "de": "Letztes Zahlungsziel (Zahlung)",
             "en": "PaymentLastPayDate"
         },
         "displayName": "PaymentLastPayDate",
@@ -112,28 +75,11 @@
         "metadataClassificationInternalName": ""
     },
     {
-        "sourceAttributeId": "fd04bcf7-b5fc-4f2e-a273-5d05addad982",
-        "order": "5",
-        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
-        "displayNameTranslations": {
-            "de": "Bestellungsnummer (Bestellung)",
-            "en": "PurOrderDocNo"
-        },
-        "displayName": "PurOrderDocNo",
-        "internalName": "pur_order_doc_no_20bbf450_9220_434b_96c3_0bb588ad95c0",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
         "sourceAttributeId": "4e3ba31f-7bba-4bd3-8638-94823bf3aeec",
         "order": "",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "displayNameTranslations": {
-            "en": "InvoiceDocDate",
-            "de": "Belegdatum (Kundenrechnung)"
+            "en": "InvoiceDocDate"
         },
         "displayName": "InvoiceDocDate",
         "internalName": "optimate_sales_invoice_doc_date_8431054c_81a8_4dd7_b1cc_09809be596c8",
@@ -148,7 +94,6 @@
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -164,7 +109,6 @@
         "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {
-            "de": "Menge (Position (Bestellung))",
             "en": "PurOrderLineQty"
         },
         "displayName": "PurOrderLineQty",
@@ -180,7 +124,6 @@
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -196,7 +139,6 @@
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
         "displayNameTranslations": {
-            "de": "Rechnungsdatum (LIeferantenrechnung)",
             "en": "PurInvExtDocDate"
         },
         "displayName": "PurInvExtDocDate",
@@ -212,7 +154,6 @@
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {
-            "de": "Liefertermin (Bestellung)",
             "en": "PurOrderLineDeliveryDate"
         },
         "displayName": "PurOrderLineDeliveryDate",
@@ -228,8 +169,7 @@
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {
-            "en": "PartReplenishmentTime",
-            "de": "Wiederbeschaffungszeit (Teil (Teil))"
+            "en": "PartReplenishmentTime"
         },
         "displayName": "PartReplenishmentTime",
         "internalName": "optimate_part_replenishment_time_f20bd9f5_08d8_4e2e_a851_13f2cb8e3352",
@@ -244,7 +184,6 @@
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {
-            "de": "Wunschtermin (Bestellung)",
             "en": "PurOrderLineRequestedDate"
         },
         "displayName": "PurOrderLineRequestedDate",
@@ -256,27 +195,10 @@
         "metadataClassificationInternalName": ""
     },
     {
-        "sourceAttributeId": "e91fdae4-2ddb-47cd-a06f-2687613412ff",
-        "order": "1",
-        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
-        "displayNameTranslations": {
-            "en": "SupplierName",
-            "de": "Name (Lieferant)"
-        },
-        "displayName": "SupplierName",
-        "internalName": "supplier_name_a18b3c9b_1f00_46e1_9fd5_de1497da8594",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -292,7 +214,6 @@
         "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {
-            "de": "Wunschtermin (Bestellung)",
             "en": "PurOrderLineRequestedDate"
         },
         "displayName": "PurOrderLineRequestedDate",
@@ -308,7 +229,6 @@
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "displayNameTranslations": {
-            "de": "Menge (Position (Bestellung))",
             "en": "PurOrderLineQty"
         },
         "displayName": "PurOrderLineQty",
@@ -324,7 +244,6 @@
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -340,7 +259,6 @@
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -356,7 +274,6 @@
         "order": "",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "displayNameTranslations": {
-            "de": "Letztes Zahlungsziel (Zahlung)",
             "en": "PaymentLastPayDate"
         },
         "displayName": "PaymentLastPayDate",
@@ -372,7 +289,6 @@
         "order": "",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "displayNameTranslations": {
-            "de": "Rechnungs-OID (Kundenrechnung)",
             "en": "InvoiceDocID"
         },
         "displayName": "InvoiceDocID",
@@ -388,7 +304,6 @@
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "displayNameTranslations": {
-            "de": "Belegdatum (Wareneingang)",
             "en": "PurStockRecDocDate"
         },
         "displayName": "PurStockRecDocDate",
@@ -400,27 +315,10 @@
         "metadataClassificationInternalName": ""
     },
     {
-        "sourceAttributeId": "2f08d855-e251-4be6-bad7-ca391f391555",
-        "order": "6",
-        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
-        "displayNameTranslations": {
-            "de": "Lieferantenrechnungsnummer (Lieferantenrechnung)",
-            "en": "PurInvDocNo"
-        },
-        "displayName": "PurInvDocNo",
-        "internalName": "pur_inv_doc_no_556c2b8c_fcd1_45b9_82f8_1898832f74e6",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -436,7 +334,6 @@
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
         "displayNameTranslations": {
-            "de": "Anzahl der Auftragsbest\u00e4tigungen (Bestellung)",
             "en": "PurOrderLineNumberConf"
         },
         "displayName": "PurOrderLineNumberConf",
@@ -452,7 +349,6 @@
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -468,7 +364,6 @@
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {
-            "de": "Liefertermin (Bestellung)",
             "en": "PurOrderLineDeliveryDate"
         },
         "displayName": "PurOrderLineDeliveryDate",
@@ -484,7 +379,6 @@
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -500,7 +394,6 @@
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -516,7 +409,6 @@
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
         "displayNameTranslations": {
-            "de": "\u00c4nderungsdatum (Lieferantenrechnung)",
             "en": "PurInvChangeDate"
         },
         "displayName": "PurInvChangeDate",
@@ -532,7 +424,6 @@
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -548,7 +439,6 @@
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -564,7 +454,6 @@
         "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {
-            "de": "Menge (Position (Wareneingang))",
             "en": "PurStockRecLineQty"
         },
         "displayName": "PurStockRecLineQty",
@@ -580,7 +469,6 @@
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -596,7 +484,6 @@
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -612,7 +499,6 @@
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
         "displayNameTranslations": {
-            "de": "Wunschtermin (Bestellung)",
             "en": "PurOrderLineRequestedDate"
         },
         "displayName": "PurOrderLineRequestedDate",
@@ -628,7 +514,6 @@
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -644,7 +529,6 @@
         "order": "",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "displayNameTranslations": {
-            "de": "Netto-F\u00e4lligkeitsdatum (Zahlung)",
             "en": "PaymentNettoDueDate"
         },
         "displayName": "PaymentNettoDueDate",
@@ -660,7 +544,6 @@
         "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "displayNameTranslations": {
-            "de": "Belegdatum (Bestellung)",
             "en": "PurOrderDocDate"
         },
         "displayName": "PurOrderDocDate",
@@ -672,43 +555,10 @@
         "metadataClassificationInternalName": ""
     },
     {
-        "sourceAttributeId": "6a0773ff-51dc-475b-81d0-11cb2276200b",
-        "order": "2",
-        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
-        "displayNameTranslations": {
-            "de": "Teilenummer (Teil)",
-            "en": "PartID"
-        },
-        "displayName": "PartID",
-        "internalName": "part_i_d_05f86bc5_1095_4648_b7bf_1c62a163a523",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "sourceAttributeId": "cd132033-ed22-42a3-9ebf-858e838035bd",
-        "order": "3",
-        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
-        "displayNameTranslations": {
-            "de": "Teilebezeichnung1 (Teil)",
-            "en": "PartDesc1"
-        },
-        "displayName": "PartDesc1",
-        "internalName": "part_desc1_17f2eb61_c355_4653_ab46_57298811dfcf",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -724,7 +574,6 @@
         "order": "8",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "displayNameTranslations": {
-            "de": "Bestellungs-OID (Bestellung)",
             "en": "PurOrderDocID"
         },
         "displayName": "PurOrderDocID",
@@ -740,7 +589,6 @@
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
         "displayNameTranslations": {
-            "de": "Anlagedatum (Position (Bestellung))",
             "en": "PurOrderLineCreationDate"
         },
         "displayName": "PurOrderLineCreationDate",
@@ -756,7 +604,6 @@
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {
-            "de": "Anlagedatum (Position (Bestellung))",
             "en": "PurOrderLineCreationDate"
         },
         "displayName": "PurOrderLineCreationDate",
@@ -772,7 +619,6 @@
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "displayNameTranslations": {
-            "de": "Anlagedatum (Position (Wareneingang))",
             "en": "PurStockRecLineCreationDate"
         },
         "displayName": "PurStockRecLineCreationDate",

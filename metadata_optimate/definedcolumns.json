@@ -10,8 +10,8 @@
         },
         "displayName": "In-Full Sourcing Overdelivered (boolean)",
         "displayNameTranslations": {
-            "en": "In-Full Sourcing Overdelivered (boolean)",
-            "de": "Einkaufsmengentreue \u00fcberliefert (boolean)"
+            "de": "Einkaufsmengentreue \u00fcberliefert (boolean)",
+            "en": "In-Full Sourcing Overdelivered (boolean)"
         },
         "formula": "optimate_purchasing_in_full_sourcing_amount < 0",
         "groupByColumnInternalName": null,
@@ -21,6 +21,34 @@
         "order": "7",
         "internalName": "optimate_purchasing_in_full_sourcing_overdelivered_boolean",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "On-Time Sourcing Too Early (boolean)",
+        "displayNameTranslations": {
+            "en": "On-Time Delivery Too Early (boolean)",
+            "de": "Einkaufstermintreue zu fr\u00fch (boolean)"
+        },
+        "formula": "optimate_sales_on_time_delivery_days > 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": null,
+        "unit": "",
+        "order": "7",
+        "internalName": "optimate_sales_on_time_delivery_too_early_boolean",
+        "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -116,6 +144,34 @@
         "descriptionTranslations": {
             "en": ""
         },
+        "displayName": "On-Time Delivery Too Late (boolean)",
+        "displayNameTranslations": {
+            "de": "Vertriebslieferung zu sp\u00e4t (boolean)",
+            "en": "On-Time Delivery Too Late (boolean)"
+        },
+        "formula": "optimate_sales_on_time_delivery_days < 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": null,
+        "unit": "",
+        "order": "8",
+        "internalName": "optimate_sales_on_time_delivery_too_late_boolean",
+        "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
         "displayName": "Payments Deviation On Time (boolean)",
         "displayNameTranslations": {
             "en": "Payments Deviation On Time (boolean)",
@@ -174,8 +230,8 @@
         },
         "displayName": "Payments Deviation (days)",
         "displayNameTranslations": {
-            "en": "Payments Deviation (days)",
-            "de": "Zahlungsabweichung (Tage)"
+            "de": "Zahlungsabweichung (Tage)",
+            "en": "Payments Deviation (days)"
         },
         "formula": "payment_netto_due_date-payment_last_pay_date",
         "groupByColumnInternalName": null,
@@ -202,8 +258,8 @@
         },
         "displayName": "On-Time Sourcing Too Early (boolean)",
         "displayNameTranslations": {
-            "en": "On-Time Sourcing Too Early (boolean)",
-            "de": "Einkaufstermintreue zu fr\u00fch (boolean)"
+            "de": "Einkaufstermintreue zu fr\u00fch (boolean)",
+            "en": "On-Time Sourcing Too Early (boolean)"
         },
         "formula": "optimate_purchasing_on_time_sourcing_days > 0",
         "groupByColumnInternalName": null,
@@ -315,6 +371,34 @@
         "displayName": "On-Time Sourcing (days)",
         "displayNameTranslations": {
             "de": "Einkaufstermintreue (Tage)",
+            "en": "On-Time Delivery Deviation (days)"
+        },
+        "formula": "order_doc_line_requested_date - delivery_date",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": 128,
+        "unit": "days",
+        "order": "6",
+        "internalName": "optimate_sales_on_time_delivery_days",
+        "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "integer",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "On-Time Sourcing (days)",
+        "displayNameTranslations": {
+            "de": "Einkaufstermintreue (Tage)",
             "en": "On-Time Sourcing (days)"
         },
         "formula": "pur_order_line_requested_date-pur_order_line_delivery_date",
@@ -342,8 +426,8 @@
         },
         "displayName": "On-Time Sourcing (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufstermintreue (boolean)",
-            "en": "On-Time Sourcing (boolean)"
+            "en": "On-Time Sourcing (boolean)",
+            "de": "Einkaufstermintreue (boolean)"
         },
         "formula": "optimate_purchasing_on_time_sourcing_days == 0",
         "groupByColumnInternalName": null,
@@ -368,10 +452,38 @@
         "descriptionTranslations": {
             "en": ""
         },
+        "displayName": "On-Time Sourcing (boolean)",
+        "displayNameTranslations": {
+            "en": "On-Time Delivery (boolean)",
+            "de": "Einkaufstermintreue (boolean)"
+        },
+        "formula": "optimate_sales_on_time_delivery_days == 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": null,
+        "unit": "",
+        "order": "5",
+        "internalName": "optimate_sales_on_time_delivery_boolean",
+        "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
         "displayName": "In-Full Sourcing (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufsmengentreue (boolean)",
-            "en": "In-Full Sourcing (boolean)"
+            "en": "In-Full Sourcing (boolean)",
+            "de": "Einkaufsmengentreue (boolean)"
         },
         "formula": "optimate_purchasing_in_full_sourcing_amount == 0",
         "groupByColumnInternalName": null,
@@ -398,8 +510,8 @@
         },
         "displayName": "On-Time Sourcing Too Late (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufstermintreue zu sp\u00e4t (boolean)",
-            "en": "On-Time Sourcing Too Late (boolean)"
+            "en": "On-Time Sourcing Too Late (boolean)",
+            "de": "Einkaufstermintreue zu sp\u00e4t (boolean)"
         },
         "formula": "optimate_purchasing_on_time_sourcing_days < 0",
         "groupByColumnInternalName": null,
@@ -482,8 +594,8 @@
         },
         "displayName": "In-Full Sourcing (amount)",
         "displayNameTranslations": {
-            "de": "Einkaufsmengentreue Abweichung (Menge)",
-            "en": "In-Full Sourcing (amount)"
+            "en": "In-Full Sourcing (amount)",
+            "de": "Einkaufsmengentreue Abweichung (Menge)"
         },
         "formula": "pur_order_line_qty-pur_stock_rec_line_qty",
         "groupByColumnInternalName": null,

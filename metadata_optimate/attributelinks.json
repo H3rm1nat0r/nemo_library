@@ -3,7 +3,9 @@
         "sourceAttributeId": "9d6d30f9-6c03-49d7-89c3-fddfdac65a00",
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Menge (Position (Wareneingang))"
+        },
         "displayName": "PurStockRecLineQty",
         "internalName": "optimate_pur_stock_rec_line_qty_6a4e4a5b_8c3f_487a_9f82_56c1434ed13a",
         "id": "",
@@ -16,7 +18,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_e63e1003_7f1e_4490_84e2_af469a0db4d4",
         "id": "",
@@ -29,9 +33,42 @@
         "sourceAttributeId": "ec6007a9-c2c5-47a4-a356-8fc3c2571bde",
         "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Netto-F\u00e4lligkeitsdatum (Zahlung)"
+        },
         "displayName": "PaymentNettoDueDate",
         "internalName": "optimate_payment_netto_due_date_7bf43cb6_a841_4f96_9850_e16cbba31371",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": "a3c2350d-5869-4842-b0fc-f39fe7b94977",
+        "order": "4",
+        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
+        "displayNameTranslations": {
+            "de": "Wareneingangsnummer (Wareneingang)",
+            "en": "PurStockRecDocNo"
+        },
+        "displayName": "PurStockRecDocNo",
+        "internalName": "pur_stock_rec_doc_no_3fd8fc15_38e1_4eb1_9098_b849f90f557b",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": "323be909-daff-43a3-ae90-1b740a69956f",
+        "order": "0",
+        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
+        "displayNameTranslations": {
+            "de": "Lieferantennummer (Lieferant)"
+        },
+        "displayName": "SupplierID",
+        "internalName": "supplier_i_d_3536b461_f93d_4c23_9e60_11eeee9fdc00",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -42,7 +79,9 @@
         "sourceAttributeId": "8cf911a1-188e-49af-854b-dc3565907382",
         "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Anlagedatum (Position (Wareneingang))"
+        },
         "displayName": "PurStockRecLineCreationDate",
         "internalName": "optimate_pur_stock_rec_line_creation_date_182f0243_67da_4485_bfa3_6a1afc667b13",
         "id": "",
@@ -55,9 +94,26 @@
         "sourceAttributeId": "0d817d5b-19d3-4fc2-9066-5856700f7fbf",
         "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Letztes Zahlungsziel (Zahlung)"
+        },
         "displayName": "PaymentLastPayDate",
         "internalName": "optimate_payment_last_pay_date_5290ddcd_56db_40ee_96c4_fa23cb396577",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": "fd04bcf7-b5fc-4f2e-a273-5d05addad982",
+        "order": "5",
+        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
+        "displayNameTranslations": {
+            "de": "Bestellungsnummer (Bestellung)"
+        },
+        "displayName": "PurOrderDocNo",
+        "internalName": "pur_order_doc_no_20bbf450_9220_434b_96c3_0bb588ad95c0",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -68,7 +124,10 @@
         "sourceAttributeId": "4e3ba31f-7bba-4bd3-8638-94823bf3aeec",
         "order": "",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "en": "InvoiceDocDate",
+            "de": "Belegdatum (Kundenrechnung)"
+        },
         "displayName": "InvoiceDocDate",
         "internalName": "optimate_sales_invoice_doc_date_8431054c_81a8_4dd7_b1cc_09809be596c8",
         "id": "",
@@ -81,7 +140,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_37d88419_2423_407e_a2a9_716d081ff5b8",
         "id": "",
@@ -94,7 +155,9 @@
         "sourceAttributeId": "33ace03c-4621-428e-a9a5-0ab2118a5367",
         "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Menge (Position (Bestellung))"
+        },
         "displayName": "PurOrderLineQty",
         "internalName": "optimate_pur_order_line_qty_fbd5ab0d_523f_486b_a89d_c497ec5820f2",
         "id": "",
@@ -107,7 +170,9 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_120a2d65_9883_4bda_ad32_2a3d78e2b213",
         "id": "",
@@ -120,7 +185,9 @@
         "sourceAttributeId": "c74cd6d9-c895-41ad-a408-05f1ffd73df2",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Rechnungsdatum (LIeferantenrechnung)"
+        },
         "displayName": "PurInvExtDocDate",
         "internalName": "optimate_pur_inv_ext_doc_date_1ac6ca6c_e0d1_4b73_8642_29f308abca66",
         "id": "",
@@ -133,7 +200,9 @@
         "sourceAttributeId": "9c698a1f-9ff8-49bb-8ecf-40cfc2283b4f",
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Liefertermin (Bestellung)"
+        },
         "displayName": "PurOrderLineDeliveryDate",
         "internalName": "optimate_pur_order_line_delivery_date_49739315_77cc_4b84_9185_7bcee5a08c82",
         "id": "",
@@ -146,7 +215,10 @@
         "sourceAttributeId": "24366ccb-b3e0-42ad-b694-4c8d5ffca177",
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "en": "PartReplenishmentTime",
+            "de": "Wiederbeschaffungszeit (Teil (Teil))"
+        },
         "displayName": "PartReplenishmentTime",
         "internalName": "optimate_part_replenishment_time_f20bd9f5_08d8_4e2e_a851_13f2cb8e3352",
         "id": "",
@@ -159,9 +231,27 @@
         "sourceAttributeId": "79d2aa60-0b63-4a19-9523-df4bf1a8bc27",
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Wunschtermin (Bestellung)"
+        },
         "displayName": "PurOrderLineRequestedDate",
         "internalName": "optimate_pur_order_line_requested_date_009139db_ff3c_4a79_9845_cc49397fb5ef",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": "e91fdae4-2ddb-47cd-a06f-2687613412ff",
+        "order": "1",
+        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
+        "displayNameTranslations": {
+            "en": "SupplierName",
+            "de": "Name (Lieferant)"
+        },
+        "displayName": "SupplierName",
+        "internalName": "supplier_name_a18b3c9b_1f00_46e1_9fd5_de1497da8594",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -172,7 +262,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_26a49a8f_880a_4845_8c08_e409ec2ab0fd",
         "id": "",
@@ -185,7 +277,9 @@
         "sourceAttributeId": "79d2aa60-0b63-4a19-9523-df4bf1a8bc27",
         "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Wunschtermin (Bestellung)"
+        },
         "displayName": "PurOrderLineRequestedDate",
         "internalName": "optimate_pur_order_line_requested_date_1562a677_5eb9_4ebe_b04d_edc93a606eca",
         "id": "",
@@ -198,7 +292,9 @@
         "sourceAttributeId": "33ace03c-4621-428e-a9a5-0ab2118a5367",
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Menge (Position (Bestellung))"
+        },
         "displayName": "PurOrderLineQty",
         "internalName": "optimate_pur_order_line_qty_12d601fb_0022_4e81_a31a_694461dcebc1",
         "id": "",
@@ -211,7 +307,9 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_df817df4_64c0_4a79_bbd5_7efc9b0237a8",
         "id": "",
@@ -224,7 +322,9 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_7c0906bc_520f_4463_86da_711d556692f2",
         "id": "",
@@ -237,7 +337,9 @@
         "sourceAttributeId": "0d817d5b-19d3-4fc2-9066-5856700f7fbf",
         "order": "",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Letztes Zahlungsziel (Zahlung)"
+        },
         "displayName": "PaymentLastPayDate",
         "internalName": "optimate_sales_payment_last_pay_date_372ce40f_47cd_466e_85cd_2bb31d88fd06",
         "id": "",
@@ -250,7 +352,10 @@
         "sourceAttributeId": "1d605cd4-f437-46a8-b575-30e61e209959",
         "order": "",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Rechnungs-OID (Kundenrechnung)",
+            "en": "InvoiceDocID"
+        },
         "displayName": "InvoiceDocID",
         "internalName": "optimate_sales_invoice_doc_i_d_d64ce6f9_05cd_48fa_8953_74cef1511ccd",
         "id": "",
@@ -263,9 +368,26 @@
         "sourceAttributeId": "095934b8-292d-4a30-8365-e543988771b4",
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Wareneingang)"
+        },
         "displayName": "PurStockRecDocDate",
         "internalName": "optimate_pur_stock_rec_doc_date_1c549b8f_addd_4ce0_ab09_9c47389804c0",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": "2f08d855-e251-4be6-bad7-ca391f391555",
+        "order": "6",
+        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
+        "displayNameTranslations": {
+            "de": "Lieferantenrechnungsnummer (Lieferantenrechnung)"
+        },
+        "displayName": "PurInvDocNo",
+        "internalName": "pur_inv_doc_no_556c2b8c_fcd1_45b9_82f8_1898832f74e6",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -276,7 +398,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_bbcea4ce_53ac_4dac_b1b1_bfc7afeed211",
         "id": "",
@@ -289,7 +413,9 @@
         "sourceAttributeId": "e027a48c-3486-4715-911f-c188736b2275",
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Anzahl der Auftragsbest\u00e4tigungen (Bestellung)"
+        },
         "displayName": "PurOrderLineNumberConf",
         "internalName": "optimate_pur_order_line_amount_conf_b211e0c8_9dc5_4485_a60d_a1e3a8dabefe",
         "id": "",
@@ -302,7 +428,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_0a3ffff0_2e9c_41ce_b855_b5d8dbe249a8",
         "id": "",
@@ -315,7 +443,9 @@
         "sourceAttributeId": "9c698a1f-9ff8-49bb-8ecf-40cfc2283b4f",
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Liefertermin (Bestellung)"
+        },
         "displayName": "PurOrderLineDeliveryDate",
         "internalName": "optimate_pur_order_line_delivery_date_ab6f3fc2_1de3_47d9_bc16_e253a7c66b8f",
         "id": "",
@@ -328,7 +458,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_43b046b6_d0ac_49be_af3c_1660185c0dee",
         "id": "",
@@ -341,7 +473,9 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_9f9d98ba_714c_489c_91e3_d69c462007f6",
         "id": "",
@@ -354,7 +488,9 @@
         "sourceAttributeId": "a333e685-0bbe-4165-a618-ed1e618ce3b2",
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "\u00c4nderungsdatum (Lieferantenrechnung)"
+        },
         "displayName": "PurInvChangeDate",
         "internalName": "optimate_pur_inv_change_date_4c8abb72_b2e0_48fa_bcc1_c4efc33c8cea",
         "id": "",
@@ -367,7 +503,9 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_4a8c6a11_52de_47f6_8590_148c8cdb003f",
         "id": "",
@@ -380,7 +518,9 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_34870108_2508_401d_bc46_f091e664c958",
         "id": "",
@@ -393,7 +533,9 @@
         "sourceAttributeId": "9d6d30f9-6c03-49d7-89c3-fddfdac65a00",
         "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Menge (Position (Wareneingang))"
+        },
         "displayName": "PurStockRecLineQty",
         "internalName": "optimate_pur_stock_rec_line_qty_af8123a9_a2db_491e_b0ee_469154070bea",
         "id": "",
@@ -406,7 +548,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_c72b8156_d866_4b77_9f24_e38025a0738b",
         "id": "",
@@ -419,7 +563,9 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_0f567b32_64b8_4005_b9b6_df3f8645f257",
         "id": "",
@@ -432,7 +578,9 @@
         "sourceAttributeId": "79d2aa60-0b63-4a19-9523-df4bf1a8bc27",
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Wunschtermin (Bestellung)"
+        },
         "displayName": "PurOrderLineRequestedDate",
         "internalName": "optimate_pur_order_line_requested_date_2e185e1e_38c7_449d_b87b_ff9478d8b0bd",
         "id": "",
@@ -445,7 +593,9 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_18606ecb_077d_4705_8593_4c681f973ba6",
         "id": "",
@@ -458,7 +608,9 @@
         "sourceAttributeId": "ec6007a9-c2c5-47a4-a356-8fc3c2571bde",
         "order": "",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Netto-F\u00e4lligkeitsdatum (Zahlung)"
+        },
         "displayName": "PaymentNettoDueDate",
         "internalName": "optimate_sales_payment_netto_due_date_6df65f46_f4b2_4e7e_be95_7ace0713d629",
         "id": "",
@@ -471,9 +623,41 @@
         "sourceAttributeId": "3f31271b-0ac2-47f3-9f53-1a83768f67fe",
         "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Belegdatum (Bestellung)"
+        },
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_f2ed03c1_3c94_4bce_816f_04efdaa9ab8e",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": "6a0773ff-51dc-475b-81d0-11cb2276200b",
+        "order": "2",
+        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
+        "displayNameTranslations": {
+            "de": "Teilenummer (Teil)"
+        },
+        "displayName": "PartID",
+        "internalName": "part_i_d_05f86bc5_1095_4648_b7bf_1c62a163a523",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": "cd132033-ed22-42a3-9ebf-858e838035bd",
+        "order": "3",
+        "parentAttributeGroupInternalName": "allgemeine_einkaufsdaten",
+        "displayNameTranslations": {
+            "de": "Teilebezeichnung1 (Teil)"
+        },
+        "displayName": "PartDesc1",
+        "internalName": "part_desc1_17f2eb61_c355_4653_ab46_57298811dfcf",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -484,7 +668,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_c42b8ccd_0c0e_4ea7_b0d7_ab4e031c6cc5",
         "id": "",
@@ -497,7 +683,9 @@
         "sourceAttributeId": "21e63eee-f9b0-42b6-8681-4e40d6db3a53",
         "order": "8",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Bestellungs-OID (Bestellung)"
+        },
         "displayName": "PurOrderDocID",
         "internalName": "optimate_pur_order_doc_i_d_fa4328fe_f573_4688_84d8_efb9f7b679e9",
         "id": "",
@@ -510,7 +698,9 @@
         "sourceAttributeId": "796fd238-3d80-4951-bafe-a926fb25b65a",
         "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Anlagedatum (Position (Bestellung))"
+        },
         "displayName": "PurOrderLineCreationDate",
         "internalName": "optimate_pur_order_line_creation_date_c4c7bf97_d5af_4b1a_a5d5_b021597de192",
         "id": "",
@@ -523,7 +713,9 @@
         "sourceAttributeId": "796fd238-3d80-4951-bafe-a926fb25b65a",
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Anlagedatum (Position (Bestellung))"
+        },
         "displayName": "PurOrderLineCreationDate",
         "internalName": "optimate_pur_order_line_creation_date_3e0a62a5_5495_4b60_8d30_6dc2b63a99c5",
         "id": "",
@@ -536,7 +728,9 @@
         "sourceAttributeId": "8cf911a1-188e-49af-854b-dc3565907382",
         "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
-        "displayNameTranslations": {},
+        "displayNameTranslations": {
+            "de": "Anlagedatum (Position (Wareneingang))"
+        },
         "displayName": "PurStockRecLineCreationDate",
         "internalName": "optimate_pur_stock_rec_line_creation_date_490339da_a017_4734_be83_d2a627a1134f",
         "id": "",

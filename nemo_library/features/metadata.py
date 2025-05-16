@@ -440,11 +440,46 @@ def MetaDataAutoResolveApplications(
     attributegroups_model = (
         []
     )  # empty dictionary to hold the attribute groups to be created
-    applications_model = _load_data_from_json(config, "applications", Application)
-    pages_model = _load_data_from_json(config, "pages", Page)
-    metrics_model = _load_data_from_json(config, "metrics", Metric)
-    definedcolumns_model = _load_data_from_json(config, "definedcolumns", DefinedColumn)
-    diagrams_model = _load_data_from_json(config, "diagrams", Diagram)
+    applications_model = _load_data_from_json(
+        config,
+        "applications",
+        Application,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    pages_model = _load_data_from_json(
+        config,
+        "pages",
+        Page,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    metrics_model = _load_data_from_json(
+        config,
+        "metrics",
+        Metric,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    definedcolumns_model = _load_data_from_json(
+        config,
+        "definedcolumns",
+        DefinedColumn,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    diagrams_model = _load_data_from_json(
+        config,
+        "diagrams",
+        Diagram,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
     attribute_groups_metrics = defaultdict(set)
     attributelinks_model = (
         []

@@ -16,26 +16,6 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_on_time_in_full_otif",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 2,
-                "type": "Diagram"
-            },
-            {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_otif_rate",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Metric"
-            },
-            {
                 "column": 1,
                 "columnSpan": 1,
                 "content": "optimate_purchasing_days_payables_outstanding_dpo",

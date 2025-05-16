@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import Any, List, Type, TypeVar, get_type_hints
+from typing import Any, Type, TypeVar, get_type_hints
 
 import requests
 
@@ -22,7 +22,7 @@ from nemo_library.model.rule import Rule
 from nemo_library.model.subprocess import SubProcess
 from nemo_library.model.tile import Tile
 from nemo_library.utils.config import Config
-from nemo_library.utils.utils import FilterType, FilterValue, clean_meta_data, log_error
+from nemo_library.utils.utils import FilterType, FilterValue, log_error
 
 T = TypeVar("T")
 
@@ -239,9 +239,7 @@ def _generic_metadata_get(
         if match_filter(item.get(filter_value.value, ""), filter, filter_type)
     ]
 
-    # Clean metadata and return the list of objects
-    cleaned_data = clean_meta_data(filtered_data)
-    return [_deserializeMetaDataObject(item, return_type) for item in cleaned_data]
+    return [_deserializeMetaDataObject(item, return_type) for item in filtered_data]
 
 
 def getProjectID(
@@ -660,7 +658,7 @@ def createAttributeLinks(
         projectname=projectname,
         objects=attributelinks,
         endpoint="AttributeLink",
-        get_existing_func=getAttributeLinks
+        get_existing_func=getAttributeLinks,
     )
 
 
@@ -778,9 +776,7 @@ def getProjects(
         if match_filter(item.get(filter_value.value, ""), filter, filter_type)
     ]
 
-    # Clean metadata and return the list of objects
-    cleaned_data = clean_meta_data(filtered_data)
-    return [_deserializeMetaDataObject(item, Project) for item in cleaned_data]
+    return [_deserializeMetaDataObject(item, Project) for item in filtered_data]
 
 
 def deleteProjects(config: Config, projects: list[str]) -> None:

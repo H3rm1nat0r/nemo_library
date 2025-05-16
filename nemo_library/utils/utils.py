@@ -89,32 +89,3 @@ def log_error(error_message: str, error_type: Type[BaseException] = ValueError) 
     """
     logging.error(error_message)
     raise error_type(error_message)
-
-
-def clean_meta_data(data):
-    """
-    Cleans metadata from a list of elements by removing specific columns.
-
-    Args:
-        data (list): The list of elements to clean.
-
-    Returns:
-        list: The cleaned list of elements.
-    """
-    for element in data:
-        for column in [
-            "attributeGroupInternalName",
-            "changedBy",
-            "changedDate",
-            "createdBy",
-            "creationDate",
-            "metadataTemplateId",
-            "conflictState",
-            "focusAggregationFunction",
-            "focusAggregationGroupByTargetType",
-            "focusAggregationSourceColumnInternalName",
-            "focusGroupByTargetInternalName",
-        ]:
-            element.pop(column, None)
-
-    return data

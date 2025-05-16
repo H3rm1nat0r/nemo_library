@@ -66,7 +66,6 @@ class Diagram:
         isCustom (bool): Indicates if the diagram is custom.
         metadataClassificationInternalName (str): The internal name for metadata classification.
         basedOnMetric (bool): Indicates if the diagram is based on a metric.
-        conflictState (str): The conflict state of the diagram.
     """
 
     alternateVisualization: bool
@@ -89,7 +88,6 @@ class Diagram:
     isCustom: bool = False
     metadataClassificationInternalName: str = ""
     basedOnMetric: bool = False
-    conflictState: str = ""
 
     def to_dict(self):
         """

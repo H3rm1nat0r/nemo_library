@@ -16,8 +16,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "3",
-        "conflictState": "NoConflict"
+        "order": "3"
     },
     {
         "attributeGroupType": "Standard",
@@ -36,8 +35,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "0",
-        "conflictState": "NoConflict"
+        "order": "0"
     },
     {
         "attributeGroupType": "Standard",
@@ -56,8 +54,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "0",
-        "conflictState": "NoConflict"
+        "order": "0"
     },
     {
         "attributeGroupType": "Standard",
@@ -76,8 +73,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "000",
-        "conflictState": "NoConflict"
+        "order": "000"
     },
     {
         "attributeGroupType": "Standard",
@@ -96,8 +92,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "1",
-        "conflictState": "NoConflict"
+        "order": "1"
     },
     {
         "attributeGroupType": "Standard",
@@ -116,8 +111,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "1",
-        "conflictState": "NoConflict"
+        "order": "1"
     },
     {
         "attributeGroupType": "Standard",
@@ -136,8 +130,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "0",
-        "conflictState": "NoConflict"
+        "order": "0"
     },
     {
         "attributeGroupType": "Standard",
@@ -156,8 +149,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "2",
-        "conflictState": "NoConflict"
+        "order": "2"
     },
     {
         "attributeGroupType": "Standard",
@@ -176,8 +168,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "2",
-        "conflictState": "NoConflict"
+        "order": "2"
     },
     {
         "attributeGroupType": "Standard",
@@ -196,8 +187,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "00",
-        "conflictState": "NoConflict"
+        "order": "00"
     },
     {
         "attributeGroupType": "Standard",
@@ -216,8 +206,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "4",
-        "conflictState": "NoConflict"
+        "order": "4"
     },
     {
         "attributeGroupType": "Standard",
@@ -236,8 +225,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "00",
-        "conflictState": "NoConflict"
+        "order": "00"
     },
     {
         "attributeGroupType": "Standard",
@@ -256,8 +244,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "2",
-        "conflictState": "NoConflict"
+        "order": "2"
     },
     {
         "attributeGroupType": "Standard",
@@ -276,7 +263,6 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "3",
-        "conflictState": "NoConflict"
+        "order": "3"
     }
 ]

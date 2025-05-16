@@ -102,8 +102,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -163,8 +162,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -222,8 +220,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -284,8 +281,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -387,8 +383,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -449,8 +444,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -511,8 +505,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -617,8 +610,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -723,8 +715,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -785,8 +776,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     },
     {
         "alternateVisualization": false,
@@ -844,7 +834,6 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "basedOnMetric": true,
-        "conflictState": ""
+        "basedOnMetric": true
     }
 ]

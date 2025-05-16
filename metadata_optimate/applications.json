@@ -1,7 +1,6 @@
 [
     {
         "active": true,
-        "conflictState": "NoConflict",
         "description": "",
         "descriptionTranslations": {
             "en": ""
@@ -37,7 +36,6 @@
     },
     {
         "active": true,
-        "conflictState": "NoConflict",
         "description": "",
         "descriptionTranslations": {
             "en": ""

@@ -16,7 +16,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "02",
+        "order": "3",
         "conflictState": "NoConflict"
     },
     {
@@ -25,8 +25,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Purchasing Finder",
         "displayNameTranslations": {
-            "en": "Purchasing Finder",
-            "de": "Purchasing Finder"
+            "de": "Purchasing Finder",
+            "en": "Purchasing Finder"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_finder",
@@ -36,7 +36,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "00",
+        "order": "0",
         "conflictState": "NoConflict"
     },
     {
@@ -45,38 +45,18 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "On Time  in Full (OTIF)",
         "displayNameTranslations": {
-            "de": "Einkaufsliefertreue",
+            "de": "Einkaufsliefertreue (OTIF)",
             "en": "On Time  in Full (OTIF)"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_on_time_in_full_otif",
-        "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
+        "parentAttributeGroupInternalName": "optimate_purchasing_finder_otif",
         "id": "",
         "projectId": "",
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "00",
-        "conflictState": "NoConflict"
-    },
-    {
-        "attributeGroupType": "Standard",
-        "defaultMetricGroup": false,
-        "defaultDefinedColumnGroup": false,
-        "displayName": "Overview",
-        "displayNameTranslations": {
-            "en": "Overview",
-            "de": "\u00dcbersicht"
-        },
-        "isCoupled": false,
-        "internalName": "optimate_purchasing_finder_overview",
-        "parentAttributeGroupInternalName": "optimate_purchasing_finder",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": "",
-        "order": "00",
+        "order": "0",
         "conflictState": "NoConflict"
     },
     {
@@ -96,7 +76,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "04",
+        "order": "000",
         "conflictState": "NoConflict"
     },
     {
@@ -116,7 +96,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "00",
+        "order": "1",
         "conflictState": "NoConflict"
     },
     {
@@ -125,8 +105,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Order Confirmation Rate",
         "displayNameTranslations": {
-            "en": "Order Confirmation Rate",
-            "de": "Auftragsbest\u00e4tigungsquote"
+            "de": "Auftragsbest\u00e4tigungsquote",
+            "en": "Order Confirmation Rate"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_order_confirmation_rate_diagramm",
@@ -136,7 +116,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "00",
+        "order": "1",
         "conflictState": "NoConflict"
     },
     {
@@ -145,18 +125,18 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Days Payables Outstanding (DPO)",
         "displayNameTranslations": {
-            "en": "Days Payables Outstanding (DPO)",
-            "de": "Im Einkauf zur\u00fcckgehaltens Kapital (DPO)"
+            "de": "Im Einkauf zur\u00fcckgehaltens Kapital (DPO)",
+            "en": "Days Payables Outstanding (DPO)"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_days_payables_outstanding_dpo",
-        "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
+        "parentAttributeGroupInternalName": "optimate_purchasing_finder_dpo",
         "id": "",
         "projectId": "",
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "01",
+        "order": "0",
         "conflictState": "NoConflict"
     },
     {
@@ -176,7 +156,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "01",
+        "order": "2",
         "conflictState": "NoConflict"
     },
     {
@@ -196,7 +176,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "01",
+        "order": "2",
         "conflictState": "NoConflict"
     },
     {
@@ -205,8 +185,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Share of early, on-time and late deliveries",
         "displayNameTranslations": {
-            "en": "Share of early, on-time and late deliveries",
-            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Lieferungen"
+            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Lieferungen",
+            "en": "Share of early, on-time and late deliveries"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
@@ -216,7 +196,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "02",
+        "order": "00",
         "conflictState": "NoConflict"
     },
     {
@@ -236,7 +216,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "03",
+        "order": "4",
         "conflictState": "NoConflict"
     },
     {
@@ -265,8 +245,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "DPO",
         "displayNameTranslations": {
-            "de": "Days Payables Outstanding (DPO)",
-            "en": "DPO"
+            "en": "DPO",
+            "de": "Days Payables Outstanding (DPO)"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_finder_dpo",
@@ -276,7 +256,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "01",
+        "order": "2",
         "conflictState": "NoConflict"
     },
     {
@@ -296,7 +276,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "02",
+        "order": "3",
         "conflictState": "NoConflict"
     }
 ]

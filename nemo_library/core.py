@@ -1,7 +1,12 @@
 import pandas as pd
 
 from nemo_library.features.deprecated import createOrUpdateReport, createOrUpdateRule
-from nemo_library.features.metadata import MetaDataAutoResolveApplications, MetaDataCreate, MetaDataDelete, MetaDataLoad
+from nemo_library.features.metadata import (
+    MetaDataAutoResolveApplications,
+    MetaDataCreate,
+    MetaDataDelete,
+    MetaDataLoad,
+)
 from nemo_library.features.migman_precheck_files import MigManPrecheckFiles
 from nemo_library.features.nemo_persistence_api import (
     createApplications,
@@ -48,6 +53,11 @@ from nemo_library.features.nemo_persistence_api import (
 from nemo_library.features.nemo_persistence_api import createProjects
 from nemo_library.features.nemo_report_api import (
     LoadReport,
+)
+from nemo_library.features.shared_api import (
+    createExportConfiguration,
+    deleteExportConfiguration,
+    getExportConfiguration,
 )
 from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
@@ -684,8 +694,8 @@ class NemoLibrary:
             filter=filter,
             filter_type=filter_type,
             filter_value=filter_value,
-    )
-        
+        )
+
     def MetaDataDelete(
         self,
         projectname: str,
@@ -922,7 +932,7 @@ class NemoLibrary:
             filter_type=filter_type,
             filter_value=filter_value,
         )
-        
+
     def createRules(self, projectname: str, rules: list[Rule]) -> None:
         """Creates or updates a list of Rules."""
         createRules(config=self.config, projectname=projectname, rules=rules)
@@ -977,7 +987,9 @@ class NemoLibrary:
 
     def deleteAttributeTreeElements(self, attributetreeelements: list[str]) -> None:
         """Deletes a list of AttributeTreeElements by their IDs."""
-        deleteAttributeTreeElements(config=self.config, attributetreeelements=attributetreeelements)
+        deleteAttributeTreeElements(
+            config=self.config, attributetreeelements=attributetreeelements
+        )
 
     def createDefinedColumns(
         self, projectname: str, definedcolumns: list[DefinedColumn]
@@ -1051,4 +1063,48 @@ class NemoLibrary:
             config=self.config,
             projectname=projectname,
             attributetreeelements=attributetreeelements,
+        )
+
+    def getExportConfiguration(
+        self,
+        projectname: str,
+        configuration_id: str,
+        datasource_id: str,
+    ) -> dict:
+        """Fetches ExportConfigurations metadata."""
+        return getExportConfiguration(
+            config=self.config,
+            projectname=projectname,
+            configuration_id=configuration_id,
+            datasource_id=datasource_id,
+        )
+
+    def createExportConfiguration(
+        self,
+        projectname: str,
+        configuration_id: str,
+        datasource_id: str,
+        configuration_json: dict,
+    ) -> None:
+        """Creates or updates an ExportConfiguration."""
+        return createExportConfiguration(
+            config=self.config,
+            projectname=projectname,
+            configuration_id=configuration_id,
+            datasource_id=datasource_id,
+            configuration_json=configuration_json,
+        )
+
+    def deleteExportConfiguration(
+        self,
+        projectname: str,
+        configuration_id: str,
+        datasource_id: str,
+    ) -> None:
+        """Deletes an ExportConfiguration."""
+        return deleteExportConfiguration(
+            config=self.config,
+            projectname=projectname,
+            configuration_id=configuration_id,
+            datasource_id=datasource_id,
         )

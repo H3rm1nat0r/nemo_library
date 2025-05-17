@@ -573,7 +573,11 @@ def MetaDataAutoResolveApplications(
             if metric.internalName in value:
                 attribute_group = key
                 break
-        if attribute_group:
+        if attribute_group and metric.parentAttributeGroupInternalName != attribute_group:
+            logging.info(
+                f"move metric {metric.internalName} from {metric.parentAttributeGroupInternalName} to {attribute_group}"
+            )
+            # move metric to the right attribute group
             metric.parentAttributeGroupInternalName = attribute_group
 
     # now we use the dependency tree to find the right attribute group for the defined and exported columns

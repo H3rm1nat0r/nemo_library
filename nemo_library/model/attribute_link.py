@@ -8,6 +8,7 @@ class AttributeLink:
     """
 
     sourceAttributeId: str = ""
+    sourceAttributeInternalName: str = ""
     order: str = ""
     parentAttributeGroupInternalName: str = ""
     displayNameTranslations: dict[str, str] = field(default_factory=dict)
@@ -19,14 +20,14 @@ class AttributeLink:
     isCustom: bool = False
     metadataClassificationInternalName: str = ""
 
+
     def to_dict(self):
         """
-        Converts the AttributeLink instance to a dictionary.
-
-        Returns:
-            dict: A dictionary representation of the AttributeLink instance.
+        Converts the instance to a dictionary, excluding 'sourceAttributeId'.
         """
-        return asdict(self)
+        result = asdict(self)
+        result.pop("sourceAttributeId", None)  # remove if present
+        return result
 
     def __post_init__(self):
         """

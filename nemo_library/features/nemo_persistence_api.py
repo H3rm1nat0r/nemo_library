@@ -303,7 +303,8 @@ def getAttributeLinks(
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> list[AttributeLink]:
     """Fetches AttributeLinks metadata with the given filters."""
-    return _generic_metadata_get(
+
+    attribute_links = _generic_metadata_get(
         config,
         projectname,
         "AttributeLink",
@@ -313,6 +314,21 @@ def getAttributeLinks(
         filter_type,
         filter_value,
     )
+
+    # resolve sourceAttributeId into sourceAttributeInternalName
+    ics = getImportedColumns(
+        config=config,
+        projectname=projectname,
+    )
+    
+    for attribute_link in attribute_links:
+        for ic in ics:
+            if attribute_link.sourceAttributeId == ic.id:
+                attribute_link.sourceAttributeInternalName = ic.internalName
+                break
+        else:
+            attribute_link.sourceAttributeInternalName = None
+    return attribute_links
 
 
 def getMetrics(

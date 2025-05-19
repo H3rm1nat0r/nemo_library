@@ -7,7 +7,7 @@ class AttributeLink:
     Represents a link between attributes with various properties and settings.
     """
 
-    sourceAttributeId: str = ""
+    sourceAttributeId: str = None
     sourceAttributeInternalName: str = ""
     order: str = ""
     parentAttributeGroupInternalName: str = ""

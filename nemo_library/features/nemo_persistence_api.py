@@ -325,6 +325,7 @@ def getAttributeLinks(
         for ic in ics:
             if attribute_link.sourceAttributeId == ic.id:
                 attribute_link.sourceAttributeInternalName = ic.internalName
+                attribute_link.sourceAttributeId = None
                 break
         else:
             attribute_link.sourceAttributeInternalName = None
@@ -669,6 +670,20 @@ def createAttributeLinks(
 ) -> None:
     """Creates or updates a list of AttributeLinks."""
 
+    # resolve sourceAttributeInternalName into sourceAttributeId
+    ics = getImportedColumns(
+        config=config,
+        projectname=projectname,
+    )
+    
+    for attribute_link in attributelinks:
+        for ic in ics:
+            if attribute_link.sourceAttributeInternalName == ic.internalName:
+                attribute_link.sourceAttributeId = ic.id
+                break
+        else:
+            attribute_link.sourceAttributeInternalName = None
+    
     _generic_metadata_create_or_update(
         config=config,
         projectname=projectname,

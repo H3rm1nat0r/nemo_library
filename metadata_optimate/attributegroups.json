@@ -60,6 +60,25 @@
         "attributeGroupType": "Standard",
         "defaultMetricGroup": false,
         "defaultDefinedColumnGroup": false,
+        "displayName": "General Purchasing Data",
+        "displayNameTranslations": {
+            "de": "Allgemeine Einkaufsdaten",
+            "en": "General Purchasing Data"
+        },
+        "isCoupled": false,
+        "internalName": "optimate_purchasing_general",
+        "parentAttributeGroupInternalName": "optimate",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": "",
+        "order": "0"
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
         "displayName": "On Time  in Full (OTIF)",
         "displayNameTranslations": {
             "de": "Einkaufsliefertreue (OTIF)",

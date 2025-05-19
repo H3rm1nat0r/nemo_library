@@ -2,13 +2,13 @@
     {
         "description": "",
         "descriptionTranslations": {
-            "en": "",
-            "de": ""
+            "de": "",
+            "en": ""
         },
         "displayName": "On Time in Full",
         "displayNameTranslations": {
-            "en": "On Time in Full",
-            "de": "P\u00fcnktlich und vollst\u00e4ndig (OTIF)"
+            "de": "P\u00fcnktlich und vollst\u00e4ndig (OTIF)",
+            "en": "On Time in Full"
         },
         "hideIfColumns": [],
         "internalName": "optimate_purchasing_finder_otif",
@@ -17,29 +17,9 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 1,
-                "columnSpan": 3,
-                "content": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
-                "contentTranslations": {},
-                "id": "",
-                "row": 3,
-                "rowSpan": 1,
-                "type": "Diagram"
-            },
-            {
-                "column": 2,
+                "column": 3,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_order_confirmation_rate_diagramm",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Diagram"
-            },
-            {
-                "column": 1,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_replenishment_deviation",
+                "content": "optimate_purchasing_order_preparation_time_days",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
@@ -57,111 +37,34 @@
                 "type": "Diagram"
             },
             {
-                "column": 3,
+                "column": 1,
+                "columnSpan": 3,
+                "content": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
+                "contentTranslations": {},
+                "id": "",
+                "row": 3,
+                "rowSpan": 1,
+                "type": "Diagram"
+            },
+            {
+                "column": 1,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_order_preparation_time_days",
+                "content": "optimate_purchasing_replenishment_deviation",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
                 "rowSpan": 1,
-                "type": "Diagram"
-            }
-        ],
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "description": "",
-        "descriptionTranslations": {
-            "de": "",
-            "en": ""
-        },
-        "displayName": "DSO",
-        "displayNameTranslations": {
-            "de": "DSO",
-            "en": "DSO"
-        },
-        "hideIfColumns": [],
-        "internalName": "optimate_sales_finder_dso",
-        "numberOfColumns": 2,
-        "numberOfRows": 2,
-        "showIfColumns": [],
-        "visuals": [
-            {
-                "column": 1,
-                "columnSpan": 2,
-                "content": "optimate_sales_customer_payments",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Diagram"
-            }
-        ],
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "Overview",
-        "displayNameTranslations": {
-            "en": "Overview",
-            "de": "\u00dcbersicht"
-        },
-        "hideIfColumns": [],
-        "internalName": "optimate_purchasing_finder_overview",
-        "numberOfColumns": 2,
-        "numberOfRows": 3,
-        "showIfColumns": [],
-        "visuals": [
-            {
-                "column": 1,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_days_payables_outstanding_dpo",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 2,
                 "type": "Diagram"
             },
             {
                 "column": 2,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_on_time_in_full_otif",
+                "content": "optimate_purchasing_order_confirmation_rate_diagramm",
                 "contentTranslations": {},
                 "id": "",
-                "row": 2,
-                "rowSpan": 2,
+                "row": 1,
+                "rowSpan": 1,
                 "type": "Diagram"
-            },
-            {
-                "column": 1,
-                "columnSpan": 1,
-                "content": "d_p_o",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Metric"
-            },
-            {
-                "column": 2,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_otif_rate",
-                "contentTranslations": {},
-                "id": "",
-                "row": 1,
-                "rowSpan": 1,
-                "type": "Metric"
             }
         ],
         "id": "",
@@ -188,16 +91,6 @@
         "showIfColumns": [],
         "visuals": [
             {
-                "column": 1,
-                "columnSpan": 1,
-                "content": "optimate_purchasing_goods_receipt_processing_time_diagram",
-                "contentTranslations": {},
-                "id": "",
-                "row": 2,
-                "rowSpan": 1,
-                "type": "Diagram"
-            },
-            {
                 "column": 2,
                 "columnSpan": 1,
                 "content": "optimate_purchasing_invoice_processing_time_diagram",
@@ -216,6 +109,16 @@
                 "row": 1,
                 "rowSpan": 1,
                 "type": "Diagram"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "optimate_purchasing_goods_receipt_processing_time_diagram",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Diagram"
             }
         ],
         "id": "",
@@ -232,8 +135,8 @@
         },
         "displayName": "Fulfillment On Time (FOT)",
         "displayNameTranslations": {
-            "en": "Fulfillment On Time (FOT)",
-            "de": "P\u00fcnktliche Erledigung (FOT)"
+            "de": "P\u00fcnktliche Erledigung (FOT)",
+            "en": "Fulfillment On Time (FOT)"
         },
         "hideIfColumns": [],
         "internalName": "optimate_sales_finder_fot",
@@ -265,11 +168,54 @@
         },
         "displayName": "Overview",
         "displayNameTranslations": {
+            "en": "Overview",
+            "de": "\u00dcbersicht"
+        },
+        "hideIfColumns": [],
+        "internalName": "optimate_sales_finder_overview",
+        "numberOfColumns": 2,
+        "numberOfRows": 3,
+        "showIfColumns": [],
+        "visuals": [
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "d_s_o",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Metric"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "optimate_purchasing_days_payables_outstanding_dpo",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 2,
+                "type": "Diagram"
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "Overview",
+        "displayNameTranslations": {
             "de": "\u00dcbersicht",
             "en": "Overview"
         },
         "hideIfColumns": [],
-        "internalName": "optimate_sales_finder_overview",
+        "internalName": "optimate_purchasing_finder_overview",
         "numberOfColumns": 2,
         "numberOfRows": 3,
         "showIfColumns": [],
@@ -285,14 +231,68 @@
                 "type": "Diagram"
             },
             {
-                "column": 1,
+                "column": 2,
                 "columnSpan": 1,
-                "content": "d_s_o",
+                "content": "optimate_purchasing_on_time_in_full_otif",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 2,
+                "type": "Diagram"
+            },
+            {
+                "column": 2,
+                "columnSpan": 1,
+                "content": "optimate_purchasing_otif_rate",
                 "contentTranslations": {},
                 "id": "",
                 "row": 1,
                 "rowSpan": 1,
                 "type": "Metric"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "d_p_o",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Metric"
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "description": "",
+        "descriptionTranslations": {
+            "en": "",
+            "de": ""
+        },
+        "displayName": "DSO",
+        "displayNameTranslations": {
+            "en": "DSO",
+            "de": "DSO"
+        },
+        "hideIfColumns": [],
+        "internalName": "optimate_sales_finder_dso",
+        "numberOfColumns": 2,
+        "numberOfRows": 2,
+        "showIfColumns": [],
+        "visuals": [
+            {
+                "column": 1,
+                "columnSpan": 2,
+                "content": "optimate_sales_customer_payments",
+                "contentTranslations": {},
+                "id": "",
+                "row": 1,
+                "rowSpan": 1,
+                "type": "Diagram"
             }
         ],
         "id": "",

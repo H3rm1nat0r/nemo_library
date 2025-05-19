@@ -666,27 +666,12 @@ def MetaDataAutoResolveApplications(
     # export the data to JSON finally
     export = {
         "attributegroups": attributegroups_model,
+        "attributelinks": attributelinks_model,
         "metrics": metrics_model,
         "definedcolumns": definedcolumns_model,
     }
     for name, data in export.items():
         _export_data_to_json(config, name, data)
-
-    # it does not make sense to save the attribute links to JSON, because they
-    # contain the id of the imported columns.
-    # So we create them directly in NEMO
-
-    # Remove duplicates from attributelinks_model
-    unique_links = {}
-    for link in attributelinks_model:
-        key = (link.sourceAttributeId, link.parentAttributeGroupInternalName)
-        if key not in unique_links:
-            unique_links[key] = link
-    attributelinks_model = list(unique_links.values())
-
-    createAttributeLinks(
-        config=config, projectname=projectname, attributelinks=attributelinks_model
-    )
 
 
 def _collect_node_objects(tree: DependencyTree) -> list[str]:

@@ -68,14 +68,18 @@ def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
 
 def _generic_test(items):
     for item in items:
+
+        # every item must have an internal name starting with ROOT
         assert item.internalName.startswith(
             ROOT
         ), f"internal name of item does not start with {ROOT}: {item.internalName}"
-        if item.internalName != ROOT:
+
+        # every item (except attribut links and the ROOT item itself) must have a variant
+        if item.internalName != ROOT and not isinstance(item, AttributeLink):
             assert (
                 item.internalName.count("_") >= 1
             ), f"internal name of item does not contain any underscore: {item.internalName}"
-            assert(
+            assert (
                 item.internalName.split("_")[1] in VARIANTS
             ), f"internal name of item does not contain a valid variant: {item.internalName}"
         assert (

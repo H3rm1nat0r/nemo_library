@@ -282,7 +282,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "part_i_d",
-        "order": "000",
+        "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
         "displayNameTranslations": {},
         "displayName": "PartID",
@@ -366,7 +366,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_inv_doc_no",
-        "order": "0",
+        "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
         "displayNameTranslations": {},
         "displayName": "PurInvDocNo",
@@ -422,7 +422,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "part_desc1",
-        "order": "1",
+        "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
         "displayNameTranslations": {},
         "displayName": "PartDesc1",
@@ -450,7 +450,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_no",
-        "order": "0",
+        "order": "333",
         "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocNo",
@@ -464,7 +464,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "supplier_name",
-        "order": "00",
+        "order": "1",
         "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
         "displayNameTranslations": {},
         "displayName": "SupplierName",
@@ -674,7 +674,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_stock_rec_doc_no",
-        "order": "0",
+        "order": "33",
         "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
         "displayNameTranslations": {},
         "displayName": "PurStockRecDocNo",

@@ -6,6 +6,111 @@
             "column": "DATE",
             "dataType": "datetime"
         },
+        "argumentAxisTitle": "",
+        "argumentAxisTitleTranslations": {
+            "de": "Zeit",
+            "en": "Time"
+        },
+        "description": "The chart shows the monthly distribution of deliveries - divided into under-deliveries, over-deliveries and exact deliveries. The data is displayed as stacked bars per month, with each bar showing the relative distribution of the three delivery categories. Additionally, forecast values for upcoming months are included. The details of the calculation can be found in the underlying metric.",
+        "descriptionTranslations": {
+            "de": "Das Diagramm zeigt die monatliche Verteilung der Lieferungen \u2013 unterteilt in Unterlieferungen, \u00dcberlieferungen und exakte Lieferungen. Die Daten werden als gestapelte Balken pro Monat dargestellt, wobei jeder Balken die relative Verteilung der drei Lieferkategorien abbildet. Zus\u00e4tzlich werden Prognosewerte f\u00fcr kommende Monate dargestellt. Die Details zur Berechnung finden sich an der zu grundeliegenden Metrik.",
+            "en": "The chart shows the monthly distribution of deliveries - divided into under-deliveries, over-deliveries and exact deliveries. The data is displayed as stacked bars per month, with each bar showing the relative distribution of the three delivery categories. Additionally, forecast values for upcoming months are included. The details of the calculation can be found in the underlying metric."
+        },
+        "displayName": "Share of complete deliveries, overdeliveries and underdeliveries",
+        "displayNameTranslations": {
+            "en": "Share of complete deliveries, overdeliveries and underdeliveries",
+            "de": "Anteil vollst\u00e4ndige Lieferungen, \u00dcber- und Unterlieferungen"
+        },
+        "internalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
+        "report": "dummy",
+        "summary": null,
+        "valueAxisTitle": "",
+        "valueAxisTitleTranslations": {
+            "de": "Anteil (%)",
+            "en": "Share (%)"
+        },
+        "values": [
+            {
+                "aggregation": "actuals",
+                "chartType": "stackedbar",
+                "column": "optimate_sales_deliveries_deviation_in_full_rate",
+                "id": "",
+                "legend": "In Full (Act)",
+                "legendTranslations": {
+                    "de": "Vollst\u00e4ndig (Ist)",
+                    "en": "In Full (Act)"
+                }
+            },
+            {
+                "aggregation": "prediction",
+                "chartType": "stackedbar",
+                "column": "optimate_sales_in_full_delivery_overdelivered_rate",
+                "id": "",
+                "legend": "Over (Pred)",
+                "legendTranslations": {
+                    "en": "Over (Pred)",
+                    "de": "\u00dcber (progn)"
+                }
+            },
+            {
+                "aggregation": "actuals",
+                "chartType": "stackedbar",
+                "column": "optimate_sales_in_full_delivery_underdelivered_rate",
+                "id": "",
+                "legend": "Under (Act)",
+                "legendTranslations": {
+                    "en": "Under (Act)",
+                    "de": "Unter (Ist)"
+                }
+            },
+            {
+                "aggregation": "actuals",
+                "chartType": "stackedbar",
+                "column": "optimate_sales_in_full_delivery_overdelivered_rate",
+                "id": "",
+                "legend": "Over (Act)",
+                "legendTranslations": {
+                    "en": "Over (Act)",
+                    "de": "\u00dcber (Ist)"
+                }
+            },
+            {
+                "aggregation": "prediction",
+                "chartType": "stackedbar",
+                "column": "optimate_sales_deliveries_deviation_in_full_rate",
+                "id": "",
+                "legend": "In Full (Pred)",
+                "legendTranslations": {
+                    "de": "Vollst\u00e4ndig (progn)",
+                    "en": "In Full (Pred)"
+                }
+            },
+            {
+                "aggregation": "prediction",
+                "chartType": "stackedbar",
+                "column": "optimate_sales_in_full_delivery_underdelivered_rate",
+                "id": "",
+                "legend": "Under (Pred)",
+                "legendTranslations": {
+                    "en": "Under (Pred)",
+                    "de": "Unter (progn)"
+                }
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": "",
+        "basedOnMetric": true
+    },
+    {
+        "alternateVisualization": false,
+        "argument": {
+            "aggregation": "month",
+            "column": "DATE",
+            "dataType": "datetime"
+        },
         "argumentAxisTitle": "Time",
         "argumentAxisTitleTranslations": {
             "de": "Zeit",
@@ -34,8 +139,8 @@
                 "id": "",
                 "legend": "Too early",
                 "legendTranslations": {
-                    "en": "Too early",
-                    "de": "Zu fr\u00fch (ist)"
+                    "de": "Zu fr\u00fch (ist)",
+                    "en": "Too early"
                 }
             },
             {
@@ -56,8 +161,8 @@
                 "id": "",
                 "legend": "On Time (Act)",
                 "legendTranslations": {
-                    "de": "P\u00fcnktlich (ist)",
-                    "en": "On Time (Act)"
+                    "en": "On Time (Act)",
+                    "de": "P\u00fcnktlich (ist)"
                 }
             },
             {
@@ -67,8 +172,8 @@
                 "id": "",
                 "legend": "Too Late (Pred)",
                 "legendTranslations": {
-                    "de": "Zu sp\u00e4t (progn)",
-                    "en": "Too Late (Pred)"
+                    "en": "Too Late (Pred)",
+                    "de": "Zu sp\u00e4t (progn)"
                 }
             },
             {
@@ -136,8 +241,8 @@
                 "id": "",
                 "legend": "On-Time (act)",
                 "legendTranslations": {
-                    "en": "On-Time (act)",
-                    "de": "P\u00fcnktlich (ist)"
+                    "de": "P\u00fcnktlich (ist)",
+                    "en": "On-Time (act)"
                 }
             },
             {
@@ -147,8 +252,8 @@
                 "id": "",
                 "legend": "Too early (pred)",
                 "legendTranslations": {
-                    "de": "Zu fr\u00fch (progn)",
-                    "en": "Too early (pred)"
+                    "en": "Too early (pred)",
+                    "de": "Zu fr\u00fch (progn)"
                 }
             },
             {
@@ -158,8 +263,8 @@
                 "id": "",
                 "legend": "Too late (act)",
                 "legendTranslations": {
-                    "en": "Too late (act)",
-                    "de": "Zu sp\u00e4t (ist)"
+                    "de": "Zu sp\u00e4t (ist)",
+                    "en": "Too late (act)"
                 }
             },
             {
@@ -169,8 +274,8 @@
                 "id": "",
                 "legend": "Too late (pred)",
                 "legendTranslations": {
-                    "de": "Zu sp\u00e4t (progn)",
-                    "en": "Too late (pred)"
+                    "en": "Too late (pred)",
+                    "de": "Zu sp\u00e4t (progn)"
                 }
             },
             {
@@ -180,8 +285,8 @@
                 "id": "",
                 "legend": "On-Time (pred)",
                 "legendTranslations": {
-                    "de": "P\u00fcnktlich (progn)",
-                    "en": "On-Time (pred)"
+                    "en": "On-Time (pred)",
+                    "de": "P\u00fcnktlich (progn)"
                 }
             },
             {
@@ -191,8 +296,8 @@
                 "id": "",
                 "legend": "Too early (act)",
                 "legendTranslations": {
-                    "de": "Zu fr\u00fch (ist)",
-                    "en": "Too early (act)"
+                    "en": "Too early (act)",
+                    "de": "Zu fr\u00fch (ist)"
                 }
             }
         ],
@@ -252,8 +357,8 @@
                 "id": "",
                 "legend": "Too early (Pred)",
                 "legendTranslations": {
-                    "en": "Too early (Pred)",
-                    "de": "Zu fr\u00fch (progn)"
+                    "de": "Zu fr\u00fch (progn)",
+                    "en": "Too early (Pred)"
                 }
             },
             {
@@ -263,8 +368,8 @@
                 "id": "",
                 "legend": "Too late",
                 "legendTranslations": {
-                    "de": "Zu sp\u00e4t (ist)",
-                    "en": "Too late (Act)"
+                    "en": "Too late (Act)",
+                    "de": "Zu sp\u00e4t (ist)"
                 }
             },
             {
@@ -354,8 +459,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "en": "Act",
-                    "de": "Ist"
+                    "de": "Ist",
+                    "en": "Act"
                 }
             }
         ],
@@ -415,8 +520,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "en": "Act",
-                    "de": "Ist"
+                    "de": "Ist",
+                    "en": "Act"
                 }
             }
         ],
@@ -465,8 +570,8 @@
                 "id": "",
                 "legend": "Too early (act)",
                 "legendTranslations": {
-                    "en": "Too early (act)",
-                    "de": "Zu fr\u00fch (ist)"
+                    "de": "Zu fr\u00fch (ist)",
+                    "en": "Too early (act)"
                 }
             },
             {
@@ -476,8 +581,8 @@
                 "id": "",
                 "legend": "Too late (act)",
                 "legendTranslations": {
-                    "en": "Too late (act)",
-                    "de": "Zu sp\u00e4t (ist)"
+                    "de": "Zu sp\u00e4t (ist)",
+                    "en": "Too late (act)"
                 }
             },
             {
@@ -567,8 +672,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "en": "Pred",
-                    "de": "Progn"
+                    "de": "Progn",
+                    "en": "Pred"
                 }
             },
             {
@@ -628,8 +733,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "en": "Pred",
-                    "de": "Progn"
+                    "de": "Progn",
+                    "en": "Pred"
                 }
             },
             {
@@ -639,8 +744,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "en": "Act",
-                    "de": "Ist"
+                    "de": "Ist",
+                    "en": "Act"
                 }
             }
         ],
@@ -700,8 +805,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "de": "Ist",
-                    "en": "Act"
+                    "en": "Act",
+                    "de": "Ist"
                 }
             }
         ],
@@ -750,8 +855,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "de": "Progn",
-                    "en": "Pred"
+                    "en": "Pred",
+                    "de": "Progn"
                 }
             },
             {
@@ -811,8 +916,8 @@
                 "id": "",
                 "legend": "In Full (Act)",
                 "legendTranslations": {
-                    "en": "In Full (Act)",
-                    "de": "Vollst\u00e4ndig (Ist)"
+                    "de": "Vollst\u00e4ndig (Ist)",
+                    "en": "In Full (Act)"
                 }
             },
             {
@@ -844,8 +949,8 @@
                 "id": "",
                 "legend": "Over (Pred)",
                 "legendTranslations": {
-                    "en": "Over (Pred)",
-                    "de": "\u00dcber (progn)"
+                    "de": "\u00dcber (progn)",
+                    "en": "Over (Pred)"
                 }
             },
             {
@@ -855,8 +960,8 @@
                 "id": "",
                 "legend": "Over (Act)",
                 "legendTranslations": {
-                    "de": "\u00dcber (Ist)",
-                    "en": "Over (Act)"
+                    "en": "Over (Act)",
+                    "de": "\u00dcber (Ist)"
                 }
             },
             {
@@ -866,8 +971,8 @@
                 "id": "",
                 "legend": "Under (Act)",
                 "legendTranslations": {
-                    "en": "Under (Act)",
-                    "de": "Unter (Ist)"
+                    "de": "Unter (Ist)",
+                    "en": "Under (Act)"
                 }
             }
         ],
@@ -915,8 +1020,8 @@
                 "id": "",
                 "legend": "Act",
                 "legendTranslations": {
-                    "en": "Act",
-                    "de": "Ist"
+                    "de": "Ist",
+                    "en": "Act"
                 }
             },
             {
@@ -926,8 +1031,8 @@
                 "id": "",
                 "legend": "Pred",
                 "legendTranslations": {
-                    "de": "Progn",
-                    "en": "Pred"
+                    "en": "Pred",
+                    "de": "Progn"
                 }
             }
         ],

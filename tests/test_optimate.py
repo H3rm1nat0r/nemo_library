@@ -67,6 +67,13 @@ def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
 
 
 def _generic_test(items):
+    internal_names = [item.internalName for item in items]
+    # check if all internal names are unique
+    duplicates = set([name for name in internal_names if internal_names.count(name) > 1])
+    assert len(internal_names) == len(
+        set(internal_names)
+    ), f"found duplicate internal names: {duplicates}"
+    
     for item in items:
 
         # every item must have an internal name starting with ROOT
@@ -144,24 +151,17 @@ def test_metrics():
     # Check internal names
     for metric in metrics:
 
-        if metric.internalName.startswith("optimate_purchasing"):
-            if metric.dateColumn != "pur_order_doc_date":
-                assert (
-                    False
-                ), f"found purchasing metric that does not have pur_order_doc_date as date column: {metric.internalName}"
-            if metric.groupByColumn != "pur_order_doc_i_d":
-                assert (
-                    False
-                ), f"found purchasing metric that does not have pur_order_doc_i_d as group by column: {metric.internalName}"
-        elif metric.internalName.startswith("optimate_sales"):
-            if metric.dateColumn != "invoice_doc_date":
-                assert (
-                    False
-                ), f"found sales metric that does not have invoice_doc_date as date column: {metric.internalName}"
-            if metric.groupByColumn != "invoice_doc_i_d":
-                assert (
-                    False
-                ), f"found sales metric that does not have invoice_doc_i_d as group by column: {metric.internalName}"
+        app = metric.internalName.split("_")[
+            1
+        ]  # we have ensured in _generic_tests, that this split will work
+        if metric.dateColumn != METRIC_FIELDS[app]["dateColumn"]:
+            assert (
+                False
+            ), f"found {app} metric that does not have {METRIC_FIELDS[app]["dateColumn"]} as date column: {metric.internalName}"
+        if metric.groupByColumn != METRIC_FIELDS[app]["groupByColumn"]:
+            assert (
+                False
+            ), f"found {app} metric that does not have {METRIC_FIELDS[app]["groupByColumn"]} as groupByColumn column: {metric.internalName}"
 
     # Check if all metrics are part of a diagram
     metrics_in_diagrams = [

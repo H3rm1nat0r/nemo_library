@@ -402,6 +402,7 @@ def MetaDataCreate(
         "attributelinks": createAttributeLinks,
         "definedcolumns": createDefinedColumns,
         "metrics": createMetrics,
+        "attributelinks": createAttributeLinks,
         "tiles": createTiles,
         "diagrams": createDiagrams,
         "pages": createPages,

@@ -99,6 +99,22 @@
     },
     {
         "sourceAttributeId": null,
+        "sourceAttributeInternalName": "supplier_i_d",
+        "order": "0",
+        "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
+        "displayNameTranslations": {
+            "en": "SupplierID"
+        },
+        "displayName": "SupplierID",
+        "internalName": "optimate_supplier_i_d_37e0ff4c_4bfa_4fa2_b0e5_bf66f5c08cd0",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_stock_rec_line_creation_date",
         "order": "9",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
@@ -511,6 +527,20 @@
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
         "internalName": "optimate_pur_order_doc_date_8cf036ee_4fd7_4569_86ea_556cc959c25a",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "supplier_name",
+        "order": "1",
+        "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
+        "displayNameTranslations": {},
+        "displayName": "SupplierName",
+        "internalName": "optimate_supplier_name_37e0ff4c_4bfa_4fa2_b0e5_bf66f5c08cd1",
         "id": "",
         "projectId": "",
         "tenant": "",

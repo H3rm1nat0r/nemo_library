@@ -69,13 +69,13 @@
             "en": "Payments Deviation Too Late (boolean)",
             "de": "Zahlungsabweichung zu sp\u00e4t (boolean)"
         },
-        "formula": "optimate_global_payments_deviation_days < 0",
+        "formula": "optimate_purchasing_payments_deviation_days < 0",
         "groupByColumnInternalName": null,
         "importName": "",
         "stringSize": 128,
         "unit": "",
         "order": "4",
-        "internalName": "optimate_global_payments_deviation_too_late_boolean",
+        "internalName": "optimate_purchasing_payments_deviation_too_late_boolean",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "id": "",
         "projectId": "",
@@ -83,6 +83,34 @@
         "isCustom": true,
         "metadataClassificationInternalName": ""
     },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "Payments Deviation Too Late (boolean)",
+        "displayNameTranslations": {
+            "en": "Payments Deviation Too Late (boolean)",
+            "de": "Zahlungsabweichung zu sp\u00e4t (boolean)"
+        },
+        "formula": "optimate_sales_payments_deviation_days < 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": 128,
+        "unit": "",
+        "order": "4",
+        "internalName": "optimate_sales_payments_deviation_too_late_boolean",
+        "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },    
     {
         "categorialType": false,
         "columnType": "DefinedColumn",
@@ -153,13 +181,13 @@
             "en": "Payments Deviation Too Early (boolean)",
             "de": "Zahlungsabweichung zu fr\u00fch (boolean)"
         },
-        "formula": "optimate_global_payments_deviation_days > 0",
+        "formula": "optimate_purchasing_payments_deviation_days > 0",
         "groupByColumnInternalName": null,
         "importName": "",
         "stringSize": 128,
         "unit": "",
         "order": "3",
-        "internalName": "optimate_global_payments_deviation_too_early_boolean",
+        "internalName": "optimate_purchasing_payments_deviation_too_early_boolean",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "id": "",
         "projectId": "",
@@ -167,6 +195,34 @@
         "isCustom": true,
         "metadataClassificationInternalName": ""
     },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "Payments Deviation Too Early (boolean)",
+        "displayNameTranslations": {
+            "en": "Payments Deviation Too Early (boolean)",
+            "de": "Zahlungsabweichung zu fr\u00fch (boolean)"
+        },
+        "formula": "optimate_sales_payments_deviation_days > 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": 128,
+        "unit": "",
+        "order": "3",
+        "internalName": "optimate_sales_payments_deviation_too_early_boolean",
+        "parentAttributeGroupInternalName": "optimate_sales_supplier_payments",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },    
     {
         "categorialType": false,
         "columnType": "DefinedColumn",
@@ -243,8 +299,36 @@
         "stringSize": 128,
         "unit": "days",
         "order": "1",
-        "internalName": "optimate_global_payments_deviation_days",
+        "internalName": "optimate_purchasing_payments_deviation_days",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "integer",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "Payments Deviation (days)",
+        "displayNameTranslations": {
+            "en": "Payments Deviation (days)",
+            "de": "Zahlungsabweichung (Tage)"
+        },
+        "formula": "payment_netto_due_date-payment_last_pay_date",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": 128,
+        "unit": "days",
+        "order": "1",
+        "internalName": "optimate_sales_payments_deviation_days",
+        "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -433,13 +517,13 @@
             "de": "Zahlungsabweichung p\u00fcnktlich (boolean)",
             "en": "Payments Deviation On Time (boolean)"
         },
-        "formula": "optimate_global_payments_deviation_days == 0",
+        "formula": "optimate_purchasing_payments_deviation_days == 0",
         "groupByColumnInternalName": null,
         "importName": "",
         "stringSize": 128,
         "unit": "",
         "order": "2",
-        "internalName": "optimate_global_payments_deviation_on_time_boolean",
+        "internalName": "optimate_purchasing_payments_deviation_on_time_boolean",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "id": "",
         "projectId": "",
@@ -447,6 +531,34 @@
         "isCustom": true,
         "metadataClassificationInternalName": ""
     },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "Payments Deviation On Time (boolean)",
+        "displayNameTranslations": {
+            "de": "Zahlungsabweichung p\u00fcnktlich (boolean)",
+            "en": "Payments Deviation On Time (boolean)"
+        },
+        "formula": "optimate_sales_payments_deviation_days == 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": 128,
+        "unit": "",
+        "order": "2",
+        "internalName": "optimate_sales_payments_deviation_on_time_boolean",
+        "parentAttributeGroupInternalName": "optimate_sales_supplier_payments",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },    
     {
         "categorialType": false,
         "columnType": "DefinedColumn",

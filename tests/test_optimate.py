@@ -5,7 +5,7 @@ from nemo_library.model.application import Application
 from nemo_library.model.attribute_group import AttributeGroup
 from nemo_library.model.defined_column import DefinedColumn
 from nemo_library.model.metric import Metric
-from nemo_library.model.pages import Page    
+from nemo_library.model.pages import Page
 from nemo_library.model.attribute_link import AttributeLink
 from nemo_library.model.diagram import Diagram
 from nemo_library.model.report import Report
@@ -15,7 +15,18 @@ from nemo_library.model.tile import Tile
 
 T = TypeVar("T")
 
-COCKPIT = "optimate"
+ROOT = "optimate"
+VARIANTS = ["purchasing", "sales"]
+METRIC_FIELDS = {
+    "purchasing": {
+        "dateColumn": "pur_order_doc_date",
+        "groupByColumn": "pur_order_doc_i_d",
+    },
+    "sales": {
+        "dateColumn": "invoice_doc_date",
+        "groupByColumn": "invoice_doc_i_d",
+    },
+}
 
 
 def _load_data_from_json(file: str, cls: Type[T]) -> List[T]:
@@ -23,7 +34,7 @@ def _load_data_from_json(file: str, cls: Type[T]) -> List[T]:
     Loads JSON data from a file and converts it into a list of DataClass instances,
     handling nested structures recursively.
     """
-    path = Path(".") / f"metadata_{COCKPIT}" / f"{file}.json"
+    path = Path(".") / f"metadata_{ROOT}" / f"{file}.json"
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -58,8 +69,15 @@ def _deserializeMetaDataObject(value: Any, target_type: Type) -> Any:
 def _generic_test(items):
     for item in items:
         assert item.internalName.startswith(
-            COCKPIT
-        ), f"internal name of item does not start with {COCKPIT}: {item.internalName}"
+            ROOT
+        ), f"internal name of item does not start with {ROOT}: {item.internalName}"
+        if item.internalName != ROOT:
+            assert (
+                item.internalName.count("_") >= 1
+            ), f"internal name of item does not contain any underscore: {item.internalName}"
+            assert(
+                item.internalName.split("_")[1] in VARIANTS
+            ), f"internal name of item does not contain a valid variant: {item.internalName}"
         assert (
             "en" in item.displayNameTranslations
         ), f"displayNameTranslations of item does not contain 'en': item {item.internalName}"
@@ -71,20 +89,24 @@ def _generic_test(items):
             item.displayName == item.displayNameTranslations["en"]
         ), f"displayName is not equal to displayNameTranslations['en']: {item.internalName}"
 
+
 def test_applications():
     _generic_test(applications)
+
 
 def test_attributegroups():
     _generic_test(attributegroups)
 
+
 def test_attributelinks():
     _generic_test(attributelinks)
+
 
 def test_definedcolumns():
     _generic_test(definedcolumns)
 
-    #check if all defined columns are used in a metric
-    for definedcolumn in definedcolumns:    
+    # check if all defined columns are used in a metric
+    for definedcolumn in definedcolumns:
         found = False
         for metric in metrics:
             if definedcolumn.internalName in metric.aggregateBy:
@@ -96,17 +118,21 @@ def test_definedcolumns():
             if definedcolumn.internalName in metric.groupByAggregations.keys():
                 found = True
                 break
-        
+
         # or in another defined column
         for definedcolumn2 in definedcolumns:
             if definedcolumn.internalName in definedcolumn2.formula:
                 found = True
                 break
-            
-        assert found, f"defined column {definedcolumn.internalName} is not used in a metric nor another defined column"
+
+        assert (
+            found
+        ), f"defined column {definedcolumn.internalName} is not used in a metric nor another defined column"
+
 
 def test_diagrams():
     _generic_test(diagrams)
+
 
 def test_metrics():
     _generic_test(metrics)
@@ -132,7 +158,7 @@ def test_metrics():
                 assert (
                     False
                 ), f"found sales metric that does not have invoice_doc_i_d as group by column: {metric.internalName}"
-            
+
     # Check if all metrics are part of a diagram
     metrics_in_diagrams = [
         values.column for diagram in diagrams for values in diagram.values
@@ -142,23 +168,28 @@ def test_metrics():
             assert (
                 False
             ), f"found metric that is not part of a diagram: {metric.internalName}"
-    
-    
+
+
 def test_pages():
     _generic_test(pages)
 
-def test_reports(): 
+
+def test_reports():
     _generic_test(reports)
+
 
 def test_rules():
     _generic_test(rules)
-    
+
+
 def test_subprocesses():
     _generic_test(subprocesses)
-    
-def test_tiles():   
+
+
+def test_tiles():
     _generic_test(tiles)
-    
+
+
 applications = _load_data_from_json("applications", Application)
 attributegroups = _load_data_from_json("attributegroups", AttributeGroup)
 attributelinks = _load_data_from_json("attributelinks", AttributeLink)

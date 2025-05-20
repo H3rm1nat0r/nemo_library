@@ -427,7 +427,6 @@ def MetaDataCreate(
         "attributegroups": createAttributeGroups,
         "reports": createReports,
         "rules": createRules,
-        "attributelinks": createAttributeLinks,
         "definedcolumns": createDefinedColumns,
         "metrics": createMetrics,
         "attributelinks": createAttributeLinks,

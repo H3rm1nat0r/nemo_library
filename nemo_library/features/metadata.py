@@ -754,7 +754,7 @@ def MetaDataHelperAutoResolveApplications(
                         parentAttributeGroupInternalName=metric.parentAttributeGroupInternalName,
                         displayNameTranslations={
                             "de": imported_column.displayNameTranslations.get("de", ""),
-                            "en": imported_column.displayNameTranslations.get("en", ""),
+                            "en": imported_column.displayNameTranslations.get("en", imported_column.displayName),
                         },
                         displayName=imported_column.displayName,
                         internalName=f"{filter}_{imported_column.internalName}_{uuid.uuid4()}".replace(

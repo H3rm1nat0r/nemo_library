@@ -2,7 +2,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "9",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -16,7 +16,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",
@@ -30,7 +30,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "A",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",
@@ -44,7 +44,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_amount_conf",
-        "order": "",
+        "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineNumberConf",
@@ -58,7 +58,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "invoice_doc_date",
-        "order": "",
+        "order": "5",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "displayNameTranslations": {},
         "displayName": "InvoiceDocDate",
@@ -72,7 +72,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_qty",
-        "order": "",
+        "order": "B",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineQty",
@@ -86,7 +86,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",
@@ -100,7 +100,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_stock_rec_line_creation_date",
-        "order": "",
+        "order": "9",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "displayNameTranslations": {},
         "displayName": "PurStockRecLineCreationDate",
@@ -114,7 +114,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "payment_last_pay_date",
-        "order": "",
+        "order": "7",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "displayNameTranslations": {},
         "displayName": "PaymentLastPayDate",
@@ -128,7 +128,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_inv_change_date",
-        "order": "",
+        "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
         "displayNameTranslations": {},
         "displayName": "PurInvChangeDate",
@@ -142,7 +142,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_stock_rec_line_creation_date",
-        "order": "",
+        "order": "B",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {},
         "displayName": "PurStockRecLineCreationDate",
@@ -156,7 +156,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "payment_last_pay_date",
-        "order": "",
+        "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "displayNameTranslations": {},
         "displayName": "PaymentLastPayDate",
@@ -170,7 +170,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "order_doc_line_requested_date",
-        "order": "",
+        "order": "C",
         "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {},
         "displayName": "OrderDocLineRequestedDate",
@@ -184,7 +184,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "invoice_doc_i_d",
-        "order": "",
+        "order": "6",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "displayNameTranslations": {},
         "displayName": "InvoiceDocID",
@@ -198,7 +198,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "8",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -212,7 +212,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_stock_rec_line_qty",
-        "order": "",
+        "order": "C",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "displayNameTranslations": {},
         "displayName": "PurStockRecLineQty",
@@ -226,7 +226,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_requested_date",
-        "order": "",
+        "order": "C",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineRequestedDate",
@@ -240,7 +240,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "invoice_doc_date",
-        "order": "",
+        "order": "A",
         "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {},
         "displayName": "InvoiceDocDate",
@@ -254,7 +254,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_creation_date",
-        "order": "",
+        "order": "8",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineCreationDate",
@@ -268,7 +268,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "9",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",
@@ -282,7 +282,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "9",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",
@@ -296,7 +296,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_qty",
-        "order": "",
+        "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineQty",
@@ -310,7 +310,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_requested_date",
-        "order": "",
+        "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineRequestedDate",
@@ -324,7 +324,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_creation_date",
-        "order": "",
+        "order": "A",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineCreationDate",
@@ -338,7 +338,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_delivery_date",
-        "order": "",
+        "order": "4",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineDeliveryDate",
@@ -352,7 +352,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",
@@ -366,7 +366,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "8",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -380,7 +380,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "payment_netto_due_date",
-        "order": "",
+        "order": "8",
         "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
         "displayNameTranslations": {},
         "displayName": "PaymentNettoDueDate",
@@ -394,7 +394,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "A",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",
@@ -408,7 +408,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_inv_ext_doc_date",
-        "order": "",
+        "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
         "displayNameTranslations": {},
         "displayName": "PurInvExtDocDate",
@@ -422,7 +422,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_requested_date",
-        "order": "",
+        "order": "9",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineRequestedDate",
@@ -436,7 +436,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_stock_rec_doc_date",
-        "order": "",
+        "order": "8",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "displayNameTranslations": {},
         "displayName": "PurStockRecDocDate",
@@ -450,7 +450,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "payment_netto_due_date",
-        "order": "",
+        "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "displayNameTranslations": {},
         "displayName": "PaymentNettoDueDate",
@@ -464,7 +464,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "5",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -478,7 +478,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "3",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",
@@ -492,7 +492,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "invoice_doc_i_d",
-        "order": "",
+        "order": "B",
         "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {},
         "displayName": "InvoiceDocID",
@@ -506,7 +506,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -520,7 +520,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_stock_rec_line_qty",
-        "order": "",
+        "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {},
         "displayName": "PurStockRecLineQty",
@@ -534,7 +534,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "part_replenishment_time",
-        "order": "",
+        "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
         "displayNameTranslations": {},
         "displayName": "PartReplenishmentTime",
@@ -548,7 +548,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "delivery_date",
-        "order": "",
+        "order": "9",
         "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {},
         "displayName": "DeliveryDate",
@@ -562,7 +562,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "2",
         "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -576,7 +576,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "9",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -590,7 +590,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_line_delivery_date",
-        "order": "",
+        "order": "B",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
         "displayNameTranslations": {},
         "displayName": "PurOrderLineDeliveryDate",
@@ -604,7 +604,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -618,7 +618,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_date",
-        "order": "",
+        "order": "6",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocDate",
@@ -632,7 +632,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
-        "order": "",
+        "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
         "displayNameTranslations": {},
         "displayName": "PurOrderDocID",

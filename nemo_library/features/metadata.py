@@ -651,7 +651,7 @@ def MetaDataAutoResolveApplications(
                     continue
                 attributelinks_model.append(
                     AttributeLink(
-                        sourceAttributeId=imported_column.id,
+                        sourceAttributeInternalName=imported_column.internalName,
                         parentAttributeGroupInternalName=metric.parentAttributeGroupInternalName,
                         displayNameTranslations={
                             "de": imported_column.displayNameTranslations.get("de", ""),
@@ -663,6 +663,15 @@ def MetaDataAutoResolveApplications(
                         ),
                     )
                 )
+                
+   # Remove duplicates from attributelinks_model
+    unique_links = {}
+    for link in attributelinks_model:
+        key = (link.sourceAttributeId, link.parentAttributeGroupInternalName)
+        if key not in unique_links:
+            unique_links[key] = link
+    attributelinks_model = list(unique_links.values())
+                
     # export the data to JSON finally
     export = {
         "attributegroups": attributegroups_model,

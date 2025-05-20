@@ -26,7 +26,6 @@ class AttributeLink:
         Converts the instance to a dictionary, excluding 'sourceAttributeId'.
         """
         result = asdict(self)
-        result.pop("sourceAttributeId", None)  # remove if present
         return result
 
     def __post_init__(self):

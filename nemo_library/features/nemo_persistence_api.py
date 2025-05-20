@@ -678,11 +678,13 @@ def createAttributeLinks(
     
     for attribute_link in attributelinks:
         for ic in ics:
-            if attribute_link.sourceAttributeInternalName == ic.internalName:
+            if  ic.internalName == attribute_link.sourceAttributeInternalName:
                 attribute_link.sourceAttributeId = ic.id
                 break
         else:
-            attribute_link.sourceAttributeInternalName = None
+            log_error(
+                f"AttributeLink '{attribute_link.displayName}' has no sourceAttributeInternalName"
+            )
     
     _generic_metadata_create_or_update(
         config=config,

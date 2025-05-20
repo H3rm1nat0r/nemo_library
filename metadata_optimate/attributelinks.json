@@ -1,1 +1,189 @@
-[]
+[
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "delivery_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
+        "displayNameTranslations": {
+            "de": "Liefertermin (Lieferung)",
+            "en": ""
+        },
+        "displayName": "DeliveryDate",
+        "internalName": "optimate_delivery_date_8c898283_dcaa_4bcf_b06f_18983270703f",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "pur_order_line_creation_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
+        "displayNameTranslations": {
+            "de": "Anlagedatum (Position (Bestellung))",
+            "en": ""
+        },
+        "displayName": "PurOrderLineCreationDate",
+        "internalName": "optimate_pur_order_line_creation_date_9c2e9539_4db6_41a5_98dd_06f65f39dfce",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "pur_order_line_delivery_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
+        "displayNameTranslations": {
+            "de": "Liefertermin (Bestellung)",
+            "en": ""
+        },
+        "displayName": "PurOrderLineDeliveryDate",
+        "internalName": "optimate_pur_order_line_delivery_date_f0a8dc67_c4d0_49c2_b936_ae0dff253b75",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "pur_order_line_creation_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_replenishment_deviation",
+        "displayNameTranslations": {
+            "de": "Anlagedatum (Position (Bestellung))",
+            "en": ""
+        },
+        "displayName": "PurOrderLineCreationDate",
+        "internalName": "optimate_pur_order_line_creation_date_a5e1e37f_2e2f_49c7_9665_eb348152676c",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "payment_last_pay_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
+        "displayNameTranslations": {
+            "de": "Letztes Zahlungsziel (Zahlung)",
+            "en": ""
+        },
+        "displayName": "PaymentLastPayDate",
+        "internalName": "optimate_payment_last_pay_date_06e6421f_1eab_4e91_a257_19f60b827c8c",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "pur_stock_rec_line_creation_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_goods_receipt_processing_time_diagram",
+        "displayNameTranslations": {
+            "de": "Anlagedatum (Position (Wareneingang))",
+            "en": ""
+        },
+        "displayName": "PurStockRecLineCreationDate",
+        "internalName": "optimate_pur_stock_rec_line_creation_date_9775a400_ae43_4bf6_b282_08b596644113",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "pur_order_line_qty",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
+        "displayNameTranslations": {
+            "de": "Menge (Position (Bestellung))",
+            "en": ""
+        },
+        "displayName": "PurOrderLineQty",
+        "internalName": "optimate_pur_order_line_qty_1d430631_6691_4b39_b9b7_d13964a82878",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "pur_order_line_requested_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
+        "displayNameTranslations": {
+            "de": "Wunschtermin (Bestellung)",
+            "en": ""
+        },
+        "displayName": "PurOrderLineRequestedDate",
+        "internalName": "optimate_pur_order_line_requested_date_49034eb1_db17_4ef9_abbe_e06687f82e6c",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "payment_last_pay_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_sales_customer_payments",
+        "displayNameTranslations": {
+            "de": "Letztes Zahlungsziel (Zahlung)",
+            "en": ""
+        },
+        "displayName": "PaymentLastPayDate",
+        "internalName": "optimate_payment_last_pay_date_72a4531a_e48e_41e1_a9d7_212412240711",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "pur_inv_change_date",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_invoice_processing_time_diagram",
+        "displayNameTranslations": {
+            "de": "\u00c4nderungsdatum (Lieferantenrechnung)",
+            "en": ""
+        },
+        "displayName": "PurInvChangeDate",
+        "internalName": "optimate_pur_inv_change_date_e37c103e_f3af_4c41_ab2e_de7d6b448a8f",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "pur_order_line_amount_conf",
+        "order": "",
+        "parentAttributeGroupInternalName": "optimate_purchasing_order_confirmation_rate_diagramm",
+        "displayNameTranslations": {
+            "de": "Anzahl der Auftragsbest\u00e4tigungen (Bestellung)",
+            "en": ""
+        },
+        "displayName": "PurOrderLineNumberConf",
+        "internalName": "optimate_pur_order_line_amount_conf_6f134e85_5cdf_4544_b944_5bba14b1fd43",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": false,
+        "metadataClassificationInternalName": ""
+    }
+]

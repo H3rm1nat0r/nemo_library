@@ -90,7 +90,7 @@
         "unit": "percent",
         "defaultScopeRestrictions": [],
         "internalName": "optimate_purchasing_otif_rate",
-        "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
+        "parentAttributeGroupInternalName": "optimate_purchasing_on_time_in_full_otif",
         "id": "",
         "projectId": "",
         "tenant": "",

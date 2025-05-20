@@ -437,9 +437,14 @@ def MetaDataAutoResolveApplications(
     """
 
     logging.info(f"load model from JSON files in folder {config.get_metadata()}")
-    attributegroups_model = (
-        []
-    )  # empty dictionary to hold the attribute groups to be created
+    attributegroups_model = _load_data_from_json(
+        config,
+        "attributegroups",
+        AttributeGroup,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
     applications_model = _load_data_from_json(
         config,
         "applications",
@@ -480,27 +485,45 @@ def MetaDataAutoResolveApplications(
         filter_type=filter_type,
         filter_value=filter_value,
     )
+    attributelinks_model = _load_data_from_json(
+        config,
+        "attributelinks",
+        Diagram,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
     attribute_groups_metrics = defaultdict(set)
-    attributelinks_model = (
-        []
-    )  # empty dictionary to hold the attribute links to be created
 
     # build attribute groups tree first
     logging.info(f"build attribute groups tree")
 
+    def addAttributeGroup(new_group: AttributeGroup):
+        if not any(
+            group.internalName == new_group.internalName
+            for group in attributegroups_model
+        ):
+            attributegroups_model.append(new_group)
+
     # start with root node
-    root = AttributeGroup(
-        internalName="optimate",
-        displayName="Optimate",
-        displayNameTranslations={"de": "Optimate", "en": "Optimate"},
-        parentAttributeGroupInternalName=None,
-        order="00",
-    )
-    attributegroups_model.append(root)
+    root = None
+    for ag in attributegroups_model:
+        if ag.internalName == "optimate":
+            root = ag
+            break
+    if not root:
+        root = AttributeGroup(
+            internalName="optimate",
+            displayName="OptiMate",
+            displayNameTranslations={"de": "OptiMate", "en": "OptiMate"},
+            parentAttributeGroupInternalName=None,
+            order="00",
+        )
+        addAttributeGroup(root)
 
     # add a group for each application
     for app in applications_model:
-        attributegroups_model.append(
+        addAttributeGroup(
             AttributeGroup(
                 internalName=app.internalName,
                 displayName=app.displayName,
@@ -518,7 +541,7 @@ def MetaDataAutoResolveApplications(
                     page_ref = page_search
                     break
             if page_ref:
-                attributegroups_model.append(
+                addAttributeGroup(
                     AttributeGroup(
                         internalName=page_ref.internalName,
                         displayName=page_ref.displayName,
@@ -536,7 +559,7 @@ def MetaDataAutoResolveApplications(
                                 diagram_ref = diagram_search
                                 break
                         if diagram_ref:
-                            attributegroups_model.append(
+                            addAttributeGroup(
                                 AttributeGroup(
                                     internalName=diagram_ref.internalName,
                                     displayName=diagram_ref.displayName,
@@ -553,6 +576,7 @@ def MetaDataAutoResolveApplications(
                             visual.content
                         )
 
+    # we have the attribute groups - let's bring them into order
     def assignOrder(parent: AttributeGroup):
         index = 0
         for attribute_group in attributegroups_model:
@@ -562,7 +586,37 @@ def MetaDataAutoResolveApplications(
                 assignOrder(attribute_group)
 
     assignOrder(root)
+    
+    # now we move metrics into the groups
     attribute_groups_metrics = {k: list(v) for k, v in attribute_groups_metrics.items()}
+
+    # build reverse lookup: metric → list of attribute groups
+    metric_to_groups = defaultdict(list)
+    for group, metrics in attribute_groups_metrics.items():
+        for metric in metrics:
+            metric_to_groups[metric].append(group)
+
+    # clean up duplicates by removing 'overview' if present among duplicates
+    for metric, groups in list(metric_to_groups.items()):
+        if len(groups) > 1:
+            if any("overview" in group for group in groups):
+                new_groups = [g for g in groups if "overview" not in g]
+                if new_groups:
+                    logging.info(
+                        f"Removed 'overview' group for metric '{metric}', kept: {new_groups}"
+                    )
+                    metric_to_groups[metric] = new_groups
+                    # also update attribute_groups_metrics accordingly
+                    for group in groups:
+                        if "overview" in group and metric in attribute_groups_metrics[group]:
+                            attribute_groups_metrics[group].remove(metric)
+
+    # log remaining duplicates
+    for metric, groups in metric_to_groups.items():
+        if len(groups) > 1:
+            logging.warning(
+                f"Metric '{metric}' appears in multiple attribute groups: {groups}"
+            )
 
     # move metrics to the right attribute group
     logging.info(f"move metrics to the right attribute group")
@@ -573,111 +627,114 @@ def MetaDataAutoResolveApplications(
             if metric.internalName in value:
                 attribute_group = key
                 break
-        if attribute_group and metric.parentAttributeGroupInternalName != attribute_group:
+        if (
+            attribute_group
+            and metric.parentAttributeGroupInternalName != attribute_group
+        ):
             logging.info(
                 f"move metric {metric.internalName} from {metric.parentAttributeGroupInternalName} to {attribute_group}"
             )
             # move metric to the right attribute group
             metric.parentAttributeGroupInternalName = attribute_group
 
-    # now we use the dependency tree to find the right attribute group for the defined and exported columns
-    # load metrics from NEMO to get the id of them. This is needed to get the dependency tree
-    logging.info(f"get dependency tree for metrics")
-    metrics_nemo = _fetch_data_from_nemo(
-        config=config,
-        projectname=projectname,
-        func=getMetrics,
-        filter=filter,
-        filter_type=filter_type,
-        filter_value=filter_value,
-    )
-    dependency_tree = {
-        metric.internalName: _collect_node_objects(d)
-        for metric in metrics_nemo
-        if (d := getDependencyTree(config=config, id=metric.id)) is not None
-    }
-    importedcolumns_nemo = _fetch_data_from_nemo(
-        config=config,
-        projectname=projectname,
-        func=getImportedColumns,
-        filter="*",
-        filter_type=filter_type,
-        filter_value=filter_value,
-    )
+    # # now we use the dependency tree to find the right attribute group for the defined and exported columns
+    # # load metrics from NEMO to get the id of them. This is needed to get the dependency tree
+    # logging.info(f"get dependency tree for metrics")
+    # metrics_nemo = _fetch_data_from_nemo(
+    #     config=config,
+    #     projectname=projectname,
+    #     func=getMetrics,
+    #     filter=filter,
+    #     filter_type=filter_type,
+    #     filter_value=filter_value,
+    # )
+    # dependency_tree = {
+    #     metric.internalName: _collect_node_objects(d)
+    #     for metric in metrics_nemo
+    #     if (d := getDependencyTree(config=config, id=metric.id)) is not None
+    # }
+    # importedcolumns_nemo = _fetch_data_from_nemo(
+    #     config=config,
+    #     projectname=projectname,
+    #     func=getImportedColumns,
+    #     filter="*",
+    #     filter_type=filter_type,
+    #     filter_value=filter_value,
+    # )
 
-    # move defined columns to the right attribute group
-    logging.info(f"move defined columns to the right attribute group")
-    for metric_internal_name, values in dependency_tree.items():
+    # # move defined columns to the right attribute group
+    # logging.info(f"move defined columns to the right attribute group")
+    # for metric_internal_name, values in dependency_tree.items():
 
-        # find metric in model
-        metric = None
-        for metric_search in metrics_model:
-            if metric_search.internalName == metric_internal_name:
-                metric = metric_search
-                break
-        if not metric:
-            logging.error(f"metric {metric_internal_name} not found in model")
-            continue
+    #     # find metric in model
+    #     metric = None
+    #     for metric_search in metrics_model:
+    #         if metric_search.internalName == metric_internal_name:
+    #             metric = metric_search
+    #             break
+    #     if not metric:
+    #         logging.error(f"metric {metric_internal_name} not found in model")
+    #         continue
 
-        # move defined columns to the right attribute group
-        for element in values:
-            if element.nodeType == "DefinedColumn":
-                # find defined column in model
-                defined_column = None
-                for defined_column_search in definedcolumns_model:
-                    if defined_column_search.internalName == element.nodeInternalName:
-                        defined_column = defined_column_search
-                        break
-                if not defined_column:
-                    logging.error(
-                        f"defined column {element.nodeInternalName} not found in model"
-                    )
-                    continue
+    #     # move defined columns to the right attribute group
+    #     for element in values:
+    #         if element.nodeType == "DefinedColumn":
+    #             # find defined column in model
+    #             defined_column = None
+    #             for defined_column_search in definedcolumns_model:
+    #                 if defined_column_search.internalName == element.nodeInternalName:
+    #                     defined_column = defined_column_search
+    #                     break
+    #             if not defined_column:
+    #                 logging.error(
+    #                     f"defined column {element.nodeInternalName} not found in model"
+    #                 )
+    #                 continue
 
-                defined_column.parentAttributeGroupInternalName = (
-                    metric.parentAttributeGroupInternalName
-                )
-            elif element.nodeType == "ExportedColumn":
-                # find exported column in model
-                imported_column = None
-                for imported_column_search in importedcolumns_nemo:
-                    if imported_column_search.internalName == element.nodeInternalName:
-                        imported_column = imported_column_search
-                        break
-                if not imported_column:
-                    logging.error(
-                        f"exported column {element.nodeInternalName} not found in model"
-                    )
-                    continue
-                attributelinks_model.append(
-                    AttributeLink(
-                        sourceAttributeInternalName=imported_column.internalName,
-                        parentAttributeGroupInternalName=metric.parentAttributeGroupInternalName,
-                        displayNameTranslations={
-                            "de": imported_column.displayNameTranslations.get("de", ""),
-                            "en": imported_column.displayNameTranslations.get("en", ""),
-                        },
-                        displayName=imported_column.displayName,
-                        internalName=f"{filter}_{imported_column.internalName}_{uuid.uuid4()}".replace(
-                            "-", "_"
-                        ),
-                    )
-                )
-                
-   # Remove duplicates from attributelinks_model
-    unique_links = {}
-    for link in attributelinks_model:
-        key = (link.sourceAttributeId, link.parentAttributeGroupInternalName)
-        if key not in unique_links:
-            unique_links[key] = link
-    attributelinks_model = list(unique_links.values())
-                
+    #             defined_column.parentAttributeGroupInternalName = (
+    #                 metric.parentAttributeGroupInternalName
+    #             )
+    #         elif element.nodeType == "ExportedColumn":
+    #             # find exported column in model
+    #             imported_column = None
+    #             for imported_column_search in importedcolumns_nemo:
+    #                 if imported_column_search.internalName == element.nodeInternalName:
+    #                     imported_column = imported_column_search
+    #                     break
+    #             if not imported_column:
+    #                 logging.error(
+    #                     f"exported column {element.nodeInternalName} not found in model"
+    #                 )
+    #                 continue
+    #             attributelinks_model.append(
+    #                 AttributeLink(
+    #                     sourceAttributeInternalName=imported_column.internalName,
+    #                     parentAttributeGroupInternalName=metric.parentAttributeGroupInternalName,
+    #                     displayNameTranslations={
+    #                         "de": imported_column.displayNameTranslations.get("de", ""),
+    #                         "en": imported_column.displayNameTranslations.get("en", ""),
+    #                     },
+    #                     displayName=imported_column.displayName,
+    #                     internalName=f"{filter}_{imported_column.internalName}_{uuid.uuid4()}".replace(
+    #                         "-", "_"
+    #                     ),
+    #                 )
+    #             )
+
+    # # Remove duplicates from attributelinks_model
+    # unique_links = {}
+    # for link in attributelinks_model:
+    #     key = (link.sourceAttributeId, link.parentAttributeGroupInternalName)
+    #     if key not in unique_links:
+    #         unique_links[key] = link
+    # attributelinks_model = list(unique_links.values())
+
     # export the data to JSON finally
     export = {
         "attributegroups": attributegroups_model,
-        "attributelinks": attributelinks_model,
-        "metrics": metrics_model,
-        "definedcolumns": definedcolumns_model,
+        # "attributelinks": attributelinks_model,
+        # "metrics": metrics_model,
+        # "definedcolumns": definedcolumns_model,
     }
     for name, data in export.items():
         _export_data_to_json(config, name, data)

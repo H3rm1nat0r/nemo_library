@@ -3,10 +3,10 @@
         "attributeGroupType": "Standard",
         "defaultMetricGroup": false,
         "defaultDefinedColumnGroup": false,
-        "displayName": "Optimate",
+        "displayName": "OptiMate",
         "displayNameTranslations": {
-            "de": "Optimate",
-            "en": "Optimate"
+            "de": "OptiMate",
+            "en": "OptiMate"
         },
         "isCoupled": false,
         "internalName": "optimate",
@@ -315,25 +315,6 @@
         "isCoupled": false,
         "internalName": "optimate_sales_finder_overview",
         "parentAttributeGroupInternalName": "optimate_sales_finder",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": false,
-        "metadataClassificationInternalName": "",
-        "order": "00"
-    },
-    {
-        "attributeGroupType": "Standard",
-        "defaultMetricGroup": false,
-        "defaultDefinedColumnGroup": false,
-        "displayName": "Days Payables Outstanding (DPO)",
-        "displayNameTranslations": {
-            "en": "Days Payables Outstanding (DPO)",
-            "de": "Im Einkauf zur\u00fcckgehaltens Kapital (DPO)"
-        },
-        "isCoupled": false,
-        "internalName": "optimate_purchasing_days_payables_outstanding_dpo",
-        "parentAttributeGroupInternalName": "optimate_sales_finder_overview",
         "id": "",
         "projectId": "",
         "tenant": "",

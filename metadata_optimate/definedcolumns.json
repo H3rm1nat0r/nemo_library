@@ -92,10 +92,10 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "On-Time Sourcing (boolean)",
+        "displayName": "On-Time Delivery (boolean)",
         "displayNameTranslations": {
             "en": "On-Time Delivery (boolean)",
-            "de": "Einkaufstermintreue (boolean)"
+            "de": "Vertriebslieferung zu pünktlich (boolean)"
         },
         "formula": "optimate_sales_on_time_delivery_days == 0",
         "groupByColumnInternalName": null,
@@ -508,10 +508,10 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "On-Time Sourcing (days)",
+        "displayName": "On-Time Delivery Deviation (days)",
         "displayNameTranslations": {
-            "de": "Einkaufstermintreue (Tage)",
-            "en": "On-Time Delivery Deviation (days)"
+            "en": "On-Time Delivery Deviation (days)",
+            "de": "Vertriebslieferung abweichend (Tage)"
         },
         "formula": "order_doc_line_requested_date - delivery_date",
         "groupByColumnInternalName": null,
@@ -536,10 +536,10 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "On-Time Sourcing Too Early (boolean)",
+        "displayName": "On-Time Delivery Too Early (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufstermintreue zu fr\u00fch (boolean)",
-            "en": "On-Time Delivery Too Early (boolean)"
+            "en": "On-Time Delivery Too Early (boolean)",
+            "de": "Vertriebslieferung zu früh (boolean)"
         },
         "formula": "optimate_sales_on_time_delivery_days > 0",
         "groupByColumnInternalName": null,

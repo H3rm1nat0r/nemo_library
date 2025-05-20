@@ -2,9 +2,10 @@ import pandas as pd
 
 from nemo_library.features.deprecated import createOrUpdateReport, createOrUpdateRule
 from nemo_library.features.metadata import (
-    MetaDataAutoResolveApplications,
+    MetaDataHelperAutoResolveApplications,
     MetaDataCreate,
     MetaDataDelete,
+    MetaDataHelperUpdateLinkTexts,
     MetaDataLoad,
 )
 from nemo_library.features.migman_precheck_files import MigManPrecheckFiles
@@ -681,14 +682,29 @@ class NemoLibrary:
             filter_value=filter_value,
         )
 
-    def MetaDataAutoResolveApplications(
+    def MetaDataHelperUpdateLinkTexts(
+        self,
+        projectname: str,
+        filter: str = "*",
+        filter_type: FilterType = FilterType.STARTSWITH,
+        filter_value: FilterValue = FilterValue.DISPLAYNAME,
+    ) -> None:
+        MetaDataHelperUpdateLinkTexts(
+            config=self.config,
+            projectname=projectname,
+            filter=filter,
+            filter_type=filter_type,
+            filter_value=filter_value,
+        )
+
+    def MetaDataHelperAutoResolveApplications(
         self,
         projectname: str,
         filter: str = "*",
         filter_type: FilterType = FilterType.STARTSWITH,
         filter_value: FilterValue = FilterValue.DISPLAYNAME,
     ):
-        MetaDataAutoResolveApplications(
+        MetaDataHelperAutoResolveApplications(
             config=self.config,
             projectname=projectname,
             filter=filter,

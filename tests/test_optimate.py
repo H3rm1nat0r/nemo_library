@@ -114,14 +114,24 @@ def test_metrics():
     # Check internal names
     for metric in metrics:
 
-        if metric.dateColumn != "pur_order_doc_date":
-            assert (
-                False
-            ), f"found purchasing metric that does not have pur_order_doc_date as date column: {metric.internalName}"
-        if metric.groupByColumn != "pur_order_doc_i_d":
-            assert (
-                False
-            ), f"found purchasing metric that does not have pur_order_doc_i_d as group by column: {metric.internalName}"
+        if metric.internalName.startswith("optimate_purchasing"):
+            if metric.dateColumn != "pur_order_doc_date":
+                assert (
+                    False
+                ), f"found purchasing metric that does not have pur_order_doc_date as date column: {metric.internalName}"
+            if metric.groupByColumn != "pur_order_doc_i_d":
+                assert (
+                    False
+                ), f"found purchasing metric that does not have pur_order_doc_i_d as group by column: {metric.internalName}"
+        elif metric.internalName.startswith("optimate_sales"):
+            if metric.dateColumn != "invoice_doc_date":
+                assert (
+                    False
+                ), f"found sales metric that does not have invoice_doc_date as date column: {metric.internalName}"
+            if metric.groupByColumn != "invoice_doc_i_d":
+                assert (
+                    False
+                ), f"found sales metric that does not have invoice_doc_i_d as group by column: {metric.internalName}"
             
     # Check if all metrics are part of a diagram
     metrics_in_diagrams = [

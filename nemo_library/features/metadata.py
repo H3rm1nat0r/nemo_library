@@ -156,6 +156,34 @@ def MetaDataDelete(
         delete_functions[name](config=config, **{name: objects_to_delete})
 
 
+def MetaDataHelperUpdateLinkTexts(
+    config: Config,
+    projectname: str,
+    filter: str = "*",
+    filter_type: FilterType = FilterType.STARTSWITH,
+    filter_value: FilterValue = FilterValue.DISPLAYNAME,
+) -> None:
+    attributelinks = getAttributeLinks(
+        config=config,
+        projectname=projectname,
+        filter=filter,
+        filter_type=filter_type,
+        filter_value=filter_value,
+    )
+    importedColumns = getImportedColumns(config=config, projectname=projectname)
+    
+    for attributelink in attributelinks:
+        for ic in importedColumns:
+            if ic.internalName == attributelink.sourceAttributeInternalName:
+                attributelink.displayName = ic.displayName
+                attributelink.displayNameTranslations = ic.displayNameTranslations
+                if not "en" in attributelink.displayNameTranslations:
+                    attributelink.displayNameTranslations["en"] = ic.displayName
+                break                    
+
+    _export_data_to_json(config, "attributelinks", attributelinks)
+
+
 def MetaDataCreate(
     config: Config,
     projectname: str,
@@ -423,7 +451,7 @@ def MetaDataCreate(
             )
 
 
-def MetaDataAutoResolveApplications(
+def MetaDataHelperAutoResolveApplications(
     config: Config,
     projectname: str,
     filter: str = "*",

@@ -10,8 +10,8 @@
         },
         "displayName": "Invoice Verification Processing Time (days)",
         "displayNameTranslations": {
-            "en": "Invoice Verification Processing Time (days)",
-            "de": "Prozessdauer Rechnungskontrolle (Tage)"
+            "de": "Prozessdauer Rechnungskontrolle (Tage)",
+            "en": "Invoice Verification Processing Time (days)"
         },
         "formula": "pur_inv_change_date-pur_inv_ext_doc_date",
         "groupByColumnInternalName": null,
@@ -94,8 +94,8 @@
         },
         "displayName": "On-Time Sourcing (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufstermintreue (boolean)",
-            "en": "On-Time Delivery (boolean)"
+            "en": "On-Time Delivery (boolean)",
+            "de": "Einkaufstermintreue (boolean)"
         },
         "formula": "optimate_sales_on_time_delivery_days == 0",
         "groupByColumnInternalName": null,
@@ -122,8 +122,8 @@
         },
         "displayName": "In-Full Sourcing (boolean)",
         "displayNameTranslations": {
-            "en": "In-Full Sourcing (boolean)",
-            "de": "Einkaufsmengentreue (boolean)"
+            "de": "Einkaufsmengentreue (boolean)",
+            "en": "In-Full Sourcing (boolean)"
         },
         "formula": "optimate_purchasing_in_full_sourcing_amount == 0",
         "groupByColumnInternalName": null,
@@ -150,8 +150,8 @@
         },
         "displayName": "Payments Deviation Too Early (boolean)",
         "displayNameTranslations": {
-            "de": "Zahlungsabweichung zu fr\u00fch (boolean)",
-            "en": "Payments Deviation Too Early (boolean)"
+            "en": "Payments Deviation Too Early (boolean)",
+            "de": "Zahlungsabweichung zu fr\u00fch (boolean)"
         },
         "formula": "optimate_global_payments_deviation_days > 0",
         "groupByColumnInternalName": null,
@@ -234,8 +234,8 @@
         },
         "displayName": "Payments Deviation (days)",
         "displayNameTranslations": {
-            "de": "Zahlungsabweichung (Tage)",
-            "en": "Payments Deviation (days)"
+            "en": "Payments Deviation (days)",
+            "de": "Zahlungsabweichung (Tage)"
         },
         "formula": "payment_netto_due_date-payment_last_pay_date",
         "groupByColumnInternalName": null,
@@ -262,8 +262,8 @@
         },
         "displayName": "On-Time Sourcing Too Early (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufstermintreue zu fr\u00fch (boolean)",
-            "en": "On-Time Sourcing Too Early (boolean)"
+            "en": "On-Time Sourcing Too Early (boolean)",
+            "de": "Einkaufstermintreue zu fr\u00fch (boolean)"
         },
         "formula": "optimate_purchasing_on_time_sourcing_days > 0",
         "groupByColumnInternalName": null,
@@ -318,8 +318,8 @@
         },
         "displayName": "On-Time Sourcing (boolean)",
         "displayNameTranslations": {
-            "en": "On-Time Sourcing (boolean)",
-            "de": "Einkaufstermintreue (boolean)"
+            "de": "Einkaufstermintreue (boolean)",
+            "en": "On-Time Sourcing (boolean)"
         },
         "formula": "optimate_purchasing_on_time_sourcing_days == 0",
         "groupByColumnInternalName": null,
@@ -374,8 +374,8 @@
         },
         "displayName": "In-Full Sourcing Underdelivered (boolean)",
         "displayNameTranslations": {
-            "de": "Einkaufsmengentreue unterliefert (boolean)",
-            "en": "In-Full Sourcing Underdelivered (boolean)"
+            "en": "In-Full Sourcing Underdelivered (boolean)",
+            "de": "Einkaufsmengentreue unterliefert (boolean)"
         },
         "formula": "optimate_purchasing_in_full_sourcing_amount > 0",
         "groupByColumnInternalName": null,
@@ -456,8 +456,8 @@
         "descriptionTranslations": {},
         "displayName": "Order Confirmation (boolean)",
         "displayNameTranslations": {
-            "de": "Auftragsbest\u00e4tigung (boolean)",
-            "en": "Order Confirmation (boolean)"
+            "en": "Order Confirmation (boolean)",
+            "de": "Auftragsbest\u00e4tigung (boolean)"
         },
         "formula": "pur_order_line_amount_conf > 0",
         "groupByColumnInternalName": null,
@@ -510,8 +510,8 @@
         },
         "displayName": "On-Time Sourcing (days)",
         "displayNameTranslations": {
-            "en": "On-Time Delivery Deviation (days)",
-            "de": "Einkaufstermintreue (Tage)"
+            "de": "Einkaufstermintreue (Tage)",
+            "en": "On-Time Delivery Deviation (days)"
         },
         "formula": "order_doc_line_requested_date - delivery_date",
         "groupByColumnInternalName": null,
@@ -538,8 +538,8 @@
         },
         "displayName": "On-Time Sourcing Too Early (boolean)",
         "displayNameTranslations": {
-            "en": "On-Time Delivery Too Early (boolean)",
-            "de": "Einkaufstermintreue zu fr\u00fch (boolean)"
+            "de": "Einkaufstermintreue zu fr\u00fch (boolean)",
+            "en": "On-Time Delivery Too Early (boolean)"
         },
         "formula": "optimate_sales_on_time_delivery_days > 0",
         "groupByColumnInternalName": null,

@@ -155,6 +155,11 @@ class Config:
         self.metadata = metadata or self.config.get(
             "nemo_library", "metadata", fallback="./metadata"
         )
+        
+        # Initialize tokens to None to make them persistent later
+        self._id_token = None
+        self._access_token = None
+        self._refresh_token = None        
 
     def get_config_nemo_url(self) -> str:
         """
@@ -331,14 +336,15 @@ class Config:
 
     def connection_get_tokens(self) -> tuple[str, str, str]:
         """
-        Retrieves the tokens for the connection.
+        Retrieves the tokens for the connection, caching them after first request.
 
         Returns:
             tuple[str, str, str]: The ID token, access token, and refresh token.
-
-        Raises:
-            Exception: If the request fails.
         """
+        # Return cached tokens if they exist
+        if self._id_token and self._access_token:
+            return self._id_token, self._access_token, self._refresh_token
+
         headers = {
             "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth",
             "Content-Type": "application/x-amz-json-1.1",
@@ -366,13 +372,11 @@ class Config:
                 f"request failed. Status: {response_auth.status_code}, error: {response_auth.text}"
             )
         tokens = json.loads(response_auth.text)
-        id_token = tokens["AuthenticationResult"]["IdToken"]
-        access_token = tokens["AuthenticationResult"]["AccessToken"]
-        refresh_token = tokens["AuthenticationResult"].get(
-            "RefreshToken"
-        )  # Some flows might not return a RefreshToken
+        self._id_token = tokens["AuthenticationResult"]["IdToken"]
+        self._access_token = tokens["AuthenticationResult"]["AccessToken"]
+        self._refresh_token = tokens["AuthenticationResult"].get("RefreshToken")
 
-        return id_token, access_token, refresh_token
+        return self._id_token, self._access_token, self._refresh_token
 
     def get_metadata(self) -> str:
         """

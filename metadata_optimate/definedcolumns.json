@@ -64,6 +64,34 @@
         "descriptionTranslations": {
             "en": ""
         },
+        "displayName": "In-Full Delivery (amount)",
+        "displayNameTranslations": {
+            "en": "In-Full Delivery (amount)",
+            "de": "Vertriebsmengentreue Abweichung (Menge)"
+        },
+        "formula": "order_doc_line_qty -shipping_doc_line_qty",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": 128,
+        "unit": "days",
+        "order": "5",
+        "internalName": "optimate_sales_in_full_delivery_amount",
+        "parentAttributeGroupInternalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "integer",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
         "displayName": "Payments Deviation (days)",
         "displayNameTranslations": {
             "en": "Payments Deviation (days)",
@@ -94,8 +122,8 @@
         },
         "displayName": "Invoice Verification Processing Time (days)",
         "displayNameTranslations": {
-            "en": "Invoice Verification Processing Time (days)",
-            "de": "Prozessdauer Rechnungskontrolle (Tage)"
+            "de": "Prozessdauer Rechnungskontrolle (Tage)",
+            "en": "Invoice Verification Processing Time (days)"
         },
         "formula": "pur_inv_change_date-pur_inv_ext_doc_date",
         "groupByColumnInternalName": null,
@@ -148,18 +176,18 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "In-Full Delivery Overdelivered (boolean)",
+        "displayName": "In-Full Delivery Underdelivered (boolean)",
         "displayNameTranslations": {
-            "en": "In-Full Delivery Overdelivered (boolean)",
-            "de": "Vertriebsmengentreue \u00fcberliefert (boolean)"
+            "en": "In-Full Delivery Underdelivered (boolean)",
+            "de": "Vertriebsmengentreue unterliefert (boolean)"
         },
-        "formula": "optimate_sales_in_full_delivery_amount < 0",
+        "formula": "optimate_sales_in_full_delivery_amount > 0",
         "groupByColumnInternalName": null,
         "importName": "",
         "stringSize": null,
         "unit": "",
-        "order": "7",
-        "internalName": "optimate_sales_in_full_delivery_overdelivered_boolean",
+        "order": "8",
+        "internalName": "optimate_sales_in_full_delivery_underdelivered_boolean",
         "parentAttributeGroupInternalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "id": "",
         "projectId": "",
@@ -176,8 +204,8 @@
         "descriptionTranslations": {},
         "displayName": "Order Confirmation (boolean)",
         "displayNameTranslations": {
-            "de": "Auftragsbest\u00e4tigung (boolean)",
-            "en": "Order Confirmation (boolean)"
+            "en": "Order Confirmation (boolean)",
+            "de": "Auftragsbest\u00e4tigung (boolean)"
         },
         "formula": "pur_order_line_amount_conf > 0",
         "groupByColumnInternalName": null,
@@ -204,8 +232,8 @@
         },
         "displayName": "Payments Deviation Too Early (boolean)",
         "displayNameTranslations": {
-            "de": "Zahlungsabweichung zu fr\u00fch (boolean)",
-            "en": "Payments Deviation Too Early (boolean)"
+            "en": "Payments Deviation Too Early (boolean)",
+            "de": "Zahlungsabweichung zu fr\u00fch (boolean)"
         },
         "formula": "optimate_purchasing_payments_deviation_days > 0",
         "groupByColumnInternalName": null,
@@ -286,34 +314,6 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "In-Full Delivery (amount)",
-        "displayNameTranslations": {
-            "en": "In-Full Delivery (amount)",
-            "de": "Vertriebsmengentreue Abweichung (Menge)"
-        },
-        "formula": "order_doc_line_qty -shipping_doc_line_qty",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": 128,
-        "unit": "days",
-        "order": "5",
-        "internalName": "optimate_sales_in_full_delivery_amount",
-        "parentAttributeGroupInternalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "integer",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
         "displayName": "Procurement Lead Time (PLT) (days)",
         "displayNameTranslations": {
             "de": "Bestellvorlaufzeit (Tage)",
@@ -370,8 +370,8 @@
         },
         "displayName": "In-Full Sourcing (boolean)",
         "displayNameTranslations": {
-            "en": "In-Full Sourcing (boolean)",
-            "de": "Einkaufsmengentreue (boolean)"
+            "de": "Einkaufsmengentreue (boolean)",
+            "en": "In-Full Sourcing (boolean)"
         },
         "formula": "optimate_purchasing_in_full_sourcing_amount == 0",
         "groupByColumnInternalName": null,
@@ -381,6 +381,34 @@
         "order": "6",
         "internalName": "optimate_purchasing_in_full_sourcing_boolean",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "In-Full Delivery (boolean)",
+        "displayNameTranslations": {
+            "en": "In-Full Delivery (boolean)",
+            "de": "Vertriebsmengentreue (boolean)"
+        },
+        "formula": "optimate_sales_in_full_delivery_amount == 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": null,
+        "unit": "",
+        "order": "6",
+        "internalName": "optimate_sales_in_full_delivery_boolean",
+        "parentAttributeGroupInternalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -437,34 +465,6 @@
         "order": "7",
         "internalName": "optimate_purchasing_on_time_sourcing_too_early_boolean",
         "parentAttributeGroupInternalName": "optimate_purchasing_share_of_early_on_time_and_late_deliveries",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
-        "displayName": "In-Full Delivery Underdelivered (boolean)",
-        "displayNameTranslations": {
-            "de": "Vertriebsmengentreue unterliefert (boolean)",
-            "en": "In-Full Delivery Underdelivered (boolean)"
-        },
-        "formula": "optimate_sales_in_full_delivery_amount > 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "order": "8",
-        "internalName": "optimate_sales_in_full_delivery_underdelivered_boolean",
-        "parentAttributeGroupInternalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "id": "",
         "projectId": "",
         "tenant": "",
@@ -538,8 +538,8 @@
         },
         "displayName": "On-Time Delivery Too Late (boolean)",
         "displayNameTranslations": {
-            "en": "On-Time Delivery Too Late (boolean)",
-            "de": "Vertriebslieferung zu sp\u00e4t (boolean)"
+            "de": "Vertriebslieferung zu sp\u00e4t (boolean)",
+            "en": "On-Time Delivery Too Late (boolean)"
         },
         "formula": "optimate_sales_on_time_delivery_days < 0",
         "groupByColumnInternalName": null,
@@ -566,8 +566,8 @@
         },
         "displayName": "Payments Deviation On Time (boolean)",
         "displayNameTranslations": {
-            "en": "Payments Deviation On Time (boolean)",
-            "de": "Zahlungsabweichung p\u00fcnktlich (boolean)"
+            "de": "Zahlungsabweichung p\u00fcnktlich (boolean)",
+            "en": "Payments Deviation On Time (boolean)"
         },
         "formula": "optimate_purchasing_payments_deviation_days == 0",
         "groupByColumnInternalName": null,
@@ -594,8 +594,8 @@
         },
         "displayName": "Payments Deviation On Time (boolean)",
         "displayNameTranslations": {
-            "en": "Payments Deviation On Time (boolean)",
-            "de": "Zahlungsabweichung p\u00fcnktlich (boolean)"
+            "de": "Zahlungsabweichung p\u00fcnktlich (boolean)",
+            "en": "Payments Deviation On Time (boolean)"
         },
         "formula": "optimate_sales_payments_deviation_days == 0",
         "groupByColumnInternalName": null,
@@ -676,38 +676,10 @@
         "descriptionTranslations": {
             "en": ""
         },
-        "displayName": "In-Full Delivery (boolean)",
-        "displayNameTranslations": {
-            "en": "In-Full Delivery (boolean)",
-            "de": "Vertriebsmengentreue (boolean)"
-        },
-        "formula": "optimate_sales_in_full_delivery_amount == 0",
-        "groupByColumnInternalName": null,
-        "importName": "",
-        "stringSize": null,
-        "unit": "",
-        "order": "6",
-        "internalName": "optimate_sales_in_full_delivery_boolean",
-        "parentAttributeGroupInternalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": ""
-    },
-    {
-        "categorialType": false,
-        "columnType": "DefinedColumn",
-        "containsSensitiveData": false,
-        "dataType": "boolean",
-        "description": "",
-        "descriptionTranslations": {
-            "en": ""
-        },
         "displayName": "Payments Deviation Too Late (boolean)",
         "displayNameTranslations": {
-            "de": "Zahlungsabweichung zu sp\u00e4t (boolean)",
-            "en": "Payments Deviation Too Late (boolean)"
+            "en": "Payments Deviation Too Late (boolean)",
+            "de": "Zahlungsabweichung zu sp\u00e4t (boolean)"
         },
         "formula": "optimate_sales_payments_deviation_days < 0",
         "groupByColumnInternalName": null,
@@ -734,8 +706,8 @@
         },
         "displayName": "On-Time Sourcing (days)",
         "displayNameTranslations": {
-            "en": "On-Time Sourcing (days)",
-            "de": "Einkaufstermintreue (Tage)"
+            "de": "Einkaufstermintreue (Tage)",
+            "en": "On-Time Sourcing (days)"
         },
         "formula": "pur_order_line_requested_date-pur_order_line_delivery_date",
         "groupByColumnInternalName": null,
@@ -818,8 +790,8 @@
         },
         "displayName": "Payments Deviation (days)",
         "displayNameTranslations": {
-            "de": "Zahlungsabweichung (Tage)",
-            "en": "Payments Deviation (days)"
+            "en": "Payments Deviation (days)",
+            "de": "Zahlungsabweichung (Tage)"
         },
         "formula": "payment_netto_due_date-payment_last_pay_date",
         "groupByColumnInternalName": null,
@@ -829,6 +801,34 @@
         "order": "1",
         "internalName": "optimate_purchasing_payments_deviation_days",
         "parentAttributeGroupInternalName": "optimate_purchasing_supplier_payments",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "categorialType": false,
+        "columnType": "DefinedColumn",
+        "containsSensitiveData": false,
+        "dataType": "boolean",
+        "description": "",
+        "descriptionTranslations": {
+            "en": ""
+        },
+        "displayName": "In-Full Delivery Overdelivered (boolean)",
+        "displayNameTranslations": {
+            "en": "In-Full Delivery Overdelivered (boolean)",
+            "de": "Vertriebsmengentreue \u00fcberliefert (boolean)"
+        },
+        "formula": "optimate_sales_in_full_delivery_amount < 0",
+        "groupByColumnInternalName": null,
+        "importName": "",
+        "stringSize": null,
+        "unit": "",
+        "order": "7",
+        "internalName": "optimate_sales_in_full_delivery_overdelivered_boolean",
+        "parentAttributeGroupInternalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
         "id": "",
         "projectId": "",
         "tenant": "",

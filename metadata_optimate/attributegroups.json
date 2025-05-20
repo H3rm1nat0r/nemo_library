@@ -3,29 +3,10 @@
         "attributeGroupType": "Standard",
         "defaultMetricGroup": false,
         "defaultDefinedColumnGroup": false,
-        "displayName": "Days Payables Outstanding (DPO)",
-        "displayNameTranslations": {
-            "de": "Im Einkauf zur\u00fcckgehaltens Kapital (DPO)",
-            "en": "Days Payables Outstanding (DPO)"
-        },
-        "isCoupled": false,
-        "internalName": "optimate_purchasing_days_payables_outstanding_dpo",
-        "parentAttributeGroupInternalName": "optimate_sales_finder_overview",
-        "id": "",
-        "projectId": "",
-        "tenant": "",
-        "isCustom": true,
-        "metadataClassificationInternalName": "",
-        "order": "00"
-    },
-    {
-        "attributeGroupType": "Standard",
-        "defaultMetricGroup": false,
-        "defaultDefinedColumnGroup": false,
         "displayName": "Purchasing Finder",
         "displayNameTranslations": {
-            "en": "Purchasing Finder",
-            "de": "Purchasing Finder"
+            "de": "Purchasing Finder",
+            "en": "Purchasing Finder"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_finder",
@@ -62,8 +43,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Overview",
         "displayNameTranslations": {
-            "de": "\u00dcbersicht",
-            "en": "Overview"
+            "en": "Overview",
+            "de": "\u00dcbersicht"
         },
         "isCoupled": false,
         "internalName": "optimate_sales_finder_overview",
@@ -119,8 +100,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Share of early, on-time and late supplier payments",
         "displayNameTranslations": {
-            "en": "Share of early, on-time and late supplier payments",
-            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Lieferantenzahlungen"
+            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Lieferantenzahlungen",
+            "en": "Share of early, on-time and late supplier payments"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_supplier_payments",
@@ -138,8 +119,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "DPO",
         "displayNameTranslations": {
-            "en": "DPO",
-            "de": "Days Payables Outstanding (DPO)"
+            "de": "Days Payables Outstanding (DPO)",
+            "en": "DPO"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_finder_dpo",
@@ -157,8 +138,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Invoice Processing Time",
         "displayNameTranslations": {
-            "en": "Invoice Processing Time",
-            "de": "Prozessdauer Rechnungskontrolle"
+            "de": "Prozessdauer Rechnungskontrolle",
+            "en": "Invoice Processing Time"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_invoice_processing_time_diagram",
@@ -169,6 +150,25 @@
         "isCustom": true,
         "metadataClassificationInternalName": "",
         "order": "00"
+    },
+    {
+        "attributeGroupType": "Standard",
+        "defaultMetricGroup": false,
+        "defaultDefinedColumnGroup": false,
+        "displayName": "Share of complete deliveries, overdeliveries and underdeliveries",
+        "displayNameTranslations": {
+            "en": "Share of complete deliveries, overdeliveries and underdeliveries",
+            "de": "Anteil vollst\u00e4ndige Lieferungen, \u00dcber- und Unterlieferungen"
+        },
+        "isCoupled": false,
+        "internalName": "optimate_sales_share_of_complete_deliveries_overdeliveries_and_underdeliveries",
+        "parentAttributeGroupInternalName": "optimate_sales_finder_fot",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": "",
+        "order": "01"
     },
     {
         "attributeGroupType": "Standard",
@@ -214,8 +214,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Share of early, on-time and late customer payments",
         "displayNameTranslations": {
-            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Kundenzahlungen",
-            "en": "Share of early, on-time and late customer payments"
+            "en": "Share of early, on-time and late customer payments",
+            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Kundenzahlungen"
         },
         "isCoupled": false,
         "internalName": "optimate_sales_customer_payments",
@@ -252,8 +252,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Share of early, on-time and late deliveries",
         "displayNameTranslations": {
-            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Lieferungen",
-            "en": "Share of early, on-time and late deliveries"
+            "en": "Share of early, on-time and late deliveries",
+            "de": "Anteil verfr\u00fchte, p\u00fcnktliche und versp\u00e4tete Lieferungen"
         },
         "isCoupled": false,
         "internalName": "optimate_sales_share_of_early_on_time_and_late_deliveries",
@@ -290,8 +290,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "On Time in Full",
         "displayNameTranslations": {
-            "de": "P\u00fcnktlich und vollst\u00e4ndig (OTIF)",
-            "en": "On Time in Full"
+            "en": "On Time in Full",
+            "de": "P\u00fcnktlich und vollst\u00e4ndig (OTIF)"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_finder_otif",
@@ -366,8 +366,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "Fulfillment On Time (FOT)",
         "displayNameTranslations": {
-            "en": "Fulfillment On Time (FOT)",
-            "de": "P\u00fcnktliche Erledigung (FOT)"
+            "de": "P\u00fcnktliche Erledigung (FOT)",
+            "en": "Fulfillment On Time (FOT)"
         },
         "isCoupled": false,
         "internalName": "optimate_sales_finder_fot",
@@ -385,8 +385,8 @@
         "defaultDefinedColumnGroup": false,
         "displayName": "On Time  in Full (OTIF)",
         "displayNameTranslations": {
-            "en": "On Time  in Full (OTIF)",
-            "de": "Einkaufsliefertreue"
+            "de": "Einkaufsliefertreue",
+            "en": "On Time  in Full (OTIF)"
         },
         "isCoupled": false,
         "internalName": "optimate_purchasing_on_time_in_full_otif",

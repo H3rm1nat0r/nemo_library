@@ -516,7 +516,7 @@ def MetaDataHelperAutoResolveApplications(
     attributelinks_model = _load_data_from_json(
         config,
         "attributelinks",
-        Diagram,
+        AttributeLink,
         filter=filter,
         filter_type=filter_type,
         filter_value=filter_value,

@@ -367,6 +367,36 @@
     },
     {
         "sourceAttributeId": null,
+        "sourceAttributeInternalName": "part_i_d",
+        "order": "000",
+        "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
+        "displayNameTranslations": {
+            "en": "PartID"
+        },
+        "displayName": "PartID",
+        "internalName": "optimate_part_i_d_37e0ff4c_4bfa_4fa2_b0e5_bf66f5c08cd2",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
+        "sourceAttributeInternalName": "part_desc1",
+        "order": "1",
+        "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
+        "displayNameTranslations": {},
+        "displayName": "PartDesc1",
+        "internalName": "optimate_part_desc1_37e0ff4c_4bfa_4fa2_b0e5_bf66f5c08cd3",
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": ""
+    },
+    {
+        "sourceAttributeId": null,
         "sourceAttributeInternalName": "pur_order_doc_i_d",
         "order": "7",
         "parentAttributeGroupInternalName": "optimate_purchasing_order_preparation_time_days",
@@ -536,7 +566,7 @@
     {
         "sourceAttributeId": null,
         "sourceAttributeInternalName": "supplier_name",
-        "order": "1",
+        "order": "00",
         "parentAttributeGroupInternalName": "optimate_purchasing_finder_overview",
         "displayNameTranslations": {},
         "displayName": "SupplierName",

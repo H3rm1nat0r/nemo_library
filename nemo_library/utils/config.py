@@ -28,8 +28,8 @@ Dictionary mapping environments to their respective Cognito App Client IDs.
 
 NEMO_URLS = {
     "demo": "https://demo.enter.nemo-ai.com",
-    "dev": "http://development.enter.nemo-ai.com",
-    "test": "http://test.enter.nemo-ai.com",
+    "dev": "https://development.enter.nemo-ai.com",
+    "test": "https://test.enter.nemo-ai.com",
     "prod": "https://enter.nemo-ai.com",
     "challenge": "https://challenge.enter.nemo-ai.com",
 }

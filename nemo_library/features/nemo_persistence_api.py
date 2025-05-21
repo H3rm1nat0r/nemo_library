@@ -102,7 +102,7 @@ def _generic_metadata_create_or_update(
             )
             if response.status_code != 200:
                 log_error(
-                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",}\nStatus: {response.status_code}, error: {response.text}"
+                    f"PUT Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
         else:
@@ -115,7 +115,7 @@ def _generic_metadata_create_or_update(
             )
             if response.status_code != 201:
                 log_error(
-                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
+                    f"POST Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
             if endpoint != "AttributeTreeElements" and (
@@ -170,7 +170,7 @@ def _generic_metadata_delete(config: Config, ids: list[str], endpoint: str) -> N
 
         if response.status_code != 204:
             log_error(
-                f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}"}\nStatus: {response.status_code}, error: {response.text}"
+                f"DELETE Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj_id}"}\nStatus: {response.status_code}, error: {response.text}"
             )
 
 
@@ -210,7 +210,7 @@ def _generic_metadata_get(
 
     if response.status_code != 200:
         log_error(
-            f"Request failed.\nURL:{f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/project/{project_id}{endpoint_postfix}"}\nStatus: {response.status_code}, error: {response.text}"
+            f"GET Request failed.\nURL:{f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/project/{project_id}{endpoint_postfix}"}\nStatus: {response.status_code}, error: {response.text}"
         )
         return []
 
@@ -320,7 +320,7 @@ def getAttributeLinks(
         config=config,
         projectname=projectname,
     )
-    
+
     for attribute_link in attribute_links:
         for ic in ics:
             if attribute_link.sourceAttributeId == ic.id:
@@ -675,17 +675,17 @@ def createAttributeLinks(
         config=config,
         projectname=projectname,
     )
-    
+
     for attribute_link in attributelinks:
         for ic in ics:
-            if  ic.internalName == attribute_link.sourceAttributeInternalName:
+            if ic.internalName == attribute_link.sourceAttributeInternalName:
                 attribute_link.sourceAttributeId = ic.id
                 break
         else:
             log_error(
                 f"AttributeLink '{attribute_link.displayName}' has no sourceAttributeInternalName"
             )
-    
+
     _generic_metadata_create_or_update(
         config=config,
         projectname=projectname,
@@ -845,7 +845,7 @@ def createProjects(config: Config, projects: list[Project]) -> None:
             )
             if response.status_code != 200:
                 log_error(
-                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-projects/projects/{project.id}"}\nStatus: {response.status_code}, error: {response.text}"
+                    f"PUT Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-projects/projects/{project.id}"}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
         else:
@@ -857,7 +857,7 @@ def createProjects(config: Config, projects: list[Project]) -> None:
             )
             if response.status_code != 201:
                 log_error(
-                    f"Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Project"}\nStatus: {response.status_code}, error: {response.text}"
+                    f"POST Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Project"}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
 

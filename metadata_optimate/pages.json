@@ -88,6 +88,16 @@
                 "row": 1,
                 "rowSpan": 1,
                 "type": "Diagram"
+            },
+            {
+                "column": 1,
+                "columnSpan": 1,
+                "content": "optimate_sales_dunning_rate",
+                "contentTranslations": {},
+                "id": "",
+                "row": 2,
+                "rowSpan": 1,
+                "type": "Diagram"
             }
         ],
         "id": "",

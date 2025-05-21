@@ -102,7 +102,7 @@ def _generic_metadata_create_or_update(
             )
             if response.status_code != 200:
                 log_error(
-                    f"PUT Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",}\nStatus: {response.status_code}, error: {response.text}"
+                    f"PUT Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}/{obj.id}",}\nobject: {json.dumps(obj.to_dict())}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
         else:
@@ -115,7 +115,7 @@ def _generic_metadata_create_or_update(
             )
             if response.status_code != 201:
                 log_error(
-                    f"POST Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nStatus: {response.status_code}, error: {response.text}"
+                    f"POST Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/{endpoint}"}\nobject: {json.dumps(obj.to_dict())}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
             if endpoint != "AttributeTreeElements" and (
@@ -845,7 +845,7 @@ def createProjects(config: Config, projects: list[Project]) -> None:
             )
             if response.status_code != 200:
                 log_error(
-                    f"PUT Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-projects/projects/{project.id}"}\nStatus: {response.status_code}, error: {response.text}"
+                    f"PUT Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-projects/projects/{project.id}"}\nobject: {json.dumps(project.to_dict())}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
         else:
@@ -857,7 +857,7 @@ def createProjects(config: Config, projects: list[Project]) -> None:
             )
             if response.status_code != 201:
                 log_error(
-                    f"POST Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Project"}\nStatus: {response.status_code}, error: {response.text}"
+                    f"POST Request failed.\nURL: {f"{config.get_config_nemo_url()}/api/nemo-persistence/metadata/Project"}\nobject: {json.dumps(project.to_dict())}\nStatus: {response.status_code}, error: {response.text}"
                 )
 
 

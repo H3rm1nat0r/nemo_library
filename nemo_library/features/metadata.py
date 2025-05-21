@@ -748,6 +748,7 @@ def MetaDataHelperAutoResolveApplications(
                         f"exported column {element.nodeInternalName} not found in model"
                     )
                     continue
+                app = metric.parentAttributeGroupInternalName.split("_")[1]
                 addAttributeLink(
                     AttributeLink(
                         sourceAttributeInternalName=imported_column.internalName,
@@ -757,7 +758,7 @@ def MetaDataHelperAutoResolveApplications(
                             "en": imported_column.displayNameTranslations.get("en", imported_column.displayName),
                         },
                         displayName=imported_column.displayName,
-                        internalName=f"{filter}_{imported_column.internalName}_{uuid.uuid4()}".replace(
+                        internalName=f"{root.internalName}_{app}_{imported_column.internalName}_{uuid.uuid4()}".replace(
                             "-", "_"
                         ),
                     )

@@ -163,6 +163,7 @@ def MetaDataHelperUpdateLinkTexts(
     filter_type: FilterType = FilterType.STARTSWITH,
     filter_value: FilterValue = FilterValue.DISPLAYNAME,
 ) -> None:
+    logging.info(f"load model from NEMO project {projectname}")
     attributelinks = getAttributeLinks(
         config=config,
         projectname=projectname,

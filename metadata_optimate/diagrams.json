@@ -1042,5 +1042,63 @@
         "isCustom": true,
         "metadataClassificationInternalName": "",
         "basedOnMetric": true
-    }
+    },
+    {
+        "alternateVisualization": false,
+        "argument": {
+            "aggregation": "month",
+            "column": "DATE",
+            "dataType": "datetime"
+        },
+        "argumentAxisTitle": "Time",
+        "argumentAxisTitleTranslations": {
+            "de": "Zeit",
+            "en": "Time"
+        },
+        "description": "",
+        "descriptionTranslations": {},
+        "displayName": "Days Sales Outstanding (DSO)",
+        "displayNameTranslations": {
+            "de": "Im Vertrieb zur\u00fcckgehaltens Kapital (DSO)",
+            "en": "Days Sales Outstanding (DSO)"
+        },
+        "internalName": "optimate_sales_days_sales_outstanding_dso",
+        "report": "dummy",
+        "summary": null,
+        "valueAxisTitle": "",
+        "valueAxisTitleTranslations": {
+            "en": "Time (Days)",
+            "de": "Zeit (Tage)"
+        },
+        "values": [
+            {
+                "aggregation": "prediction",
+                "chartType": "line",
+                "column": "d_s_o",
+                "id": "",
+                "legend": "Pred",
+                "legendTranslations": {
+                    "en": "Pred",
+                    "de": "Progn"
+                }
+            },
+            {
+                "aggregation": "actuals",
+                "chartType": "line",
+                "column": "d_s_o",
+                "id": "",
+                "legend": "Act",
+                "legendTranslations": {
+                    "en": "Act",
+                    "de": "Ist"
+                }
+            }
+        ],
+        "id": "",
+        "projectId": "",
+        "tenant": "",
+        "isCustom": true,
+        "metadataClassificationInternalName": "",
+        "basedOnMetric": true
+    }    
 ]

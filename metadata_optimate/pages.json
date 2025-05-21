@@ -18,7 +18,7 @@
             {
                 "column": 1,
                 "columnSpan": 1,
-                "content": "optimate_purchasing_days_payables_outstanding_dpo",
+                "content": "optimate_sales_days_sales_outstanding_dso",
                 "contentTranslations": {},
                 "id": "",
                 "row": 2,

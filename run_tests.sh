@@ -10,7 +10,9 @@ rm -rf unit-test-project
 echo "📦 Creating temporary test project..."
 mkdir -p unit-test-project
 mkdir unit-test-project/tests
+mkdir unit-test-project/metadata_optimate
 cp -r tests/* unit-test-project/tests/
+cp -r metadata_optimate/* unit-test-project/metadata_optimate/
 cd unit-test-project
 
 # Create and activate virtual environment

@@ -13,5 +13,5 @@ def getNL():
         migman_mapping_fields=["S_Kunde.Kunde", "S_Adresse.Bundesland"],
         migman_additional_fields={"S_Adresse.Bundesland": ["S_Adresse.Staat"]},
         migman_multi_projects={},
-        metadata="./tests/metadata",
+        metadata="metadata_optimate",
     )

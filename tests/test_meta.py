@@ -13,9 +13,9 @@ def test_create():
     nl = getNL()
     nl.MetaDataCreate(
         projectname=META_PROJECT_NAME,
-        filter="(C)",
+        filter="optimate",
         filter_type=FilterType.STARTSWITH,
-        filter_value=FilterValue.DISPLAYNAME,
+        filter_value=FilterValue.INTERNALNAME,
     )
 
 
@@ -23,9 +23,9 @@ def test_load():
     nl = getNL()
     nl.MetaDataLoad(
         projectname=META_PROJECT_NAME,
-        filter="(C)",
+        filter="optimate",
         filter_type=FilterType.STARTSWITH,
-        filter_value=FilterValue.DISPLAYNAME,
+        filter_value=FilterValue.INTERNALNAME,
     )
 
 
@@ -33,7 +33,7 @@ def test_delete():
     nl = getNL()
     nl.MetaDataDelete(
         projectname=META_PROJECT_NAME,
-        filter="(C)",
+        filter="optimate",
         filter_type=FilterType.STARTSWITH,
-        filter_value=FilterValue.DISPLAYNAME,
+        filter_value=FilterValue.INTERNALNAME,
     )

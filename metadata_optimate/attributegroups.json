@@ -54,7 +54,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "01"
+        "order": "0"
     },
     {
         "attributeGroupType": "Standard",
@@ -92,7 +92,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "00"
+        "order": "1"
     },
     {
         "attributeGroupType": "Standard",
@@ -358,7 +358,7 @@
         "tenant": "",
         "isCustom": true,
         "metadataClassificationInternalName": "",
-        "order": "02"
+        "order": "2"
     },
     {
         "attributeGroupType": "Standard",

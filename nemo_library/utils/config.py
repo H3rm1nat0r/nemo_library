@@ -155,11 +155,11 @@ class Config:
         self.metadata = metadata or self.config.get(
             "nemo_library", "metadata", fallback="./metadata"
         )
-        
+
         # Initialize tokens to None to make them persistent later
         self._id_token = None
         self._access_token = None
-        self._refresh_token = None        
+        self._refresh_token = None
 
     def get_config_nemo_url(self) -> str:
         """
@@ -386,3 +386,12 @@ class Config:
             str: The metadata path.
         """
         return self.metadata
+
+    def testLogin(self) -> None:
+        """
+        Tests the login by making a request to the NEMO API.
+
+        Raises:
+            Exception: If the login fails.
+        """
+        self.connection_get_headers()

@@ -173,6 +173,22 @@ class NemoLibrary:
 
         super().__init__()
 
+    def testLogin(self) -> None:
+        """
+        Tests the login credentials and returns the status.
+
+        Returns:
+            str: The status of the login attempt.
+
+        Raises:
+            RuntimeError: If the login attempt fails.
+
+        Notes:
+            - This function checks if the provided credentials are valid.
+            - If successful, it returns a success message.
+            - If unsuccessful, it raises a RuntimeError with an error message.
+        """
+        return self.config.testLogin()
     def getProjectID(self, projectname: str) -> str:
         """
         Retrieves the unique project ID for a given project name.
